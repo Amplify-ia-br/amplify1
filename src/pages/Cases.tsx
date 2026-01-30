@@ -1,6 +1,8 @@
+import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
+import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
 
 const Cases = () => {
   const cases = [
@@ -62,87 +64,107 @@ const Cases = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
         
         <div className="container mx-auto px-4 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-6 animate-fade-in">
+          <motion.div 
+            className="max-w-4xl mx-auto text-center space-y-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut" }}
+          >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-tight">
               Onde a <span className="gradient-text">Inteligência Artificial</span>{" "}
               transforma empresas
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            <motion.p 
+              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            >
               Conheça alguns dos projetos que realizamos e os resultados que alcançamos
-            </p>
-          </div>
+            </motion.p>
+          </motion.div>
         </div>
       </section>
 
       {/* Cases Grid */}
       <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {cases.map((caseItem) => (
-              <div
-                key={caseItem.id}
-                className="group rounded-xl overflow-hidden bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-xl hover:shadow-primary/5"
-              >
-                {/* Image */}
-                <div className="aspect-video relative overflow-hidden bg-muted">
-                  <img
-                    src={caseItem.image}
-                    alt={caseItem.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 rounded-full bg-background/90 text-sm font-medium">
-                      {caseItem.client}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6 space-y-4">
-                  <h3 className="text-xl font-heading font-semibold group-hover:text-primary transition-colors">
-                    {caseItem.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {caseItem.description}
-                  </p>
-                  
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    {caseItem.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary"
-                      >
-                        {tag}
+              <StaggerItem key={caseItem.id}>
+                <motion.div
+                  className="group rounded-xl overflow-hidden bg-card border border-border hover:border-primary/50 transition-all duration-300"
+                  whileHover={{ y: -8, boxShadow: "0 20px 40px -15px hsl(177 70% 41% / 0.15)" }}
+                >
+                  {/* Image */}
+                  <div className="aspect-video relative overflow-hidden bg-muted">
+                    <motion.img
+                      src={caseItem.image}
+                      alt={caseItem.title}
+                      className="w-full h-full object-cover"
+                      whileHover={{ scale: 1.1 }}
+                      transition={{ duration: 0.5 }}
+                    />
+                    <div className="absolute top-4 left-4">
+                      <span className="px-3 py-1 rounded-full bg-background/90 text-sm font-medium">
+                        {caseItem.client}
                       </span>
-                    ))}
+                    </div>
                   </div>
 
-                  <Button variant="ghost" className="w-full justify-between group/btn">
-                    Ver detalhes
-                    <ExternalLink className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                  </Button>
-                </div>
-              </div>
+                  {/* Content */}
+                  <div className="p-6 space-y-4">
+                    <h3 className="text-xl font-heading font-semibold group-hover:text-primary transition-colors">
+                      {caseItem.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {caseItem.description}
+                    </p>
+                    
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2">
+                      {caseItem.tags.map((tag, index) => (
+                        <motion.span
+                          key={index}
+                          className="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary"
+                          whileHover={{ scale: 1.05, backgroundColor: "hsl(177 70% 41% / 0.2)" }}
+                        >
+                          {tag}
+                        </motion.span>
+                      ))}
+                    </div>
+
+                    <Button variant="ghost" className="w-full justify-between group/btn">
+                      Ver detalhes
+                      <ExternalLink className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
+                    </Button>
+                  </div>
+                </motion.div>
+              </StaggerItem>
             ))}
-          </div>
+          </StaggerContainer>
         </div>
       </section>
 
       {/* CTA Section */}
       <section className="py-20 bg-card/50">
         <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-6">
+          <FadeInUp className="max-w-3xl mx-auto text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-heading font-bold">
               Quer ser nosso próximo <span className="gradient-text">case de sucesso</span>?
             </h2>
             <p className="text-muted-foreground">
               Entre em contato e descubra como podemos transformar seu negócio
             </p>
-            <Button size="lg" className="glow-cyan">
-              Iniciar Conversa
-            </Button>
-          </div>
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button size="lg" className="glow-cyan">
+                Iniciar Conversa
+              </Button>
+            </motion.div>
+          </FadeInUp>
         </div>
       </section>
     </Layout>
