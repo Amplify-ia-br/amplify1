@@ -1,9 +1,27 @@
 import { motion } from "framer-motion";
 import avatarBot from "@/assets/avatar-bot.png";
 
+declare global {
+  interface Window {
+    inbot?: {
+      open?: () => void;
+      toggle?: () => void;
+    };
+  }
+}
+
 const FloatingChatBot = () => {
   const handleClick = () => {
-    window.open("https://amplify.in.bot/", "_blank", "noopener,noreferrer");
+    // Tenta abrir o chatbot in.bot
+    if (window.inbot && typeof window.inbot.open === 'function') {
+      window.inbot.open();
+    } else if (window.inbot && typeof window.inbot.toggle === 'function') {
+      window.inbot.toggle();
+    } else {
+      // Fallback: dispara evento customizado que o script in.bot pode escutar
+      const event = new CustomEvent('inbot-open');
+      document.dispatchEvent(event);
+    }
   };
 
   return (
