@@ -4,16 +4,11 @@ import { ArrowRight, Brain, BarChart3, Users, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-} from "@/components/ui/carousel";
+import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
 // Logo imports
 import logoGrupoPrimo from "@/assets/logos/logo-grupo-primo.png";
-import treinamentoPresencial from "@/assets/treinamento-presencial.png";
 import logoAmcham from "@/assets/logos/logo-amcham.png";
 import logoBossaInvest from "@/assets/logos/logo-bossa-invest.png";
 import logoDwx from "@/assets/logos/logo-dwx.png";
@@ -45,28 +40,28 @@ const Index = () => {
         {/* Background gradient */}
         <div className="absolute inset-0 gradient-bg" />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
-        
+
         {/* Decorative elements */}
-        <motion.div 
+        <motion.div
           className="absolute top-1/4 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl"
-          animate={{ 
+          animate={{
             scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3]
+            opacity: [0.3, 0.5, 0.3],
           }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div 
+        <motion.div
           className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl"
-          animate={{ 
+          animate={{
             scale: [1.2, 1, 1.2],
-            opacity: [0.2, 0.4, 0.2]
+            opacity: [0.2, 0.4, 0.2],
           }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
 
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto text-center space-y-8">
-            <motion.h1 
+            <motion.h1
               className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold leading-tight"
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -75,8 +70,8 @@ const Index = () => {
               Transforme <span className="gradient-text">dados</span> em{" "}
               <span className="gradient-text">inteligência</span>
             </motion.h1>
-            
-            <motion.p 
+
+            <motion.p
               className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -85,22 +80,29 @@ const Index = () => {
               Vamos transformar sua empresa conosco através do poder da Inteligência Artificial
             </motion.p>
 
-            <motion.div 
+            <motion.div
               className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
             >
               <Button size="lg" asChild className="glow-cyan text-lg px-8 py-6">
-                <a href="https://web.whatsapp.com/send?phone=5511918252109&text=Olá! Gostaria de falar com um especialista." target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://web.whatsapp.com/send?phone=5511918252109&text=Olá! Gostaria de falar com um especialista."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Fale com o Especialista
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
               </Button>
-              <Button size="lg" variant="outline" asChild className="text-lg px-8 py-6 border-primary/50 hover:bg-primary/10">
-                <Link to="/cases">
-                  Ver Cases
-                </Link>
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="text-lg px-8 py-6 border-primary/50 hover:bg-primary/10"
+              >
+                <Link to="/cases">Ver Cases</Link>
               </Button>
             </motion.div>
           </div>
@@ -132,9 +134,9 @@ const Index = () => {
                 {trustedCompanies.map((company, index) => (
                   <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/3 md:basis-1/4 lg:basis-1/5">
                     <div className="flex items-center justify-center h-16 px-4">
-                      <img 
-                        src={company.logo} 
-                        alt={company.name} 
+                      <img
+                        src={company.logo}
+                        alt={company.name}
                         className="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity"
                       />
                     </div>
@@ -146,59 +148,12 @@ const Index = () => {
         </div>
       </section>
 
-      {/* About Amplify Section */}
-      <section className="py-24 bg-card/30">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <FadeInUp className="space-y-6">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-sans font-bold leading-tight">
-                O Poder da <span className="gradient-text">Inteligência Artificial</span> como Alavanca de Transformação
-              </h2>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                Amplify é uma empresa de educação corporativa e consultoria em Inteligência Artificial que conecta estratégia, inovação e aprendizado aplicado.
-              </p>
-            </FadeInUp>
-            
-            <FadeInUp className="relative">
-              <div className="rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-border">
-                <img 
-                  src={treinamentoPresencial} 
-                  alt="Treinamento presencial Amplify" 
-                  className="w-full h-auto object-cover"
-                />
-              </div>
-            </FadeInUp>
-          </div>
-
-          {/* Stats Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16 max-w-2xl mx-auto">
-            <motion.div
-              className="p-8 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 text-center"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <p className="text-4xl md:text-5xl font-heading font-bold gradient-text mb-2">130k+</p>
-              <p className="text-lg text-muted-foreground">Alunos Capacitados</p>
-            </motion.div>
-            
-            <motion.div
-              className="p-8 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 text-center"
-              whileHover={{ scale: 1.02 }}
-              transition={{ duration: 0.2 }}
-            >
-              <p className="text-4xl md:text-5xl font-heading font-bold gradient-text mb-2">1k+</p>
-              <p className="text-lg text-muted-foreground">Treinamentos Realizados</p>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
       {/* Services Preview */}
       <section className="py-24 bg-card/50">
         <div className="container mx-auto px-4">
           <FadeInUp className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
-              Como podemos <span className="gradient-text">ajudar</span>
+              O que <span className="gradient-text">oferecemos</span>
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Soluções personalizadas em Inteligência Artificial para transformar seu negócio
@@ -237,12 +192,8 @@ const Index = () => {
                   <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <service.icon className="h-6 w-6 text-primary" />
                   </div>
-                  <h3 className="text-lg font-heading font-semibold mb-2">
-                    {service.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {service.description}
-                  </p>
+                  <h3 className="text-lg font-heading font-semibold mb-2">{service.title}</h3>
+                  <p className="text-sm text-muted-foreground">{service.description}</p>
                 </motion.div>
               </StaggerItem>
             ))}
@@ -253,21 +204,20 @@ const Index = () => {
       {/* CTA Section */}
       <section className="py-24 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-primary/10 via-transparent to-primary/10" />
-        
+
         <div className="container mx-auto px-4 relative z-10">
           <FadeInUp className="max-w-3xl mx-auto text-center space-y-6">
             <h2 className="text-3xl md:text-4xl font-heading font-bold">
               Pronto para <span className="gradient-text">transformar</span> sua empresa?
             </h2>
-            <p className="text-muted-foreground">
-              Entre em contato e descubra como a IA pode revolucionar seu negócio
-            </p>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-            >
+            <p className="text-muted-foreground">Entre em contato e descubra como a IA pode revolucionar seu negócio</p>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button size="lg" asChild className="glow-cyan">
-                <a href="https://web.whatsapp.com/send?phone=5511918252109&text=Olá! Gostaria de falar com um especialista." target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://web.whatsapp.com/send?phone=5511918252109&text=Olá! Gostaria de falar com um especialista."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Fale com o Especialista
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
