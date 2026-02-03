@@ -11,18 +11,29 @@ import {
 } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
+// Logo imports
+import logoGrupoPrimo from "@/assets/logos/logo-grupo-primo.png";
+import logoAmcham from "@/assets/logos/logo-amcham.png";
+import logoBossaInvest from "@/assets/logos/logo-bossa-invest.png";
+import logoDwx from "@/assets/logos/logo-dwx.png";
+import logoGouvea from "@/assets/logos/logo-gouvea.png";
+import logoTecfil from "@/assets/logos/logo-tecfil.png";
+import logoUfg from "@/assets/logos/logo-ufg.png";
+import logoCreaPr from "@/assets/logos/logo-crea-pr.png";
+import logoKatsuki from "@/assets/logos/logo-katsuki.png";
+import logoToccato from "@/assets/logos/logo-toccato.png";
+
 const trustedCompanies = [
-  "GRUPO PRIMO",
-  "FORD",
-  "CREA-PR",
-  "CTE",
-  "FÓRUM NEGÓCIOS",
-  "FEDERAÇÃO PAULISTA DE FUTEBOL",
-  "GRUPO EREA",
-  "ASSAÍ ATACADISTA",
-  "FACULDADE HUB",
-  "PECEGE",
-  "QUERO EDUCAÇÃO",
+  { name: "Grupo Primo", logo: logoGrupoPrimo },
+  { name: "Amcham", logo: logoAmcham },
+  { name: "Bossa Invest", logo: logoBossaInvest },
+  { name: "DWX", logo: logoDwx },
+  { name: "Gouvêa", logo: logoGouvea },
+  { name: "Tecfil", logo: logoTecfil },
+  { name: "UFG", logo: logoUfg },
+  { name: "CREA-PR", logo: logoCreaPr },
+  { name: "Katsuki", logo: logoKatsuki },
+  { name: "Toccato", logo: logoToccato },
 ];
 
 const Index = () => {
@@ -118,11 +129,13 @@ const Index = () => {
             >
               <CarouselContent className="-ml-2 md:-ml-4">
                 {trustedCompanies.map((company, index) => (
-                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/3 md:basis-1/5 lg:basis-1/6">
-                    <div className="flex items-center justify-center h-12 px-4">
-                      <span className="text-xs md:text-sm font-medium text-white/60 whitespace-nowrap">
-                        {company}
-                      </span>
+                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/3 md:basis-1/4 lg:basis-1/5">
+                    <div className="flex items-center justify-center h-16 px-4">
+                      <img 
+                        src={company.logo} 
+                        alt={company.name} 
+                        className="h-8 md:h-10 w-auto object-contain opacity-70 hover:opacity-100 transition-opacity"
+                      />
                     </div>
                   </CarouselItem>
                 ))}
