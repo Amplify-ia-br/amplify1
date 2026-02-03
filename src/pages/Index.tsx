@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Brain, BarChart3, Users, Lightbulb } from "lucide-react";
+import { ArrowRight, Brain, Users, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
@@ -18,6 +18,7 @@ import logoUfg from "@/assets/logos/logo-ufg.png";
 import logoCreaPr from "@/assets/logos/logo-crea-pr.png";
 import logoKatsuki from "@/assets/logos/logo-katsuki.png";
 import logoToccato from "@/assets/logos/logo-toccato.png";
+import forumPalestra from "@/assets/forum-palestra.png";
 
 const trustedCompanies = [
   { name: "Grupo Primo", logo: logoGrupoPrimo },
@@ -160,44 +161,53 @@ const Index = () => {
             </p>
           </FadeInUp>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: Brain,
-                title: "Consultoria em IA",
-                description: "Análise e implementação de soluções de IA personalizadas",
-              },
-              {
-                icon: Lightbulb,
-                title: "Palestras",
-                description: "Eventos inspiradores sobre o futuro da tecnologia",
-              },
-              {
-                icon: Users,
-                title: "Capacitações",
-                description: "Treinamentos práticos para sua equipe dominar IA",
-              },
-              {
-                icon: BarChart3,
-                title: "Analytics",
-                description: "Transforme seus dados em insights acionáveis",
-              },
-            ].map((service, index) => (
-              <StaggerItem key={index}>
-                <motion.div
-                  className="group p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5 h-full"
-                  whileHover={{ y: -5 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                    <service.icon className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="text-lg font-heading font-semibold mb-2">{service.title}</h3>
-                  <p className="text-sm text-muted-foreground">{service.description}</p>
-                </motion.div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <StaggerContainer className="grid grid-cols-1 gap-6">
+              {[
+                {
+                  icon: Users,
+                  title: "Capacitação",
+                  description: "Treinamentos práticos e imersivos para sua equipe dominar IA e aplicar no dia a dia corporativo.",
+                },
+                {
+                  icon: Brain,
+                  title: "Consultoria e Serviços",
+                  description: "Análise estratégica e implementação de soluções de IA personalizadas para acelerar resultados.",
+                },
+                {
+                  icon: Lightbulb,
+                  title: "Comunidades",
+                  description: "Networking exclusivo com profissionais e líderes que estão transformando seus negócios com IA.",
+                },
+              ].map((service, index) => (
+                <StaggerItem key={index}>
+                  <motion.div
+                    className="group p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-all duration-300 hover:shadow-lg hover:shadow-primary/5"
+                    whileHover={{ y: -5 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                        <service.icon className="h-6 w-6 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-heading font-semibold mb-2">{service.title}</h3>
+                        <p className="text-sm text-muted-foreground">{service.description}</p>
+                      </div>
+                    </div>
+                  </motion.div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+
+            <FadeInUp delay={0.3} className="flex justify-center lg:justify-end">
+              <img
+                src={forumPalestra}
+                alt="Palestra sobre Inteligência Artificial"
+                className="rounded-2xl shadow-2xl max-w-full h-auto object-cover"
+              />
+            </FadeInUp>
+          </div>
         </div>
       </section>
 
