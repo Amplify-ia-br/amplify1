@@ -25,6 +25,11 @@ const ChatBot = () => {
     setIsLoaded(true);
   };
 
+  // Hide the button once the chat is loaded
+  if (isLoaded) {
+    return null;
+  }
+
   return (
     <motion.button
       onClick={loadChatBot}
