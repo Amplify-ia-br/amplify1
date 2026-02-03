@@ -13,6 +13,7 @@ import Autoplay from "embla-carousel-autoplay";
 
 // Logo imports
 import logoGrupoPrimo from "@/assets/logos/logo-grupo-primo.png";
+import treinamentoPresencial from "@/assets/treinamento-presencial.png";
 import logoAmcham from "@/assets/logos/logo-amcham.png";
 import logoBossaInvest from "@/assets/logos/logo-bossa-invest.png";
 import logoDwx from "@/assets/logos/logo-dwx.png";
@@ -142,6 +143,53 @@ const Index = () => {
               </CarouselContent>
             </Carousel>
           </motion.div>
+        </div>
+      </section>
+
+      {/* About Amplify Section */}
+      <section className="py-24 bg-card/30">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <FadeInUp className="space-y-6">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold leading-tight">
+                O Poder da <span className="gradient-text">Inteligência Artificial</span> como Alavanca de Transformação
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed">
+                Amplify é uma empresa de educação corporativa e consultoria em Inteligência Artificial que conecta estratégia, inovação e aprendizado aplicado.
+              </p>
+            </FadeInUp>
+            
+            <FadeInUp className="relative">
+              <div className="rounded-2xl overflow-hidden shadow-2xl shadow-primary/10 border border-border">
+                <img 
+                  src={treinamentoPresencial} 
+                  alt="Treinamento presencial Amplify" 
+                  className="w-full h-auto object-cover"
+                />
+              </div>
+            </FadeInUp>
+          </div>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16 max-w-2xl mx-auto">
+            <motion.div
+              className="p-8 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 text-center"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
+              <p className="text-4xl md:text-5xl font-heading font-bold gradient-text mb-2">130k+</p>
+              <p className="text-lg text-muted-foreground">Alunos Capacitados</p>
+            </motion.div>
+            
+            <motion.div
+              className="p-8 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/30 text-center"
+              whileHover={{ scale: 1.02 }}
+              transition={{ duration: 0.2 }}
+            >
+              <p className="text-4xl md:text-5xl font-heading font-bold gradient-text mb-2">1k+</p>
+              <p className="text-lg text-muted-foreground">Treinamentos Realizados</p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
