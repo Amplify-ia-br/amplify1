@@ -20,6 +20,7 @@ import logoKatsuki from "@/assets/logos/logo-katsuki.png";
 import logoToccato from "@/assets/logos/logo-toccato.png";
 import forumPalestra from "@/assets/forum-palestra.png";
 import faculdadeHub from "@/assets/faculdade-hub.png";
+import depoimentoGuilherme from "@/assets/depoimento-guilherme.png";
 
 // Case studies imports
 import caseFordBrasil from "@/assets/cases/case-ford-brasil.png";
@@ -300,6 +301,40 @@ const Index = () => {
               </StaggerItem>
             ))}
           </StaggerContainer>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section className="py-24 bg-card/50">
+        <div className="container mx-auto px-4">
+          <FadeInUp className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
+              <span className="gradient-text">Depoimentos</span>
+            </h2>
+          </FadeInUp>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
+            <FadeInUp className="flex justify-center">
+              <img
+                src={depoimentoGuilherme}
+                alt="Guilherme Quandt"
+                className="rounded-2xl shadow-2xl max-w-full h-auto object-cover w-80"
+              />
+            </FadeInUp>
+
+            <FadeInUp delay={0.2}>
+              <blockquote className="relative">
+                <div className="text-6xl text-primary/20 absolute -top-4 -left-4">"</div>
+                <p className="text-lg md:text-xl text-muted-foreground leading-relaxed pl-8">
+                  Como ecossistema tecnológico, líder da construção brasileira, a Inteligência Artificial tem sido um dos temas centrais dos nossos debates. Por isso, teremos a Amplify no ConstruSummit para aprofundar a discussão sobre o impacto da IA no futuro do setor.
+                </p>
+                <footer className="mt-6 pl-8">
+                  <p className="font-heading font-semibold text-foreground">Guilherme Quandt</p>
+                  <p className="text-sm text-muted-foreground">Diretor de Marketing do Ecossistema Sienge</p>
+                </footer>
+              </blockquote>
+            </FadeInUp>
+          </div>
         </div>
       </section>
 
