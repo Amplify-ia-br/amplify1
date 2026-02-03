@@ -307,22 +307,37 @@ const Index = () => {
       {/* Testimonials Section */}
       <section className="py-24 bg-card/30">
         <div className="container mx-auto px-4">
-          <FadeInUp className="text-center mb-12">
+          <motion.div
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
               <span className="gradient-text">Depoimentos</span>
             </h2>
-          </FadeInUp>
+          </motion.div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
-            <FadeInUp className="flex justify-center">
+            <motion.div
+              className="flex justify-center"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
+            >
               <img
                 src={depoimentoGuilherme}
                 alt="Guilherme Quandt"
                 className="rounded-2xl shadow-2xl max-w-full h-auto object-cover w-80"
+                loading="lazy"
               />
-            </FadeInUp>
+            </motion.div>
 
-            <FadeInUp delay={0.2}>
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut", delay: 0.2 }}
+            >
               <blockquote className="relative">
                 <div className="text-6xl text-primary/20 absolute -top-4 -left-4">"</div>
                 <p className="text-lg md:text-xl text-muted-foreground leading-relaxed pl-8">
@@ -333,7 +348,7 @@ const Index = () => {
                   <p className="text-sm text-muted-foreground">Diretor de Marketing do Ecossistema Sienge</p>
                 </footer>
               </blockquote>
-            </FadeInUp>
+            </motion.div>
           </div>
         </div>
       </section>
