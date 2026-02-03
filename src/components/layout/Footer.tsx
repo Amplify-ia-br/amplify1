@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, Linkedin, Instagram, Youtube } from "lucide-react";
+import logoAmplify from "@/assets/logo-amplify-footer.png";
 
 const Footer = () => {
   return (
@@ -9,9 +10,11 @@ const Footer = () => {
           {/* Logo e Descrição */}
           <div className="space-y-4">
             <Link to="/" className="inline-block">
-              <span className="text-2xl font-heading font-bold gradient-text">
-                Amplify
-              </span>
+              <img 
+                src={logoAmplify} 
+                alt="Amplify" 
+                className="h-8 w-auto"
+              />
             </Link>
             <p className="text-sm text-muted-foreground">
               Transformando dados em inteligência para impulsionar sua empresa com IA.
