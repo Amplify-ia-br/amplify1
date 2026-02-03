@@ -92,7 +92,7 @@ const Index = () => {
             >
               <Button size="lg" asChild className="glow-cyan text-lg px-8 py-6">
                 <Link to="/contato">
-                  Fale Conosco
+                  Fale com o Especialista
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>
@@ -212,15 +212,15 @@ const Index = () => {
               Pronto para <span className="gradient-text">transformar</span> sua empresa?
             </h2>
             <p className="text-muted-foreground">
-              Agende uma reunião e descubra como a IA pode revolucionar seu negócio
+              Entre em contato e descubra como a IA pode revolucionar seu negócio
             </p>
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <Button size="lg" asChild className="glow-cyan">
-                <Link to="/agendar">
-                  Agendar Reunião
+                <Link to="/contato">
+                  Fale com o Especialista
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Link>
               </Button>

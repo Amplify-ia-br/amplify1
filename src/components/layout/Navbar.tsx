@@ -100,11 +100,8 @@ const Navbar = () => {
             ))}
           </div>
           <div className="hidden md:flex items-center space-x-4">
-            <Button variant="ghost" asChild>
-              <Link to="/agendar">Agende uma Reunião</Link>
-            </Button>
             <Button asChild className="glow-cyan">
-              <Link to="/contato">Fale Conosco</Link>
+              <Link to="/contato">Fale com o Especialista</Link>
             </Button>
           </div>
 
@@ -163,14 +160,9 @@ const Navbar = () => {
             ))}
 
             <div className="pt-4 space-y-2">
-              <Button variant="ghost" asChild className="w-full justify-start">
-                <Link to="/agendar" onClick={() => setIsOpen(false)}>
-                  Agende uma Reunião
-                </Link>
-              </Button>
               <Button asChild className="w-full">
                 <Link to="/contato" onClick={() => setIsOpen(false)}>
-                  Fale Conosco
+                  Fale com o Especialista
                 </Link>
               </Button>
             </div>
