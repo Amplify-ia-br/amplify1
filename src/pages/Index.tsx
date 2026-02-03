@@ -21,6 +21,19 @@ import logoToccato from "@/assets/logos/logo-toccato.png";
 import forumPalestra from "@/assets/forum-palestra.png";
 import faculdadeHub from "@/assets/faculdade-hub.png";
 
+// Case studies imports
+import caseFordBrasil from "@/assets/cases/case-ford-brasil.png";
+import caseForumNegocios from "@/assets/cases/case-forum-negocios.png";
+import caseGrupoErea from "@/assets/cases/case-grupo-erea.png";
+import caseFpf from "@/assets/cases/case-fpf.png";
+
+const successCases = [
+  { name: "Ford Brasil", image: caseFordBrasil },
+  { name: "Fórum Negócios", image: caseForumNegocios },
+  { name: "Grupo EREA", image: caseGrupoErea },
+  { name: "FPF", image: caseFpf },
+];
+
 const trustedCompanies = [
   { name: "Grupo Primo", logo: logoGrupoPrimo },
   { name: "Amcham", logo: logoAmcham },
@@ -252,6 +265,41 @@ const Index = () => {
               />
             </FadeInUp>
           </div>
+        </div>
+      </section>
+
+      {/* Success Cases Section */}
+      <section className="py-24">
+        <div className="container mx-auto px-4">
+          <FadeInUp className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
+              Alguns dos nossos <span className="gradient-text">cases de sucesso</span>
+            </h2>
+          </FadeInUp>
+
+          <StaggerContainer className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+            {successCases.map((caseItem, index) => (
+              <StaggerItem key={index}>
+                <motion.div
+                  className="group relative rounded-2xl overflow-hidden aspect-square"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <img
+                    src={caseItem.image}
+                    alt={caseItem.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <h3 className="text-lg md:text-xl font-heading font-bold text-white">
+                      {caseItem.name}
+                    </h3>
+                  </div>
+                </motion.div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
         </div>
       </section>
 
