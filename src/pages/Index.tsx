@@ -4,6 +4,26 @@ import { ArrowRight, Brain, BarChart3, Users, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+
+const trustedCompanies = [
+  "GRUPO PRIMO",
+  "FORD",
+  "CREA-PR",
+  "CTE",
+  "FÓRUM NEGÓCIOS",
+  "FEDERAÇÃO PAULISTA DE FUTEBOL",
+  "GRUPO EREA",
+  "ASSAÍ ATACADISTA",
+  "FACULDADE HUB",
+  "PECEGE",
+  "QUERO EDUCAÇÃO",
+];
 
 const Index = () => {
   return (
@@ -72,6 +92,43 @@ const Index = () => {
               </Button>
             </motion.div>
           </div>
+
+          {/* Trusted Companies */}
+          <motion.div
+            className="mt-16 space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
+          >
+            <p className="text-sm text-muted-foreground uppercase tracking-widest text-center">
+              Empresas que confiam
+            </p>
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
+              }}
+              plugins={[
+                Autoplay({
+                  delay: 2000,
+                  stopOnInteraction: false,
+                }),
+              ]}
+              className="w-full max-w-4xl mx-auto"
+            >
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {trustedCompanies.map((company, index) => (
+                  <CarouselItem key={index} className="pl-2 md:pl-4 basis-1/3 md:basis-1/5 lg:basis-1/6">
+                    <div className="flex items-center justify-center h-12 px-4">
+                      <span className="text-xs md:text-sm font-medium text-white/60 whitespace-nowrap">
+                        {company}
+                      </span>
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+            </Carousel>
+          </motion.div>
         </div>
       </section>
 
