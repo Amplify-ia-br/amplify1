@@ -19,6 +19,7 @@ import logoCreaPr from "@/assets/logos/logo-crea-pr.png";
 import logoKatsuki from "@/assets/logos/logo-katsuki.png";
 import logoToccato from "@/assets/logos/logo-toccato.png";
 import forumPalestra from "@/assets/forum-palestra.png";
+import faculdadeHub from "@/assets/faculdade-hub.png";
 
 const trustedCompanies = [
   { name: "Grupo Primo", logo: logoGrupoPrimo },
@@ -146,6 +147,49 @@ const Index = () => {
               </CarouselContent>
             </Carousel>
           </motion.div>
+        </div>
+      </section>
+
+      {/* About Amplify Section */}
+      <section className="py-24 bg-card/50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <FadeInUp>
+              <h2 className="text-3xl md:text-4xl font-sans font-bold mb-6 leading-tight">
+                O Poder da Inteligência Artificial como Alavanca de <span className="gradient-text">Transformação</span>
+              </h2>
+              <p className="text-lg text-muted-foreground mb-8">
+                Amplify é uma empresa de educação corporativa e consultoria em Inteligência Artificial que conecta estratégia, inovação e aprendizado aplicado.
+              </p>
+
+              <div className="grid grid-cols-2 gap-6">
+                <motion.div
+                  className="p-6 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <h3 className="text-4xl md:text-5xl font-heading font-bold gradient-text mb-2">130k+</h3>
+                  <p className="text-muted-foreground font-medium">Alunos Capacitados</p>
+                </motion.div>
+                <motion.div
+                  className="p-6 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20"
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <h3 className="text-4xl md:text-5xl font-heading font-bold gradient-text mb-2">1k+</h3>
+                  <p className="text-muted-foreground font-medium">Treinamentos Realizados</p>
+                </motion.div>
+              </div>
+            </FadeInUp>
+
+            <FadeInUp delay={0.3} className="flex justify-center lg:justify-end">
+              <img
+                src={faculdadeHub}
+                alt="Treinamento presencial de IA"
+                className="rounded-2xl shadow-2xl max-w-full h-auto object-cover"
+              />
+            </FadeInUp>
+          </div>
         </div>
       </section>
 
