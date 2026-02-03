@@ -20,6 +20,9 @@ const Navbar = () => {
   const navLinks = [
     { name: "Sobre", path: "/sobre" },
     { name: "Cases", path: "/cases" },
+  ];
+
+  const navLinksAfter = [
     { name: "Blog", path: "/blog" },
   ];
 
@@ -82,9 +85,20 @@ const Navbar = () => {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
-
           {/* CTA Buttons */}
+            {navLinksAfter.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                className={cn(
+                  "text-sm font-medium transition-colors hover:text-primary",
+                  isActive(link.path) ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
           <div className="hidden md:flex items-center space-x-4">
             <Button variant="ghost" asChild>
               <Link to="/agendar">Agende uma Reunião</Link>
@@ -133,6 +147,20 @@ const Navbar = () => {
                 </Link>
               ))}
             </div>
+
+            {navLinksAfter.map((link) => (
+              <Link
+                key={link.path}
+                to={link.path}
+                onClick={() => setIsOpen(false)}
+                className={cn(
+                  "block text-sm font-medium transition-colors hover:text-primary",
+                  isActive(link.path) ? "text-primary" : "text-muted-foreground"
+                )}
+              >
+                {link.name}
+              </Link>
+            ))}
 
             <div className="pt-4 space-y-2">
               <Button variant="ghost" asChild className="w-full justify-start">
