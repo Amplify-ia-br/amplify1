@@ -21,27 +21,21 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a
-                href="https://www.linkedin.com/company/amplify-ia/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
                 className="text-muted-foreground hover:text-primary transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
               <a
-                href="https://www.instagram.com/amplify.ia/"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
                 className="text-muted-foreground hover:text-primary transition-colors"
                 aria-label="Instagram"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a
-                href="https://www.youtube.com/channel/UCSS0F75JO5nfnOkna5xXAHQ"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#"
                 className="text-muted-foreground hover:text-primary transition-colors"
                 aria-label="YouTube"
               >
@@ -67,6 +61,11 @@ const Footer = () => {
               <li>
                 <Link to="/blog" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                   Blog
+                </Link>
+              </li>
+              <li>
+                <Link to="/contato" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Contato
                 </Link>
               </li>
             </ul>
