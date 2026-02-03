@@ -151,7 +151,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <FadeInUp className="space-y-6">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold leading-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-sans font-bold leading-tight">
                 O Poder da <span className="gradient-text">Inteligência Artificial</span> como Alavanca de Transformação
               </h2>
               <p className="text-lg text-muted-foreground leading-relaxed">
