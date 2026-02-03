@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, ChevronDown } from "lucide-react";
-import logoAmplify from "@/assets/logo-amplify-color.png";
+import logoAmplify from "@/assets/logo-amplify-branco.png";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
