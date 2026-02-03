@@ -91,7 +91,7 @@ const Index = () => {
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
             >
               <Button size="lg" asChild className="glow-cyan text-lg px-8 py-6">
-                <a href="https://wa.me/5511918252109" target="_blank" rel="noopener noreferrer">
+                <a href="https://web.whatsapp.com/send?phone=5511918252109&text=Olá! Gostaria de falar com um especialista." target="_blank" rel="noopener noreferrer">
                   Fale com o Especialista
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
@@ -219,7 +219,7 @@ const Index = () => {
               whileTap={{ scale: 0.95 }}
             >
               <Button size="lg" asChild className="glow-cyan">
-                <a href="https://wa.me/5511918252109" target="_blank" rel="noopener noreferrer">
+                <a href="https://web.whatsapp.com/send?phone=5511918252109&text=Olá! Gostaria de falar com um especialista." target="_blank" rel="noopener noreferrer">
                   Fale com o Especialista
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </a>
