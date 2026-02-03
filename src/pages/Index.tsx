@@ -100,9 +100,9 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
           >
-            <p className="text-sm text-muted-foreground uppercase tracking-widest text-center">
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold leading-tight text-center">
               Empresas que confiam
-            </p>
+            </h2>
             <Carousel
               opts={{
                 align: "start",
