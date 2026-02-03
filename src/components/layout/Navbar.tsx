@@ -101,7 +101,7 @@ const Navbar = () => {
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <Button asChild className="glow-cyan">
-              <Link to="/contato">Fale com o Especialista</Link>
+              <a href="https://wa.me/5511918252109" target="_blank" rel="noopener noreferrer">Fale com o Especialista</a>
             </Button>
           </div>
 
@@ -161,9 +161,9 @@ const Navbar = () => {
 
             <div className="pt-4 space-y-2">
               <Button asChild className="w-full">
-                <Link to="/contato" onClick={() => setIsOpen(false)}>
+                <a href="https://wa.me/5511918252109" target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)}>
                   Fale com o Especialista
-                </Link>
+                </a>
               </Button>
             </div>
           </div>

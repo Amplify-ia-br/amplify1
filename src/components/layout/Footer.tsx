@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Linkedin, Instagram, Youtube } from "lucide-react";
+import { Phone, MapPin, Linkedin, Instagram, Youtube } from "lucide-react";
 import logoAmplify from "@/assets/logo-amplify-footer.png";
 
 const Footer = () => {
@@ -98,12 +98,10 @@ const Footer = () => {
             <h3 className="font-heading font-semibold mb-4">Contato</h3>
             <ul className="space-y-3">
               <li className="flex items-center space-x-2 text-sm text-muted-foreground">
-                <Mail className="h-4 w-4 text-primary" />
-                <span>contato@amplify.com.br</span>
-              </li>
-              <li className="flex items-center space-x-2 text-sm text-muted-foreground">
                 <Phone className="h-4 w-4 text-primary" />
-                <span>+55 (11) 99999-9999</span>
+                <a href="https://wa.me/5511918252109" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors">
+                  +55 11 91825-2109
+                </a>
               </li>
               <li className="flex items-start space-x-2 text-sm text-muted-foreground">
                 <MapPin className="h-4 w-4 text-primary mt-0.5" />
