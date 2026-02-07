@@ -6,6 +6,8 @@ import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
 import treinamentoPresencial from "@/assets/treinamento-presencial.png";
 import forumPalestra from "@/assets/forum-palestra.png";
+import caseForumNegocios from "@/assets/cases/case-forum-negocios-capacitacao.png";
+import caseAssai from "@/assets/cases/case-assai.png";
 
 const formatos = [
   {
@@ -217,6 +219,43 @@ const Capacitacoes = () => {
                   <p className="text-sm text-muted-foreground">
                     {formato.description}
                   </p>
+                </motion.div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      {/* Cases dos Clientes */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <FadeInUp className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
+              Alguns Cases dos <span className="gradient-text">Nossos Clientes</span>
+            </h2>
+          </FadeInUp>
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {[
+              { img: caseForumNegocios, title: "Fórum Negócios" },
+              { img: caseAssai, title: "Assaí Atacadista" },
+            ].map((item, index) => (
+              <StaggerItem key={index}>
+                <motion.div
+                  className="group relative rounded-2xl overflow-hidden border border-border hover:border-primary/50 transition-all duration-300"
+                  whileHover={{ y: -8, boxShadow: "0 20px 40px -15px hsl(177 70% 41% / 0.15)" }}
+                >
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className="w-full h-64 object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-6">
+                    <h3 className="text-lg font-heading font-semibold text-foreground">
+                      {item.title}
+                    </h3>
+                  </div>
                 </motion.div>
               </StaggerItem>
             ))}
