@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Monitor, Users, Video, PlayCircle, BookOpen, Target, Zap, CheckCircle } from "lucide-react";
+import { ArrowRight, Monitor, Users, Video, PlayCircle, BookOpen, Target, Zap, CheckCircle, Mic, Wrench, Rocket, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
@@ -100,8 +100,48 @@ const Capacitacoes = () => {
         </div>
       </section>
 
-      {/* Trilhas de Capacitação */}
+      {/* Produtos */}
       <section className="py-20">
+        <div className="container mx-auto px-4">
+          <FadeInUp className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
+              Nossos <span className="gradient-text">Produtos</span>
+            </h2>
+          </FadeInUp>
+
+          <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
+            {[
+              { icon: Mic, title: "Palestras Educacionais", description: "Apresentações inspiradoras sobre IA e inovação para engajar e conscientizar sua equipe." },
+              { icon: Wrench, title: "Workshops Práticos", description: "Sessões mão na massa com ferramentas de IA aplicadas a desafios reais do seu negócio." },
+              { icon: Rocket, title: "Bootcamps Intensivos", description: "Programas imersivos de curta duração para acelerar a adoção de IA na organização." },
+              { icon: Building, title: "Treinamentos In Company", description: "Capacitações personalizadas realizadas dentro da sua empresa, adaptadas à sua realidade." },
+            ].map((produto, index) => (
+              <StaggerItem key={index}>
+                <motion.div
+                  className="group p-8 rounded-xl bg-card border border-border hover:border-primary/50 transition-all duration-300 h-full flex flex-col items-center text-center"
+                  whileHover={{ y: -8, boxShadow: "0 20px 40px -15px hsl(177 70% 41% / 0.15)" }}
+                >
+                  <motion.div
+                    className="w-14 h-14 rounded-lg bg-primary/10 flex items-center justify-center mb-5"
+                    whileHover={{ scale: 1.1 }}
+                  >
+                    <produto.icon className="h-7 w-7 text-primary" />
+                  </motion.div>
+                  <h3 className="text-lg font-heading font-semibold mb-3 group-hover:text-primary transition-colors">
+                    {produto.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {produto.description}
+                  </p>
+                </motion.div>
+              </StaggerItem>
+            ))}
+          </StaggerContainer>
+        </div>
+      </section>
+
+      {/* Trilhas de Capacitação */}
+      <section className="py-20 bg-card/50">
         <div className="container mx-auto px-4">
           <FadeInUp className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
