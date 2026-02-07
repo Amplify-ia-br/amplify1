@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
 import treinamentoPresencial from "@/assets/treinamento-presencial.png";
-import forumPalestra from "@/assets/forum-palestra.png";
+import palestraEvento from "@/assets/palestra-evento.jpeg";
 import caseForumNegocios from "@/assets/cases/case-forum-negocios-capacitacao.png";
 import caseAssai from "@/assets/cases/case-assai.png";
 
@@ -93,7 +93,7 @@ const Capacitacoes = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <img
-              src={forumPalestra}
+              src={palestraEvento}
               alt="Capacitação Amplify - Palestra sobre IA"
               className="w-full h-auto object-cover"
             />
