@@ -27,9 +27,8 @@ const Navbar = () => {
   ];
 
   const solucoesLinks = [
-    { name: "Palestras", path: "/solucoes/palestras" },
-    { name: "Capacitações", path: "/solucoes/capacitacoes" },
-    { name: "Consultoria", path: "/solucoes/consultoria" },
+    { name: "Capacitação", path: "/solucoes/capacitacoes" },
+    { name: "Serviços e Consultoria", path: "/solucoes/servicos-consultoria" },
   ];
 
   return (

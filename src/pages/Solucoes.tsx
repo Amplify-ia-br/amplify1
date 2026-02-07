@@ -35,19 +35,14 @@ const Solucoes = () => {
 
   const solucoes = [
     {
-      title: "Palestras",
-      description: "Inspire sua equipe com palestras transformadoras sobre IA e inovação",
-      link: "/solucoes/palestras",
-    },
-    {
-      title: "Capacitações",
+      title: "Capacitação",
       description: "Treinamentos práticos para sua equipe dominar ferramentas de IA",
       link: "/solucoes/capacitacoes",
     },
     {
-      title: "Consultoria",
+      title: "Serviços e Consultoria",
       description: "Assessoria especializada para implementar IA no seu negócio",
-      link: "/solucoes/consultoria",
+      link: "/solucoes/servicos-consultoria",
     },
   ];
 
