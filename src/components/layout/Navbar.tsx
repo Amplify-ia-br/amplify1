@@ -23,6 +23,7 @@ const Navbar = () => {
   ];
 
   const navLinksAfter = [
+    { name: "Agenda", path: "/agenda" },
     { name: "Blog", path: "/blog" },
   ];
 
