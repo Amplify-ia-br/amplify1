@@ -102,7 +102,7 @@ const Agenda = () => {
                 </div>
               </Link>
               <div className="text-center md:text-left">
-                <p className="text-sm text-primary font-medium mb-1">Palestrante Principal</p>
+                <p className="text-sm text-primary font-medium mb-1">Palestrante</p>
                 <Link to="/founders/fernando-godoy" className="hover:text-primary transition-colors">
                   <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground italic mb-2">
                     Fernando Godoy
