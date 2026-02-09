@@ -1,144 +1,96 @@
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight, ArrowUpRight } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
 
+import caseFord from "@/assets/cases/case-ford-brasil.png";
+import caseForumNegocios from "@/assets/cases/case-forum-negocios.png";
+import caseGrupoErea from "@/assets/cases/case-grupo-erea.png";
+import caseAssai from "@/assets/cases/case-assai.png";
+import caseFpf from "@/assets/cases/case-fpf.png";
+import caseForumCapacitacao from "@/assets/cases/case-forum-negocios-capacitacao.png";
+import faculdadeHub from "@/assets/faculdade-hub.png";
+import palestraEvento from "@/assets/palestra-evento.jpeg";
+import depoimentoGuilherme from "@/assets/depoimento-guilherme.png";
+
+const cases = [
+  { category: "Capacitação Corporativa", title: "Ford Brasil", image: caseFord },
+  { category: "Capacitação Corporativa", title: "Gala The Holy Grail of Business", image: palestraEvento },
+  { category: "Capacitação Corporativa", title: "Grupo EREA", image: caseGrupoErea },
+  { category: "Capacitação Corporativa", title: "DWX Experience", image: caseFpf },
+  { category: "Capacitação Corporativa", title: "Fórum Negócios", image: caseForumNegocios },
+  { category: "Capacitação Corporativa", title: "Assaí Atacadista", image: caseAssai },
+  { category: "Capacitação Corporativa", title: "Jornada Acelere", image: caseForumCapacitacao },
+  { category: "Capacitação Corporativa", title: "Faculdade HUB", image: faculdadeHub },
+];
+
+const testimonials = [
+  {
+    quote: "\"Como ecossistema tecnológico líder da construção brasileira, a Inteligência Artificial tem sido um dos temas centrais dos nossos debates. Por isso, teremos a Amplify no ConstruSummit para aprofundar a discussão sobre o impacto da IA no futuro do setor.\"",
+    name: "Guilherme Quandt",
+    role: "Diretor de Marketing do Ecossistema Sienge",
+    image: depoimentoGuilherme,
+  },
+];
+
 const Cases = () => {
-  const cases = [
-    {
-      id: 1,
-      client: "Ford",
-      title: "Otimização de Produção com IA",
-      description: "Implementação de sistema de previsão de demanda que reduziu custos operacionais em 25%",
-      image: "/placeholder.svg",
-      tags: ["Machine Learning", "Previsão", "Indústria"],
-    },
-    {
-      id: 2,
-      client: "Globo Business",
-      title: "Análise de Audiência Inteligente",
-      description: "Plataforma de análise preditiva de audiência usando deep learning",
-      image: "/placeholder.svg",
-      tags: ["Deep Learning", "Analytics", "Mídia"],
-    },
-    {
-      id: 3,
-      client: "Banco Digital",
-      title: "Detecção de Fraudes",
-      description: "Sistema de detecção de fraudes em tempo real com 99.7% de precisão",
-      image: "/placeholder.svg",
-      tags: ["Segurança", "Real-time", "Fintech"],
-    },
-    {
-      id: 4,
-      client: "Varejo Tech",
-      title: "Recomendação Personalizada",
-      description: "Motor de recomendação que aumentou vendas online em 40%",
-      image: "/placeholder.svg",
-      tags: ["E-commerce", "Personalização", "ML"],
-    },
-    {
-      id: 5,
-      client: "Saúde Plus",
-      title: "Diagnóstico Assistido por IA",
-      description: "Sistema de apoio ao diagnóstico médico com análise de imagens",
-      image: "/placeholder.svg",
-      tags: ["Saúde", "Computer Vision", "IA"],
-    },
-    {
-      id: 6,
-      client: "Logística Express",
-      title: "Otimização de Rotas",
-      description: "Algoritmo de otimização que reduziu tempo de entrega em 30%",
-      image: "/placeholder.svg",
-      tags: ["Logística", "Otimização", "IoT"],
-    },
-  ];
+  const [currentTestimonial, setCurrentTestimonial] = useState(0);
+
+  const nextTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
+  };
+
+  const prevTestimonial = () => {
+    setCurrentTestimonial((prev) => (prev - 1 + testimonials.length) % testimonials.length);
+  };
 
   return (
     <Layout>
       {/* Hero Section */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0 gradient-bg" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div 
-            className="max-w-4xl mx-auto text-center space-y-6"
+      <section className="py-32 md:py-44 bg-background">
+        <div className="container mx-auto px-4">
+          <motion.div
+            className="max-w-4xl mx-auto text-center"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-tight">
-              Onde a <span className="gradient-text">Inteligência Artificial</span>{" "}
+            <h1 className="text-4xl md:text-5xl lg:text-7xl font-heading font-bold leading-tight">
+              Onde a
+              <br />
+              <em className="font-light not-italic italic text-muted-foreground">Inteligência Artificial</em>
+              <br />
               transforma empresas
             </h1>
-            <motion.p 
-              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              Conheça alguns dos projetos que realizamos e os resultados que alcançamos
-            </motion.p>
           </motion.div>
         </div>
       </section>
 
-      {/* Cases Grid */}
-      <section className="py-20">
+      {/* Cases Grid - 2 columns */}
+      <section className="py-12 bg-background">
         <div className="container mx-auto px-4">
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {cases.map((caseItem) => (
-              <StaggerItem key={caseItem.id}>
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-12">
+            {cases.map((caseItem, index) => (
+              <StaggerItem key={index}>
                 <motion.div
-                  className="group rounded-xl overflow-hidden bg-card border border-border hover:border-primary/50 transition-all duration-300"
-                  whileHover={{ y: -8, boxShadow: "0 20px 40px -15px hsl(177 70% 41% / 0.15)" }}
+                  className="group cursor-pointer"
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2 }}
                 >
-                  {/* Image */}
-                  <div className="aspect-video relative overflow-hidden bg-muted">
-                    <motion.img
+                  <div className="aspect-[4/3] rounded-2xl overflow-hidden mb-4 bg-card">
+                    <img
                       src={caseItem.image}
                       alt={caseItem.title}
-                      className="w-full h-full object-cover"
-                      whileHover={{ scale: 1.1 }}
-                      transition={{ duration: 0.5 }}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 rounded-full bg-background/90 text-sm font-medium">
-                        {caseItem.client}
-                      </span>
-                    </div>
                   </div>
-
-                  {/* Content */}
-                  <div className="p-6 space-y-4">
-                    <h3 className="text-xl font-heading font-semibold group-hover:text-primary transition-colors">
-                      {caseItem.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {caseItem.description}
-                    </p>
-                    
-                    {/* Tags */}
-                    <div className="flex flex-wrap gap-2">
-                      {caseItem.tags.map((tag, index) => (
-                        <motion.span
-                          key={index}
-                          className="px-2 py-1 text-xs rounded-md bg-primary/10 text-primary"
-                          whileHover={{ scale: 1.05, backgroundColor: "hsl(177 70% 41% / 0.2)" }}
-                        >
-                          {tag}
-                        </motion.span>
-                      ))}
-                    </div>
-
-                    <Button variant="ghost" className="w-full justify-between group/btn">
-                      Ver detalhes
-                      <ExternalLink className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />
-                    </Button>
-                  </div>
+                  <p className="text-sm text-muted-foreground mb-1">{caseItem.category}</p>
+                  <h3 className="text-xl md:text-2xl font-heading font-semibold text-foreground">
+                    {caseItem.title}
+                  </h3>
+                  <div className="mt-4 border-t border-border" />
                 </motion.div>
               </StaggerItem>
             ))}
@@ -146,24 +98,93 @@ const Cases = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-card/50">
+      {/* Testimonials Section */}
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <FadeInUp className="max-w-3xl mx-auto text-center space-y-6">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold">
-              Quer ser nosso próximo <span className="gradient-text">case de sucesso</span>?
-            </h2>
-            <p className="text-muted-foreground">
-              Entre em contato e descubra como podemos transformar seu negócio
-            </p>
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-12">
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">(Depoimentos de clientes)</p>
+            </div>
+            <FadeInUp>
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold leading-tight text-right">
+                Olha só o que
+                <br />
+                aconteceu <em className="font-light not-italic italic text-muted-foreground">com nossos</em>
+                <br />
+                queridos clientes
+              </h2>
+            </FadeInUp>
+          </div>
+
+          {/* Navigation arrows */}
+          <div className="flex items-center gap-4 mb-8">
+            <button
+              onClick={prevTestimonial}
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
-              <Button size="lg" className="glow-cyan">
-                Iniciar Conversa
-              </Button>
-            </motion.div>
+              <ArrowLeft className="h-4 w-4" />
+              Anterior
+            </button>
+            <div className="flex-1" />
+            <button
+              onClick={nextTestimonial}
+              className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Próximo
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          {/* Testimonial card */}
+          <motion.div
+            key={currentTestimonial}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="grid grid-cols-1 md:grid-cols-[350px_1fr] gap-0 rounded-2xl overflow-hidden bg-card border border-border"
+          >
+            <div className="aspect-square md:aspect-auto overflow-hidden">
+              <img
+                src={testimonials[currentTestimonial].image}
+                alt={testimonials[currentTestimonial].name}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="p-8 md:p-12 flex flex-col justify-center">
+              <p className="text-lg md:text-xl text-foreground leading-relaxed mb-8">
+                {testimonials[currentTestimonial].quote}
+              </p>
+              <div>
+                <p className="font-heading font-semibold text-foreground">
+                  {testimonials[currentTestimonial].name}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {testimonials[currentTestimonial].role}
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <FadeInUp className="text-center space-y-8">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold">
+              Vamos falar sobre <em className="font-light not-italic italic text-muted-foreground">seu projeto em IA?</em>
+            </h2>
+            <div className="flex justify-center">
+              <Link to="/contato">
+                <motion.div
+                  className="w-14 h-14 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <ArrowUpRight className="h-6 w-6 text-primary-foreground" />
+                </motion.div>
+              </Link>
+            </div>
           </FadeInUp>
         </div>
       </section>
