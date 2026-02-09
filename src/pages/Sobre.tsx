@@ -1,172 +1,141 @@
 import { motion } from "framer-motion";
-import { Target, Eye, Heart, Zap } from "lucide-react";
+import { Link } from "react-router-dom";
 import Layout from "@/components/layout/Layout";
-import { FadeInUp, SlideInLeft, SlideInRight, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
+import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
+import fernandoImg from "@/assets/founders/fernando-godoy.png";
+import alexImg from "@/assets/founders/alex-garcia.png";
+import magnoImg from "@/assets/founders/magno-maciel.png";
+
+const stats = [
+  { number: "90", suffix: "+", label: "Percentual de satisfação dos clientes." },
+  { number: "1k", suffix: "+", label: "treinamentos realizados" },
+  { number: "15", suffix: "+", label: "Anos de experiência" },
+  { number: "450", suffix: "+", label: "empresas impactadas" },
+];
+
+const solutions = [
+  { title: "Capacitação", description: "Ao aplicar tecnologia e processos analíticos a dados relacionados ao marketing." },
+  { title: "Consultoria e Serviços", description: "Ao aplicar tecnologia e processos analíticos a dados relacionados ao marketing." },
+  { title: "Comunidades", description: "Ao aplicar tecnologia e processos analíticos a dados relacionados ao marketing." },
+  { title: "Ferramentas em IA", description: "Ao aplicar tecnologia e processos analíticos a dados relacionados ao marketing." },
+];
+
+const founders = [
+  { name: "Fernando Godoy", role: "CEO & Founder", image: fernandoImg },
+  { name: "Alex Garcia", role: "CRO & Founder", image: alexImg },
+  { name: "Magno Maciel", role: "Advisor & Founder", image: magnoImg },
+];
 
 const Sobre = () => {
   return (
     <Layout>
-      {/* Hero Section */}
-      <section className="relative py-24 md:py-32 overflow-hidden">
-        <div className="absolute inset-0 gradient-bg" />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
-        
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div 
-            className="max-w-4xl mx-auto text-center space-y-6"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-tight">
-              Alavancamos sua{" "}
-              <span className="gradient-text">transformação digital</span> com IA
-            </h1>
-            <motion.p 
-              className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-            >
-              Somos especialistas em conectar empresas ao futuro através da Inteligência Artificial
-            </motion.p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Story Section */}
-      <section className="py-20 bg-card/50">
+      {/* Hero + Stats Section */}
+      <section className="py-24 md:py-32 bg-background">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <SlideInLeft className="space-y-6">
-              <h2 className="text-3xl md:text-4xl font-heading font-bold">
-                Nossa <span className="gradient-text">História</span>
-              </h2>
-              <div className="space-y-4 text-muted-foreground">
-                <p>
-                  A Amplify nasceu da visão de democratizar o acesso à Inteligência Artificial 
-                  para empresas de todos os portes. Acreditamos que a tecnologia deve ser uma 
-                  ferramenta de transformação, não uma barreira.
-                </p>
-                <p>
-                  Desde nossa fundação, temos ajudado centenas de empresas a descobrir o 
-                  potencial inexplorado de seus dados, transformando informações brutas em 
-                  decisões estratégicas que impulsionam resultados.
-                </p>
-                <p>
-                  Nossa equipe é formada por especialistas apaixonados por tecnologia e 
-                  negócios, unidos pelo propósito de criar impacto real através da inovação.
-                </p>
-              </div>
-            </SlideInLeft>
-            
-            <SlideInRight className="relative">
-              <motion.div 
-                className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center"
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
+          <FadeInUp>
+            <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold leading-tight">
+                A clareza <em className="font-light not-italic italic">nasce</em>
+                <br />da simplicidade.
+              </h1>
+              <Link
+                to="/solucoes"
+                className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors w-fit"
               >
-                <div className="text-center p-8">
-                  <motion.span 
-                    className="text-6xl md:text-8xl font-heading font-bold gradient-text"
-                    animate={{ 
-                      textShadow: [
-                        "0 0 20px hsl(177 70% 41% / 0.3)",
-                        "0 0 40px hsl(177 70% 41% / 0.5)",
-                        "0 0 20px hsl(177 70% 41% / 0.3)"
-                      ]
-                    }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                  >
-                    A+
-                  </motion.span>
-                  <p className="mt-4 text-muted-foreground">
-                    Excelência em IA
-                  </p>
-                </div>
-              </motion.div>
-            </SlideInRight>
-          </div>
-        </div>
-      </section>
-
-      {/* Values Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <FadeInUp className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-heading font-bold mb-4">
-              Nossos <span className="gradient-text">Valores</span>
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Os princípios que guiam cada projeto e cada decisão
-            </p>
+                Ver soluções
+              </Link>
+            </div>
           </FadeInUp>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: Target,
-                title: "Missão",
-                description: "Democratizar a IA e torná-la acessível para empresas de todos os tamanhos",
-              },
-              {
-                icon: Eye,
-                title: "Visão",
-                description: "Ser referência em transformação digital orientada por dados no Brasil",
-              },
-              {
-                icon: Heart,
-                title: "Propósito",
-                description: "Criar impacto real e mensurável nos negócios dos nossos clientes",
-              },
-              {
-                icon: Zap,
-                title: "Inovação",
-                description: "Buscar constantemente as melhores e mais recentes tecnologias",
-              },
-            ].map((value, index) => (
+          <div className="border-t border-border" />
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 gap-0 mt-0">
+            {stats.map((stat, index) => (
               <StaggerItem key={index}>
-                <motion.div
-                  className="text-center p-6 rounded-lg bg-card border border-border hover:border-primary/50 transition-all duration-300 h-full"
-                  whileHover={{ y: -5, boxShadow: "0 10px 40px -10px hsl(177 70% 41% / 0.2)" }}
-                >
-                  <motion.div 
-                    className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4"
-                    whileHover={{ scale: 1.1, backgroundColor: "hsl(177 70% 41% / 0.2)" }}
-                  >
-                    <value.icon className="h-8 w-8 text-primary" />
-                  </motion.div>
-                  <h3 className="text-xl font-heading font-semibold mb-3">
-                    {value.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {value.description}
-                  </p>
-                </motion.div>
+                <div className={`flex items-baseline gap-4 py-10 px-2 ${index < 2 ? "border-b border-border" : ""} ${index % 2 === 0 ? "md:border-r md:border-border" : ""}`}>
+                  <span className="text-6xl md:text-7xl lg:text-8xl font-heading font-bold text-foreground tracking-tight">
+                    {stat.number}
+                    <span className="text-muted-foreground">{stat.suffix}</span>
+                  </span>
+                  <span className="text-sm text-muted-foreground max-w-[180px]">{stat.label}</span>
+                </div>
               </StaggerItem>
             ))}
           </StaggerContainer>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-20 bg-card/50">
+      {/* Solutions Section */}
+      <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
-          <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {[
-              { number: "100+", label: "Projetos Entregues" },
-              { number: "50+", label: "Clientes Satisfeitos" },
-              { number: "15+", label: "Especialistas" },
-              { number: "5+", label: "Anos de Experiência" },
-            ].map((stat, index) => (
-              <StaggerItem key={index} className="text-center">
-                <motion.div 
-                  className="text-4xl md:text-5xl font-heading font-bold gradient-text mb-2"
-                  whileHover={{ scale: 1.1 }}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+            <div className="lg:col-span-1 space-y-6">
+              <FadeInUp>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-heading font-bold leading-tight">
+                  Oferecemos<br />as melhores<br />
+                  <em className="font-light not-italic italic text-muted-foreground">soluções em IA</em>
+                </h2>
+              </FadeInUp>
+              <FadeInUp delay={0.1}>
+                <p className="text-sm text-muted-foreground max-w-xs">
+                  Somos uma empresa muito dedicada desde 2025. Nossa equipe está sempre pronta para ajudar nossos clientes com as melhores soluções.
+                </p>
+              </FadeInUp>
+              <FadeInUp delay={0.2}>
+                <Link
+                  to="/solucoes"
+                  className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
                 >
-                  {stat.number}
+                  Ver soluções
+                </Link>
+              </FadeInUp>
+            </div>
+
+            <StaggerContainer className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {solutions.map((item, index) => (
+                <StaggerItem key={index}>
+                  <motion.div
+                    className="rounded-xl border border-border bg-card p-8 h-full flex flex-col justify-end min-h-[200px] hover:border-primary/40 transition-colors"
+                    whileHover={{ y: -4 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <h3 className="text-xl font-heading font-semibold mb-3 text-foreground">{item.title}</h3>
+                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                  </motion.div>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </div>
+        </div>
+      </section>
+
+      {/* Founders Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <FadeInUp className="mb-12">
+            <h2 className="text-3xl md:text-4xl font-heading font-bold">
+              Nossos <span className="gradient-text">Founders</span>
+            </h2>
+          </FadeInUp>
+
+          <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {founders.map((founder, index) => (
+              <StaggerItem key={index}>
+                <motion.div
+                  className="group"
+                  whileHover={{ y: -4 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="aspect-square rounded-2xl overflow-hidden mb-4 bg-card">
+                    <img
+                      src={founder.image}
+                      alt={founder.name}
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <h3 className="text-xl font-heading font-semibold text-foreground">{founder.name}</h3>
+                  <p className="text-sm text-muted-foreground">{founder.role}</p>
                 </motion.div>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
               </StaggerItem>
             ))}
           </StaggerContainer>
