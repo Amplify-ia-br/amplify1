@@ -185,9 +185,9 @@ const Agenda = () => {
           </FadeInUp>
 
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {eventosFiltrados.map((evento, i) => (
-              <StaggerItem key={i}>
-                <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-colors h-full flex flex-col">
+            {eventosFiltrados.map((evento, i) => {
+              const cardContent = (
+                <>
                   {evento.imagem && (
                     <div className="h-40 bg-muted/30 flex items-center justify-center p-4">
                       <img
@@ -223,9 +223,23 @@ const Agenda = () => {
                       )}
                     </div>
                   </div>
-                </div>
-              </StaggerItem>
-            ))}
+                </>
+              );
+
+              return (
+                <StaggerItem key={i}>
+                  {evento.nome === "FilosofIA" ? (
+                    <Link to="/agenda/filosofia" className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-colors h-full flex flex-col cursor-pointer">
+                      {cardContent}
+                    </Link>
+                  ) : (
+                    <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-colors h-full flex flex-col">
+                      {cardContent}
+                    </div>
+                  )}
+                </StaggerItem>
+              );
+            })}
           </StaggerContainer>
         </div>
       </section>
