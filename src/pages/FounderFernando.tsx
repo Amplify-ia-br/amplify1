@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Linkedin, Instagram, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { Linkedin, Instagram, Youtube, X, ChevronLeft, ChevronRight } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp } from "@/components/animations/MotionWrapper";
 import fernandoImg from "@/assets/founders/fernando-godoy.png";
@@ -146,6 +146,15 @@ const FounderFernando = () => {
                       <Instagram className="h-5 w-5" />
                       @fernandogodoy_oficial
                     </span>
+                  </a>
+                  <a
+                    href="https://www.youtube.com/@fernandogodoy_oficial"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    <Youtube className="h-5 w-5" />
+                    <span className="text-sm">YouTube</span>
                   </a>
                 </div>
               </div>
