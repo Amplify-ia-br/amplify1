@@ -16,6 +16,7 @@ import forumPainel from "@/assets/founders/fernando-forum-painel.jpeg";
 import forumChatgpt from "@/assets/founders/fernando-forum-chatgpt.jpeg";
 import podcast from "@/assets/founders/fernando-podcast.jpeg";
 import gala from "@/assets/founders/fernando-gala.jpeg";
+import primocast from "@/assets/founders/fernando-primocast.jpeg";
 import Autoplay from "embla-carousel-autoplay";
 import {
   Carousel,
@@ -38,6 +39,7 @@ const images = [
   { src: forumChatgpt, alt: "Fernando Godoy no Fórum Negócios Brasil" },
   { src: podcast, alt: "Fernando Godoy no InovaMente Cast" },
   { src: gala, alt: "Fernando Godoy em evento Gala Business" },
+  { src: primocast, alt: "Fernando Godoy no PrimoCast" },
 ];
 
 const FounderFernando = () => {
