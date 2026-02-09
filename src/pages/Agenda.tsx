@@ -1,70 +1,101 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import { CalendarDays, MapPin, ArrowRight, Mic, GraduationCap } from "lucide-react";
+import { CalendarDays, MapPin, ArrowRight, Mic, GraduationCap, Clock, Filter } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import fernandoImg from "@/assets/founders/fernando-godoy.png";
 import palestraEvento from "@/assets/palestra-evento.jpeg";
+import imgEdificatto from "@/assets/eventos/edificatto.png";
+import imgAmplifyClub from "@/assets/eventos/amplify-club.png";
+import imgInnovationWeek from "@/assets/eventos/sao-paulo-innovation-week.webp";
+import imgSerratec from "@/assets/eventos/serratec.png";
 
 const eventos = [
   {
-    nome: "Edificatto (workshop)",
+    nome: "Edificatto",
     tipo: "Workshop",
     data: "20 de Fevereiro, 2026",
+    horario: "09:00",
     local: "",
+    imagem: imgEdificatto,
   },
   {
-    nome: "Amplify Club - Masterclass - 20h",
+    nome: "Amplify Club - Masterclass",
     tipo: "Masterclass",
     data: "10 de Março, 2026",
+    horario: "20:00",
     local: "",
-  },
-  {
-    nome: "FilosofIA",
-    tipo: "Palestra",
-    data: "13 de Abril, 2026",
-    local: "FAAP - São Paulo",
+    imagem: imgAmplifyClub,
   },
   {
     nome: "Petrópolis - Serratec",
     tipo: "Bootcamp",
     data: "11 de Abril, 2026",
+    horario: "08:00",
     local: "Petrópolis - RJ",
+    imagem: imgSerratec,
   },
   {
-    nome: "Amplify Club - Presencial Le Bife",
-    tipo: "Evento",
+    nome: "FilosofIA",
+    tipo: "Palestra",
+    data: "15 de Abril, 2026",
+    horario: "19:00",
+    local: "FAAP - São Paulo",
+    imagem: null,
+  },
+  {
+    nome: "Amplify Club - Presencial",
+    tipo: "Presencial",
     data: "23 de Abril, 2026",
-    local: "",
+    horario: "19:30",
+    local: "Le Bife - São Paulo",
+    imagem: imgAmplifyClub,
   },
   {
     nome: "SEBRAE Lagoa Santa",
     tipo: "Palestra",
     data: "30 de Abril, 2026",
+    horario: "",
     local: "Lagoa Santa - MG",
+    imagem: null,
   },
   {
     nome: "FilosofIA Online",
     tipo: "Curso Online",
     data: "05 de Maio, 2026",
+    horario: "20:00",
     local: "",
+    imagem: null,
   },
   {
     nome: "São Paulo Innovation Week",
     tipo: "Evento",
     data: "13 de Maio, 2026",
+    horario: "",
     local: "",
+    imagem: imgInnovationWeek,
   },
   {
     nome: "Amplify Club - Evento Presencial",
     tipo: "Evento",
     data: "21 de Maio, 2026",
+    horario: "",
     local: "",
+    imagem: imgAmplifyClub,
   },
 ];
 
+const tiposUnicos = ["Todos", ...Array.from(new Set(eventos.map((e) => e.tipo)))];
+
 const Agenda = () => {
+  const [filtroAtivo, setFiltroAtivo] = useState("Todos");
+
+  const eventosFiltrados = filtroAtivo === "Todos"
+    ? eventos
+    : eventos.filter((e) => e.tipo === filtroAtivo);
+
   return (
     <Layout>
       {/* Hero */}
@@ -106,7 +137,7 @@ const Agenda = () => {
                   </h2>
                 </Link>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  CEO & Cofundador da AMPLIFY. Empreendedor serial com mais de 25 anos de experiência em tecnologia e inovação, 
+                  CEO & Cofundador da AMPLIFY. Empreendedor serial com mais de 25 anos de experiência em tecnologia e inovação,
                   especialista em Inteligência Artificial, palestrante internacional, autor e professor de MBA.
                 </p>
                 <Link
@@ -121,38 +152,76 @@ const Agenda = () => {
         </div>
       </section>
 
-      {/* Eventos */}
+      {/* Filtro + Eventos */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <FadeInUp>
-            <div className="flex items-center gap-3 mb-10">
+            <div className="flex items-center gap-3 mb-8">
               <CalendarDays className="h-6 w-6 text-primary" />
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground italic">
                 Calendário de Eventos
               </h2>
             </div>
           </FadeInUp>
+
+          {/* Filtro */}
+          <FadeInUp delay={0.1}>
+            <div className="flex items-center gap-2 mb-10 flex-wrap">
+              <Filter className="h-4 w-4 text-muted-foreground mr-1" />
+              {tiposUnicos.map((tipo) => (
+                <button
+                  key={tipo}
+                  onClick={() => setFiltroAtivo(tipo)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors border ${
+                    filtroAtivo === tipo
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card text-muted-foreground border-border hover:border-primary/50 hover:text-foreground"
+                  }`}
+                >
+                  {tipo}
+                </button>
+              ))}
+            </div>
+          </FadeInUp>
+
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {eventos.map((evento, i) => (
+            {eventosFiltrados.map((evento, i) => (
               <StaggerItem key={i}>
-                <div className="bg-card border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors h-full flex flex-col">
-                  <Badge variant="outline" className="w-fit mb-4 border-primary/30 text-primary text-xs">
-                    {evento.tipo}
-                  </Badge>
-                  <h3 className="text-lg font-heading font-semibold text-foreground mb-4 flex-grow">
-                    {evento.nome}
-                  </h3>
-                  <div className="space-y-2 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="h-4 w-4 text-primary" />
-                      <span>{evento.data}</span>
+                <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-colors h-full flex flex-col">
+                  {evento.imagem && (
+                    <div className="h-40 bg-muted/30 flex items-center justify-center p-4">
+                      <img
+                        src={evento.imagem}
+                        alt={evento.nome}
+                        className="max-h-full max-w-full object-contain"
+                      />
                     </div>
-                    {evento.local && (
+                  )}
+                  <div className="p-6 flex flex-col flex-grow">
+                    <Badge variant="outline" className="w-fit mb-4 border-primary/30 text-primary text-xs">
+                      {evento.tipo}
+                    </Badge>
+                    <h3 className="text-lg font-heading font-semibold text-foreground mb-4 flex-grow">
+                      {evento.nome}
+                    </h3>
+                    <div className="space-y-2 text-sm text-muted-foreground">
                       <div className="flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-primary" />
-                        <span>{evento.local}</span>
+                        <CalendarDays className="h-4 w-4 text-primary shrink-0" />
+                        <span>{evento.data}</span>
                       </div>
-                    )}
+                      {evento.horario && (
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-primary shrink-0" />
+                          <span>{evento.horario}</span>
+                        </div>
+                      )}
+                      {evento.local && (
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-primary shrink-0" />
+                          <span>{evento.local}</span>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </StaggerItem>
@@ -173,7 +242,7 @@ const Agenda = () => {
                   Contrate uma Palestra ou Bootcamp
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
-                  Leve a expertise da AMPLIFY para o seu evento ou empresa. Palestras inspiradoras e bootcamps práticos 
+                  Leve a expertise da AMPLIFY para o seu evento ou empresa. Palestras inspiradoras e bootcamps práticos
                   sobre Inteligência Artificial, personalizados para as necessidades do seu público.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
