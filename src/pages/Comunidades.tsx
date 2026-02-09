@@ -189,7 +189,7 @@ const Comunidades = () => {
             >
               <Button size="lg" asChild className="glow-cyan">
                 <a
-                  href="https://web.whatsapp.com/send?phone=5511918252109&text=Olá! Gostaria de saber mais sobre as comunidades Amplify."
+                  href="https://wa.me/5511918252109?text=Olá! Gostaria de saber mais sobre as comunidades Amplify."
                   target="_blank"
                   rel="noopener noreferrer"
                 >
