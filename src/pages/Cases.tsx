@@ -5,25 +5,25 @@ import { useState } from "react";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
 
-import caseFord from "@/assets/cases/case-ford-brasil.png";
-import caseForumNegocios from "@/assets/cases/case-forum-negocios.png";
-import caseGrupoErea from "@/assets/cases/case-grupo-erea.png";
-import caseAssai from "@/assets/cases/case-assai.png";
-import caseFpf from "@/assets/cases/case-fpf.png";
-import caseForumCapacitacao from "@/assets/cases/case-forum-negocios-capacitacao.png";
-import faculdadeHub from "@/assets/faculdade-hub.png";
-import palestraEvento from "@/assets/palestra-evento.jpeg";
+import caseFord from "@/assets/cases/ford.png";
+import caseGala from "@/assets/cases/gala.png";
+import caseGrupoErea from "@/assets/cases/grupo-erea.png";
+import caseDwx from "@/assets/cases/dwx.png";
+import caseForumNegocios from "@/assets/cases/forum-negocios.png";
+import caseAssai from "@/assets/cases/assai.png";
+import caseJornadaAcelere from "@/assets/cases/jornada-acelere.png";
+import caseFaculdadeHub from "@/assets/cases/faculdade-hub.png";
 import depoimentoGuilherme from "@/assets/depoimento-guilherme.png";
 
 const cases = [
   { category: "Capacitação Corporativa", title: "Ford Brasil", image: caseFord },
-  { category: "Capacitação Corporativa", title: "Gala The Holy Grail of Business", image: palestraEvento },
+  { category: "Capacitação Corporativa", title: "Gala The Holy Grail of Business", image: caseGala },
   { category: "Capacitação Corporativa", title: "Grupo EREA", image: caseGrupoErea },
-  { category: "Capacitação Corporativa", title: "DWX Experience", image: caseFpf },
+  { category: "Capacitação Corporativa", title: "DWX Experience", image: caseDwx },
   { category: "Capacitação Corporativa", title: "Fórum Negócios", image: caseForumNegocios },
   { category: "Capacitação Corporativa", title: "Assaí Atacadista", image: caseAssai },
-  { category: "Capacitação Corporativa", title: "Jornada Acelere", image: caseForumCapacitacao },
-  { category: "Capacitação Corporativa", title: "Faculdade HUB", image: faculdadeHub },
+  { category: "Capacitação Corporativa", title: "Jornada Acelere", image: caseJornadaAcelere },
+  { category: "Capacitação Corporativa", title: "Faculdade HUB", image: caseFaculdadeHub },
 ];
 
 const testimonials = [
