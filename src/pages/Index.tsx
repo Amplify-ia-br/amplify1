@@ -104,7 +104,7 @@ const Index = () => {
             >
               <Button size="lg" asChild className="glow-cyan text-lg px-8 py-6">
                 <a
-                  href="https://web.whatsapp.com/send?phone=5511918252109&text=Olá! Gostaria de falar com um especialista."
+                  href="https://wa.me/5511918252109?text=Olá! Gostaria de falar com um especialista."
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -366,7 +366,7 @@ const Index = () => {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Button size="lg" asChild className="glow-cyan">
                 <a
-                  href="https://web.whatsapp.com/send?phone=5511918252109&text=Olá! Gostaria de falar com um especialista."
+                  href="https://wa.me/5511918252109?text=Olá! Gostaria de falar com um especialista."
                   target="_blank"
                   rel="noopener noreferrer"
                 >
