@@ -175,7 +175,7 @@ const Cases = () => {
               Vamos falar sobre <em className="font-light not-italic italic text-muted-foreground">seu projeto em IA?</em>
             </h2>
             <div className="flex justify-center">
-              <Link to="/contato">
+              <a href="https://wa.me/5511918252109?text=Olá! Gostaria de falar sobre meu projeto em IA." target="_blank" rel="noopener noreferrer">
                 <motion.div
                   className="w-14 h-14 rounded-full bg-primary flex items-center justify-center hover:bg-primary/90 transition-colors"
                   whileHover={{ scale: 1.1 }}
@@ -183,7 +183,7 @@ const Cases = () => {
                 >
                   <ArrowUpRight className="h-6 w-6 text-primary-foreground" />
                 </motion.div>
-              </Link>
+              </a>
             </div>
           </FadeInUp>
         </div>

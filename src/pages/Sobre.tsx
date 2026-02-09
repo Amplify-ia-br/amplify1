@@ -38,12 +38,14 @@ const Sobre = () => {
                 A clareza <em className="font-light not-italic italic">nasce</em>
                 <br />da simplicidade.
               </h1>
-              <Link
-                to="/solucoes"
+              <a
+                href="https://wa.me/5511918252109?text=Olá! Gostaria de conhecer as soluções da Amplify."
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors w-fit"
               >
                 Ver soluções
-              </Link>
+              </a>
             </div>
           </FadeInUp>
 
@@ -82,12 +84,14 @@ const Sobre = () => {
                 </p>
               </FadeInUp>
               <FadeInUp delay={0.2}>
-                <Link
-                  to="/solucoes"
+                <a
+                  href="https://wa.me/5511918252109?text=Olá! Gostaria de conhecer as soluções da Amplify."
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="inline-flex items-center justify-center h-12 px-8 rounded-full bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
                 >
                   Ver soluções
-                </Link>
+                </a>
               </FadeInUp>
             </div>
 

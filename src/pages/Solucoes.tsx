@@ -189,10 +189,10 @@ const Solucoes = () => {
               whileTap={{ scale: 0.95 }}
             >
               <Button size="lg" asChild className="glow-cyan">
-                <Link to="/contato">
+                <a href="https://wa.me/5511918252109?text=Olá! Gostaria de solicitar uma proposta." target="_blank" rel="noopener noreferrer">
                   Solicitar Proposta
                   <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
+                </a>
               </Button>
             </motion.div>
           </FadeInUp>
