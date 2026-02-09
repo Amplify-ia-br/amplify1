@@ -1,12 +1,53 @@
-import { motion } from "framer-motion";
-import { Linkedin, Instagram } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Linkedin, Instagram, X, ChevronLeft, ChevronRight } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp } from "@/components/animations/MotionWrapper";
 import fernandoImg from "@/assets/founders/fernando-godoy.png";
 import palestraEvento from "@/assets/palestra-evento.jpeg";
 import forumPalestra from "@/assets/forum-palestra.png";
+import globonews from "@/assets/founders/fernando-globonews.png";
+import palco from "@/assets/founders/fernando-palco.jpeg";
+import pecege from "@/assets/founders/fernando-pecege.png";
+import nexialista from "@/assets/founders/fernando-nexialista.jpeg";
+import workshop from "@/assets/founders/fernando-workshop.jpeg";
+import aifirst from "@/assets/founders/fernando-aifirst.jpeg";
+import forumPainel from "@/assets/founders/fernando-forum-painel.jpeg";
+import forumChatgpt from "@/assets/founders/fernando-forum-chatgpt.jpeg";
+import podcast from "@/assets/founders/fernando-podcast.jpeg";
+import gala from "@/assets/founders/fernando-gala.jpeg";
+import Autoplay from "embla-carousel-autoplay";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
+} from "@/components/ui/carousel";
+
+const images = [
+  { src: palestraEvento, alt: "Fernando Godoy na GloboNews" },
+  { src: forumPalestra, alt: "Fernando Godoy palestrando" },
+  { src: globonews, alt: "Fernando Godoy no programa Conta Corrente - GloboNews" },
+  { src: palco, alt: "Fernando Godoy em grande palco" },
+  { src: pecege, alt: "Fernando Godoy palestrando no PECEGE" },
+  { src: nexialista, alt: "Fernando Godoy - O Nexialista É Antifrágil" },
+  { src: workshop, alt: "Fernando Godoy em workshop" },
+  { src: aifirst, alt: "Fernando Godoy - AI First" },
+  { src: forumPainel, alt: "Fernando Godoy no Painel de IA - Fórum Negócios" },
+  { src: forumChatgpt, alt: "Fernando Godoy no Fórum Negócios Brasil" },
+  { src: podcast, alt: "Fernando Godoy no InovaMente Cast" },
+  { src: gala, alt: "Fernando Godoy em evento Gala Business" },
+];
 
 const FounderFernando = () => {
+  const [zoomIndex, setZoomIndex] = useState<number | null>(null);
+
+  const openZoom = (i: number) => setZoomIndex(i);
+  const closeZoom = () => setZoomIndex(null);
+  const prev = () => setZoomIndex((i) => (i !== null ? (i - 1 + images.length) % images.length : null));
+  const next = () => setZoomIndex((i) => (i !== null ? (i + 1) % images.length : null));
+
   return (
     <Layout>
       {/* Hero */}
@@ -14,30 +55,32 @@ const FounderFernando = () => {
         <div className="container mx-auto px-4">
           <FadeInUp>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-              {/* Left - Images */}
-              <div className="space-y-6">
-                <motion.div
-                  className="rounded-2xl overflow-hidden"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
+              {/* Left - Carousel */}
+              <div className="w-full">
+                <Carousel
+                  opts={{ loop: true }}
+                  plugins={[Autoplay({ delay: 4000, stopOnInteraction: true })]}
+                  className="w-full"
                 >
-                  <img
-                    src={palestraEvento}
-                    alt="Fernando Godoy na GloboNews"
-                    className="w-full h-auto object-cover rounded-2xl"
-                  />
-                </motion.div>
-                <motion.div
-                  className="rounded-2xl overflow-hidden"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <img
-                    src={forumPalestra}
-                    alt="Fernando Godoy palestrando"
-                    className="w-full h-auto object-cover rounded-2xl"
-                  />
-                </motion.div>
+                  <CarouselContent>
+                    {images.map((img, i) => (
+                      <CarouselItem key={i}>
+                        <div
+                          className="rounded-2xl overflow-hidden cursor-pointer"
+                          onClick={() => openZoom(i)}
+                        >
+                          <img
+                            src={img.src}
+                            alt={img.alt}
+                            className="w-full h-[400px] md:h-[500px] object-cover rounded-2xl hover:scale-105 transition-transform duration-300"
+                          />
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-2" />
+                  <CarouselNext className="right-2" />
+                </Carousel>
               </div>
 
               {/* Right - Bio */}
@@ -108,6 +151,49 @@ const FounderFernando = () => {
           </FadeInUp>
         </div>
       </section>
+
+      {/* Lightbox Zoom */}
+      <AnimatePresence>
+        {zoomIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
+            onClick={closeZoom}
+          >
+            <button
+              onClick={(e) => { e.stopPropagation(); closeZoom(); }}
+              className="absolute top-4 right-4 text-white/80 hover:text-white z-50"
+            >
+              <X className="h-8 w-8" />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); prev(); }}
+              className="absolute left-4 text-white/80 hover:text-white z-50"
+            >
+              <ChevronLeft className="h-10 w-10" />
+            </button>
+            <button
+              onClick={(e) => { e.stopPropagation(); next(); }}
+              className="absolute right-4 text-white/80 hover:text-white z-50"
+            >
+              <ChevronRight className="h-10 w-10" />
+            </button>
+            <motion.img
+              key={zoomIndex}
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              src={images[zoomIndex].src}
+              alt={images[zoomIndex].alt}
+              className="max-h-[90vh] max-w-[90vw] object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </Layout>
   );
 };
