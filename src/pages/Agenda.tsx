@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { CalendarDays, MapPin, Users, ArrowRight, Mic, GraduationCap } from "lucide-react";
+import { CalendarDays, MapPin, ArrowRight, Mic, GraduationCap } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
 import { Button } from "@/components/ui/button";
@@ -7,63 +7,60 @@ import { Badge } from "@/components/ui/badge";
 import fernandoImg from "@/assets/founders/fernando-godoy.png";
 import palestraEvento from "@/assets/palestra-evento.jpeg";
 
-const palestras = [
+const eventos = [
   {
+    nome: "Edificatto (workshop)",
+    tipo: "Workshop",
+    data: "20 de Fevereiro, 2026",
+    local: "",
+  },
+  {
+    nome: "Amplify Club - Masterclass - 20h",
+    tipo: "Masterclass",
+    data: "10 de Março, 2026",
+    local: "",
+  },
+  {
+    nome: "FilosofIA",
     tipo: "Palestra",
-    titulo: "IA e o Futuro dos Negócios",
-    data: "15 de Março, 2026",
-    horario: "09:00 - 12:00",
-    local: "São Paulo, SP",
-    formato: "Presencial",
-    vagas: "500 pessoas",
+    data: "13 de Abril, 2026",
+    local: "FAAP - São Paulo",
   },
   {
+    nome: "Petrópolis - Serratec",
+    tipo: "Bootcamp",
+    data: "11 de Abril, 2026",
+    local: "Petrópolis - RJ",
+  },
+  {
+    nome: "Amplify Club - Presencial Le Bife",
+    tipo: "Evento",
+    data: "23 de Abril, 2026",
+    local: "",
+  },
+  {
+    nome: "SEBRAE Lagoa Santa",
     tipo: "Palestra",
-    titulo: "O Nexialista É Antifrágil: IA como Vantagem Competitiva",
-    data: "28 de Março, 2026",
-    horario: "14:00 - 17:00",
-    local: "Rio de Janeiro, RJ",
-    formato: "Presencial",
-    vagas: "300 pessoas",
+    data: "30 de Abril, 2026",
+    local: "Lagoa Santa - MG",
   },
   {
-    tipo: "Palestra",
-    titulo: "AI First: Transformação Digital com Inteligência Artificial",
-    data: "10 de Abril, 2026",
-    horario: "19:00 - 21:00",
-    local: "Online",
-    formato: "Online",
-    vagas: "Ilimitado",
-  },
-];
-
-const bootcamps = [
-  {
-    tipo: "Bootcamp",
-    titulo: "Bootcamp IA Generativa para Negócios",
-    data: "05 a 07 de Abril, 2026",
-    horario: "08:30 - 18:00",
-    local: "São Paulo, SP",
-    formato: "Presencial Intensivo",
-    vagas: "40 pessoas",
+    nome: "FilosofIA Online",
+    tipo: "Curso Online",
+    data: "05 de Maio, 2026",
+    local: "",
   },
   {
-    tipo: "Bootcamp",
-    titulo: "Bootcamp Liderança com IA",
-    data: "19 a 21 de Maio, 2026",
-    horario: "08:30 - 18:00",
-    local: "Curitiba, PR",
-    formato: "Presencial Intensivo",
-    vagas: "35 pessoas",
+    nome: "São Paulo Innovation Week",
+    tipo: "Evento",
+    data: "13 de Maio, 2026",
+    local: "",
   },
   {
-    tipo: "Bootcamp",
-    titulo: "Bootcamp IA para Times Operacionais",
-    data: "02 a 04 de Junho, 2026",
-    horario: "09:00 - 17:00",
-    local: "Online",
-    formato: "Online Intensivo",
-    vagas: "60 pessoas",
+    nome: "Amplify Club - Evento Presencial",
+    tipo: "Evento",
+    data: "21 de Maio, 2026",
+    local: "",
   },
 ];
 
@@ -124,82 +121,38 @@ const Agenda = () => {
         </div>
       </section>
 
-      {/* Palestras */}
+      {/* Eventos */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <FadeInUp>
             <div className="flex items-center gap-3 mb-10">
-              <Mic className="h-6 w-6 text-primary" />
+              <CalendarDays className="h-6 w-6 text-primary" />
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground italic">
-                Palestras
+                Calendário de Eventos
               </h2>
             </div>
           </FadeInUp>
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {palestras.map((evento, i) => (
+            {eventos.map((evento, i) => (
               <StaggerItem key={i}>
                 <div className="bg-card border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors h-full flex flex-col">
                   <Badge variant="outline" className="w-fit mb-4 border-primary/30 text-primary text-xs">
-                    {evento.formato}
+                    {evento.tipo}
                   </Badge>
                   <h3 className="text-lg font-heading font-semibold text-foreground mb-4 flex-grow">
-                    {evento.titulo}
+                    {evento.nome}
                   </h3>
                   <div className="space-y-2 text-sm text-muted-foreground">
                     <div className="flex items-center gap-2">
                       <CalendarDays className="h-4 w-4 text-primary" />
-                      <span>{evento.data} • {evento.horario}</span>
+                      <span>{evento.data}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-primary" />
-                      <span>{evento.local}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-primary" />
-                      <span>{evento.vagas}</span>
-                    </div>
-                  </div>
-                </div>
-              </StaggerItem>
-            ))}
-          </StaggerContainer>
-        </div>
-      </section>
-
-      {/* Bootcamps */}
-      <section className="py-20 bg-card/30">
-        <div className="container mx-auto px-4">
-          <FadeInUp>
-            <div className="flex items-center gap-3 mb-10">
-              <GraduationCap className="h-6 w-6 text-primary" />
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-foreground italic">
-                Bootcamps
-              </h2>
-            </div>
-          </FadeInUp>
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {bootcamps.map((evento, i) => (
-              <StaggerItem key={i}>
-                <div className="bg-card border border-border rounded-2xl p-6 hover:border-primary/50 transition-colors h-full flex flex-col">
-                  <Badge variant="outline" className="w-fit mb-4 border-accent/50 text-accent text-xs">
-                    {evento.formato}
-                  </Badge>
-                  <h3 className="text-lg font-heading font-semibold text-foreground mb-4 flex-grow">
-                    {evento.titulo}
-                  </h3>
-                  <div className="space-y-2 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="h-4 w-4 text-primary" />
-                      <span>{evento.data} • {evento.horario}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-primary" />
-                      <span>{evento.local}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4 text-primary" />
-                      <span>{evento.vagas}</span>
-                    </div>
+                    {evento.local && (
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-4 w-4 text-primary" />
+                        <span>{evento.local}</span>
+                      </div>
+                    )}
                   </div>
                 </div>
               </StaggerItem>
