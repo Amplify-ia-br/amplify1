@@ -27,19 +27,19 @@ import {
 } from "@/components/ui/carousel";
 
 const images = [
-  { src: palestraEvento, alt: "Fernando Godoy na GloboNews" },
-  { src: forumPalestra, alt: "Fernando Godoy palestrando" },
-  { src: globonews, alt: "Fernando Godoy no programa Conta Corrente - GloboNews" },
-  { src: palco, alt: "Fernando Godoy em grande palco" },
-  { src: pecege, alt: "Fernando Godoy palestrando no PECEGE" },
-  { src: nexialista, alt: "Fernando Godoy - O Nexialista É Antifrágil" },
-  { src: workshop, alt: "Fernando Godoy em workshop" },
-  { src: aifirst, alt: "Fernando Godoy - AI First" },
-  { src: forumPainel, alt: "Fernando Godoy no Painel de IA - Fórum Negócios" },
-  { src: forumChatgpt, alt: "Fernando Godoy no Fórum Negócios Brasil" },
-  { src: podcast, alt: "Fernando Godoy no InovaMente Cast" },
-  { src: gala, alt: "Fernando Godoy em evento Gala Business" },
-  { src: primocast, alt: "Fernando Godoy no PrimoCast" },
+  { src: palestraEvento, alt: "Fernando Godoy na GloboNews", position: "center" },
+  { src: forumPalestra, alt: "Fernando Godoy palestrando", position: "center" },
+  { src: globonews, alt: "Fernando Godoy no programa Conta Corrente - GloboNews", position: "center" },
+  { src: palco, alt: "Fernando Godoy em grande palco", position: "center" },
+  { src: pecege, alt: "Fernando Godoy palestrando no PECEGE", position: "top" },
+  { src: nexialista, alt: "Fernando Godoy - O Nexialista É Antifrágil", position: "center" },
+  { src: workshop, alt: "Fernando Godoy em workshop", position: "center" },
+  { src: aifirst, alt: "Fernando Godoy - AI First", position: "top" },
+  { src: forumPainel, alt: "Fernando Godoy no Painel de IA - Fórum Negócios", position: "center" },
+  { src: forumChatgpt, alt: "Fernando Godoy no Fórum Negócios Brasil", position: "center" },
+  { src: podcast, alt: "Fernando Godoy no InovaMente Cast", position: "center" },
+  { src: gala, alt: "Fernando Godoy em evento Gala Business", position: "top" },
+  { src: primocast, alt: "Fernando Godoy no PrimoCast", position: "center" },
 ];
 
 const FounderFernando = () => {
@@ -74,6 +74,7 @@ const FounderFernando = () => {
                           <img
                             src={img.src}
                             alt={img.alt}
+                            style={{ objectPosition: img.position }}
                             className="w-full h-[400px] md:h-[500px] object-cover rounded-2xl hover:scale-105 transition-transform duration-300"
                           />
                         </div>
