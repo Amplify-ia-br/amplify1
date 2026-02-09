@@ -4,11 +4,22 @@ import { Calendar, Clock, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem, ScaleIn } from "@/components/animations/MotionWrapper";
+import artigoVantagemCompetitiva from "@/assets/blog/artigo-vantagem-competitiva.png";
 
 const Blog = () => {
   const posts = [
     {
       id: 1,
+      title: "Hoje eu não vim falar de tecnologia. Eu vim anunciar o fim da sua vantagem.",
+      excerpt: "A vantagem competitiva não é ter IA. É implementar antes do seu concorrente. E esperar não é prudência. É perder mercado com educação.",
+      image: artigoVantagemCompetitiva,
+      date: "2025-01-31",
+      readTime: "4 min",
+      category: "Estratégia",
+      author: "Fernando Godoy",
+    },
+    {
+      id: 2,
       title: "Como a IA está revolucionando o atendimento ao cliente",
       excerpt: "Descubra como chatbots e assistentes virtuais estão transformando a experiência do consumidor",
       image: "/placeholder.svg",
@@ -17,7 +28,7 @@ const Blog = () => {
       category: "Tendências",
     },
     {
-      id: 2,
+      id: 3,
       title: "Machine Learning: Por onde começar?",
       excerpt: "Um guia prático para empresas que querem dar os primeiros passos com ML",
       image: "/placeholder.svg",
@@ -26,7 +37,7 @@ const Blog = () => {
       category: "Educação",
     },
     {
-      id: 3,
+      id: 4,
       title: "O futuro do trabalho na era da IA",
       excerpt: "Como preparar sua empresa e sua equipe para as mudanças que estão por vir",
       image: "/placeholder.svg",
@@ -35,7 +46,7 @@ const Blog = () => {
       category: "Futuro",
     },
     {
-      id: 4,
+      id: 5,
       title: "Cases de sucesso: IA no varejo brasileiro",
       excerpt: "Exemplos reais de como empresas brasileiras estão usando IA para vender mais",
       image: "/placeholder.svg",
@@ -44,7 +55,7 @@ const Blog = () => {
       category: "Cases",
     },
     {
-      id: 5,
+      id: 6,
       title: "GPT e LLMs: O que sua empresa precisa saber",
       excerpt: "Entenda o que são os grandes modelos de linguagem e como aplicá-los",
       image: "/placeholder.svg",
@@ -53,7 +64,7 @@ const Blog = () => {
       category: "Tecnologia",
     },
     {
-      id: 6,
+      id: 7,
       title: "Automação inteligente: Além do RPA tradicional",
       excerpt: "Como a IA está elevando o patamar da automação de processos",
       image: "/placeholder.svg",
