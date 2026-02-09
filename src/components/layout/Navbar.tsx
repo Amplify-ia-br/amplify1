@@ -29,6 +29,7 @@ const Navbar = () => {
   const solucoesLinks = [
     { name: "Capacitação", path: "/solucoes/capacitacoes" },
     { name: "Serviços e Consultoria", path: "/solucoes/servicos-consultoria" },
+    { name: "Comunidades", path: "/solucoes/comunidades" },
   ];
 
   return (

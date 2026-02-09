@@ -86,6 +86,11 @@ const Footer = () => {
                   Serviços e Consultoria
                 </Link>
               </li>
+              <li>
+                <Link to="/solucoes/comunidades" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+                  Comunidades
+                </Link>
+              </li>
             </ul>
           </div>
 

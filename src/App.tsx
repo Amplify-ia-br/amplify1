@@ -9,6 +9,7 @@ import Cases from "./pages/Cases";
 import Solucoes from "./pages/Solucoes";
 import ServicosConsultoria from "./pages/ServicosConsultoria";
 import Capacitacoes from "./pages/Capacitacoes";
+import Comunidades from "./pages/Comunidades";
 import Blog from "./pages/Blog";
 import Contato from "./pages/Contato";
 import NotFound from "./pages/NotFound";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/solucoes" element={<Solucoes />} />
           <Route path="/solucoes/capacitacoes" element={<Capacitacoes />} />
           <Route path="/solucoes/servicos-consultoria" element={<ServicosConsultoria />} />
+          <Route path="/solucoes/comunidades" element={<Comunidades />} />
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:id" element={<Blog />} />
           <Route path="/contato" element={<Contato />} />

@@ -44,6 +44,11 @@ const Solucoes = () => {
       description: "Assessoria especializada para implementar IA no seu negócio",
       link: "/solucoes/servicos-consultoria",
     },
+    {
+      title: "Comunidades",
+      description: "Rede de profissionais e empresas conectados pela transformação com IA",
+      link: "/solucoes/comunidades",
+    },
   ];
 
   return (
