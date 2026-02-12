@@ -70,8 +70,8 @@ const EventoFilosofia = () => {
 
             {/* Título e subtítulo */}
             <div className="text-center max-w-4xl mx-auto mb-12">
-              <Badge variant="outline" className="mb-4 border-primary/30 text-primary">
-                Palestra
+                <Badge variant="outline" className="mb-4 border-primary/30 text-primary">
+                Evento
               </Badge>
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold text-foreground italic mb-4">
                 FilosofIA
