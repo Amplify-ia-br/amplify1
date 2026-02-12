@@ -86,7 +86,7 @@ const EventoFilosofia = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-primary" />
-                  <span>19:00</span>
+                  <span>9:00</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-primary" />
