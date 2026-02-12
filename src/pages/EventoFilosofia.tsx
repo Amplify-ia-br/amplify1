@@ -82,7 +82,7 @@ const EventoFilosofia = () => {
               <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <CalendarDays className="h-4 w-4 text-primary" />
-                  <span>15 de Abril, 2026</span>
+                  <span>23 de Maio, 2026</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4 text-primary" />
