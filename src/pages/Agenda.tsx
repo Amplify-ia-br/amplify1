@@ -1,105 +1,86 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { CalendarDays, MapPin, ArrowRight, Mic, GraduationCap, Clock, Filter } from "lucide-react";
+import { CalendarDays, MapPin, ArrowRight, Mic, GraduationCap, Clock, Filter, Search, Loader2 } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import fernandoImg from "@/assets/founders/fernando-godoy.png";
 import palestraEvento from "@/assets/palestra-evento.jpeg";
-import imgEdificatto from "@/assets/eventos/edificatto.png";
-import imgAmplifyClub from "@/assets/eventos/amplify-club.png";
-import imgInnovationWeek from "@/assets/eventos/sao-paulo-innovation-week.webp";
-import imgSerratec from "@/assets/eventos/serratec.png";
 
-const eventos = [
-  {
-    nome: "Edificatto",
-    tipo: "Workshop",
-    data: "20 de Fevereiro, 2026",
-    horario: "09:00",
-    local: "",
-    imagem: imgEdificatto,
-  },
-  {
-    nome: "Amplify Club - Masterclass",
-    tipo: "Masterclass",
-    data: "10 de Março, 2026",
-    horario: "20:00",
-    local: "",
-    imagem: imgAmplifyClub,
-  },
-  {
-    nome: "Petrópolis - Serratec",
-    tipo: "Bootcamp",
-    data: "11 de Abril, 2026",
-    horario: "08:00",
-    local: "Petrópolis - RJ",
-    imagem: imgSerratec,
-  },
-  {
-    nome: "FilosofIA",
-    tipo: "Palestra",
-    data: "15 de Abril, 2026",
-    horario: "19:00",
-    local: "FAAP - São Paulo",
-    imagem: null,
-  },
-  {
-    nome: "Amplify Club - Presencial",
-    tipo: "Presencial",
-    data: "23 de Abril, 2026",
-    horario: "19:30",
-    local: "Le Bife - São Paulo",
-    imagem: imgAmplifyClub,
-  },
-  {
-    nome: "SEBRAE Lagoa Santa",
-    tipo: "Palestra",
-    data: "30 de Abril, 2026",
-    horario: "",
-    local: "Lagoa Santa - MG",
-    imagem: null,
-  },
-  {
-    nome: "FilosofIA Online",
-    tipo: "Curso Online",
-    data: "05 de Maio, 2026",
-    horario: "20:00",
-    local: "",
-    imagem: null,
-  },
-  {
-    nome: "São Paulo Innovation Week",
-    tipo: "Evento",
-    data: "13 de Maio, 2026",
-    horario: "",
-    local: "",
-    imagem: imgInnovationWeek,
-  },
-  {
-    nome: "Amplify Club - Evento Presencial",
-    tipo: "Evento",
-    data: "21 de Maio, 2026",
-    horario: "",
-    local: "",
-    imagem: imgAmplifyClub,
-  },
-];
+const API_URL = "https://bhipsbvlxfvdcohdjuac.supabase.co/functions/v1/get-public-events";
 
-const tiposUnicos = ["Todos", ...Array.from(new Set(eventos.map((e) => e.tipo)))];
+interface Evento {
+  id: string;
+  name: string;
+  event_type: string;
+  format: string;
+  description: string;
+  location: string;
+  start_date: string;
+  end_date: string;
+  start_time: string;
+  end_time: string;
+  state: string;
+  city: string;
+  status: string;
+  link: string;
+  image_url: string;
+}
+
+const formatDate = (dateStr: string) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr + "T00:00:00");
+  return date.toLocaleDateString("pt-BR", { day: "numeric", month: "long", year: "numeric" });
+};
+
+const formatTime = (timeStr: string) => {
+  if (!timeStr) return "";
+  return timeStr.substring(0, 5);
+};
+
+const buildLocation = (evento: Evento) => {
+  const parts = [evento.location, evento.city, evento.state].filter(Boolean);
+  return parts.join(" - ");
+};
 
 const Agenda = () => {
+  const [eventos, setEventos] = useState<Evento[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filtroAtivo, setFiltroAtivo] = useState("Todos");
+  const [busca, setBusca] = useState("");
+
+  useEffect(() => {
+    const fetchEventos = async () => {
+      try {
+        setLoading(true);
+        const params = new URLSearchParams();
+        if (busca) params.set("search", busca);
+        const url = `${API_URL}${params.toString() ? `?${params}` : ""}`;
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("Erro ao buscar eventos");
+        const data = await res.json();
+        setEventos(data);
+      } catch (err) {
+        console.error("Erro ao carregar eventos:", err);
+        setEventos([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    const debounce = setTimeout(fetchEventos, 300);
+    return () => clearTimeout(debounce);
+  }, [busca]);
+
+  const tiposUnicos = ["Todos", ...Array.from(new Set(eventos.map((e) => e.event_type).filter(Boolean)))];
 
   const eventosFiltrados = filtroAtivo === "Todos"
     ? eventos
-    : eventos.filter((e) => e.tipo === filtroAtivo);
+    : eventos.filter((e) => e.event_type === filtroAtivo);
 
   return (
     <Layout>
-
-
       {/* Filtro + Eventos */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
@@ -112,7 +93,20 @@ const Agenda = () => {
             </div>
           </FadeInUp>
 
-          {/* Filtro */}
+          {/* Busca */}
+          <FadeInUp delay={0.05}>
+            <div className="relative mb-6 max-w-md">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Buscar evento..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="pl-10 bg-card border-border"
+              />
+            </div>
+          </FadeInUp>
+
+          {/* Filtro por tipo */}
           <FadeInUp delay={0.1}>
             <div className="flex items-center gap-2 mb-10 flex-wrap">
               <Filter className="h-4 w-4 text-muted-foreground mr-1" />
@@ -132,63 +126,91 @@ const Agenda = () => {
             </div>
           </FadeInUp>
 
-          <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {eventosFiltrados.map((evento, i) => {
-              const cardContent = (
-                <>
-                  {evento.imagem && (
-                    <div className="h-40 bg-muted/30 flex items-center justify-center p-4">
-                      <img
-                        src={evento.imagem}
-                        alt={evento.nome}
-                        className="max-h-full max-w-full object-contain"
-                      />
-                    </div>
-                  )}
-                  <div className="p-6 flex flex-col flex-grow">
-                    <Badge variant="outline" className="w-fit mb-4 border-primary/30 text-primary text-xs">
-                      {evento.tipo}
-                    </Badge>
-                    <h3 className="text-lg font-heading font-semibold text-foreground mb-4 flex-grow">
-                      {evento.nome}
-                    </h3>
-                    <div className="space-y-2 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-2">
-                        <CalendarDays className="h-4 w-4 text-primary shrink-0" />
-                        <span>{evento.data}</span>
-                      </div>
-                      {evento.horario && (
-                        <div className="flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-primary shrink-0" />
-                          <span>{evento.horario}</span>
-                        </div>
-                      )}
-                      {evento.local && (
-                        <div className="flex items-center gap-2">
-                          <MapPin className="h-4 w-4 text-primary shrink-0" />
-                          <span>{evento.local}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </>
-              );
+          {loading ? (
+            <div className="flex items-center justify-center py-20">
+              <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+          ) : eventosFiltrados.length === 0 ? (
+            <div className="text-center py-20 text-muted-foreground">
+              <CalendarDays className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p className="text-lg">Nenhum evento encontrado.</p>
+            </div>
+          ) : (
+            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {eventosFiltrados.map((evento) => {
+                const localFormatado = buildLocation(evento);
+                const isFilosofia = evento.name?.toLowerCase().includes("filosofia");
 
-              return (
-                <StaggerItem key={i}>
-                  {evento.nome === "FilosofIA" ? (
-                    <Link to="/agenda/filosofia" className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-colors h-full flex flex-col cursor-pointer">
-                      {cardContent}
-                    </Link>
-                  ) : (
-                    <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-colors h-full flex flex-col">
-                      {cardContent}
+                const cardContent = (
+                  <>
+                    {evento.image_url && (
+                      <div className="h-40 bg-muted/30 flex items-center justify-center p-4">
+                        <img
+                          src={evento.image_url}
+                          alt={evento.name}
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      </div>
+                    )}
+                    <div className="p-6 flex flex-col flex-grow">
+                      {evento.event_type && (
+                        <Badge variant="outline" className="w-fit mb-4 border-primary/30 text-primary text-xs">
+                          {evento.event_type}
+                        </Badge>
+                      )}
+                      <h3 className="text-lg font-heading font-semibold text-foreground mb-4 flex-grow">
+                        {evento.name}
+                      </h3>
+                      <div className="space-y-2 text-sm text-muted-foreground">
+                        {evento.start_date && (
+                          <div className="flex items-center gap-2">
+                            <CalendarDays className="h-4 w-4 text-primary shrink-0" />
+                            <span>{formatDate(evento.start_date)}</span>
+                          </div>
+                        )}
+                        {evento.start_time && (
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-primary shrink-0" />
+                            <span>{formatTime(evento.start_time)}</span>
+                          </div>
+                        )}
+                        {localFormatado && (
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-primary shrink-0" />
+                            <span>{localFormatado}</span>
+                          </div>
+                        )}
+                      </div>
+                      {evento.link && (
+                        <a
+                          href={evento.link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-4 inline-flex items-center gap-1 text-primary text-sm font-medium hover:gap-2 transition-all"
+                        >
+                          Saiba mais <ArrowRight className="h-4 w-4" />
+                        </a>
+                      )}
                     </div>
-                  )}
-                </StaggerItem>
-              );
-            })}
-          </StaggerContainer>
+                  </>
+                );
+
+                return (
+                  <StaggerItem key={evento.id}>
+                    {isFilosofia ? (
+                      <Link to="/agenda/filosofia" className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-colors h-full flex flex-col cursor-pointer">
+                        {cardContent}
+                      </Link>
+                    ) : (
+                      <div className="bg-card border border-border rounded-2xl overflow-hidden hover:border-primary/50 transition-colors h-full flex flex-col">
+                        {cardContent}
+                      </div>
+                    )}
+                  </StaggerItem>
+                );
+              })}
+            </StaggerContainer>
+          )}
         </div>
       </section>
 
@@ -225,6 +247,7 @@ const Agenda = () => {
         </div>
       </section>
 
+      {/* CTA Contrate */}
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <FadeInUp>
