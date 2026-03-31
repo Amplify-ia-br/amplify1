@@ -169,7 +169,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <FadeInUp>
-              <h2 className="text-3xl md:text-4xl font-sans font-bold mb-6 leading-tight">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold mb-6 leading-tight">
                 O Poder da Inteligência Artificial como Alavanca de <span className="gradient-text">Transformação</span>
               </h2>
               <p className="text-lg text-muted-foreground mb-8">
