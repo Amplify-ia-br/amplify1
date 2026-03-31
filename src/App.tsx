@@ -19,6 +19,7 @@ import FounderFernando from "./pages/FounderFernando";
 import Agenda from "./pages/Agenda";
 import EventoFilosofia from "./pages/EventoFilosofia";
 import Amplifiers from "./pages/Amplifiers";
+import Aprenda from "./pages/Aprenda";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
