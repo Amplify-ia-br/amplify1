@@ -130,8 +130,8 @@ const Index = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6, ease: "easeOut" }}
           >
-            <h2 className="text-4xl md:text-6xl lg:text-7xl font-heading font-bold leading-tight text-center">
-              Empresas que confiam
+            <h2 className="text-4xl md:text-6xl lg:text-7xl font-heading leading-tight text-center font-thin">
+              EMPRESAS QUE CONFIAM
             </h2>
             <Carousel
               opts={{
