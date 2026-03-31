@@ -24,6 +24,10 @@ const Navbar = () => {
 
   const navLinksAfter = [
     { name: "Agenda", path: "/agenda" },
+  ];
+
+  const conteudoLinks = [
+    { name: "Aprenda", path: "/aprenda" },
     { name: "Blog", path: "/blog" },
   ];
 
@@ -86,7 +90,7 @@ const Navbar = () => {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-          {/* CTA Buttons */}
+          {/* Links after Soluções */}
             {navLinksAfter.map((link) => (
               <Link
                 key={link.path}
@@ -99,6 +103,43 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+
+            {/* Conteúdo Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className={cn(
+                    "flex items-center text-sm font-medium transition-colors hover:text-primary",
+                    location.pathname === "/blog" || location.pathname === "/aprenda"
+                      ? "text-primary"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  Conteúdo
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="bg-card border-border">
+                {conteudoLinks.map((link) => (
+                  <DropdownMenuItem key={link.path} asChild>
+                    <Link to={link.path} className="cursor-pointer">
+                      {link.name}
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Club */}
+            <Link
+              to="/solucoes/comunidades"
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                isActive("/solucoes/comunidades") ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Club
+            </Link>
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <Button asChild className="glow-cyan">
@@ -159,6 +200,31 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-foreground">Conteúdo</p>
+              {conteudoLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className="block pl-4 text-sm text-muted-foreground hover:text-primary"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+
+            <Link
+              to="/solucoes/comunidades"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                "block text-sm font-medium transition-colors hover:text-primary",
+                isActive("/solucoes/comunidades") ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Club
+            </Link>
 
             <div className="pt-4 space-y-2">
               <Button asChild className="w-full">
