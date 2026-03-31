@@ -140,6 +140,17 @@ const Navbar = () => {
             >
               Club
             </Link>
+
+            {/* Amplifiers */}
+            <Link
+              to="/amplifiers"
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                isActive("/amplifiers") ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Amplifiers
+            </Link>
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <Button asChild className="glow-cyan">
@@ -224,6 +235,17 @@ const Navbar = () => {
               )}
             >
               Club
+            </Link>
+
+            <Link
+              to="/amplifiers"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                "block text-sm font-medium transition-colors hover:text-primary",
+                isActive("/amplifiers") ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Amplifiers
             </Link>
 
             <div className="pt-4 space-y-2">
