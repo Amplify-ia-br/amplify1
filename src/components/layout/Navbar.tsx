@@ -24,6 +24,10 @@ const Navbar = () => {
 
   const navLinksAfter = [
     { name: "Agenda", path: "/agenda" },
+  ];
+
+  const conteudoLinks = [
+    { name: "Aprenda", path: "/aprenda" },
     { name: "Blog", path: "/blog" },
   ];
 
