@@ -212,7 +212,39 @@ const Agenda = () => {
         </div>
       </section>
 
-      {/* CTA */}
+      {/* Especialista Destaque */}
+      <section className="py-16 bg-card/50">
+        <div className="container mx-auto px-4">
+          <FadeInUp>
+            <div className="flex flex-col md:flex-row items-center gap-8 max-w-4xl mx-auto">
+              <Link to="/founders/fernando-godoy" className="shrink-0 group">
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden border-4 border-primary/30 group-hover:border-primary transition-colors">
+                  <img src={fernandoImg} alt="Fernando Godoy" className="w-full h-full object-cover object-top" />
+                </div>
+              </Link>
+              <div className="text-center md:text-left">
+                <p className="text-sm text-primary font-medium mb-1">Especialista</p>
+                <Link to="/founders/fernando-godoy" className="hover:text-primary transition-colors">
+                  <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground italic mb-2">
+                    Fernando Godoy
+                  </h2>
+                </Link>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  CEO & Cofundador da AMPLIFY. Empreendedor serial com mais de 25 anos de experiência em tecnologia e inovação,
+                  especialista em Inteligência Artificial, palestrante internacional, autor e professor de MBA.
+                </p>
+                <Link
+                  to="/founders/fernando-godoy"
+                  className="inline-flex items-center gap-1 text-primary text-sm font-medium mt-3 hover:gap-2 transition-all"
+                >
+                  Conheça mais <ArrowRight className="h-4 w-4" />
+                </Link>
+              </div>
+            </div>
+          </FadeInUp>
+        </div>
+      </section>
+
       <section className="py-20 bg-background">
         <div className="container mx-auto px-4">
           <FadeInUp>
