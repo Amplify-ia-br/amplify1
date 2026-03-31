@@ -237,6 +237,17 @@ const Navbar = () => {
               Club
             </Link>
 
+            <Link
+              to="/amplifiers"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                "block text-sm font-medium transition-colors hover:text-primary",
+                isActive("/amplifiers") ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Amplifiers
+            </Link>
+
             <div className="pt-4 space-y-2">
               <Button asChild className="w-full">
                 <a href="https://wa.me/5511918252109?text=Olá! Gostaria de falar com um especialista." target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)}>
