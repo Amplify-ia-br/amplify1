@@ -201,6 +201,31 @@ const Navbar = () => {
               </Link>
             ))}
 
+            <div className="space-y-2">
+              <p className="text-sm font-medium text-foreground">Conteúdo</p>
+              {conteudoLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  onClick={() => setIsOpen(false)}
+                  className="block pl-4 text-sm text-muted-foreground hover:text-primary"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+
+            <Link
+              to="/solucoes/comunidades"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                "block text-sm font-medium transition-colors hover:text-primary",
+                isActive("/solucoes/comunidades") ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Club
+            </Link>
+
             <div className="pt-4 space-y-2">
               <Button asChild className="w-full">
                 <a href="https://wa.me/5511918252109?text=Olá! Gostaria de falar com um especialista." target="_blank" rel="noopener noreferrer" onClick={() => setIsOpen(false)}>
