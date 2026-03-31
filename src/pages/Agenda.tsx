@@ -40,10 +40,6 @@ const formatTime = (timeStr: string) => {
   return timeStr.substring(0, 5);
 };
 
-const buildLocation = (evento: Evento) => {
-  const parts = [evento.location, evento.city, evento.state].filter(Boolean);
-  return parts.join(" - ");
-};
 
 const Agenda = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
@@ -136,9 +132,8 @@ const Agenda = () => {
               <p className="text-lg">Nenhum evento encontrado.</p>
             </div>
           ) : (
-            <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <StaggerContainer key={filtroAtivo} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {eventosFiltrados.map((evento) => {
-                const localFormatado = buildLocation(evento);
                 const isFilosofia = evento.name?.toLowerCase().includes("filosofia");
 
                 const cardContent = (
@@ -153,11 +148,18 @@ const Agenda = () => {
                       </div>
                     )}
                     <div className="p-6 flex flex-col flex-grow">
-                      {evento.event_type && (
-                        <Badge variant="outline" className="w-fit mb-4 border-primary/30 text-primary text-xs">
-                          {evento.event_type}
-                        </Badge>
-                      )}
+                      <div className="flex items-center gap-2 mb-4 flex-wrap">
+                        {evento.event_type && (
+                          <Badge variant="outline" className="border-primary/30 text-primary text-xs">
+                            {evento.event_type}
+                          </Badge>
+                        )}
+                        {evento.format && (
+                          <Badge variant="secondary" className="text-xs">
+                            {evento.format}
+                          </Badge>
+                        )}
+                      </div>
                       <h3 className="text-lg font-heading font-semibold text-foreground mb-4 flex-grow">
                         {evento.name}
                       </h3>
@@ -174,10 +176,10 @@ const Agenda = () => {
                             <span>{formatTime(evento.start_time)}</span>
                           </div>
                         )}
-                        {localFormatado && (
+                        {(evento.city || evento.state) && (
                           <div className="flex items-center gap-2">
                             <MapPin className="h-4 w-4 text-primary shrink-0" />
-                            <span>{localFormatado}</span>
+                            <span>{[evento.location, evento.city, evento.state].filter(Boolean).join(" - ")}</span>
                           </div>
                         )}
                       </div>
