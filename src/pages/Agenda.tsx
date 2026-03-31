@@ -40,10 +40,6 @@ const formatTime = (timeStr: string) => {
   return timeStr.substring(0, 5);
 };
 
-const buildLocation = (evento: Evento) => {
-  const parts = [evento.location, evento.city, evento.state].filter(Boolean);
-  return parts.join(" - ");
-};
 
 const Agenda = () => {
   const [eventos, setEventos] = useState<Evento[]>([]);
