@@ -14,7 +14,36 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      nps_responses: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string | null
+          feedback: string | null
+          id: string
+          name: string | null
+          score: number
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          feedback?: string | null
+          id?: string
+          name?: string | null
+          score: number
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string | null
+          feedback?: string | null
+          id?: string
+          name?: string | null
+          score?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
