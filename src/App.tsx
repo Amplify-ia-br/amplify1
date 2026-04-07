@@ -20,6 +20,7 @@ import Agenda from "./pages/Agenda";
 import EventoFilosofia from "./pages/EventoFilosofia";
 import Amplifiers from "./pages/Amplifiers";
 import Aprenda from "./pages/Aprenda";
+import Tools from "./pages/Tools";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
           <Route path="/agenda/filosofia" element={<EventoFilosofia />} />
           <Route path="/amplifiers" element={<Amplifiers />} />
           <Route path="/aprenda" element={<Aprenda />} />
+          <Route path="/tools" element={<Tools />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
