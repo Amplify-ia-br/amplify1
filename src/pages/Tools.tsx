@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { MotionWrapper } from "@/components/animations/MotionWrapper";
+import MotionWrapper from "@/components/animations/MotionWrapper";
 import { CheckCircle, Send } from "lucide-react";
 
 const npsLabels: Record<string, string> = {
