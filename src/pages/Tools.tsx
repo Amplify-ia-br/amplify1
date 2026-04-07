@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { FadeInUp } from "@/components/animations/MotionWrapper";
+import { FadeInUp } from "@/components/animations/FadeInUp";
 import { CheckCircle, Send } from "lucide-react";
 
 const npsLabels: Record<string, string> = {
@@ -56,7 +56,7 @@ const Tools = () => {
     return (
       <Layout>
         <section className="min-h-[80vh] flex items-center justify-center px-4">
-          <MotionWrapper variant="fade-up">
+          <FadeInUp variant="fade-up">
             <div className="text-center max-w-md mx-auto space-y-6">
               <CheckCircle className="h-20 w-20 text-primary mx-auto" />
               <h1 className="font-heading text-3xl md:text-4xl font-bold">
@@ -70,7 +70,7 @@ const Tools = () => {
                 <a href="/">Voltar ao início</a>
               </Button>
             </div>
-          </MotionWrapper>
+          </FadeInUp>
         </section>
       </Layout>
     );
@@ -80,7 +80,7 @@ const Tools = () => {
     <Layout>
       <section className="py-16 md:py-24 px-4">
         <div className="container mx-auto max-w-2xl">
-          <MotionWrapper variant="fade-up">
+          <FadeInUp variant="fade-up">
             <div className="text-center mb-12">
               <h1 className="font-heading text-3xl md:text-5xl font-bold mb-4">
                 Pesquisa de Satisfação
@@ -90,9 +90,9 @@ const Tools = () => {
                 serviços e entregar ainda mais valor.
               </p>
             </div>
-          </MotionWrapper>
+          </FadeInUp>
 
-          <MotionWrapper variant="fade-up" delay={0.1}>
+          <FadeInUp variant="fade-up" delay={0.1}>
             <div className="space-y-8 bg-card border border-border rounded-2xl p-6 md:p-10">
               {/* NPS Score */}
               <div className="space-y-4">
@@ -208,7 +208,7 @@ const Tools = () => {
                 <Send className="ml-2 h-4 w-4" />
               </Button>
             </div>
-          </MotionWrapper>
+          </FadeInUp>
         </div>
       </section>
     </Layout>
