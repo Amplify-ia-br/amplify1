@@ -56,7 +56,7 @@ const Tools = () => {
     return (
       <Layout>
         <section className="min-h-[80vh] flex items-center justify-center px-4">
-          <FadeInUp variant="fade-up">
+          <FadeInUp>
             <div className="text-center max-w-md mx-auto space-y-6">
               <CheckCircle className="h-20 w-20 text-primary mx-auto" />
               <h1 className="font-heading text-3xl md:text-4xl font-bold">
@@ -80,7 +80,7 @@ const Tools = () => {
     <Layout>
       <section className="py-16 md:py-24 px-4">
         <div className="container mx-auto max-w-2xl">
-          <FadeInUp variant="fade-up">
+          <FadeInUp>
             <div className="text-center mb-12">
               <h1 className="font-heading text-3xl md:text-5xl font-bold mb-4">
                 Pesquisa de Satisfação
@@ -92,7 +92,7 @@ const Tools = () => {
             </div>
           </FadeInUp>
 
-          <FadeInUp variant="fade-up" delay={0.1}>
+          <FadeInUp delay={0.1}>
             <div className="space-y-8 bg-card border border-border rounded-2xl p-6 md:p-10">
               {/* NPS Score */}
               <div className="space-y-4">
