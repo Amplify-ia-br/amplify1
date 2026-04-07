@@ -151,6 +151,17 @@ const Navbar = () => {
             >
               Amplifiers
             </Link>
+
+            {/* Tools */}
+            <Link
+              to="/tools"
+              className={cn(
+                "text-sm font-medium transition-colors hover:text-primary",
+                isActive("/tools") ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Tools
+            </Link>
           </div>
           <div className="hidden md:flex items-center space-x-4">
             <Button asChild className="glow-cyan">
@@ -246,6 +257,17 @@ const Navbar = () => {
               )}
             >
               Amplifiers
+            </Link>
+
+            <Link
+              to="/tools"
+              onClick={() => setIsOpen(false)}
+              className={cn(
+                "block text-sm font-medium transition-colors hover:text-primary",
+                isActive("/tools") ? "text-primary" : "text-muted-foreground"
+              )}
+            >
+              Tools
             </Link>
 
             <div className="pt-4 space-y-2">
