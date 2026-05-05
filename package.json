@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "lighthouse": "lighthouse http://localhost:4173 --output html --output-path ./lighthouse-report.html",
+    "lhci:audit": "lhci autorun"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -58,6 +60,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.29.2",
     "input-otp": "^1.4.2",
+    "lighthouse": "^13.2.0",
     "lucide-react": "^0.462.0",
     "next-themes": "^0.3.0",
     "react": "^18.3.1",
@@ -71,10 +74,12 @@
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",
+    "web-vitals": "^5.2.0",
     "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
+    "@lhci/cli": "^0.15.1",
     "@tailwindcss/typography": "^0.5.16",
     "@testing-library/jest-dom": "^6.6.0",
     "@testing-library/react": "^16.0.0",
