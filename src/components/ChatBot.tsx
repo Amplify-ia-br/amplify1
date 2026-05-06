@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import avatarBot from "@/assets/avatar-bot.png";
 
 declare global {
@@ -13,12 +13,15 @@ declare global {
 const JQUERY_SCRIPT_ID = "chatbot-jquery-script";
 const INBOT_SCRIPT_ID = "chatscript";
 const CUSTOM_BUTTON_ID = "amplify-custom-chatbot-button";
-const HIDE_STYLE_ID = "amplify-hide-inbot-launcher-style";
 const INBOT_SRC =
   "https://in.bot/api/inbot.gz.js?bot_id=1128&bot_token=21jygoakkt&bot_server_type=production";
 const JQUERY_SRC = "https://code.jquery.com/jquery-3.7.1.min.js";
 
 function openInbot() {
+  if (window.inbot && typeof (window.inbot as { open_chat?: (arg?: unknown) => void }).open_chat === "function") {
+    (window.inbot as { open_chat: (arg?: unknown) => void }).open_chat({ caller: "amplify_custom_button" });
+    return true;
+  }
   if (window.inbot && typeof window.inbot.open === "function") {
     window.inbot.open();
     return true;
@@ -73,35 +76,13 @@ function ensureInbotLoaded(onReady: () => void, onFail: () => void) {
   document.body.appendChild(jqueryScript);
 }
 
-function hideProviderLaunchers() {
-  const selectors = [
-    '[id*="inbot" i]',
-    '[class*="inbot" i]',
-    'iframe[src*="in.bot"]',
-    'iframe[src*="inbot"]',
-  ];
-
-  for (const selector of selectors) {
-    document.querySelectorAll<HTMLElement>(selector).forEach((el) => {
-      if (el.id === CUSTOM_BUTTON_ID) return;
-      // Keep the chat window itself; hide only launcher-sized elements.
-      const rect = el.getBoundingClientRect();
-      const looksLikeLauncher = rect.width <= 220 && rect.height <= 220;
-      if (looksLikeLauncher) {
-        el.style.setProperty("display", "none", "important");
-        el.style.setProperty("visibility", "hidden", "important");
-        el.setAttribute("aria-hidden", "true");
-      }
-    });
-  }
-}
-
 function clickProviderLauncherFallback() {
   const clickableSelectors = [
+    "#bot_icon",
+    "#mini_box_chat",
+    '[onclick*="open_chat"]',
     '[id*="inbot" i][role="button"]',
     '[class*="inbot" i][role="button"]',
-    '[id*="inbot" i]',
-    '[class*="inbot" i]',
   ];
 
   for (const selector of clickableSelectors) {
@@ -109,7 +90,7 @@ function clickProviderLauncherFallback() {
     for (const node of nodes) {
       if (node.id === CUSTOM_BUTTON_ID) continue;
       const rect = node.getBoundingClientRect();
-      if (rect.width <= 260 && rect.height <= 260) {
+      if (rect.width <= 360 && rect.height <= 360) {
         node.click();
         return true;
       }
@@ -120,28 +101,6 @@ function clickProviderLauncherFallback() {
 
 const ChatBot = () => {
   const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    if (!document.getElementById(HIDE_STYLE_ID)) {
-      const style = document.createElement("style");
-      style.id = HIDE_STYLE_ID;
-      style.textContent = `
-        iframe[src*="in.bot"][style*="bottom"],
-        iframe[src*="inbot"][style*="bottom"],
-        [id*="inbot" i][style*="bottom"],
-        [class*="inbot" i][style*="bottom"] {
-          display: none !important;
-          visibility: hidden !important;
-        }
-      `;
-      document.head.appendChild(style);
-    }
-
-    hideProviderLaunchers();
-    const observer = new MutationObserver(() => hideProviderLaunchers());
-    observer.observe(document.body, { childList: true, subtree: true });
-    return () => observer.disconnect();
-  }, []);
 
   const handleClick = () => {
     setIsLoading(true);
