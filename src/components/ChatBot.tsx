@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import avatarBot from "@/assets/avatar-bot.png";
 
 declare global {
@@ -101,6 +101,30 @@ function clickProviderLauncherFallback() {
 
 const ChatBot = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  useEffect(() => {
+    const syncInbotUi = () => {
+      const miniBox = document.getElementById("mini_box_chat") as HTMLElement | null;
+      const botIcon = document.getElementById("bot_icon") as HTMLElement | null;
+      const botPointer = document.getElementById("bot_icon_pointer") as HTMLElement | null;
+      const boxChat = document.getElementById("box_chat") as HTMLElement | null;
+
+      // Hide provider launchers; keep only our custom launcher.
+      if (miniBox) miniBox.style.setProperty("display", "none", "important");
+      if (botIcon) botIcon.style.setProperty("display", "none", "important");
+      if (botPointer) botPointer.style.setProperty("display", "none", "important");
+
+      if (boxChat) {
+        const visible = boxChat.style.display !== "none" && boxChat.offsetParent !== null;
+        setIsChatOpen(visible);
+      }
+    };
+
+    const timer = window.setInterval(syncInbotUi, 300);
+    syncInbotUi();
+    return () => window.clearInterval(timer);
+  }, []);
 
   const handleClick = () => {
     setIsLoading(true);
@@ -135,7 +159,7 @@ const ChatBot = () => {
       id={CUSTOM_BUTTON_ID}
       type="button"
       onClick={handleClick}
-      className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow border-2 border-primary/50 bg-card"
+      className={`fixed bottom-6 right-6 z-[2147483647] w-14 h-14 rounded-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow border-2 border-primary/50 bg-card ${isChatOpen ? "hidden" : ""}`}
       aria-label="Abrir chat com especialista"
     >
       <img
