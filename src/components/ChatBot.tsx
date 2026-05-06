@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import avatarBot from "@/assets/avatar-bot.png";
 
 declare global {
@@ -12,6 +12,8 @@ declare global {
 
 const JQUERY_SCRIPT_ID = "chatbot-jquery-script";
 const INBOT_SCRIPT_ID = "chatscript";
+const CUSTOM_BUTTON_ID = "amplify-custom-chatbot-button";
+const HIDE_STYLE_ID = "amplify-hide-inbot-launcher-style";
 const INBOT_SRC =
   "https://in.bot/api/inbot.gz.js?bot_id=1128&bot_token=21jygoakkt&bot_server_type=production";
 const JQUERY_SRC = "https://code.jquery.com/jquery-3.7.1.min.js";
@@ -71,14 +73,86 @@ function ensureInbotLoaded(onReady: () => void, onFail: () => void) {
   document.body.appendChild(jqueryScript);
 }
 
+function hideProviderLaunchers() {
+  const selectors = [
+    '[id*="inbot" i]',
+    '[class*="inbot" i]',
+    'iframe[src*="in.bot"]',
+    'iframe[src*="inbot"]',
+  ];
+
+  for (const selector of selectors) {
+    document.querySelectorAll<HTMLElement>(selector).forEach((el) => {
+      if (el.id === CUSTOM_BUTTON_ID) return;
+      // Keep the chat window itself; hide only launcher-sized elements.
+      const rect = el.getBoundingClientRect();
+      const looksLikeLauncher = rect.width <= 220 && rect.height <= 220;
+      if (looksLikeLauncher) {
+        el.style.setProperty("display", "none", "important");
+        el.style.setProperty("visibility", "hidden", "important");
+        el.setAttribute("aria-hidden", "true");
+      }
+    });
+  }
+}
+
+function clickProviderLauncherFallback() {
+  const clickableSelectors = [
+    '[id*="inbot" i][role="button"]',
+    '[class*="inbot" i][role="button"]',
+    '[id*="inbot" i]',
+    '[class*="inbot" i]',
+  ];
+
+  for (const selector of clickableSelectors) {
+    const nodes = Array.from(document.querySelectorAll<HTMLElement>(selector));
+    for (const node of nodes) {
+      if (node.id === CUSTOM_BUTTON_ID) continue;
+      const rect = node.getBoundingClientRect();
+      if (rect.width <= 260 && rect.height <= 260) {
+        node.click();
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
 const ChatBot = () => {
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    if (!document.getElementById(HIDE_STYLE_ID)) {
+      const style = document.createElement("style");
+      style.id = HIDE_STYLE_ID;
+      style.textContent = `
+        iframe[src*="in.bot"][style*="bottom"],
+        iframe[src*="inbot"][style*="bottom"],
+        [id*="inbot" i][style*="bottom"],
+        [class*="inbot" i][style*="bottom"] {
+          display: none !important;
+          visibility: hidden !important;
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    hideProviderLaunchers();
+    const observer = new MutationObserver(() => hideProviderLaunchers());
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, []);
 
   const handleClick = () => {
     setIsLoading(true);
     ensureInbotLoaded(
       () => {
         waitAndOpenInbot();
+        window.setTimeout(() => {
+          if (!openInbot()) {
+            clickProviderLauncherFallback();
+          }
+        }, 400);
         setIsLoading(false);
       },
       () => {
@@ -89,11 +163,17 @@ const ChatBot = () => {
     // If already loaded, open immediately.
     if (openInbot()) {
       setIsLoading(false);
+      return;
     }
+
+    // Final fallback for cases where provider API methods are unavailable.
+    clickProviderLauncherFallback();
+    setIsLoading(false);
   };
 
   return (
     <button
+      id={CUSTOM_BUTTON_ID}
       type="button"
       onClick={handleClick}
       className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full overflow-hidden shadow-lg hover:shadow-xl transition-shadow border-2 border-primary/50 bg-card"
