@@ -4,15 +4,15 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "build:dev": "vite build --mode development",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
     "lint": "eslint .",
-    "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
     "lighthouse": "lighthouse http://localhost:4173 --output html --output-path ./lighthouse-report.html",
-    "lhci:audit": "lhci autorun"
+    "lhci:audit": "lhci autorun",
+    "lighthouse:prod:mobile:median": "node scripts/lighthouse-prod-mobile-median.mjs https://aplify-site.vercel.app 5"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -78,6 +78,9 @@
     "zod": "^3.25.76"
   },
   "devDependencies": {
+    "@astrojs/react": "^5.0.4",
+    "@astrojs/tailwind": "^6.0.2",
+    "@astrojs/vercel": "^9.0.0",
     "@eslint/js": "^9.32.0",
     "@lhci/cli": "^0.15.1",
     "@tailwindcss/typography": "^0.5.16",
@@ -87,6 +90,7 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@vitejs/plugin-react-swc": "^3.11.0",
+    "astro": "^5.18.1",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",

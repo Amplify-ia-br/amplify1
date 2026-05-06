@@ -1,0 +1,33 @@
+---
+import globalStyles from "@/index.css?url";
+
+const {
+  title = "Amplify | Inteligencia Artificial para empresas",
+  description = "A Amplify conecta estrategia, educacao corporativa e consultoria para ajudar empresas a aplicar Inteligencia Artificial com impacto real.",
+} = Astro.props;
+
+const pageTitle = String(title).trim() || "Amplify | Inteligencia Artificial para empresas";
+const pageDescription = String(description).trim() || "A Amplify conecta estrategia, educacao corporativa e consultoria para ajudar empresas a aplicar Inteligencia Artificial com impacto real.";
+const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
+---
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={pageDescription} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={pageDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={pageTitle} />
+    <meta name="twitter:description" content={pageDescription} />
+    <link rel="stylesheet" href={globalStyles} />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

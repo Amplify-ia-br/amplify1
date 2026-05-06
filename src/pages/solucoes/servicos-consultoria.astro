@@ -1,0 +1,23 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import ServicosConsultoria from "@/pages/_ServicosConsultoria.tsx";
+import { getImage } from "astro:assets";
+import heroImage from "@/assets/consultoria-servicos-hero.jpg";
+
+const [heroAvif, heroWebp] = await Promise.all([
+  getImage({ src: heroImage, format: "avif", quality: 55, widths: [640, 960, 1280, 1600] }),
+  getImage({ src: heroImage, format: "webp", quality: 65, widths: [640, 960, 1280, 1600] }),
+]);
+
+const optimizedHero = {
+  avifSrcSet: heroAvif.srcSet.attribute,
+  webpSrcSet: heroWebp.srcSet.attribute,
+  fallbackSrc: heroWebp.src,
+  sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1280px",
+  width: heroWebp.attributes.width,
+  height: heroWebp.attributes.height,
+};
+---
+<PageShell title="Servicos de consultoria | Amplify">
+  <ServicosConsultoria heroImage={optimizedHero} client:load />
+</PageShell>

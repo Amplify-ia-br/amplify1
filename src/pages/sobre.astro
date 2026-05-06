@@ -1,0 +1,23 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import Sobre from "@/pages/_Sobre.tsx";
+import { getImage } from "astro:assets";
+import fernandoImage from "@/assets/founders/fernando-godoy.png";
+
+const [fernandoAvif, fernandoWebp] = await Promise.all([
+  getImage({ src: fernandoImage, format: "avif", quality: 55, widths: [640, 960] }),
+  getImage({ src: fernandoImage, format: "webp", quality: 65, widths: [640, 960] }),
+]);
+
+const optimizedFernando = {
+  avifSrcSet: fernandoAvif.srcSet.attribute,
+  webpSrcSet: fernandoWebp.srcSet.attribute,
+  fallbackSrc: fernandoWebp.src,
+  sizes: "(max-width: 768px) 100vw, 33vw",
+  width: fernandoWebp.attributes.width,
+  height: fernandoWebp.attributes.height,
+};
+---
+<PageShell title="Sobre | Amplify">
+  <Sobre fernandoImage={optimizedFernando} client:load />
+</PageShell>

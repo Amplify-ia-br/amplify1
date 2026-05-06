@@ -1,0 +1,37 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import Layout from "@/components/layout/Layout";
+import { assetSrc } from "@/lib/assets";
+import alexImg from "@/assets/founders/alex-garcia.png";
+---
+<PageShell title="Alex Garcia | Amplify">
+  <Layout>
+    <section class="py-24 md:py-32 bg-background">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-12 items-center max-w-5xl mx-auto">
+          <div class="rounded-2xl overflow-hidden bg-card border border-border">
+            <img src={assetSrc(alexImg)} alt="Alex Garcia" class="w-full aspect-square object-cover object-top" />
+          </div>
+          <div class="space-y-6">
+            <a href="/sobre" class="text-sm text-muted-foreground hover:text-primary transition-colors">Voltar para Sobre</a>
+            <div>
+              <p class="text-sm text-primary font-medium mb-2">CRO & Founder</p>
+              <h1 class="text-4xl md:text-5xl font-heading font-bold text-foreground italic">Alex Garcia</h1>
+            </div>
+            <p class="text-muted-foreground leading-relaxed">
+              Cofundador da Amplify, atua na expansão comercial e no relacionamento com empresas que buscam aplicar Inteligência Artificial com estratégia, clareza e impacto operacional.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <a href="https://www.linkedin.com/in/alexgarciacr/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center h-11 px-6 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors">
+                LinkedIn
+              </a>
+              <a href="https://wa.me/5511918252109?text=Olá! Gostaria de falar com a Amplify." target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center h-11 px-6 rounded-md border border-border text-foreground hover:bg-card transition-colors">
+                Fale com a Amplify
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </Layout>
+</PageShell>

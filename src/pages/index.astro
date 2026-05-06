@@ -1,0 +1,29 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import Index from "@/pages/_Index.tsx";
+import forumPalestra from "@/assets/optimized/forum-palestra.webp";
+import faculdadeHub from "@/assets/optimized/faculdade-hub.webp";
+import depoimentoGuilherme from "@/assets/depoimento-guilherme.png";
+import caseFordBrasil from "@/assets/optimized/case-ford-brasil-card.webp";
+import caseForumNegocios from "@/assets/optimized/case-forum-negocios-card.webp";
+import caseGrupoErea from "@/assets/optimized/case-grupo-erea-card.webp";
+import caseFpf from "@/assets/optimized/case-fpf-card.webp";
+
+const homeImages = {
+  forumPalestra: forumPalestra.src,
+  faculdadeHub: faculdadeHub.src,
+  depoimento: depoimentoGuilherme.src,
+  cases: [
+    { name: "Ford Brasil", image: caseFordBrasil.src },
+    { name: "Fórum Negócios", image: caseForumNegocios.src },
+    { name: "Grupo EREA", image: caseGrupoErea.src },
+    { name: "FPF", image: caseFpf.src },
+  ],
+};
+---
+<PageShell
+  title="Amplify | Inteligencia Artificial para empresas"
+  description="A Amplify ajuda empresas a aplicar Inteligencia Artificial com estrategia, capacitacao e consultoria orientadas a resultado."
+>
+  <Index images={homeImages} />
+</PageShell>

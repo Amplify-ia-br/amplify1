@@ -1,3 +1,4 @@
+import "@/index.css";
 import { ReactNode } from "react";
 import Navbar from "./Navbar";
 import Footer from "./Footer";

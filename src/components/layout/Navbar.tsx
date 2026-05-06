@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "@/lib/astro-router";
+import { assetSrc } from "@/lib/assets";
 import { Menu, X, ChevronDown } from "lucide-react";
 import logoAmplify from "@/assets/logo-amplify-branco.png";
 import { Button } from "@/components/ui/button";
@@ -44,9 +45,11 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center">
             <img 
-              src={logoAmplify} 
+              src={assetSrc(logoAmplify)} 
               alt="Amplify" 
-              className="h-8 w-auto"
+              width={160}
+              height={32}
+              className="h-6 md:h-8 w-auto"
             />
           </Link>
 
@@ -173,6 +176,8 @@ const Navbar = () => {
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 text-foreground"
+            aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
+            aria-expanded={isOpen}
           >
             {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
           </button>

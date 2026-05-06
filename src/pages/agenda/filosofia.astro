@@ -1,0 +1,35 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import EventoFilosofia from "@/pages/_EventoFilosofia.tsx";
+import { getImage } from "astro:assets";
+import imgFernando from "@/assets/eventos/fernando-godoy-filosofia.png";
+import imgFilosofiaHero from "@/assets/eventos/filosofia-hero.png";
+
+const [fernandoAvif, fernandoWebp, heroAvif, heroWebp] = await Promise.all([
+  getImage({ src: imgFernando, format: "avif", quality: 55, widths: [192, 288, 384] }),
+  getImage({ src: imgFernando, format: "webp", quality: 65, widths: [192, 288, 384] }),
+  getImage({ src: imgFilosofiaHero, format: "avif", quality: 55, widths: [640, 960, 1280, 1600] }),
+  getImage({ src: imgFilosofiaHero, format: "webp", quality: 65, widths: [640, 960, 1280, 1600] }),
+]);
+
+const optimizedFernando = {
+  avifSrcSet: fernandoAvif.srcSet.attribute,
+  webpSrcSet: fernandoWebp.srcSet.attribute,
+  fallbackSrc: fernandoWebp.src,
+  sizes: "(max-width: 768px) 112px, 144px",
+  width: fernandoWebp.attributes.width,
+  height: fernandoWebp.attributes.height,
+};
+
+const optimizedHero = {
+  avifSrcSet: heroAvif.srcSet.attribute,
+  webpSrcSet: heroWebp.srcSet.attribute,
+  fallbackSrc: heroWebp.src,
+  sizes: "(max-width: 768px) 100vw, (max-width: 1280px) 90vw, 1280px",
+  width: heroWebp.attributes.width,
+  height: heroWebp.attributes.height,
+};
+---
+<PageShell title="A Filosofia da IA | Amplify">
+  <EventoFilosofia imgFernando={optimizedFernando} imgFilosofiaHero={optimizedHero} client:load />
+</PageShell>

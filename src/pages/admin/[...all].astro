@@ -1,0 +1,17 @@
+---
+import globalStyles from "@/index.css?url";
+export const prerender = false;
+import AdminApp from "../../admin/AdminApp.tsx";
+---
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin | Amplify</title>
+    <meta name="description" content="Area administrativa da Amplify." />
+    <link rel="stylesheet" href={globalStyles} />
+  </head>
+  <body>
+    <AdminApp client:only="react" />
+  </body>
+</html>

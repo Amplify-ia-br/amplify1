@@ -1,0 +1,54 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import FounderFernando from "@/pages/_FounderFernando.tsx";
+import { getImage } from "astro:assets";
+import fernandoAvatar from "@/assets/founders/fernando-godoy.png";
+import globonews from "@/assets/founders/fernando-globonews.png";
+import pecege from "@/assets/founders/fernando-pecege.png";
+
+const [
+  avatarAvif,
+  avatarWebp,
+  globonewsAvif,
+  globonewsWebp,
+  pecegeAvif,
+  pecegeWebp,
+] = await Promise.all([
+  getImage({ src: fernandoAvatar, format: "avif", quality: 55, widths: [160, 240, 320] }),
+  getImage({ src: fernandoAvatar, format: "webp", quality: 65, widths: [160, 240, 320] }),
+  getImage({ src: globonews, format: "avif", quality: 55, widths: [640, 960, 1280] }),
+  getImage({ src: globonews, format: "webp", quality: 65, widths: [640, 960, 1280] }),
+  getImage({ src: pecege, format: "avif", quality: 55, widths: [640, 960, 1280] }),
+  getImage({ src: pecege, format: "webp", quality: 65, widths: [640, 960, 1280] }),
+]);
+
+const optimizedAvatar = {
+  avifSrcSet: avatarAvif.srcSet.attribute,
+  webpSrcSet: avatarWebp.srcSet.attribute,
+  fallbackSrc: avatarWebp.src,
+  sizes: "80px",
+  width: avatarWebp.attributes.width,
+  height: avatarWebp.attributes.height,
+};
+
+const optimizedGlobonews = {
+  avifSrcSet: globonewsAvif.srcSet.attribute,
+  webpSrcSet: globonewsWebp.srcSet.attribute,
+  fallbackSrc: globonewsWebp.src,
+  sizes: "(max-width: 768px) 100vw, 50vw",
+  width: globonewsWebp.attributes.width,
+  height: globonewsWebp.attributes.height,
+};
+
+const optimizedPecege = {
+  avifSrcSet: pecegeAvif.srcSet.attribute,
+  webpSrcSet: pecegeWebp.srcSet.attribute,
+  fallbackSrc: pecegeWebp.src,
+  sizes: "(max-width: 768px) 100vw, 50vw",
+  width: pecegeWebp.attributes.width,
+  height: pecegeWebp.attributes.height,
+};
+---
+<PageShell title="Fernando Godoy | Amplify">
+  <FounderFernando fernandoAvatar={optimizedAvatar} globonews={optimizedGlobonews} pecege={optimizedPecege} client:load />
+</PageShell>

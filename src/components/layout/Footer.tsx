@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/astro-router";
+import { assetSrc } from "@/lib/assets";
 import { Phone, MapPin, Linkedin, Instagram, Youtube } from "lucide-react";
 import logoAmplify from "@/assets/logo-amplify-footer.png";
 
@@ -11,9 +12,11 @@ const Footer = () => {
           <div className="space-y-4">
             <Link to="/" className="inline-block">
               <img 
-                src={logoAmplify} 
+                src={assetSrc(logoAmplify)} 
                 alt="Amplify" 
-                className="h-8 w-auto"
+                width={160}
+                height={32}
+                className="h-6 md:h-8 w-auto"
               />
             </Link>
             <p className="text-sm text-muted-foreground">
@@ -124,7 +127,7 @@ const Footer = () => {
               <Link to="/termos" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Termos de Uso
               </Link>
-              <Link to="/admin" className="text-sm text-muted-foreground/60 hover:text-primary transition-colors">
+              <Link to="/admin" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Admin
               </Link>
             </div>

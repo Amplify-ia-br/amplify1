@@ -1,0 +1,8 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import BlogPost from "@/pages/_BlogPost.tsx";
+const { slug } = Astro.params;
+---
+<PageShell title="Blog | Amplify">
+  <BlogPost slug={slug} client:load />
+</PageShell>
