@@ -1,5 +1,6 @@
 ---
 import globalStyles from "@/index.css?url";
+import ChatBot from "@/components/ChatBot";
 
 const {
   title = "Amplify | Inteligencia Artificial para empresas",
@@ -29,5 +30,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString(
   </head>
   <body>
     <slot />
+    <ChatBot client:load />
   </body>
 </html>
