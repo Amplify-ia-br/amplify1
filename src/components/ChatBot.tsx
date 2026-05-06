@@ -115,6 +115,31 @@ const ChatBot = () => {
       if (botIcon) botIcon.style.setProperty("display", "none", "important");
       if (botPointer) botPointer.style.setProperty("display", "none", "important");
 
+      // Some InBot themes render an extra fixed bubble with "chat.com".
+      // Hide only tiny bottom-right fixed bubbles, never the full chat box.
+      document.querySelectorAll<HTMLElement>("div, a, button, span").forEach((el) => {
+        if (el.id === CUSTOM_BUTTON_ID || el.id === "box_chat") return;
+        const text = (el.textContent || "").trim().toLowerCase();
+        if (!text.includes("chat.com")) return;
+        const style = window.getComputedStyle(el);
+        const rect = el.getBoundingClientRect();
+        const looksLikeLauncher =
+          style.position === "fixed" &&
+          rect.width > 16 &&
+          rect.width <= 140 &&
+          rect.height > 16 &&
+          rect.height <= 140 &&
+          rect.right >= window.innerWidth - 180 &&
+          rect.bottom >= window.innerHeight - 180;
+
+        if (looksLikeLauncher) {
+          el.style.setProperty("display", "none", "important");
+          el.style.setProperty("visibility", "hidden", "important");
+          el.style.setProperty("opacity", "0", "important");
+          el.style.setProperty("pointer-events", "none", "important");
+        }
+      });
+
       if (boxChat) {
         const visible = boxChat.style.display !== "none" && boxChat.offsetParent !== null;
         setIsChatOpen(visible);
