@@ -12,7 +12,9 @@
     "test:watch": "vitest",
     "lighthouse": "lighthouse http://localhost:4173 --output html --output-path ./lighthouse-report.html",
     "lhci:audit": "lhci autorun",
-    "lighthouse:prod:mobile:median": "node scripts/lighthouse-prod-mobile-median.mjs https://aplify-site.vercel.app 5"
+    "lighthouse:prod:mobile:median": "node scripts/lighthouse-prod-mobile-median.mjs https://aplify-site.vercel.app 5",
+    "migrate:blog:sanity:dry": "node scripts/migrate-blog-posts-to-sanity.mjs",
+    "migrate:blog:sanity": "node scripts/migrate-blog-posts-to-sanity.mjs --apply"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
