@@ -1,6 +1,5 @@
 ---
 import globalStyles from "@/index.css?url";
-import ChatBot from "@/components/ChatBot";
 
 const {
   title = "Amplify | Inteligencia Artificial para empresas",
@@ -27,9 +26,18 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString(
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
     <link rel="stylesheet" href={globalStyles} />
+    <script
+      id="chatbot-jquery-script"
+      src="https://code.jquery.com/jquery-3.7.1.min.js"
+      defer
+    ></script>
+    <script
+      id="chatscript"
+      src="https://in.bot/api/inbot.gz.js?bot_id=1128&bot_token=21jygoakkt&bot_server_type=production"
+      async
+    ></script>
   </head>
   <body>
     <slot />
-    <ChatBot client:load />
   </body>
 </html>

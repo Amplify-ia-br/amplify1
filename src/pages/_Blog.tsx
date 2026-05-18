@@ -3,6 +3,7 @@ import { Link } from "@/lib/astro-router";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getSanityPosts } from "@/integrations/sanity/blog";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, ScaleIn } from "@/components/animations/MotionWrapper";
 import { Button } from "@/components/ui/button";
@@ -24,13 +25,25 @@ const Blog = () => {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase
-        .from("blog_posts")
-        .select("id, title, slug, excerpt, cover_image_url, category, read_time, published_at")
-        .eq("published", true)
-        .order("published_at", { ascending: false });
-      setPosts(data ?? []);
-      setLoading(false);
+      try {
+        const sanityPosts = await getSanityPosts();
+        if (sanityPosts) {
+          setPosts(sanityPosts);
+          return;
+        }
+
+        const { data } = await supabase
+          .from("blog_posts")
+          .select("id, title, slug, excerpt, cover_image_url, category, read_time, published_at")
+          .eq("published", true)
+          .order("published_at", { ascending: false });
+        setPosts(data ?? []);
+      } catch (_error) {
+        // Keep UI responsive even if CMS request fails.
+        setPosts([]);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 

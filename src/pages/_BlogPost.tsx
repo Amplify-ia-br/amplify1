@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Clock, User, Loader2 } from "lucide-react";
 import DOMPurify from "dompurify";
 import { supabase } from "@/integrations/supabase/client";
+import { getSanityPostBySlug } from "@/integrations/sanity/blog";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp } from "@/components/animations/MotionWrapper";
 import NotFound from "./_NotFound";
@@ -30,15 +31,26 @@ const BlogPost = ({ slug }: BlogPostProps) => {
   useEffect(() => {
     if (!slug) { setNotFound(true); setLoading(false); return; }
     (async () => {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("title, cover_image_url, published_at, read_time, category, author_name, content")
-        .eq("slug", slug)
-        .eq("published", true)
-        .maybeSingle();
-      if (error || !data) { setNotFound(true); }
-      else { setPost(data); }
-      setLoading(false);
+      try {
+        const sanityPost = await getSanityPostBySlug(slug);
+        if (sanityPost) {
+          setPost(sanityPost);
+          return;
+        }
+
+        const { data, error } = await supabase
+          .from("blog_posts")
+          .select("title, cover_image_url, published_at, read_time, category, author_name, content")
+          .eq("slug", slug)
+          .eq("published", true)
+          .maybeSingle();
+        if (error || !data) { setNotFound(true); }
+        else { setPost(data); }
+      } catch (_error) {
+        setNotFound(true);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, [slug]);
 

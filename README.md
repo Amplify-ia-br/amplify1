@@ -71,3 +71,31 @@ Yes, you can!
 To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+
+## Sanity (blog) integration
+
+This project now supports Sanity as the source for public blog pages with automatic fallback to Supabase.
+
+1. Add env vars in `.env`:
+
+```sh
+PUBLIC_SANITY_PROJECT_ID=your_project_id
+PUBLIC_SANITY_DATASET=production
+PUBLIC_SANITY_API_VERSION=2025-01-01
+```
+
+2. If these vars are present, `/blog` and `/blog/[slug]` will read from Sanity.
+3. If these vars are missing, pages continue using Supabase (current behavior).
+
+Expected Sanity document shape for `_type == "post"`:
+
+- `title` (string)
+- `slug.current` (slug)
+- `published` (boolean)
+- `publishedAt` (datetime)
+- `excerpt` (string, optional)
+- `category` (string, optional)
+- `readTime` (string, optional)
+- `authorName` (string, optional)
+- `coverImage.asset` (image, optional)
+- `contentHtml` (text/html string used by the current blog renderer)
