@@ -6,5 +6,5 @@ import { getSanityPosts } from "@/integrations/sanity/blog";
 const posts = (await getSanityPosts()) ?? [];
 ---
 <PageShell title="Blog | Amplify">
-  <Blog posts={posts} />
+  <Blog client:load posts={posts} />
 </PageShell>

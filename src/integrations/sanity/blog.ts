@@ -6,14 +6,14 @@ export interface SanityBlogPostListItem {
   title: string;
   slug: string;
   excerpt: string | null;
-  cover_image_url: string | null;
+  coverImage: string | null;
   category: string | null;
-  read_time: string | null;
-  published_at: string | null;
+  readTime: string | null;
+  publishedAt: string | null;
 }
 
 export interface SanityBlogPostDetail extends SanityBlogPostListItem {
-  author_name: string | null;
+  authorName: string | null;
   content: string;
 }
 
@@ -22,10 +22,10 @@ const POSTS_LIST_QUERY = groq`*[_type == "post" && published == true] | order(pu
   title,
   "slug": slug.current,
   excerpt,
-  "cover_image_url": coverImage.asset->url,
+  "coverImage": coverImage.asset->url,
   category,
-  "read_time": readTime,
-  "published_at": publishedAt
+  "readTime": readTime,
+  "publishedAt": publishedAt
 }`;
 
 const POST_BY_SLUG_QUERY = groq`*[_type == "post" && published == true && slug.current == $slug][0]{
@@ -33,11 +33,11 @@ const POST_BY_SLUG_QUERY = groq`*[_type == "post" && published == true && slug.c
   title,
   "slug": slug.current,
   excerpt,
-  "cover_image_url": coverImage.asset->url,
+  "coverImage": coverImage.asset->url,
   category,
-  "read_time": readTime,
-  "published_at": publishedAt,
-  "author_name": authorName,
+  "readTime": readTime,
+  "publishedAt": publishedAt,
+  "authorName": authorName,
   "content": coalesce(contentHtml, "")
 }`;
 
@@ -52,4 +52,3 @@ export async function getSanityPostBySlug(slug: string) {
   const data = await sanityClient.fetch<SanityBlogPostDetail | null>(POST_BY_SLUG_QUERY, { slug });
   return data;
 }
-

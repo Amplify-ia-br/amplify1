@@ -38,22 +38,22 @@ const BlogPost = ({ post }: BlogPostProps) => {
                 {post.title}
               </h1>
               <div className="flex flex-wrap items-center gap-4 mt-6 text-sm text-muted-foreground">
-                {post.author_name && (
-                  <span className="flex items-center"><User className="h-4 w-4 mr-1" />{post.author_name}</span>
+                {post.authorName && (
+                  <span className="flex items-center"><User className="h-4 w-4 mr-1" />{post.authorName}</span>
                 )}
-                {post.published_at && (
-                  <span className="flex items-center"><Calendar className="h-4 w-4 mr-1" />{formatDate(post.published_at)}</span>
+                {post.publishedAt && (
+                  <span className="flex items-center"><Calendar className="h-4 w-4 mr-1" />{formatDate(post.publishedAt)}</span>
                 )}
-                {post.read_time && (
-                  <span className="flex items-center"><Clock className="h-4 w-4 mr-1" />{post.read_time} de leitura</span>
+                {post.readTime && (
+                  <span className="flex items-center"><Clock className="h-4 w-4 mr-1" />{post.readTime} de leitura</span>
                 )}
               </div>
             </FadeInUp>
 
-            {post.cover_image_url && (
+            {post.coverImage && (
               <FadeInUp delay={0.1}>
                 <motion.div className="my-10 rounded-2xl overflow-hidden border border-border" whileHover={{ scale: 1.01 }}>
-                  <img src={post.cover_image_url} alt={post.title} className="w-full h-auto object-cover" />
+                  <img src={post.coverImage} alt={post.title} className="w-full h-auto object-cover" />
                 </motion.div>
               </FadeInUp>
             )}
@@ -65,14 +65,14 @@ const BlogPost = ({ post }: BlogPostProps) => {
               />
             </FadeInUp>
 
-            {post.author_name && (
+            {post.authorName && (
               <FadeInUp delay={0.3}>
                 <div className="mt-16 p-6 rounded-2xl bg-card border border-border flex items-center gap-4">
                   <div className="h-14 w-14 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold text-xl">
-                    {post.author_name.split(" ").map((s) => s[0]).slice(0, 2).join("")}
+                    {post.authorName.split(" ").map((s) => s[0]).slice(0, 2).join("")}
                   </div>
                   <div>
-                    <p className="font-heading font-semibold">{post.author_name}</p>
+                    <p className="font-heading font-semibold">{post.authorName}</p>
                     <p className="text-sm text-muted-foreground">Amplify</p>
                   </div>
                 </div>

@@ -6,5 +6,5 @@ const { slug } = Astro.params;
 const post = slug ? await getSanityPostBySlug(slug) : null;
 ---
 <PageShell title="Blog | Amplify">
-  <BlogPost post={post} />
+  <BlogPost client:load post={post} />
 </PageShell>

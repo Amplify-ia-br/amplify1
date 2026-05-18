@@ -19,7 +19,7 @@ const Blog = ({ posts }: BlogProps) => {
 
   return (
     <Layout>
-      <section className="relative py-24 md:py-32 overflow-hidden">
+      <section className="relative py-20 md:py-24 overflow-hidden">
         <div className="absolute inset-0 gradient-bg" />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
         <div className="container mx-auto px-4 relative z-10">
@@ -39,7 +39,7 @@ const Blog = ({ posts }: BlogProps) => {
         </div>
       </section>
 
-      <section className="py-20">
+      <section className="py-16 md:py-20">
         <div className="container mx-auto px-4">
           {posts.length === 0 ? (
             <p className="text-center text-muted-foreground py-16">Nenhum post publicado ainda.</p>
@@ -52,8 +52,8 @@ const Blog = ({ posts }: BlogProps) => {
                     className="group grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 rounded-2xl bg-card border border-border hover:border-primary/50 transition-all duration-300"
                   >
                     <motion.div className="aspect-video rounded-xl overflow-hidden bg-muted" whileHover={{ scale: 1.02 }}>
-                      {featured.cover_image_url && (
-                        <img src={featured.cover_image_url} alt={featured.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      {featured.coverImage && (
+                        <img src={featured.coverImage} alt={featured.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                       )}
                     </motion.div>
                     <div className="flex flex-col justify-center space-y-4">
@@ -63,8 +63,8 @@ const Blog = ({ posts }: BlogProps) => {
                       <h2 className="text-2xl md:text-3xl font-heading font-bold group-hover:text-primary transition-colors">{featured.title}</h2>
                       {featured.excerpt && <p className="text-muted-foreground">{featured.excerpt}</p>}
                       <div className="flex items-center space-x-4 text-sm text-muted-foreground">
-                        <span className="flex items-center"><Calendar className="h-4 w-4 mr-1" />{formatDate(featured.published_at)}</span>
-                        {featured.read_time && <span className="flex items-center"><Clock className="h-4 w-4 mr-1" />{featured.read_time}</span>}
+                        <span className="flex items-center"><Calendar className="h-4 w-4 mr-1" />{formatDate(featured.publishedAt)}</span>
+                        {featured.readTime && <span className="flex items-center"><Clock className="h-4 w-4 mr-1" />{featured.readTime}</span>}
                       </div>
                     </div>
                   </Link>
@@ -79,9 +79,9 @@ const Blog = ({ posts }: BlogProps) => {
                       to={`/blog/${post.slug}`}
                       className="group flex flex-col rounded-2xl bg-card border border-border hover:border-primary/50 transition-all overflow-hidden"
                     >
-                      {post.cover_image_url && (
+                      {post.coverImage && (
                         <div className="aspect-video overflow-hidden bg-muted">
-                          <img src={post.cover_image_url} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         </div>
                       )}
                       <div className="p-5 space-y-3 flex-1 flex flex-col">
@@ -91,8 +91,8 @@ const Blog = ({ posts }: BlogProps) => {
                         <h3 className="font-heading font-bold group-hover:text-primary transition-colors">{post.title}</h3>
                         {post.excerpt && <p className="text-sm text-muted-foreground line-clamp-3">{post.excerpt}</p>}
                         <div className="flex items-center gap-3 text-xs text-muted-foreground mt-auto pt-2">
-                          <span className="flex items-center"><Calendar className="h-3 w-3 mr-1" />{formatDate(post.published_at)}</span>
-                          {post.read_time && <span className="flex items-center"><Clock className="h-3 w-3 mr-1" />{post.read_time}</span>}
+                          <span className="flex items-center"><Calendar className="h-3 w-3 mr-1" />{formatDate(post.publishedAt)}</span>
+                          {post.readTime && <span className="flex items-center"><Clock className="h-3 w-3 mr-1" />{post.readTime}</span>}
                         </div>
                       </div>
                     </Link>
