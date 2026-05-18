@@ -74,11 +74,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString(
         window.addEventListener("keydown", start, { once: true, passive: true });
         window.addEventListener("scroll", start, { once: true, passive: true });
 
-        if ("requestIdleCallback" in window) {
-          window.requestIdleCallback(() => loadChatbot(), { timeout: 4500 });
-        } else {
-          window.setTimeout(loadChatbot, 3000);
-        }
+        // Fallback tardio para usuários que não interagem, sem afetar o carregamento inicial.
+        window.setTimeout(loadChatbot, 15000);
       })();
     </script>
   </head>
