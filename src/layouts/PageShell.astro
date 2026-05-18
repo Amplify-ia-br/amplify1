@@ -26,16 +26,61 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString(
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
     <link rel="stylesheet" href={globalStyles} />
-    <script
-      id="chatbot-jquery-script"
-      src="https://code.jquery.com/jquery-3.7.1.min.js"
-      defer
-    ></script>
-    <script
-      id="chatscript"
-      src="https://in.bot/api/inbot.gz.js?bot_id=1128&bot_token=21jygoakkt&bot_server_type=production"
-      async
-    ></script>
+    <link rel="preconnect" href="https://code.jquery.com" crossorigin />
+    <link rel="preconnect" href="https://in.bot" crossorigin />
+    <script is:inline>
+      (() => {
+        let loaded = false;
+
+        function loadScript(id, src, async = true) {
+          return new Promise((resolve, reject) => {
+            if (document.getElementById(id)) {
+              resolve();
+              return;
+            }
+            const script = document.createElement("script");
+            script.id = id;
+            script.src = src;
+            script.async = async;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error(`Failed to load ${src}`));
+            document.head.appendChild(script);
+          });
+        }
+
+        async function loadChatbot() {
+          if (loaded) return;
+          loaded = true;
+          try {
+            await loadScript("chatbot-jquery-script", "https://code.jquery.com/jquery-3.7.1.min.js", true);
+            await loadScript(
+              "chatscript",
+              "https://in.bot/api/inbot.gz.js?bot_id=1128&bot_token=21jygoakkt&bot_server_type=production",
+              true
+            );
+          } catch (_err) {
+            loaded = false;
+          }
+        }
+
+        const start = () => {
+          window.removeEventListener("pointerdown", start);
+          window.removeEventListener("keydown", start);
+          window.removeEventListener("scroll", start);
+          loadChatbot();
+        };
+
+        window.addEventListener("pointerdown", start, { once: true, passive: true });
+        window.addEventListener("keydown", start, { once: true, passive: true });
+        window.addEventListener("scroll", start, { once: true, passive: true });
+
+        if ("requestIdleCallback" in window) {
+          window.requestIdleCallback(() => loadChatbot(), { timeout: 4500 });
+        } else {
+          window.setTimeout(loadChatbot, 3000);
+        }
+      })();
+    </script>
   </head>
   <body>
     <slot />
