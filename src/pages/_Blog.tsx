@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "@/lib/astro-router";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { hasSupabaseConfig, supabase } from "@/integrations/supabase/client";
 import { getSanityPosts } from "@/integrations/sanity/blog";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, ScaleIn } from "@/components/animations/MotionWrapper";
@@ -29,6 +29,11 @@ const Blog = () => {
         const sanityPosts = await getSanityPosts();
         if (sanityPosts) {
           setPosts(sanityPosts);
+          return;
+        }
+
+        if (!hasSupabaseConfig) {
+          setPosts([]);
           return;
         }
 

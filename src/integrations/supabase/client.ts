@@ -4,13 +4,20 @@ import type { Database } from './types';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+export const hasSupabaseConfig = Boolean(SUPABASE_URL && SUPABASE_PUBLISHABLE_KEY);
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
 const isBrowser = typeof window !== "undefined";
 
-export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+const FALLBACK_SUPABASE_URL = "https://example.supabase.co";
+const FALLBACK_SUPABASE_KEY = "public-anon-key-placeholder";
+
+export const supabase = createClient<Database>(
+  hasSupabaseConfig ? SUPABASE_URL : FALLBACK_SUPABASE_URL,
+  hasSupabaseConfig ? SUPABASE_PUBLISHABLE_KEY : FALLBACK_SUPABASE_KEY,
+  {
   auth: {
     storage: isBrowser ? localStorage : undefined,
     persistSession: true,

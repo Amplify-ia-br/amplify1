@@ -3,7 +3,7 @@ import { Link } from "@/lib/astro-router";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Clock, User, Loader2 } from "lucide-react";
 import DOMPurify from "dompurify";
-import { supabase } from "@/integrations/supabase/client";
+import { hasSupabaseConfig, supabase } from "@/integrations/supabase/client";
 import { getSanityPostBySlug } from "@/integrations/sanity/blog";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp } from "@/components/animations/MotionWrapper";
@@ -35,6 +35,11 @@ const BlogPost = ({ slug }: BlogPostProps) => {
         const sanityPost = await getSanityPostBySlug(slug);
         if (sanityPost) {
           setPost(sanityPost);
+          return;
+        }
+
+        if (!hasSupabaseConfig) {
+          setNotFound(true);
           return;
         }
 
