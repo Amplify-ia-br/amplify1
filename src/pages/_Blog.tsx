@@ -1,57 +1,16 @@
-import { useEffect, useState } from "react";
 import { Link } from "@/lib/astro-router";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Loader2 } from "lucide-react";
-import { hasSupabaseConfig, supabase } from "@/integrations/supabase/client";
-import { getSanityPosts } from "@/integrations/sanity/blog";
+import { Calendar, Clock } from "lucide-react";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp, ScaleIn } from "@/components/animations/MotionWrapper";
 import { Button } from "@/components/ui/button";
+import type { SanityBlogPostListItem } from "@/integrations/sanity/blog";
 
-interface Post {
-  id: string;
-  title: string;
-  slug: string;
-  excerpt: string | null;
-  cover_image_url: string | null;
-  category: string | null;
-  read_time: string | null;
-  published_at: string | null;
+interface BlogProps {
+  posts: SanityBlogPostListItem[];
 }
 
-const Blog = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const sanityPosts = await getSanityPosts();
-        if (sanityPosts) {
-          setPosts(sanityPosts);
-          return;
-        }
-
-        if (!hasSupabaseConfig) {
-          setPosts([]);
-          return;
-        }
-
-        const { data } = await supabase
-          .from("blog_posts")
-          .select("id, title, slug, excerpt, cover_image_url, category, read_time, published_at")
-          .eq("published", true)
-          .order("published_at", { ascending: false });
-        setPosts(data ?? []);
-      } catch (_error) {
-        // Keep UI responsive even if CMS request fails.
-        setPosts([]);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
+const Blog = ({ posts }: BlogProps) => {
   const formatDate = (d: string | null) =>
     d ? new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" }) : "";
 
@@ -82,9 +41,7 @@ const Blog = () => {
 
       <section className="py-20">
         <div className="container mx-auto px-4">
-          {loading ? (
-            <div className="flex justify-center py-16"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>
-          ) : posts.length === 0 ? (
+          {posts.length === 0 ? (
             <p className="text-center text-muted-foreground py-16">Nenhum post publicado ainda.</p>
           ) : (
             <>

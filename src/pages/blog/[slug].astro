@@ -1,8 +1,10 @@
 ---
 import PageShell from "@/layouts/PageShell.astro";
 import BlogPost from "@/pages/_BlogPost.tsx";
+import { getSanityPostBySlug } from "@/integrations/sanity/blog";
 const { slug } = Astro.params;
+const post = slug ? await getSanityPostBySlug(slug) : null;
 ---
 <PageShell title="Blog | Amplify">
-  <BlogPost slug={slug} client:load />
+  <BlogPost post={post} />
 </PageShell>

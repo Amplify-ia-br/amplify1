@@ -1,68 +1,18 @@
-import { useEffect, useState } from "react";
 import { Link } from "@/lib/astro-router";
 import { motion } from "framer-motion";
-import { ArrowLeft, Calendar, Clock, User, Loader2 } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
 import DOMPurify from "dompurify";
-import { hasSupabaseConfig, supabase } from "@/integrations/supabase/client";
-import { getSanityPostBySlug } from "@/integrations/sanity/blog";
+import type { SanityBlogPostDetail } from "@/integrations/sanity/blog";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp } from "@/components/animations/MotionWrapper";
 import NotFound from "./_NotFound";
 
-interface Post {
-  title: string;
-  cover_image_url: string | null;
-  published_at: string | null;
-  read_time: string | null;
-  category: string | null;
-  author_name: string | null;
-  content: string;
-}
-
 interface BlogPostProps {
-  slug?: string;
+  post: SanityBlogPostDetail | null;
 }
 
-const BlogPost = ({ slug }: BlogPostProps) => {
-  const [post, setPost] = useState<Post | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
-
-  useEffect(() => {
-    if (!slug) { setNotFound(true); setLoading(false); return; }
-    (async () => {
-      try {
-        const sanityPost = await getSanityPostBySlug(slug);
-        if (sanityPost) {
-          setPost(sanityPost);
-          return;
-        }
-
-        if (!hasSupabaseConfig) {
-          setNotFound(true);
-          return;
-        }
-
-        const { data, error } = await supabase
-          .from("blog_posts")
-          .select("title, cover_image_url, published_at, read_time, category, author_name, content")
-          .eq("slug", slug)
-          .eq("published", true)
-          .maybeSingle();
-        if (error || !data) { setNotFound(true); }
-        else { setPost(data); }
-      } catch (_error) {
-        setNotFound(true);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [slug]);
-
-  if (loading) {
-    return <Layout><div className="min-h-[60vh] flex items-center justify-center"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div></Layout>;
-  }
-  if (notFound || !post) return <NotFound />;
+const BlogPost = ({ post }: BlogPostProps) => {
+  if (!post) return <NotFound />;
 
   const formatDate = (d: string | null) =>
     d ? new Date(d).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" }) : "";

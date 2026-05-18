@@ -1,7 +1,10 @@
 ---
 import PageShell from "@/layouts/PageShell.astro";
 import Blog from "@/pages/_Blog.tsx";
+import { getSanityPosts } from "@/integrations/sanity/blog";
+
+const posts = (await getSanityPosts()) ?? [];
 ---
 <PageShell title="Blog | Amplify">
-  <Blog client:load />
+  <Blog posts={posts} />
 </PageShell>
