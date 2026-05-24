@@ -2,6 +2,7 @@
 import globalStyles from "@/index.css?url";
 export const prerender = false;
 import AdminApp from "../../admin/AdminApp.tsx";
+import Analytics from "@vercel/analytics/astro";
 ---
 <html lang="pt-BR">
   <head>
@@ -13,5 +14,7 @@ import AdminApp from "../../admin/AdminApp.tsx";
   </head>
   <body>
     <AdminApp client:only="react" />
+    <Analytics />
+    <script type="text/javascript" async src="https://d335luupugsy2.cloudfront.net/js/loader-scripts/78f58b17-d323-4a2c-8a67-a7574e2f61f1-loader.js"></script>
   </body>
 </html>
