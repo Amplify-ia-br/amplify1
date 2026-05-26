@@ -73,7 +73,7 @@ const Index = ({ images }: IndexProps) => {
           </div>
 
           <div className="mt-16 space-y-6">
-            <h2 className="text-4xl md:text-6xl font-heading leading-tight text-center font-thin mx-0 lg:text-sm">EMPRESAS QUE CONFIAM</h2>
+            <h2 className="text-2xl md:text-4xl lg:text-5xl font-heading leading-tight text-center font-thin mx-0">EMPRESAS QUE CONFIAM</h2>
             <div className="w-full max-w-4xl mx-auto grid grid-cols-3 md:grid-cols-5 gap-4">
               {trustedCompanies.map((company, index) => (
                     <div key={index} className="flex items-center justify-center h-16 px-2">
