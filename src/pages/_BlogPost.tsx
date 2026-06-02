@@ -1,7 +1,7 @@
 import { Link } from "@/lib/astro-router";
 import { motion } from "framer-motion";
 import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
-import DOMPurify from "dompurify";
+import DOMPurify from "isomorphic-dompurify";
 import type { SanityBlogPostDetail } from "@/integrations/sanity/blog";
 import Layout from "@/components/layout/Layout";
 import { FadeInUp } from "@/components/animations/MotionWrapper";
