@@ -17,7 +17,6 @@ import {
 import { assetSrc } from "@/lib/assets";
 import { Button } from "@/components/ui/button";
 import { FadeInUp, StaggerContainer, StaggerItem } from "@/components/animations/MotionWrapper";
-import { supabase, hasSupabaseConfig } from "@/integrations/supabase/client";
 import logoAmplify from "@/assets/logo-amplify-branco.png";
 import cover from "@/assets/ebook/executivo-x0-cover.png";
 
@@ -93,18 +92,15 @@ const EbookExecutivoX0 = () => {
 
     setStatus("loading");
 
-    // Captura o lead (não bloqueia o download caso o backend não esteja disponível).
-    if (hasSupabaseConfig) {
-      try {
-        await supabase.from("ebook_leads").insert({
-          name: name.trim(),
-          email: email.trim().toLowerCase(),
-          company_site: site.trim() || null,
-          source: "lp-executivo-x0",
-        });
-      } catch (err) {
-        console.warn("Falha ao registrar lead do ebook:", err);
-      }
+    // Inscreve o lead no Kit (não bloqueia o download caso o backend falhe).
+    try {
+      await fetch("/api/ebook-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), site: site.trim() }),
+      });
+    } catch (err) {
+      console.warn("Falha ao registrar lead do ebook:", err);
     }
 
     setStatus("success");

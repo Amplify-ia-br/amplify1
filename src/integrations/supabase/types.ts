@@ -65,33 +65,6 @@ export type Database = {
         }
         Relationships: []
       }
-      ebook_leads: {
-        Row: {
-          company_site: string | null
-          created_at: string
-          email: string
-          id: string
-          name: string
-          source: string | null
-        }
-        Insert: {
-          company_site?: string | null
-          created_at?: string
-          email: string
-          id?: string
-          name: string
-          source?: string | null
-        }
-        Update: {
-          company_site?: string | null
-          created_at?: string
-          email?: string
-          id?: string
-          name?: string
-          source?: string | null
-        }
-        Relationships: []
-      }
       nps_responses: {
         Row: {
           company: string | null
