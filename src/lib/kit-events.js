@@ -29,6 +29,11 @@ const FIELD_LABELS = [
   "bootcamp_checkin_status",
   "bootcamp_whatsapp_url",
   "bootcamp_last_event",
+  "ebook_slug",
+  "ebook_title",
+  "ebook_url",
+  "ebook_site",
+  "ebook_last_event",
 ];
 
 const EVENT_TAG_MAP = {
@@ -44,6 +49,7 @@ const EVENT_TAG_MAP = {
   bootcamp_whatsapp_optin: ["bootcamp:whatsapp_optin"],
   bootcamp_attended: ["bootcamp:compareceu"],
   bootcamp_missed: ["bootcamp:nao_compareceu"],
+  ebook_executivo_x0_lead_captured: ["ebook:executivo_x0", "ebook:download", "lead:ebook"],
 };
 
 const TAG_MAP = {
@@ -66,6 +72,9 @@ const TAG_MAP = {
   "bootcamp:whatsapp_optin": "bootcamp:whatsapp_optin",
   "bootcamp:compareceu": "bootcamp:compareceu",
   "bootcamp:nao_compareceu": "bootcamp:nao_compareceu",
+  ebook_executivo_x0: "ebook:executivo_x0",
+  ebook_download: "ebook:download",
+  lead_ebook: "lead:ebook",
 };
 
 const NATIVE_FOLLOWUP_SEQUENCES = {
@@ -454,6 +463,11 @@ async function cancelWorkflowBroadcastTags({ workflowKeys, subscriberId }) {
 }
 
 function buildCustomFields(payload = {}, lead = {}) {
+  const eventName = getEventName(payload);
+  const isNexialistaEvent = eventName.startsWith("nexialista_") || clean(payload.source) === "nexialista";
+  const isBootcampEvent = eventName.startsWith("bootcamp_") || Boolean(payload.bootcampSlug || payload.bootcamp_slug);
+  const isEbookEvent = Boolean(payload.ebookSlug || payload.ebook_slug);
+
   return compactObject({
     lead_score: lead.total_score ?? payload.totalScore ?? payload.score,
     fit_score: lead.fit_score ?? payload.fitScore,
@@ -469,7 +483,7 @@ function buildCustomFields(payload = {}, lead = {}) {
     nexialista_incentive: payload.incentive || payload.label || payload.result?.label,
     nexialista_price: payload.price || payload.result?.price,
     nexialista_access_url: payload.accessUrl || payload.access_url,
-    nexialista_last_event: getEventName(payload),
+    nexialista_last_event: isNexialistaEvent ? eventName : undefined,
     bootcamp_slug: payload.bootcampSlug || payload.bootcamp_slug || payload.slug,
     bootcamp_event_id: payload.bootcampEventId || payload.bootcamp_event_id || payload.symplaEventId,
     bootcamp_city: payload.bootcampCity || payload.bootcamp_city || payload.city,
@@ -478,7 +492,12 @@ function buildCustomFields(payload = {}, lead = {}) {
     bootcamp_ticket_number: payload.bootcampTicketNumber || payload.bootcamp_ticket_number || payload.ticketNumber || payload.ticket_number,
     bootcamp_checkin_status: payload.bootcampCheckinStatus || payload.bootcamp_checkin_status || payload.checkinStatus,
     bootcamp_whatsapp_url: payload.bootcampWhatsappUrl || payload.bootcamp_whatsapp_url || payload.whatsappGroupUrl,
-    bootcamp_last_event: getEventName(payload),
+    bootcamp_last_event: isBootcampEvent ? eventName : undefined,
+    ebook_slug: payload.ebookSlug || payload.ebook_slug,
+    ebook_title: payload.ebookTitle || payload.ebook_title,
+    ebook_url: payload.ebookUrl || payload.ebook_url,
+    ebook_site: payload.site || payload.website,
+    ebook_last_event: isEbookEvent ? eventName : undefined,
   });
 }
 

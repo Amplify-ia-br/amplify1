@@ -1,12 +1,23 @@
 import type { APIRoute } from "astro";
+import { syncKitSubscriberEvent } from "../../lib/kit-events.js";
 
 export const prerender = false;
 
-// Credenciais do Kit (ex-ConvertKit) — definidas como env vars na Vercel.
-// KIT_API_KEY: API key (v3) da conta Kit.
-// KIT_FORM_ID: ID do formulário Kit ao qual o lead será inscrito.
-const KIT_API_KEY = process.env.KIT_API_KEY ?? import.meta.env.KIT_API_KEY;
-const KIT_FORM_ID = process.env.KIT_FORM_ID ?? import.meta.env.KIT_FORM_ID;
+// A integração roda 100% server-side e reutiliza o mesmo padrão do Nexialista
+// (syncKitSubscriberEvent / API v4 do Kit). A KIT_API_KEY é fornecida como env
+// var na Vercel; em dev local o Astro pode expor apenas via import.meta.env,
+// então sincronizamos com process.env porque kit-events.js lê de process.env.
+function syncKitEnv() {
+  if (!process.env.KIT_API_KEY && import.meta.env?.KIT_API_KEY) {
+    process.env.KIT_API_KEY = import.meta.env.KIT_API_KEY as string;
+  }
+}
+
+const EBOOK = {
+  slug: "executivo-x0",
+  title: "Executivo X.0 - Sem Barreiras",
+  url: "/materiais/executivo-x0-amplify.pdf",
+};
 
 const emailValido = (value: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
 
@@ -32,35 +43,34 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ ok: false, error: "invalid_fields" }, 422);
   }
 
-  // Sem credenciais configuradas: não bloqueia o usuário (download segue no client).
-  if (!KIT_API_KEY || !KIT_FORM_ID) {
-    return json({ ok: false, error: "kit_not_configured", captured: false });
-  }
+  syncKitEnv();
 
   try {
-    const res = await fetch(`https://api.convertkit.com/v3/forms/${KIT_FORM_ID}/subscribe`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        api_key: KIT_API_KEY,
-        email,
-        first_name: name.split(" ")[0],
-        fields: {
-          full_name: name,
-          company_site: site || undefined,
-        },
-      }),
+    const result = await syncKitSubscriberEvent({
+      source: "ebook_executivo_x0",
+      eventName: "ebook_executivo_x0_lead_captured",
+      name,
+      email,
+      site,
+      ebookSlug: EBOOK.slug,
+      ebookTitle: EBOOK.title,
+      ebookUrl: EBOOK.url,
+      tags: ["ebook_executivo_x0", "ebook_download", "lead_ebook"],
     });
 
-    if (!res.ok) {
-      const detail = await res.text().catch(() => "");
-      console.warn("Kit subscribe falhou:", res.status, detail);
+    // Sem KIT_API_KEY (ex.: ambiente local): não bloqueia o download no client.
+    if (result?.skipped) {
+      return json({ ok: false, error: "kit_not_configured", captured: false });
+    }
+
+    if (!result?.ok) {
+      console.warn("Kit subscribe (ebook) falhou:", JSON.stringify(result));
       return json({ ok: false, error: "kit_error", captured: false });
     }
 
     return json({ ok: true, captured: true });
   } catch (err) {
-    console.warn("Erro ao chamar Kit:", err);
+    console.warn("Erro ao chamar Kit (ebook):", err);
     return json({ ok: false, error: "kit_unreachable", captured: false });
   }
 };
