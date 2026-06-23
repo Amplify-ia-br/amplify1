@@ -29,6 +29,11 @@ const FIELD_LABELS = [
   "bootcamp_checkin_status",
   "bootcamp_whatsapp_url",
   "bootcamp_last_event",
+  "ebook_slug",
+  "ebook_title",
+  "ebook_url",
+  "ebook_site",
+  "ebook_last_event",
 ];
 
 const EVENT_TAG_MAP = {
@@ -44,6 +49,7 @@ const EVENT_TAG_MAP = {
   bootcamp_whatsapp_optin: ["bootcamp:whatsapp_optin"],
   bootcamp_attended: ["bootcamp:compareceu"],
   bootcamp_missed: ["bootcamp:nao_compareceu"],
+  ebook_executivo_x0_lead_captured: ["ebook:executivo_x0", "ebook:download", "lead:ebook"],
 };
 
 const TAG_MAP = {
@@ -66,6 +72,9 @@ const TAG_MAP = {
   "bootcamp:whatsapp_optin": "bootcamp:whatsapp_optin",
   "bootcamp:compareceu": "bootcamp:compareceu",
   "bootcamp:nao_compareceu": "bootcamp:nao_compareceu",
+  ebook_executivo_x0: "ebook:executivo_x0",
+  ebook_download: "ebook:download",
+  lead_ebook: "lead:ebook",
 };
 
 const NATIVE_FOLLOWUP_SEQUENCES = {
@@ -479,6 +488,11 @@ function buildCustomFields(payload = {}, lead = {}) {
     bootcamp_checkin_status: payload.bootcampCheckinStatus || payload.bootcamp_checkin_status || payload.checkinStatus,
     bootcamp_whatsapp_url: payload.bootcampWhatsappUrl || payload.bootcamp_whatsapp_url || payload.whatsappGroupUrl,
     bootcamp_last_event: getEventName(payload),
+    ebook_slug: payload.ebookSlug || payload.ebook_slug,
+    ebook_title: payload.ebookTitle || payload.ebook_title,
+    ebook_url: payload.ebookUrl || payload.ebook_url,
+    ebook_site: payload.site || payload.website,
+    ebook_last_event: (payload.ebookSlug || payload.ebook_slug) ? getEventName(payload) : undefined,
   });
 }
 
