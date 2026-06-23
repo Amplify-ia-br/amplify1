@@ -1,15 +1,10 @@
 ---
 import PageShell from "@/layouts/PageShell.astro";
-import { getImage } from "astro:assets";
 import logoAmplify from "@/assets/logo-amplify-branco.png";
 import heroBook from "@/assets/mockup-livro.png";
 
 const logoSrc = logoAmplify.src;
-
-const [heroBookAvif, heroBookWebp] = await Promise.all([
-  getImage({ src: heroBook, format: "avif", quality: 60, widths: [380, 760] }),
-  getImage({ src: heroBook, format: "webp", quality: 70, widths: [380, 760] }),
-]);
+const heroBookSrc = heroBook.src;
 ---
 <PageShell
   title="O Profissional Nexialista | Amplify"
@@ -50,11 +45,7 @@ const [heroBookAvif, heroBookWebp] = await Promise.all([
       </div>
 
       <div class="nex-hero-visual" aria-hidden="true">
-        <picture>
-          <source type="image/avif" srcset={heroBookAvif.srcSet.attribute} sizes="380px" />
-          <source type="image/webp" srcset={heroBookWebp.srcSet.attribute} sizes="380px" />
-          <img src={heroBookWebp.src} alt="" class="nex-hero-book" width="380" height="558" loading="eager" fetchpriority="high" decoding="async" />
-        </picture>
+        <img src={heroBookSrc} alt="" class="nex-hero-book" width="380" height="558" loading="eager" fetchpriority="high" decoding="async" />
       </div>
     </section>
 
