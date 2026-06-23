@@ -1,0 +1,389 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import logoAmplify from "@/assets/logo-amplify-branco.png";
+import { verifyAccessToken, verifyStripeSession } from "../../lib/nexialista-access-utils.js";
+import { persistLeadEvent } from "../../lib/lead-scoring/store.js";
+
+const logoSrc = logoAmplify.src;
+const sessionId = Astro.url.searchParams.get("session_id") || "";
+const accessToken = Astro.url.searchParams.get("access_token") || "";
+
+if (!process.env.NEXIALISTA_ACCESS_SECRET && import.meta.env?.NEXIALISTA_ACCESS_SECRET) {
+  process.env.NEXIALISTA_ACCESS_SECRET = import.meta.env.NEXIALISTA_ACCESS_SECRET;
+}
+
+if (!process.env.STRIPE_SECRET_KEY && import.meta.env?.STRIPE_SECRET_KEY) {
+  process.env.STRIPE_SECRET_KEY = import.meta.env.STRIPE_SECRET_KEY;
+}
+
+if (!process.env.DATABASE_URL && import.meta.env?.DATABASE_URL) {
+  process.env.DATABASE_URL = import.meta.env.DATABASE_URL;
+}
+
+if (!process.env.KIT_API_KEY && import.meta.env?.KIT_API_KEY) {
+  process.env.KIT_API_KEY = import.meta.env.KIT_API_KEY;
+}
+
+const tokenPayload = accessToken ? verifyAccessToken(accessToken) : null;
+const stripeSession = sessionId ? await verifyStripeSession(sessionId) : null;
+const hasAccess = Boolean(tokenPayload || stripeSession);
+const accessQuery = sessionId
+  ? `session_id=${encodeURIComponent(sessionId)}`
+  : `access_token=${encodeURIComponent(accessToken)}`;
+const accessUrl = hasAccess ? Astro.url.toString() : "";
+
+if (stripeSession?.customer_details?.email || stripeSession?.customer_email) {
+  const email = stripeSession.customer_details?.email || stripeSession.customer_email;
+  const metadata = stripeSession.metadata || {};
+  const paymentEvent = {
+    source: "nexialista",
+    eventName: "nexialista_payment_completed",
+    formStatus: "payment_completed",
+    email,
+    name: metadata.nome,
+    tier: metadata.tier,
+    score: metadata.score,
+    level: metadata.nivel,
+    price: metadata.preco_final,
+    stripeSessionId: stripeSession.id,
+    stripePaymentIntent: stripeSession.payment_intent,
+    accessUrl,
+    tags: ["pagamento_concluido", "ebook_nexialista"],
+  };
+
+  await persistLeadEvent(paymentEvent, { source: "nexialista" }).catch(() => null);
+}
+---
+<PageShell
+  title={hasAccess ? "Acesso liberado | O Profissional Nexialista" : "Acesso não autorizado | O Profissional Nexialista"}
+  description="Página de acesso ao e-book O Profissional Nexialista."
+>
+  <main class="thank-page">
+    <header class="thank-header" aria-label="Amplify">
+      <a href="/" aria-label="Voltar para a página inicial">
+        <img src={logoSrc} alt="Amplify" width="160" height="32" />
+      </a>
+    </header>
+
+    {hasAccess ? (
+      <section class="thank-hero" aria-labelledby="thank-title">
+        <div class="thank-copy">
+          <p class="thank-kicker">Acesso liberado</p>
+          <h1 id="thank-title">Boa decisão.</h1>
+          <p>
+            Você saiu do ruído das ferramentas e entrou na pergunta que importa: como usar IA para mudar operação, decisão e resultado.
+          </p>
+          <p>
+            Baixe o e-book e use a leitura para identificar onde a sua organização precisa de método, repertório e gente capaz de ligar as pontas.
+          </p>
+          <div class="thank-actions">
+            <a class="thank-primary" href={`/api/nexialista-download?format=pdf&${accessQuery}`}>Baixar PDF</a>
+            <a class="thank-secondary" href={`/api/nexialista-download?format=epub&${accessQuery}`}>Baixar EPUB</a>
+            <a class="thank-secondary" href="/contato?origem=nexialista-diagnostico">Solicitar diagnóstico</a>
+          </div>
+        </div>
+
+        <aside class="thank-book" aria-label="O Profissional Nexialista">
+          <span>E-book</span>
+          <strong>O Profissional Nexialista</strong>
+          <small>Um guia para ligar IA, áreas, processos e decisão executiva sem transformar tecnologia em teatro.</small>
+        </aside>
+      </section>
+    ) : (
+      <section class="thank-hero thank-denied" aria-labelledby="denied-title">
+        <div class="thank-copy">
+          <p class="thank-kicker">Acesso não autorizado</p>
+          <h1 id="denied-title">Este acesso não foi liberado.</h1>
+          <p>
+            Para baixar o material, faça o diagnóstico ou conclua o checkout. Assim o incentivo fica reservado para quem passou pela jornada correta.
+          </p>
+          <div class="thank-actions">
+            <a class="thank-primary" href="/nexialista#diagnostico">Descobrir meu perfil nexialista</a>
+            <a class="thank-secondary" href="/nexialista">Voltar para a página</a>
+          </div>
+        </div>
+      </section>
+    )}
+  </main>
+
+  <style>
+    .thank-page {
+      min-height: 100svh;
+      background:
+        radial-gradient(circle at 24% 24%, rgba(45, 212, 191, 0.16), transparent 24rem),
+        radial-gradient(circle at 76% 32%, rgba(255, 255, 255, 0.08), transparent 22rem),
+        linear-gradient(135deg, #030405 0%, #071010 48%, #030405 100%);
+      color: #f6fbfb;
+      overflow: hidden;
+    }
+
+    .thank-page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
+      background-size: 4.8rem 4.8rem;
+      mask-image: radial-gradient(circle at 50% 38%, black, transparent 72%);
+    }
+
+    .thank-header {
+      position: relative;
+      z-index: 2;
+      height: 4.8rem;
+      display: flex;
+      align-items: center;
+      padding: 0 clamp(1.1rem, 4vw, 4rem);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(3, 4, 5, 0.74);
+      backdrop-filter: blur(18px);
+    }
+
+    .thank-header img {
+      height: 1.7rem;
+      width: auto;
+    }
+
+    .thank-hero {
+      position: relative;
+      z-index: 1;
+      min-height: calc(100svh - 4.8rem);
+      width: min(100%, 86rem);
+      margin: 0 auto;
+      padding: clamp(2rem, 5vw, 5rem) clamp(1.1rem, 4vw, 4rem);
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.62fr);
+      gap: clamp(2rem, 6vw, 5rem);
+      align-items: center;
+    }
+
+    .thank-denied {
+      grid-template-columns: minmax(0, 48rem);
+      justify-content: center;
+      text-align: center;
+    }
+
+    .thank-kicker {
+      margin: 0 0 1rem;
+      color: #28d6ce;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .thank-copy h1 {
+      max-width: 11ch;
+      margin: 0;
+      font-size: clamp(3rem, 6vw, 5.8rem);
+      line-height: 0.96;
+      letter-spacing: -0.058em;
+    }
+
+    .thank-denied h1 {
+      margin-inline: auto;
+    }
+
+    .thank-copy p {
+      max-width: 39rem;
+      color: rgba(246, 251, 251, 0.72);
+      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+      line-height: 1.62;
+    }
+
+    .thank-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.8rem;
+    }
+
+    .thank-denied .thank-actions {
+      justify-content: center;
+    }
+
+    .thank-primary,
+    .thank-secondary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3.25rem;
+      padding: 0.9rem 1.25rem;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-weight: 900;
+      text-decoration: none;
+      overflow: hidden;
+      transform: translateZ(0);
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease,
+        box-shadow 180ms ease,
+        color 180ms ease;
+      will-change: transform;
+    }
+
+    .thank-primary::after,
+    .thank-secondary::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(110deg, transparent 0%, rgba(255, 255, 255, 0.22) 42%, transparent 72%);
+      opacity: 0;
+      transform: translateX(-85%);
+      transition:
+        opacity 180ms ease,
+        transform 520ms ease;
+    }
+
+    .thank-primary {
+      border-color: rgba(45, 212, 191, 0.65);
+      background: linear-gradient(135deg, #2dd4bf, #0ea5a4);
+      color: #031010;
+      box-shadow: 0 1.4rem 4rem rgba(45, 212, 191, 0.25);
+    }
+
+    .thank-secondary {
+      color: rgba(246, 251, 251, 0.82);
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .thank-primary:hover,
+    .thank-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .thank-primary:hover {
+      box-shadow: 0 1.7rem 4.4rem rgba(45, 212, 191, 0.34);
+    }
+
+    .thank-secondary:hover {
+      border-color: rgba(45, 212, 191, 0.28);
+      background: rgba(45, 212, 191, 0.075);
+      color: #f6fbfb;
+    }
+
+    .thank-primary:hover::after,
+    .thank-secondary:hover::after {
+      opacity: 1;
+      transform: translateX(85%);
+    }
+
+    .thank-primary:active,
+    .thank-secondary:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    .thank-book {
+      min-height: 27rem;
+      padding: clamp(1.4rem, 3vw, 2rem);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1.5rem;
+      background:
+        radial-gradient(circle at 58% 25%, rgba(45, 212, 191, 0.28), transparent 9rem),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2rem 5rem rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(18px);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      transform: translateZ(0);
+      animation: thank-float 7s ease-in-out infinite;
+      transition:
+        transform 220ms ease,
+        border-color 220ms ease,
+        box-shadow 220ms ease;
+      will-change: transform;
+    }
+
+    .thank-book:hover {
+      animation-play-state: paused;
+      transform: translateY(-4px);
+      border-color: rgba(45, 212, 191, 0.24);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 2.3rem 5.2rem rgba(0, 0, 0, 0.34), 0 0 0 1px rgba(45, 212, 191, 0.06);
+    }
+
+    .thank-book span {
+      color: #28d6ce;
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .thank-book strong {
+      max-width: 9ch;
+      margin: 0.45rem 0 1rem;
+      font-size: clamp(2.35rem, 4vw, 3.8rem);
+      line-height: 0.96;
+      letter-spacing: -0.058em;
+    }
+
+    .thank-book small {
+      color: rgba(246, 251, 251, 0.68);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .thank-copy {
+      animation: thank-reveal 420ms ease both;
+    }
+
+    @keyframes thank-reveal {
+      from {
+        opacity: 0;
+        transform: translateY(0.7rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes thank-float {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-0.45rem);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    @media (max-width: 880px) {
+      .thank-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .thank-page {
+        overflow: auto;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .thank-actions {
+        flex-direction: column;
+      }
+
+      .thank-primary,
+      .thank-secondary {
+        width: 100%;
+      }
+    }
+  </style>
+</PageShell>

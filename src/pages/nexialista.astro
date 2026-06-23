@@ -1,0 +1,2096 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import { getImage } from "astro:assets";
+import logoAmplify from "@/assets/logo-amplify-branco.png";
+import heroBook from "@/assets/mockup-livro.png";
+
+const logoSrc = logoAmplify.src;
+
+const [heroBookAvif, heroBookWebp] = await Promise.all([
+  getImage({ src: heroBook, format: "avif", quality: 60, widths: [380, 760] }),
+  getImage({ src: heroBook, format: "webp", quality: 70, widths: [380, 760] }),
+]);
+---
+<PageShell
+  title="O Profissional Nexialista | Amplify"
+  description="Baixe o e-book O Profissional Nexialista e descubra como ligar IA à estratégia, aos processos e às decisões que movem a empresa."
+  chatbot={false}
+>
+  <main class="nex-page">
+    <header class="nex-header" aria-label="Amplify">
+      <a href="/" class="nex-logo-link" aria-label="Voltar para a pagina inicial da Amplify">
+        <img src={logoSrc} alt="Amplify" width="160" height="32" class="nex-logo" />
+      </a>
+      <nav class="nex-header-nav" aria-label="Navegação da página">
+        <a class="nex-header-link" href="#tensao">Tese</a>
+        <a class="nex-header-link" href="#entender">Conteúdo</a>
+        <a class="nex-header-link" href="#diagnostico">Diagnóstico</a>
+      </nav>
+    </header>
+
+    <section class="nex-hero" aria-labelledby="nex-title">
+      <div class="nex-ambient" aria-hidden="true">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+
+      <div class="nex-hero-copy">
+        <p class="nex-kicker">E-book executivo + diagnóstico de 3 minutos</p>
+        <h1 id="nex-title">
+          <span>Quem formula melhor</span>
+          <span>decide melhor.</span>
+        </h1>
+        <p class="nex-lead">Um guia para executivos que precisam tirar a IA do improviso.</p>
+        <p class="nex-author">Por Fernando Godoy, CEO e cofundador da Amplify.</p>
+        <div class="nex-actions">
+          <a class="nex-primary" href="#diagnostico">Descobrir meu perfil nexialista</a>
+          <a class="nex-secondary" href="#entender">Ler o ebook gratuito</a>
+        </div>
+      </div>
+
+      <div class="nex-hero-visual" aria-hidden="true">
+        <picture>
+          <source type="image/avif" srcset={heroBookAvif.srcSet.attribute} sizes="380px" />
+          <source type="image/webp" srcset={heroBookWebp.srcSet.attribute} sizes="380px" />
+          <img src={heroBookWebp.src} alt="" class="nex-hero-book" width="380" height="558" loading="eager" fetchpriority="high" decoding="async" />
+        </picture>
+      </div>
+    </section>
+
+    <section id="tensao" class="nex-section nex-tension" aria-label="Tensão executiva com IA">
+      <h2>IA virou iniciativa de área quando deveria virar capacidade da empresa.</h2>
+    </section>
+
+    <section class="nex-section nex-for" aria-label="Para quem é este e-book">
+      <div>
+        <p class="nex-kicker">Para quem é</p>
+        <h2>Três formas de reconhecer que este material é para você.</h2>
+      </div>
+      <div class="nex-for-grid">
+        <article>
+          <h3>Você lidera uma empresa</h3>
+          <p>Precisa que a IA vire decisão, não experimento.</p>
+        </article>
+        <article>
+          <h3>Você gerencia equipes</h3>
+          <p>Quer que seu time use IA com método, não no improviso.</p>
+        </article>
+        <article>
+          <h3>Você quer se reposicionar</h3>
+          <p>Precisa de uma linguagem para o que já faz intuitivamente.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="entender" class="nex-section nex-understand" aria-label="O que você vai entender">
+      <div>
+        <p class="nex-kicker">O que você vai entender</p>
+        <h2>Três ideias para usar IA com mais critério.</h2>
+      </div>
+      <ol class="nex-understand-list">
+        <li><span>01</span><p>A diferença real entre especialista, generalista e nexialista</p></li>
+        <li><span>02</span><p>Como as cinco bases se constroem e se reforçam</p></li>
+        <li><span>03</span><p>Como aplicar pensamento nexialista em decisões com IA</p></li>
+      </ol>
+    </section>
+
+    <section id="diagnostico" class="nex-section nex-diagnostic" aria-labelledby="diagnostico-title">
+      <div class="nex-diagnostic-copy">
+        <p class="nex-kicker">Incentivo Nexialista</p>
+        <h2 id="diagnostico-title">Descubra seu nível de prontidão nexialista.</h2>
+        <p>
+          O e-book custa R$ 127. Mas a Amplify quer incentivar líderes que têm contexto real, campo de aplicação e problemas relevantes para aplicar pensamento nexialista dentro de uma organização.
+        </p>
+        <p class="nex-time">Em menos de 3 minutos, suas respostas ajudam a identificar seu perfil de aplicação e o nível de incentivo disponível para o seu acesso.</p>
+        <ul>
+          <li class="nex-incentive-highlight">
+            <span>Incentivo para perfil Nexialista: Gratuito</span>
+            <span class="nex-tooltip" tabindex="0" aria-label="O acesso gratuito depende do resultado do diagnóstico.">
+              ?
+              <span role="tooltip">Depende do resultado do diagnóstico.</span>
+            </span>
+          </li>
+          <li>Incentivo avançado: R$ 37</li>
+          <li>Incentivo parcial: R$ 67</li>
+          <li>Valor integral: R$ 127</li>
+        </ul>
+        <p class="nex-fineprint">O incentivo depende do perfil de aplicação identificado no diagnóstico.</p>
+      </div>
+
+      <div class="nex-diagnostic-form-column">
+        <div class="nex-form-shell">
+        <div class="nex-form-top">
+          <span data-step-name>Identidade</span>
+          <strong data-step-counter>1 de 6</strong>
+        </div>
+        <div class="nex-progress" aria-hidden="true">
+          <span data-progress-bar></span>
+        </div>
+        <form class="nex-form" data-nex-form novalidate>
+          <fieldset class="nex-step is-active" data-step="0">
+            <h3>Comece seu diagnóstico</h3>
+            <p class="nex-step-copy">Leva menos de 3 minutos. Ao final, você verá seu nível de prontidão nexialista e o incentivo disponível para acessar o e-book.</p>
+            <label>Nome<input name="name" autocomplete="name" required placeholder="Seu nome" /></label>
+            <label>Email<input name="email" type="email" autocomplete="email" required placeholder="seuemail@empresa.com" /></label>
+            <label>WhatsApp <small>opcional, para receber seu resultado</small><input name="phone" autocomplete="tel" placeholder="DDD + número" /></label>
+          </fieldset>
+
+          <fieldset class="nex-step" data-step="1">
+            <h3>Qual é seu escopo de decisão e influência?</h3>
+            <label>Cargo
+              <select name="role" required>
+                <option value="">Selecione</option>
+                <option value="CEO / Founder">CEO / Founder</option>
+                <option value="C-level">C-level</option>
+                <option value="Diretoria">Diretoria</option>
+                <option value="Gerente">Gerente</option>
+                <option value="Especialista / coordenação">Especialista / coordenação</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+            <label>Empresa<input name="company" required placeholder="Nome da empresa" /></label>
+            <label>Tamanho da organização
+              <select name="companySize" required>
+                <option value="">Selecione</option>
+                <option value="self-employed">Autônomo ou independente</option>
+                <option value="1-10">1 a 10 pessoas</option>
+                <option value="11-50">11 a 50 pessoas</option>
+                <option value="51-200">51 a 200 pessoas</option>
+                <option value="201-500">201 a 500 pessoas</option>
+                <option value="501-1000">501 a 1.000 pessoas</option>
+                <option value="1001-5000">1.001 a 5.000 pessoas</option>
+                <option value="5001-10000">5.001 a 10.000 pessoas</option>
+                <option value="10001+">10.001+ pessoas</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="nex-step" data-step="2">
+            <h3>Qual problema merece IA de verdade?</h3>
+            <label>Segmento
+              <select name="segment" required>
+                <option value="">Selecione</option>
+                <option value="Serviços">Serviços</option>
+                <option value="Indústria">Indústria</option>
+                <option value="Educação">Educação</option>
+                <option value="Saúde">Saúde</option>
+                <option value="Construção / engenharia">Construção / engenharia</option>
+                <option value="Tecnologia">Tecnologia</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+            <label>Principal desafio de negócio hoje
+              <textarea name="businessChallenge" required rows="4" placeholder="Ex: reduzir retrabalho entre áreas, acelerar atendimento sem perder qualidade, usar dados na decisão comercial..."></textarea>
+            </label>
+          </fieldset>
+
+          <fieldset class="nex-step" data-step="3">
+            <h3>Como a IA está sendo usada na prática?</h3>
+            <p class="nex-field-context">Isso nos ajuda a entender onde você está — sem julgamento.</p>
+            <label>Uso atual de IA
+              <select name="aiUsage" required>
+                <option value="">Selecione</option>
+                <option value="Não usa ainda">Não usa ainda</option>
+                <option value="Uso individual informal">Uso individual informal</option>
+                <option value="Algumas ferramentas em áreas específicas">Algumas ferramentas em áreas específicas</option>
+                <option value="Projetos estruturados em andamento">Projetos estruturados em andamento</option>
+                <option value="IA integrada a processos críticos">IA integrada a processos críticos</option>
+              </select>
+            </label>
+            <label>Maturidade em IA
+              <select name="aiMaturity" required>
+                <option value="">Selecione</option>
+                <option value="Explorando">Explorando</option>
+                <option value="Testando">Testando</option>
+                <option value="Implementando">Implementando</option>
+                <option value="Escalando">Escalando</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="nex-step" data-step="4">
+            <h3>Qual movimento mudaria o resultado?</h3>
+            <label>Próximo passo desejado com IA
+              <textarea name="aiNextStep" required rows="4" placeholder="Descreva o próximo movimento que faria a IA gerar resultado visível na organização."></textarea>
+            </label>
+            <label>Você quer um diagnóstico com a Amplify?
+              <select name="diagnosisInterest" required>
+                <option value="">Selecione</option>
+                <option value="sim">Sim, quero avaliar um diagnóstico</option>
+                <option value="talvez">Talvez, quero entender melhor</option>
+                <option value="nao">Não agora, quero apenas o e-book</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <fieldset class="nex-step" data-step="5">
+            <h3>Já houve investimento real?</h3>
+            <label>Investimento em IA nos últimos 12 meses
+              <select name="aiInvestment" required>
+                <option value="">Selecione</option>
+                <option value="Ainda não investiu">Ainda não investiu</option>
+                <option value="Até R$ 10 mil">Até R$ 10 mil</option>
+                <option value="R$ 10 mil a R$ 50 mil">R$ 10 mil a R$ 50 mil</option>
+                <option value="R$ 50 mil a R$ 200 mil">R$ 50 mil a R$ 200 mil</option>
+                <option value="Acima de R$ 200 mil">Acima de R$ 200 mil</option>
+              </select>
+            </label>
+            <label>Já contratou programa ou consultoria de IA?
+              <select name="aiConsulting" required>
+                <option value="">Selecione</option>
+                <option value="Não">Não</option>
+                <option value="Sim, até R$ 20 mil">Sim, até R$ 20 mil</option>
+                <option value="Sim, R$ 20 mil a R$ 100 mil">Sim, R$ 20 mil a R$ 100 mil</option>
+                <option value="Sim, acima de R$ 100 mil">Sim, acima de R$ 100 mil</option>
+              </select>
+            </label>
+          </fieldset>
+
+          <div class="nex-form-actions">
+            <button type="button" class="nex-secondary" data-prev disabled>Voltar</button>
+            <button type="button" class="nex-primary" data-next>Continuar diagnóstico</button>
+            <button type="submit" class="nex-primary" data-submit hidden>Revelar meu perfil</button>
+          </div>
+          <p class="nex-form-note">Seu resultado será calculado a partir das suas respostas.</p>
+          <p class="nex-form-error" data-form-error role="status" aria-live="polite"></p>
+        </form>
+
+        <section class="nex-result" data-result hidden aria-live="polite">
+          <p class="nex-step-label">Resultado</p>
+          <h3 data-result-title></h3>
+          <p data-result-copy></p>
+          <div class="nex-result-meter" aria-hidden="true">
+            <span data-result-meter></span>
+          </div>
+          <div class="nex-result-grid">
+            <div>
+              <span>Nível</span>
+              <strong data-result-level></strong>
+            </div>
+            <div>
+              <span>Incentivo</span>
+              <strong data-result-incentive></strong>
+            </div>
+          </div>
+          <div class="nex-result-price">
+            <span>Seu acesso</span>
+            <strong data-result-price></strong>
+          </div>
+          <div class="nex-downloads" data-free-downloads hidden>
+          </div>
+          <div class="nex-result-actions">
+            <button type="button" class="nex-primary" data-checkout hidden>Ativar meu incentivo</button>
+            <a class="nex-secondary" href="/contato?origem=nexialista-diagnostico" target="_blank" rel="noopener noreferrer">Solicitar diagnóstico</a>
+          </div>
+          <p class="nex-form-error" data-result-error role="status" aria-live="polite"></p>
+        </section>
+      </div>
+      </div>
+    </section>
+
+    <section class="nex-section nex-faq" aria-label="Dúvidas comuns">
+      <div>
+        <p class="nex-kicker">Dúvidas comuns</p>
+        <h2>Antes de começar</h2>
+      </div>
+      <div class="nex-faq-list">
+        <details>
+          <summary>O diagnóstico é gratuito?</summary>
+          <p>Sim. Ele leva menos de 3 minutos e identifica seu perfil de aplicação.</p>
+        </details>
+        <details>
+          <summary>Preciso informar cartão?</summary>
+          <p>Não para fazer o diagnóstico. Cartão só aparece se o seu resultado indicar acesso pago.</p>
+        </details>
+        <details>
+          <summary>O e-book é técnico?</summary>
+          <p>Não. Ele foi criado para líderes que precisam conectar IA à estratégia, processos, pessoas e decisões de negócio.</p>
+        </details>
+        <details>
+          <summary>O que significa “nexialista”?</summary>
+          <p>É o profissional capaz de atravessar áreas, conectar repertórios e resolver problemas inteiros, em vez de otimizar partes isoladas.</p>
+        </details>
+        <details>
+          <summary>O incentivo é garantido?</summary>
+          <p>Não. O incentivo depende do perfil identificado no diagnóstico.</p>
+        </details>
+      </div>
+    </section>
+  </main>
+
+  <script is:inline>
+    const form = document.querySelector("[data-nex-form]");
+    const steps = [...document.querySelectorAll("[data-step]")];
+    const progressBar = document.querySelector("[data-progress-bar]");
+    const prevButton = document.querySelector("[data-prev]");
+    const nextButton = document.querySelector("[data-next]");
+    const submitButton = document.querySelector("[data-submit]");
+    const formError = document.querySelector("[data-form-error]");
+    const resultSection = document.querySelector("[data-result]");
+    const resultTitle = document.querySelector("[data-result-title]");
+    const resultCopy = document.querySelector("[data-result-copy]");
+    const resultPrice = document.querySelector("[data-result-price]");
+    const resultLevel = document.querySelector("[data-result-level]");
+    const resultIncentive = document.querySelector("[data-result-incentive]");
+    const resultMeter = document.querySelector("[data-result-meter]");
+    const resultError = document.querySelector("[data-result-error]");
+    const checkoutButton = document.querySelector("[data-checkout]");
+    const freeDownloads = document.querySelector("[data-free-downloads]");
+    const stepName = document.querySelector("[data-step-name]");
+    const stepCounter = document.querySelector("[data-step-counter]");
+    const stepNames = ["Identidade", "Contexto", "Desafio", "IA", "Próximo passo", "Investimento"];
+
+    let currentStep = 0;
+    let lastPayload = null;
+    let lastFreeAccessUrl = "";
+
+    function setStep(index) {
+      currentStep = index;
+      steps.forEach((step, stepIndex) => step.classList.toggle("is-active", stepIndex === currentStep));
+      prevButton.disabled = currentStep === 0;
+      nextButton.hidden = currentStep === steps.length - 1;
+      submitButton.hidden = currentStep !== steps.length - 1;
+      progressBar.style.width = `${((currentStep + 1) / steps.length) * 100}%`;
+      stepName.textContent = stepNames[currentStep];
+      stepCounter.textContent = `${currentStep + 1} de ${steps.length}`;
+      formError.textContent = "";
+    }
+
+    function getCurrentFields() {
+      return [...steps[currentStep].querySelectorAll("input, select, textarea")];
+    }
+
+    function getFieldLabel(field) {
+      const label = field.closest("label");
+      return label ? label.childNodes[0].textContent.trim() : "campo obrigatório";
+    }
+
+    function validateCurrentStep() {
+      const fields = getCurrentFields();
+      const invalidField = fields.find((field) => {
+        if (!field.required) return false;
+        return !String(field.value || "").trim();
+      });
+
+      if (invalidField) {
+        formError.textContent = `Preencha o campo: ${getFieldLabel(invalidField)}.`;
+        invalidField.focus({ preventScroll: true });
+        return false;
+      }
+
+      formError.textContent = "";
+      return true;
+    }
+
+    function getFormData() {
+      return Object.fromEntries(new FormData(form).entries());
+    }
+
+    function includesAny(value, options) {
+      return options.some((option) => String(value || "").toLowerCase().includes(option.toLowerCase()));
+    }
+
+    function getScoreSignals(data) {
+      const role = String(data.role || "");
+      const companySize = String(data.companySize || "");
+      const segment = String(data.segment || "");
+      const aiUsage = String(data.aiUsage || "");
+      const aiMaturity = String(data.aiMaturity || "");
+      const aiInvestment = String(data.aiInvestment || "");
+      const aiConsulting = String(data.aiConsulting || "").toLowerCase();
+      const businessChallengeLength = String(data.businessChallenge || "").trim().length;
+      const aiNextStepLength = String(data.aiNextStep || "").trim().length;
+
+      return {
+        isDecisionMaker: ["CEO / Founder", "C-level", "Diretoria"].includes(role),
+        isManager: role === "Gerente",
+        hasIcpRole: ["CEO / Founder", "C-level", "Diretoria", "Gerente"].includes(role),
+        hasIcpSize: ["51-200", "201-500", "501-1000"].includes(companySize),
+        hasNearIcpSize: ["11-50", "1001-5000"].includes(companySize),
+        hasLargeNonIcpSize: ["5001-10000", "10001+"].includes(companySize),
+        isPrioritySegment: ["Serviços", "Indústria", "Educação", "Saúde", "Construção / engenharia"].includes(segment),
+        hasClearChallenge: businessChallengeLength >= 80,
+        hasSomeChallenge: businessChallengeLength >= 30,
+        hasStructuredAi: ["Projetos estruturados em andamento", "IA integrada a processos críticos"].includes(aiUsage),
+        hasSomeAiUse: ["Uso individual informal", "Algumas ferramentas em áreas específicas"].includes(aiUsage),
+        hasAdvancedMaturity: ["Implementando", "Escalando"].includes(aiMaturity),
+        hasTestingMaturity: aiMaturity === "Testando",
+        hasRelevantInvestment: ["R$ 50 mil a R$ 200 mil", "Acima de R$ 200 mil"].includes(aiInvestment),
+        hasSomeInvestment: ["Até R$ 10 mil", "R$ 10 mil a R$ 50 mil"].includes(aiInvestment),
+        hasRelevantConsulting: aiConsulting.includes("acima") || aiConsulting.includes("r$ 20 mil a"),
+        hasSomeConsulting: aiConsulting.includes("até"),
+        hasClearNextStep: aiNextStepLength >= 80,
+        hasSomeNextStep: aiNextStepLength >= 30,
+        wantsDiagnosis: data.diagnosisInterest === "sim",
+        maybeWantsDiagnosis: data.diagnosisInterest === "talvez",
+      };
+    }
+
+    function calculateScore(data) {
+      const signals = getScoreSignals(data);
+      let score = 0;
+
+      if (signals.isDecisionMaker) score += 18;
+      else if (signals.isManager) score += 11;
+      else if (data.role) score += 5;
+
+      if (signals.hasIcpSize) score += 18;
+      else if (signals.hasNearIcpSize) score += 12;
+      else if (signals.hasLargeNonIcpSize) score += 10;
+      else if (data.companySize === "1-10") score += 4;
+      else if (data.companySize === "self-employed") score += 2;
+
+      if (signals.isPrioritySegment) score += 10;
+      else if (data.segment) score += 4;
+
+      if (signals.hasClearChallenge) score += 10;
+      else if (signals.hasSomeChallenge) score += 5;
+
+      if (signals.hasStructuredAi) score += 14;
+      else if (signals.hasSomeAiUse) score += 8;
+      else if (data.aiUsage) score += 3;
+
+      if (signals.hasAdvancedMaturity) score += 12;
+      else if (signals.hasTestingMaturity) score += 6;
+      else if (data.aiMaturity) score += 3;
+
+      if (signals.hasRelevantInvestment) score += 10;
+      else if (signals.hasSomeInvestment) score += 5;
+
+      if (signals.hasRelevantConsulting) score += 6;
+      else if (signals.hasSomeConsulting) score += 3;
+
+      if (signals.hasClearNextStep) score += 7;
+      else if (signals.hasSomeNextStep) score += 4;
+
+      if (signals.wantsDiagnosis) score += 7;
+      else if (signals.maybeWantsDiagnosis) score += 3;
+
+      return Math.min(score, 100);
+    }
+
+    function hasFreeAccessGate(data) {
+      const signals = getScoreSignals(data);
+      return (
+        signals.hasIcpRole &&
+        signals.hasIcpSize &&
+        signals.isPrioritySegment
+      );
+    }
+
+    function getCreditResult(score, data = {}) {
+      if (hasFreeAccessGate(data) || score >= 68) {
+        return {
+          score,
+          tier: "free",
+          price: "Gratuito",
+          label: "Incentivo integral",
+          level: "Alto Potencial Nexialista",
+          incentive: "100%",
+          creditTag: "incentivo_nexialista_gratuito",
+          title: "Você está no grupo que a Amplify quer perto.",
+          copy: "Suas respostas indicam aderência ao perfil de aplicação que a Amplify quer aproximar deste material: escopo de decisão, porte, segmento ou sinais fortes de maturidade para transformar leitura em ação. Por isso, seu acesso ao e-book foi liberado de forma imediata.",
+          cta: "Acesso gratuito e imediato",
+        };
+      }
+
+      if (score >= 44) {
+        return {
+          score,
+          tier: "partial",
+          price: "R$ 67",
+          label: "Incentivo parcial",
+          level: "Potencial Nexialista em evolução",
+          incentive: "R$ 60",
+          creditTag: "incentivo_nexialista_67",
+          title: "Você já vê que IA não se resolve só com ferramenta.",
+          copy: "Suas respostas indicam repertório para ligar negócio, IA e operação. Ainda há espaço para amadurecer método e aplicação, então a Amplify reduziu o valor para facilitar seu acesso ao e-book.",
+          cta: "Usar incentivo e acessar o e-book",
+        };
+      }
+
+      return {
+        score,
+        tier: "full",
+        price: "R$ 127",
+        label: "Valor integral",
+          level: "Sinal Inicial",
+          incentive: "Valor integral",
+          creditTag: "incentivo_nexialista_127",
+          title: "Este é um bom ponto para começar com mais critério.",
+          copy: "Suas respostas mostram que o próximo ganho está em repertório: entender onde a IA entra, onde atrapalha e como conectar áreas antes de investir mais tempo ou dinheiro.",
+          cta: "Comprar o e-book",
+      };
+    }
+
+    function spawnParticles() {
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (prefersReduced) return;
+
+      for (let i = 0; i < 4; i++) {
+        const particle = document.createElement("span");
+        particle.style.cssText = `position:fixed;width:6px;height:6px;border-radius:50%;background:#2dd4bf;pointer-events:none;left:${30 + i * 14}%;bottom:20%;animation:nex-particle 600ms ease ${i * 80}ms both;z-index:9999`;
+        document.body.appendChild(particle);
+        setTimeout(() => particle.remove(), 800 + i * 80);
+      }
+    }
+
+    function showResult(result) {
+      form.hidden = true;
+      resultSection.hidden = false;
+      resultTitle.textContent = result.title;
+      resultCopy.textContent = result.copy;
+      resultPrice.textContent = result.price;
+      resultLevel.textContent = result.level;
+      resultIncentive.textContent = result.incentive && result.incentive !== "Não aplicado" ? result.incentive : "Valor integral";
+      resultMeter.style.width = `${Math.max(result.score, 12)}%`;
+      stepName.textContent = "Perfil revelado";
+      stepCounter.textContent = "Resultado";
+      progressBar.style.width = "100%";
+      freeDownloads.hidden = true;
+      checkoutButton.hidden = false;
+      checkoutButton.textContent = result.cta;
+      const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      resultSection.scrollIntoView({ behavior: prefersReduced ? "auto" : "smooth", block: "center" });
+      spawnParticles();
+    }
+
+    async function submitLead(payload, { silent = false } = {}) {
+      const response = await fetch("/api/nexialista-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) {
+        const errorPayload = await response.json().catch(() => ({}));
+        if (silent) return false;
+        throw new Error(errorPayload.error || "Não foi possível registrar seu diagnóstico.");
+      }
+
+      return true;
+    }
+
+    async function readJson(response) {
+      const text = await response.text();
+      if (!text) return {};
+
+      try {
+        return JSON.parse(text);
+      } catch (_error) {
+        return { error: "O servidor retornou uma resposta inesperada." };
+      }
+    }
+
+    async function ensureFreeAccess(payload) {
+      if (lastFreeAccessUrl) return lastFreeAccessUrl;
+
+      const accessResponse = await fetch("/api/nexialista-free", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: payload.email,
+          name: payload.name,
+          company: payload.company,
+          tier: payload.result.tier,
+        }),
+      });
+      const accessPayload = await readJson(accessResponse);
+
+      if (!accessResponse.ok || !accessPayload.url) {
+        throw new Error(accessPayload.error || "Acesso gratuito indisponível.");
+      }
+
+      lastFreeAccessUrl = accessPayload.url;
+      return lastFreeAccessUrl;
+    }
+
+    function openInNewTab(url) {
+      if (!url) return;
+
+      const popupWindow = window.open(url, "_blank");
+      if (popupWindow) {
+        popupWindow.opener = null;
+        return;
+      }
+
+      if (!popupWindow) {
+        window.location.href = url;
+      }
+    }
+
+    nextButton.addEventListener("click", async () => {
+      if (!validateCurrentStep()) return;
+      const data = getFormData();
+      if (data.name && data.email) {
+        submitLead({
+          ...data,
+          formStatus: "in_progress",
+          completedStep: currentStep + 1,
+          result: {
+            label: "Diagnóstico incompleto",
+            level: "Em andamento",
+            price: "Não definido",
+            score: "",
+            copy: "Lead iniciou o diagnóstico Nexialista, mas ainda não concluiu.",
+          },
+        }, { silent: true });
+      }
+      setStep(Math.min(currentStep + 1, steps.length - 1));
+    });
+
+    prevButton.addEventListener("click", () => {
+      setStep(Math.max(currentStep - 1, 0));
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (!validateCurrentStep()) return;
+
+      const data = getFormData();
+      const result = getCreditResult(calculateScore(data), data);
+      const payload = {
+        ...data,
+        formStatus: "completed",
+        completedStep: steps.length,
+        result,
+      };
+      lastPayload = payload;
+      submitButton.disabled = true;
+      formError.textContent = "Calculando e registrando seu diagnóstico...";
+
+      try {
+        await submitLead(payload);
+        if (result.tier === "free") {
+          formError.textContent = "Acesso liberado. Preparando envio por email...";
+          await ensureFreeAccess(payload);
+        }
+        showResult(result);
+      } catch (error) {
+        formError.textContent = `${error.message} Mesmo assim, seu resultado será exibido agora.`;
+        window.setTimeout(() => showResult(result), 900);
+      } finally {
+        submitButton.disabled = false;
+      }
+    });
+
+    checkoutButton.addEventListener("click", async () => {
+      if (!lastPayload) return;
+      checkoutButton.disabled = true;
+      resultError.textContent = "";
+
+      try {
+        if (lastPayload.result.tier === "free") {
+          openInNewTab(await ensureFreeAccess(lastPayload));
+          return;
+        }
+
+        const response = await fetch("/api/nexialista-checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: lastPayload.name,
+            email: lastPayload.email,
+            tier: lastPayload.result.tier,
+            score: lastPayload.result.score,
+            level: lastPayload.result.level,
+            price: lastPayload.result.price,
+          }),
+        });
+        const payload = await readJson(response);
+
+        if (!response.ok || !payload.url) {
+          throw new Error(payload.error || "Checkout indisponível.");
+        }
+
+        openInNewTab(payload.url);
+      } catch (error) {
+        resultError.textContent = lastPayload.result.tier === "free"
+          ? error.message
+          : `${error.message} Configure as variáveis do Stripe para ativar o pagamento.`;
+        checkoutButton.disabled = false;
+      }
+    });
+
+    setStep(0);
+  </script>
+
+  <style>
+    .nex-page {
+      --nex-header-height: 4.8rem;
+      --text-hero: clamp(2.35rem, 4.8vw, 4.35rem);
+      --text-section: clamp(1.95rem, 3.6vw, 3.45rem);
+      --text-emphasis: clamp(2.15rem, 4.4vw, 4.25rem);
+      --text-card-title: clamp(1.35rem, 2.2vw, 1.95rem);
+      --text-step-title: clamp(1.45rem, 2.5vw, 2rem);
+      --text-body-lg: clamp(1rem, 1.25vw, 1.16rem);
+      --text-body: 0.98rem;
+      min-height: 100svh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(circle at 18% 18%, rgba(34, 211, 238, 0.18), transparent 25rem),
+        radial-gradient(circle at 76% 14%, rgba(255, 255, 255, 0.08), transparent 22rem),
+        linear-gradient(135deg, #0a0a0a 0%, #071010 48%, #0a0a0a 100%);
+      color: #f6fbfb;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    .nex-page::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.026) 1px, transparent 1px);
+      background-size: 4.8rem 4.8rem;
+      mask-image: radial-gradient(circle at 50% 38%, black, transparent 72%);
+    }
+
+    .nex-header,
+    .nex-hero,
+    .nex-section {
+      position: relative;
+      z-index: 1;
+    }
+
+    [hidden] {
+      display: none !important;
+    }
+
+    .nex-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: var(--nex-header-height);
+      padding: 0 max(clamp(1.1rem, 4vw, 4rem), env(safe-area-inset-left));
+      padding-right: max(clamp(1.1rem, 4vw, 4rem), env(safe-area-inset-right));
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(3, 4, 5, 0.74);
+      backdrop-filter: blur(18px);
+    }
+
+    .nex-logo-link {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .nex-logo {
+      height: 1.7rem;
+      width: auto;
+    }
+
+    .nex-header-nav {
+      display: flex;
+      align-items: center;
+      gap: clamp(0.8rem, 2vw, 1.6rem);
+    }
+
+    .nex-header-link,
+    .nex-secondary {
+      color: rgba(246, 251, 251, 0.82);
+      text-decoration: none;
+    }
+
+    .nex-hero {
+      height: calc(100dvh - var(--nex-header-height));
+      min-height: 34rem;
+      width: min(100%, 82rem);
+      margin: 0 auto;
+      padding: clamp(0.75rem, 2vw, 1.5rem) clamp(1.1rem, 4vw, 3.6rem);
+      display: grid;
+      grid-template-columns: minmax(0, 0.95fr) minmax(18rem, 0.8fr);
+      align-items: center;
+      column-gap: 60px;
+      row-gap: clamp(1.6rem, 4vw, 4rem);
+    }
+
+    .nex-ambient {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .nex-ambient span {
+      position: absolute;
+      border: 1px solid rgba(45, 212, 191, 0.25);
+      border-radius: 999px;
+      animation: nex-pulse 5s ease-in-out infinite;
+    }
+
+    .nex-ambient span:nth-child(1) {
+      left: -8rem;
+      top: 18%;
+      width: 24rem;
+      height: 24rem;
+    }
+
+    .nex-ambient span:nth-child(2) {
+      right: 8%;
+      top: 18%;
+      width: 12rem;
+      height: 12rem;
+      animation-delay: 1.2s;
+    }
+
+    .nex-ambient span:nth-child(3) {
+      left: 44%;
+      bottom: 8%;
+      width: 8rem;
+      height: 8rem;
+      animation-delay: 2.1s;
+    }
+
+    .nex-kicker {
+      margin: 0 0 1rem;
+      color: #28d6ce;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+    }
+
+    .nex-hero h1,
+    .nex-section h2 {
+      margin: 0;
+      max-width: 11ch;
+      font-size: var(--text-hero);
+      line-height: 1.02;
+      letter-spacing: -0.052em;
+    }
+
+    .nex-hero h1 {
+      max-width: 12ch;
+      color: #fff;
+      font-family: "Bebas Neue", Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: clamp(40px, 5.5vw, 68px);
+      font-weight: 400;
+      line-height: 0.95;
+      letter-spacing: 0.01em;
+    }
+
+    .nex-hero h1 span {
+      display: block;
+      white-space: nowrap;
+    }
+
+    .nex-section h2 {
+      max-width: 12ch;
+      font-size: var(--text-section);
+    }
+
+    .nex-lead {
+      max-width: 620px;
+      margin: 1.2rem 0 0;
+      color: #999;
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.45;
+      letter-spacing: 0;
+    }
+
+    .nex-body,
+    .nex-text-stack p,
+    .nex-diagnostic-copy p,
+    .nex-provocation p,
+    .nex-pillars p,
+    .nex-price p,
+    .nex-price small,
+    .nex-book small,
+    .nex-faq p,
+    .nex-result p {
+      color: rgba(246, 251, 251, 0.72);
+      line-height: 1.65;
+    }
+
+    .nex-body {
+      max-width: 620px;
+      margin: 1rem 0 0;
+      font-size: var(--text-body);
+    }
+
+    .nex-author {
+      margin: 0.9rem 0 0;
+      color: rgba(246, 251, 251, 0.58);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .nex-actions,
+    .nex-form-actions,
+    .nex-downloads {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      margin-top: 1.6rem;
+    }
+
+    .nex-hero-visual {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .nex-hero-book {
+      width: 100%;
+      max-width: 380px;
+      height: auto;
+      filter: drop-shadow(0 24px 48px rgba(0, 0, 0, 0.6));
+      transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .nex-hero-book:hover {
+      transform: translateY(-6px) scale(1.02);
+    }
+
+    .nex-primary,
+    .nex-secondary {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 3.25rem;
+      padding: 0.9rem 1.25rem;
+      border-radius: 0.9rem;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-weight: 800;
+      text-decoration: none;
+      cursor: pointer;
+      overflow: hidden;
+      transform: translateZ(0);
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease,
+        box-shadow 180ms ease,
+        color 180ms ease;
+      will-change: transform;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+
+    .nex-primary::after,
+    .nex-secondary::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: none;
+      opacity: 0;
+      transform: none;
+      transition: none;
+    }
+
+    .nex-primary {
+      border-color: rgba(45, 212, 191, 0.4);
+      background: transparent;
+      color: #2dd4bf;
+      box-shadow: none;
+    }
+
+    .nex-secondary {
+      background: rgba(255, 255, 255, 0.045);
+    }
+
+    .nex-primary:hover,
+    .nex-secondary:hover {
+      transform: translateY(-2px);
+    }
+
+    .nex-primary:hover {
+      color: #2dd4bf;
+      box-shadow:
+        0 0 0 1px rgba(45, 212, 191, 0.8),
+        0 0 24px rgba(45, 212, 191, 0.25);
+    }
+
+    .nex-secondary:hover {
+      border-color: rgba(45, 212, 191, 0.28);
+      background: rgba(45, 212, 191, 0.075);
+      color: #f6fbfb;
+    }
+
+    .nex-primary:hover::after,
+    .nex-secondary:hover::after {
+      opacity: 0;
+      transform: none;
+    }
+
+    .nex-primary:active,
+    .nex-secondary:active {
+      transform: translateY(0) scale(0.99);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    button:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .nex-card {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .nex-incentive-panel {
+      align-self: center;
+    }
+
+    .nex-book,
+    .nex-price,
+    .nex-form-shell,
+    .nex-pillars article {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.025));
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2rem 5rem rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(18px);
+    }
+
+    .nex-price,
+    .nex-pillars article,
+    .nex-for-grid article {
+      transition:
+        transform 220ms ease,
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        background 220ms ease;
+    }
+
+    .nex-price:hover,
+    .nex-pillars article:hover,
+    .nex-for-grid article:hover {
+      transform: translateY(-3px);
+      border-color: rgba(45, 212, 191, 0.24);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09), 0 2.2rem 5rem rgba(0, 0, 0, 0.32), 0 0 0 1px rgba(45, 212, 191, 0.05);
+    }
+
+    .nex-book {
+      position: relative;
+      min-height: 28rem;
+      padding: 2rem;
+      border-radius: 1.7rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 52% 26%, rgba(45, 212, 191, 0.36), transparent 8rem),
+        linear-gradient(150deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.025));
+    }
+
+    .nex-book::before {
+      content: "";
+      position: absolute;
+      inset: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 1.2rem;
+      pointer-events: none;
+    }
+
+    .nex-book::after {
+      content: "E-book";
+      position: absolute;
+      top: 1.8rem;
+      right: 1.8rem;
+      padding: 0.45rem 0.7rem;
+      border: 1px solid rgba(45, 212, 191, 0.35);
+      border-radius: 999px;
+      color: #99f6e4;
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nex-network {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .nex-network::before,
+    .nex-network::after {
+      content: "";
+      position: absolute;
+      left: 18%;
+      right: 16%;
+      top: 34%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(45, 212, 191, 0.42), transparent);
+      transform: rotate(-18deg);
+    }
+
+    .nex-network::after {
+      top: 48%;
+      transform: rotate(24deg);
+    }
+
+    .nex-network i {
+      position: absolute;
+      width: 0.7rem;
+      height: 0.7rem;
+      border-radius: 999px;
+      background: #2dd4bf;
+      box-shadow: 0 0 2.2rem rgba(45, 212, 191, 0.8);
+      animation: nex-node-glow 3.8s ease-in-out infinite;
+    }
+
+    .nex-network i:nth-child(1) {
+      left: 19%;
+      top: 28%;
+    }
+
+    .nex-network i:nth-child(2) {
+      left: 62%;
+      top: 22%;
+      animation-delay: 0.5s;
+    }
+
+    .nex-network i:nth-child(3) {
+      left: 34%;
+      top: 48%;
+      animation-delay: 1s;
+    }
+
+    .nex-network i:nth-child(4) {
+      right: 20%;
+      top: 53%;
+      animation-delay: 1.5s;
+    }
+
+    .nex-book span,
+    .nex-price span {
+      color: rgba(246, 251, 251, 0.58);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nex-book strong {
+      margin-top: 0.25rem;
+      font-size: var(--text-emphasis);
+      line-height: 0.98;
+      letter-spacing: -0.052em;
+    }
+
+    .nex-price {
+      padding: clamp(1.35rem, 3vw, 2rem);
+      border-radius: 1.35rem;
+    }
+
+    .nex-price h2 {
+      max-width: 9ch;
+      margin: 0.45rem 0 1.4rem;
+      color: #f6fbfb;
+      font-size: var(--text-card-title);
+      line-height: 1.05;
+      letter-spacing: -0.042em;
+    }
+
+    .nex-price strong {
+      display: block;
+      margin: 0.1rem 0 0.1rem;
+      font-size: clamp(2rem, 3.4vw, 3rem);
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    .nex-price em {
+      display: block;
+      margin: -0.15rem 0 0.85rem;
+      color: rgba(246, 251, 251, 0.58);
+      font-style: normal;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .nex-price p {
+      margin: 0 0 1rem;
+      font-size: var(--text-body);
+    }
+
+    .nex-value-list {
+      display: grid;
+      gap: 0.5rem;
+      margin: 0 0 1.2rem;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nex-value-list li {
+      position: relative;
+      padding-left: 1.05rem;
+      color: rgba(246, 251, 251, 0.76);
+      font-size: 0.9rem;
+      line-height: 1.45;
+    }
+
+    .nex-value-list li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0.65em;
+      width: 0.38rem;
+      height: 0.38rem;
+      border-radius: 999px;
+      background: #2dd4bf;
+    }
+
+    .nex-price-options {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.55rem;
+      margin: 1.1rem 0;
+    }
+
+    .nex-price-options b {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 2.8rem;
+      padding: 0.5rem;
+      border: 1px solid rgba(45, 212, 191, 0.28);
+      border-radius: 0.8rem;
+      background: rgba(45, 212, 191, 0.08);
+      color: #99f6e4;
+      font-size: 0.95rem;
+      line-height: 1;
+      text-align: center;
+      transition:
+        transform 180ms ease,
+        border-color 180ms ease,
+        background 180ms ease;
+    }
+
+    .nex-price-options b:hover {
+      transform: translateY(-2px);
+      border-color: rgba(45, 212, 191, 0.48);
+      background: rgba(45, 212, 191, 0.13);
+    }
+
+    .nex-section {
+      width: min(100%, 82rem);
+      margin: 0 auto;
+      padding: 120px clamp(1.1rem, 4vw, 3.6rem);
+      scroll-margin-top: calc(var(--nex-header-height) + 1rem);
+    }
+
+    .nex-pain {
+      display: grid;
+      gap: clamp(1.2rem, 3vw, 2rem);
+      padding-top: clamp(2.2rem, 5vw, 4rem);
+      padding-bottom: clamp(2.2rem, 5vw, 4rem);
+    }
+
+    .nex-pain h2 {
+      max-width: 16ch;
+    }
+
+    .nex-tension {
+      display: grid;
+      place-items: center;
+      text-align: center;
+    }
+
+    .nex-tension h2 {
+      max-width: 16ch;
+      font-size: clamp(2.6rem, 5.5vw, 5.4rem);
+      line-height: 0.98;
+    }
+
+    .nex-for {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: clamp(2rem, 6vw, 5rem);
+      align-items: start;
+      padding-top: clamp(3rem, 6vw, 5rem);
+      padding-bottom: clamp(2rem, 5vw, 4rem);
+    }
+
+    .nex-for h2 {
+      max-width: 13ch;
+      font-size: var(--text-section);
+    }
+
+    .nex-for-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.9rem;
+    }
+
+    .nex-for-grid article {
+      min-height: 9rem;
+      padding: 40px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.045);
+      color: rgba(246, 251, 251, 0.78);
+      line-height: 1.45;
+      font-weight: 700;
+    }
+
+    .nex-for-grid h3 {
+      margin: 0 0 0.65rem;
+      color: #f6fbfb;
+      font-size: 1.15rem;
+      line-height: 1.2;
+      letter-spacing: -0.025em;
+    }
+
+    .nex-for-grid p {
+      max-width: 620px;
+      margin: 0;
+      color: rgba(246, 251, 251, 0.68);
+      font-weight: 500;
+    }
+
+    .nex-provocation {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding-top: clamp(3.5rem, 7vw, 6.5rem);
+      padding-bottom: clamp(3.5rem, 7vw, 6.5rem);
+    }
+
+    .nex-provocation h2 {
+      max-width: 15ch;
+      margin: 0.2rem 0 1rem;
+      font-size: var(--text-emphasis);
+    }
+
+    .nex-provocation p {
+      max-width: 44rem;
+      margin: 0;
+      font-size: var(--text-body-lg);
+    }
+
+    .nex-split,
+    .nex-diagnostic {
+      display: grid;
+      gap: clamp(2rem, 6vw, 6rem);
+      align-items: start;
+    }
+
+    .nex-split {
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    }
+
+    .nex-diagnostic {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      align-items: flex-start;
+    }
+
+    .nex-text-stack {
+      display: grid;
+      gap: 1rem;
+      font-size: var(--text-body-lg);
+    }
+
+    .nex-text-stack p,
+    .nex-diagnostic-copy p {
+      max-width: 620px;
+    }
+
+    .nex-not {
+      padding-top: clamp(2rem, 5vw, 4rem);
+    }
+
+    .nex-understand {
+      display: grid;
+      grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+      gap: clamp(2rem, 6vw, 6rem);
+      align-items: start;
+    }
+
+    .nex-understand-list {
+      display: grid;
+      gap: 1.2rem;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .nex-understand-list li {
+      display: grid;
+      grid-template-columns: 3rem minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+      padding-bottom: 1.2rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .nex-understand-list span {
+      color: #2dd4bf;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+    }
+
+    .nex-understand-list p {
+      max-width: 620px;
+      margin: 0;
+      color: rgba(246, 251, 251, 0.78);
+      font-size: var(--text-body-lg);
+      line-height: 1.55;
+    }
+
+    .nex-pillars {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 0.85rem;
+      padding-top: 0;
+    }
+
+    .nex-pillars article {
+      min-height: 15rem;
+      padding: 1.35rem;
+      border-radius: 1.2rem;
+    }
+
+    .nex-pillars span {
+      color: #28d6ce;
+      font-weight: 900;
+    }
+
+    .nex-pillars h3 {
+      margin: 2.2rem 0 0.5rem;
+      font-size: 1.18rem;
+      letter-spacing: -0.035em;
+    }
+
+    .nex-diagnostic-copy {
+      position: sticky;
+      top: 6.5rem;
+      padding-right: 48px;
+    }
+
+    .nex-diagnostic-form-column {
+      display: grid;
+      gap: 1.2rem;
+      justify-items: start;
+      min-width: 0;
+    }
+
+    .nex-diagnostic-copy ul {
+      margin: 1.5rem 0 0;
+      padding: 0;
+      list-style: none;
+      display: grid;
+      gap: 0.65rem;
+    }
+
+    .nex-diagnostic-copy li {
+      padding: 0.82rem 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.04);
+      color: rgba(246, 251, 251, 0.78);
+    }
+
+    .nex-diagnostic-copy .nex-incentive-highlight {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      border-color: rgba(45, 212, 191, 0.5);
+      color: #2dd4bf;
+    }
+
+    .nex-tooltip {
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 auto;
+      width: 1.35rem;
+      height: 1.35rem;
+      border: 1px solid rgba(45, 212, 191, 0.45);
+      border-radius: 999px;
+      color: #2dd4bf;
+      font-size: 0.78rem;
+      font-weight: 900;
+      line-height: 1;
+      cursor: help;
+    }
+
+    .nex-tooltip [role="tooltip"] {
+      position: absolute;
+      right: 50%;
+      bottom: calc(100% + 0.7rem);
+      width: min(15rem, 72vw);
+      padding: 0.75rem 0.85rem;
+      border: 1px solid rgba(45, 212, 191, 0.24);
+      border-radius: 0.8rem;
+      background: rgba(10, 14, 14, 0.96);
+      box-shadow: 0 18px 44px rgba(0, 0, 0, 0.38);
+      color: rgba(246, 251, 251, 0.82);
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.4;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(50%, 0.4rem);
+      transition: opacity 180ms ease, transform 180ms ease;
+      z-index: 5;
+    }
+
+    .nex-tooltip:hover [role="tooltip"],
+    .nex-tooltip:focus-visible [role="tooltip"] {
+      opacity: 1;
+      transform: translate(50%, 0);
+    }
+
+    .nex-fineprint,
+    .nex-form-note,
+    .nex-step-copy,
+    .nex-form small {
+      color: rgba(246, 251, 251, 0.58);
+      line-height: 1.55;
+    }
+
+    .nex-fineprint {
+      margin-top: 1rem;
+      font-size: 0.92rem;
+    }
+
+    .nex-form-shell {
+      width: 100%;
+      max-width: 520px;
+      border-radius: 1.5rem;
+      overflow: hidden;
+    }
+
+    .nex-form-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1rem clamp(1.1rem, 3vw, 2rem);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.035);
+    }
+
+    .nex-form-top span,
+    .nex-form-top strong {
+      color: rgba(246, 251, 251, 0.72);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .nex-form-top span {
+      color: #28d6ce;
+    }
+
+    .nex-progress {
+      height: 0.25rem;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nex-progress span {
+      display: block;
+      height: 100%;
+      width: 16.66%;
+      background: linear-gradient(90deg, #2dd4bf, #67e8f9);
+      box-shadow: 0 0 1.4rem rgba(45, 212, 191, 0.42);
+      transition: width 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .nex-form,
+    .nex-result {
+      padding: clamp(1.1rem, 3vw, 2rem);
+    }
+
+    .nex-step {
+      display: none;
+      margin: 0;
+      padding: 0;
+      border: 0;
+    }
+
+    .nex-step.is-active {
+      display: grid;
+      gap: 1rem;
+      animation: nex-step-in 260ms ease both;
+    }
+
+    .nex-step-label {
+      margin: 0;
+      color: #28d6ce;
+      font-size: 0.76rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .nex-step h3,
+    .nex-result h3 {
+      margin: 0 0 0.5rem;
+      font-size: var(--text-step-title);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+    }
+
+    .nex-step-copy {
+      margin: -0.25rem 0 0.2rem;
+      font-size: 0.95rem;
+    }
+
+    .nex-field-context {
+      margin: -0.2rem 0 20px;
+      color: #666;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+
+    .nex-form label {
+      display: grid;
+      gap: 0.45rem;
+      color: rgba(246, 251, 251, 0.78);
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .nex-form small {
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .nex-form input,
+    .nex-form select,
+    .nex-form textarea {
+      width: 100%;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.95rem;
+      background: rgba(3, 4, 5, 0.72);
+      color: #f6fbfb;
+      font: inherit;
+      font-size: 16px;
+      padding: 0.95rem 1rem;
+      outline: none;
+      transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background 180ms ease,
+        transform 180ms ease;
+    }
+
+    .nex-form textarea {
+      resize: vertical;
+    }
+
+    .nex-form input:focus,
+    .nex-form select:focus,
+    .nex-form textarea:focus {
+      border-color: rgba(45, 212, 191, 0.7);
+      box-shadow: 0 0 0 4px rgba(45, 212, 191, 0.1);
+      background: rgba(3, 12, 12, 0.82);
+      transform: translateY(-1px);
+    }
+
+    .nex-form-error {
+      min-height: 1.4rem;
+      margin: 1rem 0 0;
+      color: #fca5a5;
+      font-size: 0.92rem;
+    }
+
+    .nex-form-note {
+      margin: 0.85rem 0 0;
+      font-size: 0.86rem;
+    }
+
+    .nex-faq {
+      display: grid;
+      grid-template-columns: minmax(0, 0.65fr) minmax(0, 1fr);
+      gap: clamp(1.6rem, 5vw, 4rem);
+      padding-top: clamp(2.2rem, 6vw, 5rem);
+    }
+
+    .nex-faq h2 {
+      max-width: 10ch;
+    }
+
+    .nex-faq-list {
+      display: grid;
+      gap: 0.75rem;
+    }
+
+    .nex-faq details {
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.045);
+      overflow: hidden;
+    }
+
+    .nex-faq summary {
+      cursor: pointer;
+      padding: 1rem 1.1rem;
+      color: #f6fbfb;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .nex-faq p {
+      margin: 0;
+      padding: 0 1.1rem 1rem;
+    }
+
+    .nex-result-price {
+      margin: 1.4rem 0;
+      padding: 1.2rem;
+      border-radius: 1rem;
+      background: rgba(45, 212, 191, 0.1);
+      border: 1px solid rgba(45, 212, 191, 0.4);
+      animation: nex-result-lift 420ms ease 120ms both;
+    }
+
+    .nex-result-price span {
+      display: block;
+      color: rgba(246, 251, 251, 0.58);
+      font-size: 0.78rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .nex-result-price strong {
+      display: block;
+      margin-top: 0.25rem;
+      color: #f5f2ec;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -0.05em;
+    }
+
+    .nex-result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1.6rem;
+    }
+
+    .nex-result-meter {
+      height: 0.55rem;
+      margin: 1.3rem 0;
+      border-radius: 999px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .nex-result-meter span {
+      display: block;
+      width: 0%;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #0f766e, #2dd4bf, #67e8f9);
+      box-shadow: 0 0 1.2rem rgba(45, 212, 191, 0.42);
+      transition: width 0.72s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .nex-result-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+      margin: 1rem 0;
+    }
+
+    .nex-result-grid div {
+      padding: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 1rem;
+      background: rgba(255, 255, 255, 0.04);
+      animation: nex-result-lift 420ms ease both;
+    }
+
+    .nex-result-grid div:nth-child(2) {
+      animation-delay: 80ms;
+    }
+
+    .nex-result-grid span {
+      display: block;
+      color: rgba(246, 251, 251, 0.54);
+      font-size: 0.72rem;
+      font-weight: 900;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .nex-result-grid strong {
+      display: block;
+      margin-top: 0.3rem;
+      font-size: 1.05rem;
+      line-height: 1.2;
+    }
+
+    @keyframes nex-pulse {
+      0%, 100% {
+        transform: scale(0.95);
+        opacity: 0.22;
+      }
+      50% {
+        transform: scale(1.05);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes nex-node-glow {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 0.78;
+      }
+      50% {
+        transform: scale(1.22);
+        opacity: 1;
+      }
+    }
+
+    @keyframes nex-step-in {
+      from {
+        opacity: 0;
+        transform: translateY(0.55rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes nex-result-lift {
+      from {
+        opacity: 0;
+        transform: translateY(0.65rem);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes nex-particle {
+      from {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-60px) scale(0);
+        opacity: 0;
+      }
+    }
+
+    .nex-result:not([hidden]) {
+      animation: nex-step-in 360ms ease both;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.001ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.001ms !important;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .nex-hero,
+      .nex-for,
+      .nex-split,
+      .nex-diagnostic,
+      .nex-understand,
+      .nex-faq {
+        grid-template-columns: 1fr;
+      }
+
+      .nex-hero {
+        height: calc(100dvh - var(--nex-header-height));
+        min-height: 36rem;
+        align-content: center;
+      }
+
+      .nex-hero-visual {
+        justify-content: center;
+      }
+
+      .nex-card {
+        grid-template-columns: 1fr;
+      }
+
+      .nex-book {
+        min-height: 18rem;
+      }
+
+      .nex-pillars {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .nex-for-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nex-diagnostic-form-column {
+        justify-items: center;
+      }
+
+      .nex-diagnostic-copy {
+        position: static;
+        padding-right: 0;
+      }
+
+      .nex-form-shell {
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nex-hero {
+        height: auto;
+        min-height: 0;
+        align-content: start;
+        padding-top: clamp(3rem, 12vw, 5rem);
+        padding-bottom: clamp(2.6rem, 9vw, 4rem);
+      }
+
+      .nex-hero-visual {
+        display: none;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .nex-header {
+        --nex-header-height: 3.75rem;
+        height: var(--nex-header-height);
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+      }
+
+      .nex-logo {
+        height: 1.35rem;
+      }
+
+      .nex-header-link {
+        display: none;
+      }
+
+      .nex-hero {
+        padding-top: clamp(2rem, 10vw, 3.25rem);
+        padding-bottom: clamp(2.4rem, 11vw, 3.6rem);
+      }
+
+      .nex-hero h1 {
+        max-width: 100%;
+        font-size: clamp(34px, 10.6vw, 44px);
+        line-height: 0.98;
+      }
+
+      .nex-hero h1 span {
+        white-space: normal;
+      }
+
+      .nex-lead {
+        max-width: 22rem;
+        font-size: 16px;
+      }
+
+      .nex-section {
+        padding-block: 64px;
+      }
+
+      .nex-tension {
+        padding-top: 56px;
+        padding-bottom: 56px;
+      }
+
+      .nex-tension h2 {
+        font-size: clamp(2rem, 9vw, 2.7rem);
+        line-height: 1;
+      }
+
+      .nex-for,
+      .nex-understand,
+      .nex-diagnostic,
+      .nex-faq {
+        gap: 1.4rem;
+      }
+
+      .nex-for-grid article {
+        min-height: 0;
+        padding: 20px;
+      }
+
+      .nex-pillars {
+        grid-template-columns: 1fr;
+      }
+
+      .nex-actions,
+      .nex-form-actions,
+      .nex-downloads,
+      .nex-result-actions {
+        flex-direction: column;
+        gap: 0.7rem;
+      }
+
+      .nex-result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nex-primary,
+      .nex-secondary {
+        width: 100%;
+        min-height: 3.15rem;
+        padding-inline: 1rem;
+        text-align: center;
+      }
+
+      .nex-form-shell {
+        border-radius: 1.15rem;
+      }
+
+      .nex-form-top {
+        padding: 0.85rem 1rem;
+      }
+
+      .nex-form,
+      .nex-result {
+        padding: 1rem;
+      }
+
+      .nex-step.is-active {
+        gap: 0.9rem;
+      }
+
+      .nex-step h3,
+      .nex-result h3 {
+        font-size: clamp(1.35rem, 6vw, 1.65rem);
+      }
+
+      .nex-form input,
+      .nex-form select,
+      .nex-form textarea {
+        min-height: 3.2rem;
+        border-radius: 0.8rem;
+        background: rgba(3, 4, 5, 0.84);
+      }
+
+      .nex-result-price strong {
+        font-size: clamp(2rem, 10vw, 2.45rem);
+      }
+    }
+  </style>
+</PageShell>
