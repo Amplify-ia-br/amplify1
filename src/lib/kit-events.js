@@ -107,15 +107,15 @@ const TAG_MAP = {
 const NATIVE_FOLLOWUP_SEQUENCES = {
   free_access: Number(process.env.KIT_NEXIALISTA_FREE_FOLLOWUP_SEQUENCE_ID || 2787868),
   purchased_downloaded: Number(process.env.KIT_NEXIALISTA_PURCHASED_FOLLOWUP_SEQUENCE_ID || 2787869),
-  bootcamp_interest: Number(process.env.KIT_BOOTCAMP_INTEREST_SEQUENCE_ID || 0),
-  bootcamp_checkout_abandoned: Number(process.env.KIT_BOOTCAMP_CHECKOUT_ABANDONED_SEQUENCE_ID || 0),
+  bootcamp_interest: Number(process.env.KIT_BOOTCAMP_INTEREST_SEQUENCE_ID || 2805414),
+  bootcamp_checkout_abandoned: Number(process.env.KIT_BOOTCAMP_CHECKOUT_ABANDONED_SEQUENCE_ID || 2805415),
   bootcamp_corporate: Number(process.env.KIT_BOOTCAMP_CORPORATE_SEQUENCE_ID || 2805401),
   bootcamp_sponsor: Number(process.env.KIT_BOOTCAMP_SPONSOR_SEQUENCE_ID || 0),
   bootcamp_waitlist: Number(process.env.KIT_BOOTCAMP_WAITLIST_SEQUENCE_ID || 0),
-  bootcamp_confirmed: Number(process.env.KIT_BOOTCAMP_CONFIRMED_SEQUENCE_ID || 0),
+  bootcamp_confirmed: Number(process.env.KIT_BOOTCAMP_CONFIRMED_SEQUENCE_ID || 2805416),
   bootcamp_whatsapp_optin: Number(process.env.KIT_BOOTCAMP_WHATSAPP_SEQUENCE_ID || 0),
-  bootcamp_attended: Number(process.env.KIT_BOOTCAMP_ATTENDED_SEQUENCE_ID || 0),
-  bootcamp_missed: Number(process.env.KIT_BOOTCAMP_MISSED_SEQUENCE_ID || 0),
+  bootcamp_attended: Number(process.env.KIT_BOOTCAMP_ATTENDED_SEQUENCE_ID || 2805417),
+  bootcamp_missed: Number(process.env.KIT_BOOTCAMP_MISSED_SEQUENCE_ID || 2805418),
 };
 
 let customFieldsPromise = null;
