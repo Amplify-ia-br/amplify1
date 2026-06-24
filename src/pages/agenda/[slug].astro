@@ -1,0 +1,285 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import logoAmplify from "@/assets/logo-amplify-branco.png";
+import { getBootcampEventBySlug } from "@/lib/bootcamp-events.js";
+import { BOOTCAMP_VERSION_LABELS } from "@/lib/bootcamp-natal-content.js";
+
+export const prerender = false;
+
+const { slug = "" } = Astro.params;
+if (slug === "natal-25-07-26") {
+  return Astro.redirect("/agenda/natal-23-07-26", 301);
+}
+
+const event = getBootcampEventBySlug(slug);
+const logoSrc = logoAmplify.src;
+const versions = [
+  {
+    id: "template",
+    title: "Template",
+    copy: "Reprodução comparável da LP anterior, preservando estrutura comercial, promessa, oferta e prova social.",
+  },
+  {
+    id: "branding",
+    title: "Branding Amplify",
+    copy: "Versão principal de marca: IA como capacidade de decisão, com estética premium e narrativa executiva.",
+  },
+  {
+    id: "cidade",
+    title: "Cidade",
+    copy: "Versão local e autoral: Natal como contexto vivo para prática, comunidade e continuidade da turma.",
+  },
+];
+
+if (!event) {
+  Astro.response.status = 404;
+}
+---
+
+<PageShell
+  title={event ? `Mockups Bootcamp ${event.city} | Amplify` : "Bootcamp não encontrado | Amplify"}
+  description={event
+    ? `Escolha uma das tres versoes de mockup do Bootcamp Amplify em ${event.city}.`
+    : "Turma de Bootcamp não encontrada."}
+  chatbot={false}
+>
+  {event ? (
+    <main class="agenda-hub">
+      <header class="agenda-hub__header" aria-label="Amplify">
+        <a href="/" aria-label="Voltar para a pagina inicial da Amplify">
+          <img src={logoSrc} alt="Amplify" width="160" height="32" />
+        </a>
+      </header>
+
+      <section class="agenda-hub__hero" aria-labelledby="hub-title">
+        <p>Revisão interna · {event.city} · {event.date}</p>
+        <h1 id="hub-title">Escolha uma versão da landing page do Bootcamp.</h1>
+        <div class="agenda-hub__facts" aria-label="Resumo da turma">
+          <span>{event.date}</span>
+          <span>{event.startTime} às {event.endTime}</span>
+          <span>{event.venue}</span>
+        </div>
+      </section>
+
+      <section class="agenda-hub__grid" aria-label="Versões disponíveis">
+        {versions.map((version) => (
+          <a class={`agenda-card agenda-card--${version.id}`} href={`/agenda/${event.slug}/${version.id}`}>
+            <span>{BOOTCAMP_VERSION_LABELS[version.id]}</span>
+            <h2>{version.title}</h2>
+            <p>{version.copy}</p>
+            <strong>Abrir mockup</strong>
+          </a>
+        ))}
+      </section>
+    </main>
+  ) : (
+    <main class="agenda-hub agenda-hub--not-found">
+      <a href="/" aria-label="Voltar para a pagina inicial da Amplify">
+        <img src={logoSrc} alt="Amplify" width="160" height="32" />
+      </a>
+      <h1>Turma não encontrada.</h1>
+      <p>Confira se a URL segue o formato /agenda/cidade-dd-mm-aa.</p>
+    </main>
+  )}
+</PageShell>
+
+<style>
+  :global(html),
+  :global(body) {
+    margin: 0;
+    background: #050708;
+    overflow-x: hidden;
+  }
+
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+  }
+
+  .agenda-hub {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    min-height: 100vh;
+    color: #f8fbfb;
+    background:
+      radial-gradient(circle at 18% 12%, rgba(0, 194, 203, 0.24), transparent 28rem),
+      linear-gradient(135deg, #050708 0%, #0d1414 48%, #11191a 100%);
+    padding: 32px clamp(20px, 5vw, 72px) 56px;
+  }
+
+  .agenda-hub__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .agenda-hub__header img,
+  .agenda-hub--not-found img {
+    display: block;
+    height: auto;
+  }
+
+  .agenda-hub__hero {
+    min-width: 0;
+    max-width: min(960px, 100%);
+    padding: clamp(76px, 12vw, 150px) 0 clamp(36px, 7vw, 82px);
+  }
+
+  .agenda-hub__hero p {
+    margin: 0 0 18px;
+    color: #31d6dc;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .agenda-hub__hero h1 {
+    max-width: 850px;
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(3rem, 8vw, 7.6rem);
+    line-height: 0.92;
+    letter-spacing: 0;
+  }
+
+  .agenda-hub__facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 34px;
+  }
+
+  .agenda-hub__facts span {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 999px;
+    padding: 12px 16px;
+    color: #d9e2e2;
+    background: rgba(255, 255, 255, 0.04);
+    font-weight: 700;
+  }
+
+  .agenda-hub__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .agenda-card {
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    color: #ffffff;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    padding: clamp(22px, 3vw, 34px);
+    background: rgba(255, 255, 255, 0.055);
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      background 180ms ease;
+  }
+
+  .agenda-card:hover,
+  .agenda-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: rgba(49, 214, 220, 0.62);
+    background: rgba(255, 255, 255, 0.09);
+  }
+
+  .agenda-card span {
+    color: #31d6dc;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .agenda-card h2 {
+    margin: 26px 0 14px;
+    color: #ffffff;
+    font-size: clamp(1.8rem, 3vw, 3.1rem);
+    line-height: 0.98;
+    letter-spacing: 0;
+  }
+
+  .agenda-card p {
+    margin: 0;
+    color: #b9c2c2;
+    font-size: 1.02rem;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+
+  .agenda-card strong {
+    margin-top: 34px;
+    color: #071011;
+    align-self: flex-start;
+    border-radius: 6px;
+    padding: 12px 16px;
+    background: #31d6dc;
+    font-size: 0.96rem;
+  }
+
+  .agenda-card--template {
+    background:
+      linear-gradient(160deg, rgba(255, 55, 95, 0.14), rgba(255, 255, 255, 0.045)),
+      rgba(255, 255, 255, 0.04);
+  }
+
+  .agenda-card--cidade {
+    background:
+      linear-gradient(160deg, rgba(244, 153, 55, 0.16), rgba(0, 194, 203, 0.08)),
+      rgba(255, 255, 255, 0.04);
+  }
+
+  .agenda-hub--not-found {
+    display: grid;
+    align-content: center;
+    gap: 20px;
+  }
+
+  .agenda-hub--not-found h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 7vw, 5rem);
+  }
+
+  .agenda-hub--not-found p {
+    margin: 0;
+    color: #b9c2c2;
+  }
+
+  @media (max-width: 900px) {
+    .agenda-hub__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .agenda-card {
+      min-height: 240px;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .agenda-hub {
+      padding: 24px 16px 36px;
+    }
+
+    .agenda-hub__hero h1 {
+      font-size: clamp(2.15rem, 10vw, 2.9rem);
+      line-height: 1.02;
+    }
+
+    .agenda-card h2 {
+      font-size: 2rem;
+      line-height: 1.05;
+    }
+
+    .agenda-hub__facts span {
+      width: 100%;
+    }
+  }
+</style>

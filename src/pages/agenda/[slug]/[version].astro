@@ -1,0 +1,6331 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import logoAmplify from "@/assets/logo-amplify-branco.png";
+import treinamentoPresencial from "@/assets/optimized/treinamento-presencial.webp";
+import forumPalestra from "@/assets/optimized/forum-palestra.webp";
+import logoGrupoPrimo from "@/assets/logos/logo-grupo-primo.png";
+import logoAmcham from "@/assets/logos/logo-amcham.png";
+import logoGouvea from "@/assets/logos/logo-gouvea.png";
+import logoTecfil from "@/assets/logos/logo-tecfil.png";
+import logoUfg from "@/assets/logos/logo-ufg.png";
+import logoCreaPr from "@/assets/logos/logo-crea-pr.png";
+import { getBootcampCheckoutUrl, getBootcampEventBySlug } from "@/lib/bootcamp-events.js";
+import {
+  BOOTCAMP_NATAL,
+  BOOTCAMP_VERSION_LABELS,
+  isBootcampMockupVersion,
+} from "@/lib/bootcamp-natal-content.js";
+
+export const prerender = false;
+
+const { slug = "", version = "" } = Astro.params;
+const legacyNatalSlug = "natal-25-07-26";
+const canonicalNatalSlug = "natal-23-07-26";
+
+if (slug === legacyNatalSlug && version) {
+  return Astro.redirect(`/agenda/${canonicalNatalSlug}/${version}`, 301);
+}
+
+const event = getBootcampEventBySlug(slug);
+const activeVersion = String(version).toLowerCase();
+const isValidVersion = isBootcampMockupVersion(activeVersion);
+const content = BOOTCAMP_NATAL;
+const logoSrc = logoAmplify.src;
+const heroSrc = treinamentoPresencial.src;
+const citySrc = forumPalestra.src;
+const checkoutUrl = event ? getBootcampCheckoutUrl(event, Astro.url) : "";
+const sponsorUrl = event?.whatsappGroupUrl || "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20o%20Bootcamp%20IA%20para%20neg%C3%B3cios%20em%20Natal";
+const horizontalVideoSrc = "/bootcamp/video-optimized/bootcamp-natal-horizontal-wifi.mp4";
+const verticalVideoSrc = "/bootcamp/video-optimized/bootcamp-natal-vertical-cellular.mp4";
+const horizontalVideoFallbackSrc = "/bootcamp/video-optimized/bootcamp-natal-horizontal-cellular.mp4";
+const verticalVideoPoster = "/bootcamp/midias/thumbnail_1d1f0446.jpg";
+const horizontalVideoPoster = content.templateAssets.stage04;
+const brandingClientLogos = [
+  { src: logoGrupoPrimo.src, alt: "Grupo Primo" },
+  { src: logoAmcham.src, alt: "Amcham" },
+  { src: logoGouvea.src, alt: "Gouvêa" },
+  { src: logoTecfil.src, alt: "Tecfil" },
+  { src: logoUfg.src, alt: "UFG" },
+  { src: logoCreaPr.src, alt: "CREA-PR" },
+];
+const brandingFaq = [
+  {
+    question: "Até que dia vão as inscrições?",
+    answer:
+      "As inscrições ficarão abertas até três dias antes do evento ou até esgotarem as vagas. Recomendamos garantir o ingresso o quanto antes, pois as vagas são limitadas.",
+  },
+  {
+    question: "Vocês fornecem certificado?",
+    answer:
+      "Sim. Todos os participantes recebem certificado digital de conclusão, reconhecendo sua participação na imersão do Bootcamp IA para Negócios®.",
+  },
+  {
+    question: "Como será a alimentação?",
+    answer: "O evento oferece coffee break à tarde e coquetel happy hour.",
+  },
+  {
+    question: "Tem estacionamento?",
+    answer: "O evento será no Bright Coworking Natal. Detalhes finais de acesso, estacionamento e chegada serão enviados aos inscritos antes da imersão.",
+  },
+];
+const cityHeroImage = "/bootcamp/parque-cidade-natal-torre.jpg";
+const cityForteImage = "/bootcamp/forte-dos-reis-magos-natal-1600.jpg";
+const cityMorroImage = "/bootcamp/morro-do-careca-ponta-negra-natal.jpg";
+const cityLandmarks = [
+  {
+    label: "Forte",
+    title: "Estrutura",
+    copy: "O Forte dos Reis Magos vira metáfora do dia: critério, base e método antes de qualquer ferramenta.",
+    image: cityForteImage,
+  },
+  {
+    label: "Dunas",
+    title: "Trajetória",
+    copy: "Das dunas à prática: sair do improviso, atravessar exercícios reais e chegar a um plano de aplicação.",
+    image: cityMorroImage,
+  },
+  {
+    label: "Potengi",
+    title: "Fluxo",
+    copy: "Dados, atendimento, conteúdo e operação precisam circular. IA entra para organizar esse fluxo.",
+    image: cityHeroImage,
+  },
+  {
+    label: "Ponta Negra",
+    title: "Encontro",
+    copy: "Uma turma presencial para aprender junto, trocar repertório e criar resenha boa depois da compra.",
+    image: cityMorroImage,
+  },
+];
+const cityRoute = [
+  {
+    time: "09:00",
+    title: "Chegada",
+    copy: "Credenciamento, leitura da turma e alinhamento do que cada pessoa quer tirar da IA.",
+  },
+  {
+    time: "Manhã",
+    title: "Método",
+    copy: "Fundamentos, prompts, critérios de qualidade e repertório para decidir melhor.",
+  },
+  {
+    time: "Tarde",
+    title: "Prática",
+    copy: "Agentes, chatbot, dados e conteúdo visual aplicados a situações reais de trabalho.",
+  },
+  {
+    time: "18:00",
+    title: "Plano",
+    copy: "De rocha: você sai com prioridades, próximos passos e convite para o grupo oficial da turma.",
+  },
+];
+const cityFaq = [
+  {
+    question: "Preciso saber programar?",
+    answer: "Não. A proposta é IA sem aperreio: linguagem clara, prática guiada e exercícios que partem da rotina de trabalho.",
+  },
+  {
+    question: "Como faço a inscrição?",
+    answer: "Sem arrodeio: a compra acontece pela Sympla, e a confirmação chega por email com os dados da turma.",
+  },
+  {
+    question: "O grupo de WhatsApp é obrigatório?",
+    answer: "Não. O opt-in é voluntário depois da compra. O grupo serve para avisos, materiais, logística e networking.",
+  },
+  {
+    question: "O local já está definido?",
+    answer: "Sim. O Bootcamp será no Bright Coworking Natal, na Av. Dão Silveira, 3860 - Loja 03 - Parque das Colinas, Natal - RN, 59066-180.",
+  },
+];
+const pageTitle = event && isValidVersion
+  ? `${BOOTCAMP_VERSION_LABELS[activeVersion]} | Bootcamp ${event.city} | Amplify`
+  : "Bootcamp não encontrado | Amplify";
+const pageDescription = event && isValidVersion
+  ? `Mockup ${BOOTCAMP_VERSION_LABELS[activeVersion]} da landing page do Bootcamp Amplify em ${event.city}, no dia ${event.date}.`
+  : "Turma de Bootcamp não encontrada.";
+
+if (!event || !isValidVersion) {
+  Astro.response.status = 404;
+}
+---
+
+<PageShell title={pageTitle} description={pageDescription} chatbot={false}>
+  {event && isValidVersion ? (
+    <main class={`boot-mockup boot-mockup--${activeVersion}`} data-bootcamp-slug={event.slug} data-bootcamp-version={activeVersion}>
+      {activeVersion === "template" && (
+        <>
+          <section class="template-hero" aria-labelledby="template-title">
+            <picture class="template-hero__media" aria-hidden="true">
+              <source srcset={content.templateAssets.heroMobile} media="(max-width: 680px)" />
+              <img src={content.templateAssets.hero} alt="" width="1600" height="900" loading="eager" />
+            </picture>
+            <div class="template-hero__overlay"></div>
+            <header class="template-header">
+              <a class="template-logo-mark" href="/" aria-label="Bootcamp IA para Negócios Natal">
+                <img src={content.templateAssets.logo} alt="Bootcamp IA para Negócios Natal" width="398" height="148" loading="eager" />
+              </a>
+              <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>{content.template.cta}</a>
+            </header>
+            <div class="template-hero__copy">
+              <p>{content.template.eyebrow}</p>
+              <h1 id="template-title">{content.template.headline}</h1>
+              <p>{content.template.lead}</p>
+              <div class="template-meta" aria-label="Resumo do evento">
+                <span>{content.longDateLabel}</span>
+                <span>{content.cityLabel}</span>
+                <span>Presencial</span>
+                <span>{content.durationLabel}</span>
+              </div>
+              <div class="template-actions">
+                <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>{content.template.cta}</a>
+                <a class="template-actions__sponsor" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Seja um Patrocinador</a>
+                <span>{event.date} · {event.startTime} às {event.endTime}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="template-band template-band--proof" aria-label="Prova social">
+            <p>Bootcamp IA para Negócios® Natal · {content.longDateLabel}</p>
+            <strong>{content.template.proof}</strong>
+            <div>
+              <span>lideranças</span>
+              <span>empreendedores</span>
+              <span>profissionais liberais</span>
+              <span>equipes corporativas</span>
+            </div>
+          </section>
+
+          <section class="template-countdown" aria-label="Contagem regressiva">
+            <p>{content.template.countdownTitle}</p>
+            <div>
+              <span><strong>44</strong>dias</span>
+              <span><strong>09</strong>horas</span>
+              <span><strong>30</strong>minutos</span>
+              <span><strong>00</strong>segundos</span>
+            </div>
+          </section>
+
+          <section class="template-section template-video" aria-labelledby="video-title">
+            <div>
+              <p>Última edição</p>
+              <h2 id="video-title">{content.template.videoTitle}</h2>
+            </div>
+            <div class="template-video__frame bootcamp-video-card bootcamp-video-card--vertical" aria-label="Vídeo da edição anterior">
+              <video class="bootcamp-video" poster={verticalVideoPoster} playsinline preload="metadata">
+                <source src={verticalVideoSrc} type="video/mp4" />
+              </video>
+              <button type="button" class="bootcamp-video-play" aria-label="Reproduzir vídeo">
+                <span>
+                  <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M22 15.5v33c0 2.4 2.7 3.8 4.7 2.4l23.4-16.5c1.7-1.2 1.7-3.7 0-4.9L26.7 13.1c-2-1.4-4.7 0-4.7 2.4Z"></path></svg>
+                </span>
+              </button>
+              <button type="button" class="bootcamp-video-fullscreen" aria-label="Abrir vídeo em tela cheia">
+                <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 24V10h14v6h-8v8h-6Zm30-14h14v14h-6v-8h-8v-6ZM16 40v8h8v6H10V40h6Zm32 8v-8h6v14H40v-6h8Z"></path></svg>
+              </button>
+            </div>
+          </section>
+
+          <section class="template-section template-what" aria-labelledby="what-title">
+            <div class="template-section__head">
+              <p>Imersão presencial</p>
+              <h2 id="what-title">{content.template.whatTitle}</h2>
+            </div>
+            <div class="template-what__copy">
+              {content.template.whatCopy.map((paragraph) => <p>{paragraph}</p>)}
+            </div>
+          </section>
+
+          <section class="template-section template-location" aria-label="Informações do evento">
+            <figure>
+              <img src={content.templateAssets.cityArt} alt="Arte visual do Bootcamp IA para Negócios" width="820" height="620" loading="lazy" />
+            </figure>
+            <article>
+              <span>Data</span>
+              <strong>{event.date}</strong>
+              <p>{content.longDateLabel}</p>
+            </article>
+            <article>
+              <span>Horário</span>
+              <strong>{event.startTime} às {event.endTime}</strong>
+              <p>{content.durationLabel}</p>
+            </article>
+            <article>
+              <span>Local</span>
+              <strong>{event.venue}</strong>
+              <p>{event.address}</p>
+            </article>
+          </section>
+
+          <section class="template-section" aria-labelledby="expect-title">
+            <div class="template-section__head">
+              <p>O que esperar</p>
+              <h2 id="expect-title">Experiência intensiva, prática e presencial.</h2>
+            </div>
+            <div class="template-grid">
+              {content.expectations.map((item) => (
+                <article>
+                  <h3>{item.title}</h3>
+                  <p>{item.copy}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="template-section template-program" aria-labelledby="program-title">
+            <div class="template-section__head">
+              <p>Programação</p>
+              <h2 id="program-title">4 work sessions para sair com repertório e aplicação.</h2>
+            </div>
+            <div class="template-program__list">
+              {content.sessions.map((session, index) => (
+                <article>
+                  <img
+                    src={[
+                      content.templateAssets.session01,
+                      content.templateAssets.session02,
+                      content.templateAssets.session03,
+                      content.templateAssets.session04,
+                    ][index]}
+                    alt=""
+                    width="360"
+                    height="240"
+                    loading="lazy"
+                  />
+                  <span>{session.label}</span>
+                  <h3>{session.title}</h3>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="template-section template-audience" aria-labelledby="audience-title">
+            <div>
+              <p>Para quem é</p>
+              <h2 id="audience-title">Profissionais que querem aplicar IA no trabalho real.</h2>
+            </div>
+            <ul>
+              {content.audience.map((item) => <li>{item}</li>)}
+            </ul>
+          </section>
+
+          <section class="template-section template-offers" aria-labelledby="offers-title">
+            <div class="template-section__head">
+              <p>Ingressos</p>
+              <h2 id="offers-title">Escolha seu plano.</h2>
+            </div>
+            <div class="template-offers__grid">
+              {content.offers.map((offer) => (
+                <article>
+                  <h3>{offer.title}</h3>
+                  <strong>{offer.price}</strong>
+                  <p>{offer.note}</p>
+                  <ul>
+                    {offer.items.map((item) => <li>{item}</li>)}
+                  </ul>
+                  <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>
+                    {offer.title === "Plano individual" ? "Comprar ingresso" : "Falar com consultor"}
+                  </a>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="template-section template-mentor" aria-labelledby="mentor-title">
+            <img src={content.templateAssets.mentor} alt="Leonardo Camacho" width="720" height="900" loading="lazy" />
+            <div>
+              <p>Seu mentor</p>
+              <h2 id="mentor-title">{content.mentor.name}</h2>
+              <strong>{content.mentor.title}</strong>
+              <p>{content.mentor.bio}</p>
+            </div>
+            <aside>
+              {content.stats.map((stat) => (
+                <span><strong>{stat.value}</strong>{stat.label}</span>
+              ))}
+            </aside>
+          </section>
+
+          <section class="template-section template-quote" aria-label="Depoimento">
+            <blockquote>“{content.testimonial.quote}”</blockquote>
+            <p>{content.testimonial.author} · {content.testimonial.role}</p>
+          </section>
+
+          <section class="template-section template-faq" aria-labelledby="faq-title">
+            <div class="template-section__head">
+              <p>Dúvidas frequentes</p>
+              <h2 id="faq-title">FAQ</h2>
+            </div>
+            {content.faq.map((item) => (
+              <details>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </section>
+
+          <section class="template-final" aria-label="Comprar ingresso">
+            <h2>Garanta sua vaga no Bootcamp IA para Negócios® Natal.</h2>
+            <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>{content.template.cta}</a>
+          </section>
+        </>
+      )}
+
+      {activeVersion === "branding" && (
+        <>
+          <header class="bn-nav">
+            <div class="bn-container bn-nav__inner">
+              <a class="bn-nav__brand" href="/" aria-label="Voltar para a pagina inicial da Amplify">
+                <img src={logoSrc} alt="Amplify" width="120" height="24" />
+                <span>Bootcamp IA para Negócios® · Natal</span>
+              </a>
+              <div class="bn-nav__links">
+                <a href="#programacao">Programação</a>
+                <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Garanta sua vaga</a>
+              </div>
+            </div>
+          </header>
+
+          <section class="bn-hero" aria-labelledby="bn-title">
+            <img class="bn-hero__photo" src={heroSrc} alt="" width="1280" height="720" loading="eager" />
+            <div class="bn-hero__scrim"></div>
+            <span class="bn-pulse bn-pulse--hero" aria-hidden="true"></span>
+            <div class="bn-container bn-hero__inner">
+              <p class="bn-label">Bootcamp IA para Negócios® <span></span> Natal · {content.longDateLabel}</p>
+              <h1 id="bn-title">Do zero ao <strong>método em 10 horas.</strong></h1>
+              <p>
+                Enquanto outros assistem tutoriais, você já está implementando IA na sua vida.
+                Método prático + networking + cases reais. Presencial, intenso, irresistível.
+              </p>
+              <div class="bn-actions">
+                <a class="bn-button bn-button--primary" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Garanta sua vaga <span aria-hidden="true">→</span></a>
+                <a class="bn-button bn-button--secondary" href="#programacao">Ver programação</a>
+                <a class="bn-button bn-button--ghost" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Seja um Patrocinador</a>
+              </div>
+              <div class="bn-meta" aria-label="Resumo do evento">
+                <span>{content.cityLabel}</span>
+                <span>{content.longDateLabel}</span>
+                <span>{event.startTime} às {event.endTime}</span>
+                <span>{event.venue}</span>
+                <span>{content.durationLabel}</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="bn-section bn-split" aria-labelledby="bn-what-title" data-screen-label="O que é">
+            <div>
+              <p class="bn-label">O que é o Bootcamp</p>
+              <h2 id="bn-what-title">Não é aula. É aceleração.</h2>
+            </div>
+            <div class="bn-copy">
+              <p>
+                Você já sabe que IA existe. Já testou. Viu potencial. Mas aí vem a verdade:
+                testando você nunca sai do sandbox. O <strong>Bootcamp IA para Negócios®</strong> é
+                para quem quer transformar curiosidade em método, método em operação, operação em resultado.
+              </p>
+              <p>
+                10 horas de imersão estratégica com <strong>Leonardo Camacho</strong>. Você sai com
+                um plano claro, ferramentas escolhidas e confiança para implementar.
+              </p>
+              <div class="bn-note"><strong>92%</strong> dos participantes aplicam IA em tarefas reais nos 7 dias seguintes.</div>
+            </div>
+          </section>
+
+          <section class="bn-section bn-section--surface" aria-labelledby="bn-expect-title">
+            <div class="bn-section__head">
+              <p class="bn-label">O que esperar do Bootcamp</p>
+              <h2 id="bn-expect-title">Uma experiência imersiva, prática e transformadora.</h2>
+            </div>
+            <div class="bn-grid">
+              {content.expectations.map((item) => (
+                <article>
+                  <h3>{item.title}</h3>
+                  <p>{item.copy}</p>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section id="programacao" class="bn-section" aria-labelledby="bn-program-title">
+            <div class="bn-section__head">
+              <p class="bn-label">Programação</p>
+              <h2 id="bn-program-title">Quatro Work Sessions práticas e focadas.</h2>
+              <p>
+                Cada sessão combina exercícios reais, discussão de casos e aplicação conectada ao
+                contexto de trabalho de quem está na sala.
+              </p>
+            </div>
+            <div class="bn-program">
+              {content.sessions.map((session, index) => (
+                <article>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <div>
+                    <h3>{session.title}</h3>
+                    <p>{session.copy}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="bn-section" aria-labelledby="bn-audience-title">
+            <div class="bn-section__head">
+              <p class="bn-label">Para quem é</p>
+              <h2 id="bn-audience-title">O Bootcamp é para quem está pronto para agir.</h2>
+            </div>
+            <div class="bn-audience">
+              {content.audience.map((item) => (
+                <p><span>→</span>{item}</p>
+              ))}
+            </div>
+          </section>
+
+          <section class="bn-section bn-experience" aria-labelledby="bn-experience-title">
+            <img src={content.templateAssets.stage04} alt="Sala de aula presencial do Bootcamp" width="720" height="480" loading="lazy" />
+            <div>
+              <p class="bn-label">O que está incluído</p>
+              <h2 id="bn-experience-title">Experiência presencial completa.</h2>
+              <ul>
+                <li>Ingresso para 10 horas de imersão</li>
+                <li>Certificado de Conclusão</li>
+                <li>Coffee Break e networking</li>
+                <li>Grupo de WhatsApp exclusivo da turma <small>para troca de experiências, informações e networking</small></li>
+              </ul>
+            </div>
+          </section>
+
+          <section class="bn-section bn-video-stats" aria-labelledby="bn-video-title">
+            <div class="bn-section__head">
+              <p class="bn-label">Assista ao vídeo</p>
+              <h2 id="bn-video-title">Veja como foi a última edição do Bootcamp.</h2>
+              <p>Interação real, cases concretos e pessoas saindo com método.</p>
+            </div>
+            <div class="bn-video-card bootcamp-video-card bootcamp-video-card--horizontal" aria-label="Vídeo da última edição do Bootcamp">
+              <video class="bootcamp-video" poster={horizontalVideoPoster} playsinline preload="metadata">
+                <source src={horizontalVideoSrc} type="video/mp4" media="(min-width: 720px)" />
+                <source src={horizontalVideoFallbackSrc} type="video/mp4" />
+              </video>
+              <button type="button" class="bn-video-play bootcamp-video-play" aria-label="Reproduzir vídeo">
+                <span>
+                  <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M22 15.5v33c0 2.4 2.7 3.8 4.7 2.4l23.4-16.5c1.7-1.2 1.7-3.7 0-4.9L26.7 13.1c-2-1.4-4.7 0-4.7 2.4Z"></path></svg>
+                </span>
+              </button>
+              <button type="button" class="bootcamp-video-fullscreen" aria-label="Abrir vídeo em tela cheia">
+                <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 24V10h14v6h-8v8h-6Zm30-14h14v14h-6v-8h-8v-6ZM16 40v8h8v6H10V40h6Zm32 8v-8h6v14H40v-6h8Z"></path></svg>
+              </button>
+            </div>
+            <div class="bn-section__head bn-section__head--center">
+              <p class="bn-label">Um plano de ação prático</p>
+              <h2>Com ferramentas aplicáveis e uma metodologia que transforma.</h2>
+            </div>
+            <div class="bn-stats">
+              {content.stats.map((stat) => (
+                <article>
+                  <strong>{stat.value}</strong>
+                  <span>{stat.label}</span>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="bn-section bn-section--surface bn-mentor" aria-labelledby="bn-mentor-title">
+            <img src={content.templateAssets.mentor} alt="Leonardo Camacho" width="720" height="900" loading="lazy" />
+            <div>
+              <p class="bn-label">Quem será seu mentor?</p>
+              <h2 id="bn-mentor-title">{content.mentor.name}</h2>
+              <p>{content.mentor.bio}</p>
+              <div class="bn-client-row" aria-label="Empresas que confiam na Amplify">
+                <p>Empresas que confiam na Amplify</p>
+                <div>
+                  {brandingClientLogos.map((client) => (
+                    <img src={client.src} alt={client.alt} width="120" height="40" loading="lazy" />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="oferta" class="bn-section bn-offer" aria-labelledby="bn-offer-title">
+            <div class="bn-section__head">
+              <p class="bn-label">Garanta sua vaga</p>
+              <h2 id="bn-offer-title">Escolha seu plano.</h2>
+              <p><strong>Vagas limitadas.</strong> 1º lote até 10 de julho por R$ 1.890. Depois sobe para R$ 2.170. Quanto antes confirma, mais tempo para se preparar e mais rápido começa a ganhar com IA.</p>
+            </div>
+            <div class="bn-offer-grid">
+              <article class="bn-card bn-card--highlight">
+                <span class="bn-badge">1º lote até 10/07</span>
+                <h3>Ingresso Individual</h3>
+                <p>Para você participar da imersão</p>
+                <div class="bn-price">
+                  <strong>R$ 1.890</strong>
+                  <span class="bn-price__compare"><s>de R$ 2.170</s><em>Economize R$ 280</em></span>
+                </div>
+                <ul>
+                  {content.offers[0].items.map((item) => <li>{item}</li>)}
+                </ul>
+                <a class="bn-button bn-button--primary" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Comprar ingresso agora <span aria-hidden="true">→</span></a>
+              </article>
+              <article class="bn-card">
+                <h3>Plano Corporativo</h3>
+                <p>Acima de 5 ingressos</p>
+                <p>Sua empresa tem condição diferenciada e apoio para organizar a participação da equipe.</p>
+                <div class="bn-note">Desconto sob consulta · Entre em contato com nosso consultor.</div>
+                <a class="bn-button bn-button--primary" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Fale com nosso consultor <span aria-hidden="true">→</span></a>
+              </article>
+            </div>
+          </section>
+
+          <section class="bn-section bn-section--surface bn-faq" aria-labelledby="bn-faq-title">
+            <div class="bn-section__head">
+              <p class="bn-label">Perguntas frequentes</p>
+              <h2 id="bn-faq-title">Tudo o que você precisa saber.</h2>
+            </div>
+            <div class="bn-faq__list">
+              {brandingFaq.map((item) => (
+                <details>
+                  <summary>{item.question}</summary>
+                  <p>{item.answer}</p>
+                </details>
+              ))}
+            </div>
+          </section>
+
+          <section class="bn-section bn-final" aria-label="Comprar ingresso">
+            <span class="bn-pulse bn-pulse--final" aria-hidden="true"></span>
+            <h2>Está pronto para <strong>implementar</strong> IA?</h2>
+            <p>Transforme dados em inteligência e inteligência em resultado. O Bootcamp te mostra o caminho prático.</p>
+            <div class="bn-actions bn-actions--center">
+              <a class="bn-button bn-button--primary" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Garanta sua vaga agora <span aria-hidden="true">→</span></a>
+              <a class="bn-button bn-button--secondary" href="#oferta">Ver preços</a>
+            </div>
+            <small>Bootcamp IA para Negócios® · Bright Coworking Natal · {content.longDateLabel} · {event.startTime} às {event.endTime}</small>
+          </section>
+
+          <footer class="bn-footer">
+            <div class="bn-container">
+              <img src={logoSrc} alt="Amplify" width="120" height="24" />
+              <p>© 2026 Bootcamp IA para Negócios®. Todos os direitos reservados.</p>
+            </div>
+          </footer>
+
+          <script is:inline>
+            const animatedItems = document.querySelectorAll(
+              ".boot-mockup--branding .bn-section, .boot-mockup--branding .bn-card, .boot-mockup--branding .bn-program article, .boot-mockup--branding .bn-grid article, .boot-mockup--branding .bn-audience p, .boot-mockup--branding .bn-stats article"
+            );
+
+            if ("IntersectionObserver" in window) {
+              const revealObserver = new IntersectionObserver(
+                (entries) => {
+                  entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    entry.target.classList.add("is-visible");
+                    revealObserver.unobserve(entry.target);
+                  });
+                },
+                { rootMargin: "0px 0px -12% 0px", threshold: 0.1 }
+              );
+
+              animatedItems.forEach((item) => {
+                item.classList.add("bn-reveal");
+                revealObserver.observe(item);
+              });
+            } else {
+              animatedItems.forEach((item) => item.classList.add("is-visible"));
+            }
+          </script>
+        </>
+      )}
+
+      {activeVersion === "cidade" && (
+        <>
+          <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+            <defs>
+              <symbol id="city-sol" viewBox="0 0 24 24">
+                <path d="M4 17 A8 8 0 0 1 20 17"></path>
+                <line x1="2" y1="17" x2="22" y2="17"></line>
+                <line x1="12" y1="4" x2="12" y2="6.5"></line>
+                <line x1="5.5" y1="7.5" x2="7.2" y2="9.2"></line>
+                <line x1="18.5" y1="7.5" x2="16.8" y2="9.2"></line>
+              </symbol>
+              <symbol id="city-sunticks" viewBox="0 0 120 120">
+                <line x1="118" y1="60" x2="110" y2="60"></line>
+                <line x1="110.2" y1="89" x2="103.3" y2="85"></line>
+                <line x1="89" y1="110.2" x2="85" y2="103.3"></line>
+                <line x1="60" y1="118" x2="60" y2="110"></line>
+                <line x1="31" y1="110.2" x2="35" y2="103.3"></line>
+                <line x1="9.8" y1="89" x2="16.7" y2="85"></line>
+                <line x1="2" y1="60" x2="10" y2="60"></line>
+                <line x1="9.8" y1="31" x2="16.7" y2="35"></line>
+                <line x1="31" y1="9.8" x2="35" y2="16.7"></line>
+                <line x1="60" y1="2" x2="60" y2="10"></line>
+                <line x1="89" y1="9.8" x2="85" y2="16.7"></line>
+                <line x1="110.2" y1="31" x2="103.3" y2="35"></line>
+              </symbol>
+            </defs>
+          </svg>
+
+          <header class="tp-nav">
+            <div class="tp-container tp-nav__inner">
+              <a class="tp-nav__brand" href="/" aria-label="Voltar para a pagina inicial da Amplify">
+                <img src={logoSrc} alt="Amplify" width="160" height="32" />
+                <span class="tp-nav__sep tp-hide-mobile"></span>
+                <span class="tp-nav__label tp-hide-mobile">Bootcamp IA para Negócios® · Natal</span>
+              </a>
+              <nav class="tp-nav__right" aria-label="Navegação da LP Cidade">
+                <a class="tp-nav__link tp-hide-mobile" href="#programacao">Programação</a>
+                <a class="tp-btn tp-btn--primary tp-nav__cta" href="#oferta">
+                  <span class="tp-nav__cta-default">Garanta sua vaga</span>
+                  <span class="tp-nav__cta-price">Garantir por R$ 1.890</span>
+                </a>
+              </nav>
+            </div>
+            <div class="tp-nav__progress"></div>
+          </header>
+
+          <section class="tp-hero" aria-labelledby="tp-title">
+            <div class="tp-hero__bg" style={`background-image:url('${heroSrc}')`}></div>
+            <div class="tp-pulse-ring" aria-hidden="true"><svg class="tp-sun-ticks"><use href="#city-sunticks"></use></svg></div>
+            <div class="tp-container">
+              <div class="tp-hero__inner">
+                <div class="tp-hero__eyebrow">
+                  <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Bootcamp IA para Negócios®</span>
+                  <span class="tp-sep"></span>
+                  <span class="tp-hero__meta-inline">Natal · {content.longDateLabel} · Cidade do Sol</span>
+                </div>
+                <h1 id="tp-title">Do zero ao <span class="tp-hl">método em <span>10&nbsp;horas.</span></span></h1>
+                <p class="tp-hero__sub">
+                  Enquanto outros assistem tutoriais, você já está implementando IA no seu negócio.
+                  Método prático + networking + cases reais. Presencial, intenso, irresistível.
+                  <span class="tp-pot">Tem pareia não.</span>
+                </p>
+                <div class="tp-hero__ctas">
+                  <a class="tp-btn tp-btn--primary tp-btn--lg" href="#oferta">Garanta sua vaga&nbsp;→</a>
+                  <a class="tp-btn tp-btn--secondary tp-btn--lg" href="#programacao">Ver programação</a>
+                  <a class="tp-btn tp-btn--ghost tp-btn--lg" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Seja um Patrocinador</a>
+                </div>
+                <p class="tp-hero__proof">+100 mil profissionais capacitados · NPS 98 · Vagas limitadas</p>
+                <div class="tp-hero__meta" aria-label="Resumo do evento">
+                  <span>Natal, RN</span>
+                  <span>{content.longDateLabel}</span>
+                  <span><svg class="tp-sun-ico"><use href="#city-sol"></use></svg>{event.startTime} às {event.endTime}</span>
+                  <span>{event.venue}</span>
+                  <span>{content.durationLabel}</span>
+                </div>
+              </div>
+            </div>
+            <svg class="tp-hero__dune" viewBox="0 0 1440 72" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0,72 L0,46 C220,18 460,60 740,38 C1000,18 1240,54 1440,28 L1440,72 Z"></path>
+            </svg>
+          </section>
+
+          <section class="tp-section" aria-labelledby="tp-what-title">
+            <div class="tp-container tp-split">
+              <div class="tp-reveal">
+                <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>O que é o Bootcamp</span>
+                <h2 id="tp-what-title" class="tp-h2">Não é aula.<br />É aceleração.</h2>
+              </div>
+              <div class="tp-reveal">
+                <p class="tp-body-strong">
+                  Você já sabe que IA existe. Já testou. Viu potencial. Mas aí vem a verdade:
+                  testando você nunca sai do sandbox. O <strong>Bootcamp IA para Negócios®</strong> é
+                  para quem quer transformar curiosidade em método, método em operação, operação em resultado.
+                </p>
+                <p class="tp-lead">
+                  10 horas de imersão estratégica com <strong>Leonardo Camacho</strong>, especialista em IA aplicada.
+                  Você sai com um plano claro, ferramentas escolhidas e confiança de implementar.
+                </p>
+                <div class="tp-callout">
+                  <span>✓</span>
+                  <p><strong>92%</strong> dos participantes aplicam IA em tarefas reais nos 7 dias seguintes.<em>De rocha.</em></p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="tp-section tp-section--surface" aria-labelledby="tp-expect-title">
+            <svg class="tp-dune-field" viewBox="0 0 1440 600" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0,80 C240,40 480,110 720,75 C960,40 1200,100 1440,60"></path>
+              <path d="M0,200 C240,160 480,230 720,195 C960,160 1200,220 1440,180"></path>
+              <path d="M0,320 C240,280 480,350 720,315 C960,280 1200,340 1440,300"></path>
+              <path d="M0,440 C240,400 480,470 720,435 C960,400 1200,460 1440,420"></path>
+            </svg>
+            <div class="tp-container">
+              <div class="tp-section-head tp-reveal">
+                <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>O que esperar do Bootcamp</span>
+                <h2 id="tp-expect-title" class="tp-h2">Imersão de verdade. Zero teoria solta.</h2>
+              </div>
+              <div class="tp-expect-grid" data-stagger>
+                {content.expectations.map((item) => (
+                  <article class="tp-expect-card tp-reveal">
+                    <svg class="tp-corner-star"><use href="#city-sol"></use></svg>
+                    <h3>{item.title === "Networking de valor" ? "Resenha que Vale Ouro" : item.title}</h3>
+                    <p>{item.copy}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section id="programacao" class="tp-section" aria-labelledby="tp-program-title">
+            <div class="tp-container">
+              <svg class="tp-dune-divider" viewBox="0 0 1440 56" preserveAspectRatio="none" aria-hidden="true">
+                <path class="tp-w1" d="M0,38 C240,14 480,50 720,32 C960,14 1200,46 1440,26"></path>
+                <path class="tp-w2" d="M0,46 C240,26 480,56 720,42 C960,28 1200,52 1440,38"></path>
+                <path class="tp-w3" d="M0,30 C240,8 480,40 720,24 C960,8 1200,36 1440,18"></path>
+              </svg>
+              <div class="tp-section-head tp-reveal">
+                <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Programação</span>
+                <h2 id="tp-program-title" class="tp-h2">Quatro Work Sessions práticas e focadas.</h2>
+                <p class="tp-lead">Cada sessão é conduzida por Leonardo Camacho com exercícios reais, discussão de casos e aplicação prática conectada ao contexto de trabalho de quem está na sala.</p>
+              </div>
+              {content.sessions.map((session, index) => (
+                <article class="tp-session">
+                  <div class="tp-session__num">{String(index + 1).padStart(2, "0")}</div>
+                  <div>
+                    <h3>{session.title}</h3>
+                    <p>{session.copy}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          <section class="tp-section" aria-labelledby="tp-audience-title">
+            <div class="tp-container">
+              <div class="tp-section-head tp-reveal">
+                <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Para quem é</span>
+                <h2 id="tp-audience-title" class="tp-h2">O Bootcamp é para quem está pronto para agir.</h2>
+              </div>
+              <div class="tp-audience" data-stagger>
+                {content.audience.map((item) => (
+                  <div class="tp-audience__item tp-reveal">
+                    <svg class="tp-star-ico"><use href="#city-sol"></use></svg>
+                    <p>{item}</p>
+                  </div>
+                ))}
+              </div>
+              <p class="tp-exclusion tp-reveal">Se você quer só assistir mais um conteúdo sobre IA, este evento não é para você.</p>
+            </div>
+          </section>
+
+          <section class="tp-section" aria-labelledby="tp-included-title">
+            <div class="tp-container tp-split tp-split--center">
+              <div class="tp-media-frame tp-media-frame--64 tp-reveal">
+                <img src={content.templateAssets.stage04} alt="Sala do evento presencial do Bootcamp" width="720" height="480" loading="lazy" />
+              </div>
+              <div class="tp-reveal">
+                <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>O que está incluído</span>
+                <h2 id="tp-included-title" class="tp-h2">Experiência presencial completa.</h2>
+                <div class="tp-checklist">
+                  <div><span>✓</span><p>Ingresso para 10 horas de imersão</p></div>
+                  <div><span>✓</span><p>Certificado de Conclusão</p></div>
+                  <div><span>✓</span><p>Coffee Break (Networking)</p></div>
+                  <div><span>✓</span><p>Grupo de WhatsApp Exclusivo da Turma<small>Troca de experiências, informações e networking com a sua turma.</small></p></div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="tp-section" aria-labelledby="tp-video-title">
+            <div class="tp-container">
+              <div class="tp-section-head tp-reveal">
+                <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Assista ao vídeo</span>
+                <h2 id="tp-video-title" class="tp-h2">Veja o Bootcamp acontecendo.</h2>
+                <p class="tp-lead">Sala cheia, prática guiada, troca real e gente saindo com método. O vídeo mostra a experiência sem maquiagem.</p>
+              </div>
+              <div class="tp-video-wrap tp-reveal bootcamp-video-card bootcamp-video-card--horizontal" aria-label="Vídeo da última edição do Bootcamp">
+                <video class="bootcamp-video" playsinline preload="metadata" data-preview-frame="0.12">
+                  <source src={horizontalVideoSrc} type="video/mp4" media="(min-width: 720px)" />
+                  <source src={horizontalVideoFallbackSrc} type="video/mp4" />
+                </video>
+                <button type="button" class="tp-video-play bootcamp-video-play" aria-label="Reproduzir vídeo">
+                  <svg class="tp-sun-ticks"><use href="#city-sunticks"></use></svg>
+                  <span></span>
+                </button>
+                <button type="button" class="tp-video-fullscreen bootcamp-video-fullscreen" aria-label="Abrir vídeo em tela cheia">↗</button>
+                <span class="tp-video-dur">2 min</span>
+              </div>
+              <div class="tp-stats" data-count-root>
+                <svg class="tp-rays" viewBox="0 0 900 220" preserveAspectRatio="none" aria-hidden="true">
+                  <line x1="450" y1="220" x2="0" y2="40"></line>
+                  <line x1="450" y1="220" x2="130" y2="10"></line>
+                  <line x1="450" y1="220" x2="290" y2="0"></line>
+                  <line x1="450" y1="220" x2="450" y2="0"></line>
+                  <line x1="450" y1="220" x2="610" y2="0"></line>
+                  <line x1="450" y1="220" x2="770" y2="10"></line>
+                  <line x1="450" y1="220" x2="900" y2="40"></line>
+                </svg>
+                <div class="tp-section-head tp-section-head--center tp-reveal">
+                  <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Um plano de ação prático</span>
+                  <h2 class="tp-h2">Com ferramentas aplicáveis e uma metodologia que transforma.</h2>
+                </div>
+                <div class="tp-stats-grid">
+                  <article class="tp-stat"><strong data-count-to="28" data-prefix="+">+28</strong><span>Ferramentas que você leva no bolso</span></article>
+                  <article class="tp-stat"><strong data-count-to="100" data-prefix="+" data-suffix="K">+100K</strong><span>Profissionais capacitados</span></article>
+                  <article class="tp-stat"><strong data-count-to="98">98</strong><span>NPS: avaliação de satisfação</span></article>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="tp-section tp-section--surface" aria-labelledby="tp-mentor-title">
+            <div class="tp-container">
+              <div class="tp-split tp-split--center">
+                <div class="tp-media-frame tp-media-frame--34 tp-reveal">
+                  <img src={content.templateAssets.mentor} alt="Leonardo Camacho" width="720" height="900" loading="lazy" />
+                </div>
+                <div class="tp-mentor tp-reveal">
+                  <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Quem será seu mentor?</span>
+                  <h2 id="tp-mentor-title" class="tp-h2">{content.mentor.name}</h2>
+                  <p>{content.mentor.bio}</p>
+                  <p class="tp-cascudo-note">Na terra de Câmara Cascudo, método e ofício são tradição.</p>
+                </div>
+              </div>
+              <div class="tp-clients tp-reveal">
+                <span class="tp-label">Empresas que confiam na Amplify</span>
+                <div class="tp-clients__row">
+                  {brandingClientLogos.map((client) => (
+                    <img src={client.src} alt={client.alt} width="120" height="40" loading="lazy" />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="oferta" class="tp-section" aria-labelledby="tp-offer-title">
+            <svg class="tp-dune-field" viewBox="0 0 1440 600" preserveAspectRatio="none" aria-hidden="true">
+              <path d="M0,80 C240,40 480,110 720,75 C960,40 1200,100 1440,60"></path>
+              <path d="M0,200 C240,160 480,230 720,195 C960,160 1200,220 1440,180"></path>
+              <path d="M0,320 C240,280 480,350 720,315 C960,280 1200,340 1440,300"></path>
+              <path d="M0,440 C240,400 480,470 720,435 C960,400 1200,460 1440,420"></path>
+            </svg>
+            <div class="tp-container">
+              <div class="tp-section-head tp-reveal">
+                <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Garanta sua vaga</span>
+                <h2 id="tp-offer-title" class="tp-h2">Escolha seu plano.</h2>
+                <p class="tp-lead"><strong>Vagas limitadas. Quando acabarem, acabou.</strong> 1º lote até 10 de julho por R$ 1.890. Depois sobe para R$ 2.170. Se a primeira turma esgotar, abriremos lista de espera para uma possível segunda turma em 24 de julho.</p>
+              </div>
+              <div class="tp-pricing-grid">
+                <article class="tp-price-card tp-price-card--featured tp-reveal">
+                  <svg class="tp-card-rays" viewBox="0 0 240 240" aria-hidden="true">
+                    <line x1="240" y1="0" x2="0" y2="60"></line>
+                    <line x1="240" y1="0" x2="20" y2="120"></line>
+                    <line x1="240" y1="0" x2="60" y2="180"></line>
+                    <line x1="240" y1="0" x2="120" y2="226"></line>
+                    <line x1="240" y1="0" x2="190" y2="240"></line>
+                  </svg>
+                  <span class="tp-price-card__badge">Avia! Lote vira em 10/07</span>
+                  <h3>Ingresso Individual</h3>
+                  <p>Para você participar da imersão</p>
+                  <div class="tp-price-row">
+                    <strong>R$ 1.890</strong>
+                    <span>de R$ 2.170</span>
+                    <em>De rocha: economize R$ 280</em>
+                  </div>
+                  <p class="tp-price-anchor">R$ 189 por hora de método. Um almoço de negócios custa mais e resolve menos.</p>
+                  <div class="tp-checklist">
+                    {content.offers[0].items.map((item) => (
+                      <div><span>✓</span><p>{item}</p></div>
+                    ))}
+                  </div>
+                  <a class="tp-btn tp-btn--primary" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Comprar Ingresso Agora&nbsp;→</a>
+                  <p class="tp-btn-subtext">Lote vira em 10/07 · Pagamento seguro via Sympla</p>
+                </article>
+                <article class="tp-price-card tp-reveal">
+                  <h3>Plano Corporativo</h3>
+                  <p>Acima de 5 ingressos</p>
+                  <p class="tp-body">Sua empresa tem condição diferenciada e apoio para organizar a participação de toda a equipe.</p>
+                  <div class="tp-price-card__info"><strong>Desconto sob consulta</strong> — Entre em contato com nosso consultor.</div>
+                  <a class="tp-btn tp-btn--primary" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Fale com Nosso Consultor&nbsp;→</a>
+                </article>
+              </div>
+            </div>
+          </section>
+
+          <section class="tp-section tp-section--surface" aria-labelledby="tp-faq-title">
+            <div class="tp-container">
+              <div class="tp-section-head tp-reveal">
+                <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Perguntas frequentes</span>
+                <h2 id="tp-faq-title" class="tp-h2">Tudo o que você precisa saber.</h2>
+              </div>
+              <div class="tp-faq">
+                {brandingFaq.map((item) => (
+                  <div class="tp-faq__item">
+                    <button class="tp-faq__q" type="button" aria-expanded="false">{item.question}<svg class="tp-star-ico"><use href="#city-sol"></use></svg></button>
+                    <div class="tp-faq__a"><p>{item.answer}</p></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          <section class="tp-section tp-final" aria-label="Comprar ingresso">
+            <div class="tp-final__sunset"><span></span></div>
+            <div class="tp-container">
+              <div class="tp-final__inner tp-reveal">
+                <h2>Em 23 de julho, uma turma sai <span>com método.</span> O resto continua testando.</h2>
+                <p>Transforme dados em inteligência e inteligência em resultados. O Bootcamp te mostra o caminho prático.</p>
+                <div class="tp-final__ctas">
+                  <a class="tp-btn tp-btn--primary tp-btn--lg" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Avia, garanta sua vaga&nbsp;→</a>
+                  <a class="tp-btn tp-btn--secondary tp-btn--lg" href="#oferta">Ver preços</a>
+                </div>
+                <small>Bootcamp IA para Negócios® · Bright Coworking Natal · {content.longDateLabel} · {event.startTime} às {event.endTime} · Vagas limitadas</small>
+              </div>
+            </div>
+          </section>
+
+          <footer class="tp-footer">
+            <div class="tp-container tp-footer__inner">
+              <img src={logoSrc} alt="Amplify" width="120" height="24" />
+              <div>
+                <span><svg class="tp-sun-ico"><use href="#city-sol"></use></svg>Feito na Cidade do Sol</span>
+                <span>© 2026 Bootcamp IA para Negócios®. Todos os direitos reservados.</span>
+              </div>
+            </div>
+          </footer>
+
+          <div class="tp-sticky-cta">
+            <div><strong>R$ 1.890</strong><span>1º lote · vira em 10/07</span></div>
+            <a class="tp-btn tp-btn--primary" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Garantir vaga</a>
+          </div>
+        </>
+      )}
+    </main>
+  ) : (
+    <main class="boot-not-found">
+      <a href="/" aria-label="Voltar para a pagina inicial da Amplify">
+        <img src={logoSrc} alt="Amplify" width="160" height="32" />
+      </a>
+      <h1>Mockup não encontrado.</h1>
+      <p>Use /template, /branding ou /cidade depois do slug da turma.</p>
+    </main>
+  )}
+</PageShell>
+
+{event && isValidVersion && (
+  <script is:inline define:vars={{ slug: event.slug, version: activeVersion }}>
+    function preserveUtm(link) {
+      try {
+        const url = new URL(link.href);
+        const current = new URL(window.location.href);
+        ["utm_source", "utm_medium", "utm_campaign", "utm_term", "utm_content"].forEach((key) => {
+          const value = current.searchParams.get(key);
+          if (value && !url.searchParams.has(key)) url.searchParams.set(key, value);
+        });
+        link.href = url.toString();
+      } catch (_error) {}
+    }
+
+    function track(eventName) {
+      const payload = JSON.stringify({ slug, version, eventName, pageUrl: window.location.href });
+      if (navigator.sendBeacon) {
+        navigator.sendBeacon("/api/bootcamp-track", new Blob([payload], { type: "application/json" }));
+        return;
+      }
+      fetch("/api/bootcamp-track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+        keepalive: true,
+      }).catch(() => {});
+    }
+
+    document.querySelectorAll("[data-checkout-link]").forEach((link) => {
+      preserveUtm(link);
+      link.addEventListener("click", () => track("bootcamp:checkout_clicado"));
+    });
+
+    const cityRoot = document.querySelector(".boot-mockup--cidade");
+    if (cityRoot) {
+      const progress = cityRoot.querySelector(".tp-nav__progress");
+      const updateProgress = () => {
+        const doc = document.documentElement;
+        const max = doc.scrollHeight - window.innerHeight;
+        const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+        if (progress) progress.style.width = `${pct}%`;
+      };
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      updateProgress();
+
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const startCounts = (root) => {
+        root.querySelectorAll("[data-count-to]").forEach((el) => {
+          const to = parseInt(el.getAttribute("data-count-to") || "0", 10);
+          const prefix = el.getAttribute("data-prefix") || "";
+          const suffix = el.getAttribute("data-suffix") || "";
+          if (reduced) {
+            el.textContent = `${prefix}${to}${suffix}`;
+            return;
+          }
+          let start = null;
+          const tick = (timestamp) => {
+            if (!start) start = timestamp;
+            const progress = Math.min((timestamp - start) / 1400, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            el.textContent = `${prefix}${Math.round(to * eased)}${suffix}`;
+            if (progress < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        });
+      };
+
+      cityRoot.querySelectorAll("[data-stagger]").forEach((group) => {
+        Array.from(group.children).forEach((child, index) => {
+          child.style.transitionDelay = `${index * 80}ms`;
+        });
+      });
+
+      if ("IntersectionObserver" in window) {
+        const revealObserver = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              if (!entry.isIntersecting) return;
+              entry.target.classList.add("in-view");
+              if (entry.target.hasAttribute("data-count-root")) startCounts(entry.target);
+              revealObserver.unobserve(entry.target);
+            });
+          },
+          { threshold: 0.22 }
+        );
+        cityRoot.querySelectorAll(".tp-reveal, .tp-session, [data-count-root]").forEach((el) => revealObserver.observe(el));
+      } else {
+        cityRoot.querySelectorAll(".tp-reveal, .tp-session").forEach((el) => el.classList.add("in-view"));
+        cityRoot.querySelectorAll("[data-count-root]").forEach(startCounts);
+      }
+
+      cityRoot.querySelectorAll(".tp-faq__q").forEach((button) => {
+        button.addEventListener("click", () => {
+          const item = button.closest(".tp-faq__item");
+          const answer = item?.querySelector(".tp-faq__a");
+          if (!item || !answer) return;
+          const isOpen = item.classList.contains("open");
+          cityRoot.querySelectorAll(".tp-faq__item.open").forEach((openItem) => {
+            if (openItem === item) return;
+            openItem.classList.remove("open");
+            const openAnswer = openItem.querySelector(".tp-faq__a");
+            const openButton = openItem.querySelector(".tp-faq__q");
+            if (openAnswer) openAnswer.style.maxHeight = "0px";
+            if (openButton) openButton.setAttribute("aria-expanded", "false");
+          });
+          item.classList.toggle("open", !isOpen);
+          answer.style.maxHeight = isOpen ? "0px" : `${answer.scrollHeight}px`;
+          button.setAttribute("aria-expanded", String(!isOpen));
+        });
+      });
+
+      const stickyCta = cityRoot.querySelector(".tp-sticky-cta");
+      const offerSection = cityRoot.querySelector("#oferta");
+      if (stickyCta && offerSection && "IntersectionObserver" in window) {
+        const stickyObserver = new IntersectionObserver(
+          ([entry]) => stickyCta.classList.toggle("is-visible", entry.boundingClientRect.top < 0 && !entry.isIntersecting),
+          { threshold: 0 }
+        );
+        stickyObserver.observe(offerSection);
+      }
+    }
+
+    document.querySelectorAll(".bootcamp-video-card").forEach((card) => {
+      const video = card.querySelector("video");
+      const playButton = card.querySelector(".bootcamp-video-play");
+      const fullscreenButton = card.querySelector(".bootcamp-video-fullscreen");
+      if (!video || !playButton) return;
+
+      const previewFrame = Number(video.dataset.previewFrame);
+      if (Number.isFinite(previewFrame) && previewFrame > 0) {
+        const loadPreviewFrame = () => {
+          if (video.currentTime > 0 || video.readyState < 1) return;
+          try {
+            video.currentTime = previewFrame;
+          } catch (error) {
+            // Some mobile browsers block programmatic seeking before the first user gesture.
+          }
+        };
+        if (video.readyState >= 1) loadPreviewFrame();
+        else video.addEventListener("loadedmetadata", loadPreviewFrame, { once: true });
+      }
+
+      playButton.addEventListener("click", () => {
+        video.setAttribute("controls", "controls");
+        video.play().catch(() => {});
+      });
+
+      video.addEventListener("play", () => {
+        card.classList.add("is-playing");
+        track("bootcamp:video_play");
+      }, { once: true });
+
+      video.addEventListener("pause", () => {
+        if (!video.ended) card.classList.remove("is-playing");
+      });
+
+      video.addEventListener("ended", () => {
+        card.classList.remove("is-playing");
+      });
+
+      fullscreenButton?.addEventListener("click", () => {
+        if (video.requestFullscreen) video.requestFullscreen();
+        else if (video.webkitEnterFullscreen) video.webkitEnterFullscreen();
+      });
+    });
+
+    fetch(`/api/bootcamp-status?slug=${encodeURIComponent(slug)}`)
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data) => {
+        const label = document.querySelector("[data-status-label]");
+        if (!label || !data?.statusLabel) return;
+        label.textContent = data.statusLabel;
+      })
+      .catch(() => {});
+  </script>
+)}
+
+<style>
+  :global(html),
+  :global(body) {
+    margin: 0;
+    background: #050707;
+    overflow-x: hidden;
+  }
+
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+  }
+
+  .boot-mockup {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    min-height: 100vh;
+    color: #f8fbfb;
+    background: #050707;
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .boot-mockup a {
+    text-decoration: none;
+  }
+
+  .boot-not-found {
+    min-height: 100vh;
+    display: grid;
+    align-content: center;
+    gap: 18px;
+    padding: 40px;
+    color: #ffffff;
+    background: #050707;
+  }
+
+  .boot-not-found h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 7vw, 5rem);
+  }
+
+  .boot-not-found p {
+    margin: 0;
+    color: #aeb9b9;
+  }
+
+  .template-hero {
+    position: relative;
+    min-height: 100vh;
+    overflow: hidden;
+    isolation: isolate;
+    background: #050505;
+  }
+
+  .template-hero__media,
+  .template-hero__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .template-hero__media img {
+    object-fit: cover;
+  }
+
+  .template-hero__overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(90deg, rgba(0, 0, 0, 0.88), rgba(0, 0, 0, 0.48) 54%, rgba(0, 0, 0, 0.82)),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.56), rgba(0, 0, 0, 0.12) 44%, #050505 98%);
+  }
+
+  .template-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 28px clamp(20px, 5vw, 76px);
+  }
+
+  .template-header img {
+    width: min(286px, 58vw);
+    height: auto;
+  }
+
+  .template-header a,
+  .template-actions a,
+  .template-offers a,
+  .template-final a {
+    color: #070707;
+    background: #eefb37;
+    border-radius: 999px;
+    padding: 14px 20px;
+    font-weight: 900;
+  }
+
+  .template-hero__copy {
+    position: relative;
+    z-index: 2;
+    min-width: 0;
+    max-width: 880px;
+    padding: clamp(80px, 10vw, 150px) clamp(20px, 6vw, 90px) 90px;
+  }
+
+  .template-hero__copy > p:first-child,
+  .template-section__head p,
+  .template-video p,
+  .template-audience > div p,
+  .template-mentor p:first-child,
+  .template-offers .template-section__head p,
+  .template-faq .template-section__head p {
+    margin: 0 0 14px;
+    color: #eefb37;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .template-hero__copy h1 {
+    margin: 0;
+    max-width: 780px;
+    color: #ffffff;
+    font-size: clamp(3.4rem, 7vw, 7.5rem);
+    line-height: 0.92;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .template-hero__copy > p:last-of-type {
+    max-width: 690px;
+    margin: 28px 0 0;
+    color: #e8eeee;
+    font-size: clamp(1.1rem, 2vw, 1.45rem);
+    line-height: 1.5;
+  }
+
+  .template-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px;
+    margin-top: 34px;
+  }
+
+  .template-actions span {
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    padding: 13px 18px;
+    font-weight: 800;
+    background: rgba(0, 0, 0, 0.42);
+  }
+
+  .template-actions .template-actions__sponsor {
+    color: #ffffff;
+    background: rgba(0, 0, 0, 0.38);
+    border: 1px solid rgba(255, 255, 255, 0.34);
+    box-shadow: inset 0 0 0 1px rgba(16, 220, 225, 0.18);
+  }
+
+  .template-band,
+  .template-countdown,
+  .template-section,
+  .template-final {
+    padding: clamp(52px, 8vw, 104px) clamp(20px, 6vw, 90px);
+  }
+
+  .template-band--proof {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    color: #111111;
+    background: #eefb37;
+  }
+
+  .template-band strong {
+    font-size: clamp(1.8rem, 4vw, 4rem);
+    line-height: 0.98;
+  }
+
+  .template-band div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .template-band span {
+    border: 1px solid rgba(0, 0, 0, 0.24);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-weight: 800;
+  }
+
+  .template-countdown {
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 28px;
+    align-items: center;
+    background: #101010;
+  }
+
+  .template-countdown p {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(1.5rem, 3vw, 3rem);
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .template-countdown div {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+
+  .template-countdown span {
+    display: grid;
+    gap: 6px;
+    padding: 20px;
+    color: #aeb9b9;
+    background: #050505;
+    border-radius: 10px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 0.74rem;
+    font-weight: 900;
+  }
+
+  .template-countdown strong {
+    color: #ffffff;
+    font-size: clamp(2rem, 4vw, 4rem);
+  }
+
+  .template-section {
+    background: #050505;
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .template-video,
+  .template-what,
+  .template-audience,
+  .template-mentor {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(28px, 6vw, 80px);
+    align-items: start;
+  }
+
+  .template-section h2,
+  .template-final h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(2.5rem, 5vw, 5.6rem);
+    line-height: 0.96;
+    letter-spacing: 0;
+  }
+
+  .template-what__copy p,
+  .template-mentor div > p:last-child,
+  .template-video + p {
+    color: #cfd7d7;
+  }
+
+  .template-video__frame {
+    min-height: 380px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    background:
+      linear-gradient(rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.58)),
+      url("https://bootcampiaparanegocios.com.br/images/og-image-aplicada.jpg") center / cover;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+  }
+
+  .template-video__frame span {
+    display: grid;
+    place-items: center;
+    width: 86px;
+    height: 86px;
+    border-radius: 999px;
+    color: #111;
+    background: #eefb37;
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .bootcamp-video-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: #050505;
+    transform: translateZ(0);
+  }
+
+  .bootcamp-video-card video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    background: #050505;
+    filter: brightness(0.74) saturate(0.92);
+    transform: scale(1.01);
+    transition: filter 220ms ease, transform 420ms ease;
+  }
+
+  .bootcamp-video-card--horizontal {
+    aspect-ratio: 16 / 9;
+  }
+
+  .bootcamp-video-card--vertical {
+    width: min(100%, 360px);
+    min-height: 0;
+    aspect-ratio: 9 / 16;
+    justify-self: center;
+    border: 2px solid rgba(0, 229, 229, 0.72);
+    border-radius: 18px;
+    box-shadow: 0 0 42px rgba(0, 229, 229, 0.18);
+  }
+
+  .bootcamp-video-play {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.28));
+    cursor: pointer;
+    transition: opacity 180ms ease;
+  }
+
+  .template-video__frame .bootcamp-video-play span,
+  .bootcamp-video-play span,
+  .bn-video-play span {
+    display: grid;
+    place-items: center;
+    width: 78px;
+    height: 78px;
+    padding-left: 5px;
+    border-radius: 999px;
+    color: #041010;
+    background: #22e0d3;
+    box-shadow: 0 0 34px rgba(34, 224, 211, 0.42);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+
+  .bootcamp-video-play svg {
+    width: 34px;
+    height: 34px;
+    fill: currentColor;
+  }
+
+  .bootcamp-video-card:hover .bootcamp-video-play span {
+    transform: scale(1.06);
+    box-shadow: 0 0 46px rgba(34, 224, 211, 0.55);
+  }
+
+  .bootcamp-video-card.is-playing .bootcamp-video-play {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .bootcamp-video-card.is-playing video {
+    filter: brightness(1) saturate(1);
+    transform: scale(1);
+  }
+
+  .bootcamp-video-fullscreen {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    color: #ffffff;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0.9;
+    transition: color 180ms ease, opacity 180ms ease, transform 180ms ease;
+  }
+
+  .bootcamp-video-fullscreen:hover {
+    color: #22e0d3;
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+
+  .bootcamp-video-fullscreen svg {
+    width: 28px;
+    height: 28px;
+    fill: currentColor;
+  }
+
+  .template-grid,
+  .template-offers__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 36px;
+  }
+
+  .template-grid article,
+  .template-offers article,
+  .template-program article,
+  .template-location article,
+  .brand-thesis article,
+  .brand-offers article,
+  .city-context article,
+  .city-route article,
+  .city-program article,
+  .city-offers article {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.045);
+    padding: 24px;
+  }
+
+  .template-grid h3,
+  .template-program h3,
+  .template-offers h3,
+  .template-location strong,
+  .template-mentor strong {
+    margin: 0 0 10px;
+    color: #ffffff;
+    font-size: 1.3rem;
+  }
+
+  .template-grid p,
+  .template-program p,
+  .template-offers p,
+  .template-location p,
+  .template-audience li,
+  .template-faq p {
+    color: #b9c2c2;
+    line-height: 1.55;
+  }
+
+  .template-program__list {
+    display: grid;
+    gap: 14px;
+    margin-top: 36px;
+  }
+
+  .template-program article {
+    display: grid;
+    grid-template-columns: 170px minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 24px;
+    align-items: baseline;
+  }
+
+  .template-program span,
+  .template-location span,
+  .template-mentor aside span {
+    color: #eefb37;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .template-location {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    background: #121212;
+  }
+
+  .template-audience ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 12px;
+  }
+
+  .template-audience li {
+    border-left: 4px solid #eefb37;
+    padding: 16px 0 16px 18px;
+    background: linear-gradient(90deg, rgba(238, 251, 55, 0.08), transparent);
+  }
+
+  .template-offers__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .template-offers strong {
+    display: block;
+    color: #eefb37;
+    font-size: clamp(2rem, 4vw, 4rem);
+    line-height: 1;
+  }
+
+  .template-offers ul,
+  .brand-offers ul,
+  .city-offers ul {
+    margin: 22px 0;
+    padding-left: 20px;
+  }
+
+  .template-mentor aside {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .template-mentor aside span {
+    display: grid;
+    gap: 8px;
+    padding: 22px;
+    border-radius: 8px;
+    background: rgba(238, 251, 55, 0.09);
+  }
+
+  .template-mentor aside strong {
+    color: #ffffff;
+    font-size: clamp(2rem, 4vw, 4.8rem);
+    line-height: 0.92;
+  }
+
+  .template-quote {
+    background: #eefb37;
+    color: #111111;
+  }
+
+  .template-quote blockquote {
+    max-width: 1060px;
+    margin: 0;
+    font-size: clamp(1.8rem, 4vw, 4rem);
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .template-quote p {
+    margin: 24px 0 0;
+    font-weight: 900;
+  }
+
+  .template-faq details,
+  .brand-faq details,
+  .city-faq details {
+    border-top: 1px solid rgba(255, 255, 255, 0.13);
+    padding: 20px 0;
+  }
+
+  .template-faq summary,
+  .brand-faq summary,
+  .city-faq summary {
+    cursor: pointer;
+    color: #ffffff;
+    font-size: 1.12rem;
+    font-weight: 900;
+  }
+
+  .template-final {
+    text-align: center;
+    background:
+      linear-gradient(180deg, rgba(0, 0, 0, 0.55), #050505),
+      url("https://bootcampiaparanegocios.com.br/_astro/main.Cm_Af4Lq_FfKRY.webp") center / cover;
+  }
+
+  .template-final h2 {
+    max-width: 900px;
+    margin: 0 auto 30px;
+  }
+
+  .brand-header,
+  .city-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 22px clamp(18px, 4vw, 64px);
+    background: rgba(5, 7, 7, 0.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .brand-header img,
+  .city-header img {
+    display: block;
+    height: auto;
+  }
+
+  .brand-header a:last-child,
+  .brand-actions a:first-child,
+  .brand-offers a,
+  .brand-final a,
+  .city-header a:last-child,
+  .city-actions a:first-child,
+  .city-offers a,
+  .city-final a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    color: #061011;
+    background: #31d6dc;
+    border-radius: 6px;
+    padding: 0 18px;
+    font-weight: 900;
+  }
+
+  .brand-hero,
+  .city-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.78fr);
+    gap: clamp(28px, 6vw, 90px);
+    align-items: center;
+    min-height: calc(100vh - 77px);
+    padding: clamp(50px, 9vw, 120px) clamp(18px, 6vw, 86px);
+    background:
+      radial-gradient(circle at 8% 18%, rgba(49, 214, 220, 0.22), transparent 26rem),
+      linear-gradient(135deg, #050707 0%, #0b1212 54%, #111919 100%);
+  }
+
+  .brand-hero__copy p:first-child,
+  .brand-section > p,
+  .brand-program > div:first-child p,
+  .brand-mentor p:first-child,
+  .brand-final p,
+  .city-hero__copy p:first-child,
+  .city-section > p,
+  .city-section > div:first-child p {
+    margin: 0 0 16px;
+    color: #31d6dc;
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .brand-hero h1,
+  .city-hero h1 {
+    margin: 0;
+    max-width: 880px;
+    color: #ffffff;
+    font-size: clamp(3.8rem, 8vw, 8.4rem);
+    line-height: 0.9;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .brand-hero__copy > p:last-of-type,
+  .city-hero__copy > p:last-of-type {
+    max-width: 720px;
+    margin: 28px 0 0;
+    color: #c8d2d2;
+    font-size: clamp(1.15rem, 2vw, 1.45rem);
+    line-height: 1.55;
+  }
+
+  .brand-actions,
+  .city-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 34px;
+  }
+
+  .brand-actions a:last-child,
+  .city-actions a:last-child {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 6px;
+    padding: 0 18px;
+    font-weight: 900;
+  }
+
+  .brand-hero__media {
+    position: relative;
+    min-height: 560px;
+  }
+
+  .brand-hero__media img {
+    width: 100%;
+    height: 100%;
+    min-height: 560px;
+    object-fit: cover;
+    border-radius: 8px;
+    filter: saturate(0.78) contrast(1.08);
+  }
+
+  .brand-system {
+    position: absolute;
+    right: 24px;
+    bottom: 24px;
+    display: grid;
+    gap: 8px;
+  }
+
+  .brand-system span {
+    color: #061011;
+    background: #31d6dc;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-weight: 900;
+  }
+
+  .brand-facts,
+  .city-facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .brand-facts span,
+  .city-facts span {
+    padding: 22px clamp(16px, 3vw, 36px);
+    color: #ffffff;
+    background: #0b1111;
+    font-weight: 900;
+  }
+
+  .brand-section,
+  .city-section,
+  .brand-final,
+  .city-final {
+    padding: clamp(60px, 9vw, 118px) clamp(18px, 6vw, 86px);
+    border-top: 1px solid rgba(255, 255, 255, 0.09);
+  }
+
+  .brand-section h2,
+  .brand-final h2,
+  .city-section h2,
+  .city-final h2 {
+    margin: 0;
+    max-width: 1100px;
+    color: #ffffff;
+    font-size: clamp(2.6rem, 5vw, 5.8rem);
+    line-height: 0.95;
+    letter-spacing: 0;
+  }
+
+  .brand-thesis__grid,
+  .brand-offers__grid,
+  .city-context__grid,
+  .city-route__steps,
+  .city-offers > div {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 38px;
+  }
+
+  .brand-thesis article span,
+  .brand-timeline span,
+  .city-route article span,
+  .city-program span {
+    color: #31d6dc;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .brand-thesis h3,
+  .brand-timeline h3,
+  .brand-offers h3,
+  .city-context h3,
+  .city-route h3,
+  .city-program h3,
+  .city-offers h3 {
+    margin: 14px 0 10px;
+    color: #ffffff;
+    font-size: 1.4rem;
+  }
+
+  .brand-thesis p,
+  .brand-timeline p,
+  .brand-offers p,
+  .brand-offers li,
+  .brand-faq p,
+  .city-context p,
+  .city-route p,
+  .city-program p,
+  .city-whatsapp > p,
+  .city-offers p,
+  .city-offers li,
+  .city-faq p {
+    color: #b9c2c2;
+    line-height: 1.55;
+  }
+
+  .brand-program,
+  .brand-mentor,
+  .city-program {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: clamp(28px, 6vw, 80px);
+  }
+
+  .brand-timeline,
+  .city-program > div:last-child {
+    display: grid;
+    gap: 14px;
+  }
+
+  .brand-proof {
+    background: #31d6dc;
+    color: #061011;
+  }
+
+  .brand-proof blockquote {
+    max-width: 1060px;
+    margin: 0;
+    color: #061011;
+    font-size: clamp(2rem, 4vw, 4.4rem);
+    font-weight: 900;
+    line-height: 0.98;
+  }
+
+  .brand-proof p {
+    margin: 24px 0 4px;
+    color: #061011;
+    font-weight: 900;
+  }
+
+  .brand-proof span {
+    color: rgba(6, 16, 17, 0.72);
+    font-weight: 800;
+  }
+
+  .brand-mentor aside {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .brand-mentor aside article {
+    border-radius: 8px;
+    padding: 24px;
+    background: rgba(49, 214, 220, 0.1);
+    border: 1px solid rgba(49, 214, 220, 0.24);
+  }
+
+  .brand-mentor aside strong {
+    display: block;
+    color: #ffffff;
+    font-size: clamp(2rem, 4vw, 4.5rem);
+    line-height: 0.95;
+  }
+
+  .brand-mentor aside span,
+  .brand-mentor div > p:last-child {
+    color: #b9c2c2;
+    line-height: 1.55;
+  }
+
+  .brand-offers__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .brand-offers strong,
+  .city-offers strong {
+    display: block;
+    color: #31d6dc;
+    font-size: clamp(2rem, 4vw, 4rem);
+    line-height: 1;
+  }
+
+  .brand-final,
+  .city-final {
+    text-align: center;
+    background:
+      radial-gradient(circle at 50% 10%, rgba(49, 214, 220, 0.2), transparent 28rem),
+      #050707;
+  }
+
+  .brand-final h2,
+  .city-final h2 {
+    margin: 0 auto 30px;
+  }
+
+  .boot-mockup--branding {
+    --bn-bg: #0a0a0a;
+    --bn-surface: #111212;
+    --bn-surface-2: #151818;
+    --bn-line: rgba(255, 255, 255, 0.105);
+    --bn-line-soft: rgba(255, 255, 255, 0.07);
+    --bn-text: #f6f7f4;
+    --bn-muted: #9b9f9d;
+    --bn-faint: #737977;
+    --bn-accent: #2dd4bf;
+    --bn-page-gutter: clamp(24px, 8.6vw, 180px);
+    color: var(--bn-text);
+    background: var(--bn-bg);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  .bn-container,
+  .bn-section {
+    width: min(1680px, calc(100% - (var(--bn-page-gutter) * 2)));
+    margin-inline: auto;
+  }
+
+  .bn-nav {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10, 10, 10, 0.84);
+    border-bottom: 1px solid var(--bn-line-soft);
+    backdrop-filter: blur(14px);
+  }
+
+  .bn-nav__inner {
+    min-height: 96px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .bn-nav__brand,
+  .bn-nav__links {
+    display: inline-flex;
+    align-items: center;
+    gap: 28px;
+  }
+
+  .bn-nav__brand::after {
+    content: "";
+    width: 1px;
+    height: 30px;
+    order: 1;
+    background: var(--bn-line);
+  }
+
+  .bn-nav__brand img,
+  .bn-footer img {
+    width: 206px;
+    height: auto;
+  }
+
+  .bn-nav__brand span {
+    order: 2;
+    color: var(--bn-muted);
+    font-size: 1.12rem;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+
+  .bn-nav__links a:first-child {
+    color: var(--bn-muted);
+    font-size: 1.12rem;
+    font-weight: 500;
+  }
+
+  .bn-nav__links a:last-child,
+  .bn-button {
+    min-height: 52px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 14px;
+    padding: 0 28px;
+    font-size: 1rem;
+    font-weight: 700;
+    text-decoration: none;
+    transform: translateY(0);
+    transition:
+      transform 180ms ease,
+      border-color 180ms ease,
+      background 180ms ease,
+      color 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .bn-nav__links a:last-child,
+  .bn-button--primary {
+    color: var(--bn-accent);
+    background: rgba(45, 212, 191, 0.025);
+    border: 1px solid rgba(45, 212, 191, 0.44);
+    box-shadow: 0 0 0 rgba(34, 224, 211, 0);
+  }
+
+  .bn-button--secondary,
+  .bn-button--ghost {
+    color: var(--bn-text);
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid var(--bn-line);
+  }
+
+  .bn-button--ghost {
+    color: var(--bn-muted);
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .bn-nav__links a:last-child:hover,
+  .bn-button:hover {
+    transform: translateY(-2px);
+  }
+
+  .bn-nav__links a:last-child:hover,
+  .bn-button--primary:hover {
+    box-shadow: 0 14px 34px rgba(34, 224, 211, 0.22);
+  }
+
+  .bn-button--secondary:hover,
+  .bn-button--ghost:hover {
+    color: var(--bn-text);
+    border-color: rgba(34, 224, 211, 0.35);
+    background: rgba(34, 224, 211, 0.07);
+  }
+
+  .bn-nav__links a:last-child:active,
+  .bn-button:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .bn-hero {
+    position: relative;
+    min-height: calc(100vh - 96px);
+    overflow: hidden;
+    background: var(--bn-bg);
+    border-bottom: 1px solid var(--bn-line-soft);
+  }
+
+  .bn-hero__photo,
+  .bn-hero__scrim {
+    position: absolute;
+    inset: 0;
+  }
+
+  .bn-hero__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 34%;
+    filter: grayscale(0.15) saturate(0.58) brightness(0.38);
+  }
+
+  .bn-hero__scrim {
+    background:
+      radial-gradient(circle at 78% 47%, rgba(45, 212, 191, 0.035), transparent 23rem),
+      linear-gradient(90deg, rgba(10, 10, 10, 0.98), rgba(10, 10, 10, 0.84) 48%, rgba(10, 10, 10, 0.62)),
+      linear-gradient(180deg, rgba(10, 10, 10, 0.74), rgba(10, 10, 10, 0.22) 44%, var(--bn-bg));
+  }
+
+  .bn-pulse {
+    position: absolute;
+    width: 420px;
+    height: 420px;
+    border: 1px solid rgba(45, 212, 191, 0.16);
+    border-radius: 999px;
+    opacity: 0.48;
+    pointer-events: none;
+  }
+
+  .bn-pulse::after {
+    content: "";
+    position: absolute;
+    inset: 48px;
+    border: 1px solid rgba(45, 212, 191, 0.18);
+    border-radius: inherit;
+    animation: bn-ring 7s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+  }
+
+  .bn-pulse--hero {
+    right: 6%;
+    top: 26%;
+    width: 660px;
+    height: 660px;
+  }
+
+  .bn-pulse--final {
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  @keyframes bn-ring {
+    0% {
+      opacity: 0.7;
+      transform: scale(0.6);
+    }
+
+    100% {
+      opacity: 0;
+      transform: scale(1.5);
+    }
+  }
+
+  .bn-hero__inner {
+    position: relative;
+    z-index: 2;
+    padding: clamp(148px, 16vh, 216px) 0 clamp(86px, 10vh, 136px);
+  }
+
+  .bn-label {
+    margin: 0 0 44px;
+    color: var(--bn-accent);
+    font-size: 0.88rem;
+    font-weight: 900;
+    letter-spacing: 0.24em;
+    text-transform: uppercase;
+  }
+
+  .bn-label span {
+    width: 28px;
+    height: 1px;
+    display: inline-block;
+    margin: 0 11px 0 9px;
+    vertical-align: middle;
+    background: var(--bn-line);
+  }
+
+  .bn-hero h1,
+  .bn-section h2,
+  .bn-final h2 {
+    margin: 0;
+    color: var(--bn-text);
+    font-family: Inter, system-ui, sans-serif;
+    font-weight: 650;
+    letter-spacing: 0;
+  }
+
+  .bn-hero h1 {
+    max-width: 1420px;
+    font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+    font-size: clamp(4.7rem, 5.25vw, 7.2rem);
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: 0.018em;
+    text-transform: uppercase;
+  }
+
+  .bn-hero h1 strong,
+  .bn-final h2 strong {
+    color: var(--bn-accent);
+  }
+
+  .bn-hero__inner > p:not(.bn-label),
+  .bn-section__head > p:not(.bn-label),
+  .bn-copy p,
+  .bn-final p {
+    max-width: 760px;
+    color: var(--bn-muted);
+    font-size: clamp(1.05rem, 1.25vw, 1.58rem);
+    line-height: 1.75;
+  }
+
+  .bn-hero__inner > p:not(.bn-label) {
+    max-width: 960px;
+    margin: 46px 0 0;
+    color: #e7e7e4;
+    font-size: clamp(1.22rem, 1.42vw, 1.9rem);
+    line-height: 1.48;
+  }
+
+  .bn-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+    margin-top: 66px;
+  }
+
+  .bn-actions--center {
+    justify-content: center;
+  }
+
+  .bn-meta {
+    max-width: 1100px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px 56px;
+    margin-top: 96px;
+    padding-top: 38px;
+    border-top: 1px solid var(--bn-line-soft);
+  }
+
+  .bn-meta span {
+    color: var(--bn-muted);
+    font-size: 1.02rem;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+  }
+
+  .bn-section {
+    padding: clamp(132px, 12vw, 210px) 0;
+    border-top: 1px solid var(--bn-line-soft);
+  }
+
+  .bn-section--surface {
+    width: 100%;
+    padding-inline: var(--bn-page-gutter);
+    background: var(--bn-surface);
+  }
+
+  .bn-section h2,
+  .bn-final h2 {
+    max-width: 820px;
+    font-size: clamp(2.75rem, 3.4vw, 4.4rem);
+    line-height: 1.08;
+  }
+
+  .bn-section__head {
+    max-width: 820px;
+    margin-bottom: 92px;
+  }
+
+  .bn-section__head--center {
+    max-width: 820px;
+    margin: 56px auto 44px;
+    text-align: center;
+  }
+
+  .bn-split,
+  .bn-experience,
+  .bn-mentor {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1fr);
+    gap: clamp(72px, 9vw, 152px);
+    align-items: start;
+  }
+
+  .bn-copy p {
+    margin: 0;
+  }
+
+  .bn-copy p + p {
+    margin-top: 34px;
+  }
+
+  .bn-note {
+    margin-top: 48px;
+    padding: 28px 34px;
+    color: var(--bn-text);
+    background: rgba(45, 212, 191, 0.055);
+    border: 1px solid rgba(45, 212, 191, 0.22);
+    border-radius: 16px;
+    font-size: 1.12rem;
+    line-height: 1.6;
+  }
+
+  .bn-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 72px 76px;
+  }
+
+  .bn-grid article,
+  .bn-program article,
+  .bn-audience p,
+  .bn-experience li,
+  .bn-card,
+  .bn-faq details {
+    border-top: 1px solid var(--bn-line);
+  }
+
+  .bn-grid article,
+  .bn-program article,
+  .bn-audience p,
+  .bn-card,
+  .bn-stats article {
+    transition:
+      transform 220ms ease,
+      border-color 220ms ease,
+      background 220ms ease,
+      opacity 360ms ease;
+  }
+
+  .bn-grid article:hover,
+  .bn-program article:hover,
+  .bn-audience p:hover {
+    transform: translateX(3px);
+    border-color: rgba(45, 212, 191, 0.24);
+  }
+
+  .bn-grid article {
+    padding-top: 28px;
+  }
+
+  .bn-grid h3,
+  .bn-program h3,
+  .bn-card h3 {
+    margin: 0;
+    color: var(--bn-text);
+    font-size: clamp(1.15rem, 1.25vw, 1.62rem);
+    font-weight: 700;
+  }
+
+  .bn-grid p,
+  .bn-program p,
+  .bn-audience p,
+  .bn-card p,
+  .bn-card li,
+  .bn-faq p,
+  .bn-experience li,
+  .bn-mentor p {
+    color: var(--bn-muted);
+    font-size: clamp(0.98rem, 1.05vw, 1.34rem);
+    line-height: 1.72;
+  }
+
+  .bn-program article {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 72px;
+    padding: 54px 0;
+  }
+
+  .bn-program article:last-child,
+  .bn-audience p:last-child {
+    border-bottom: 1px solid var(--bn-line);
+  }
+
+  .bn-program article > span {
+    color: var(--bn-accent);
+    font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+    font-size: clamp(4rem, 4vw, 6.4rem);
+    font-weight: 400;
+    line-height: 0.82;
+  }
+
+  .bn-audience {
+    max-width: 860px;
+  }
+
+  .bn-audience p {
+    display: flex;
+    gap: 34px;
+    margin: 0;
+    padding: 28px 0;
+  }
+
+  .bn-audience span {
+    color: var(--bn-accent);
+    font-weight: 900;
+  }
+
+  .bn-experience img,
+  .bn-mentor img {
+    width: 100%;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 34px 90px rgba(0, 0, 0, 0.52);
+    filter: saturate(0.72) contrast(1.02) brightness(0.76);
+  }
+
+  .bn-experience img {
+    aspect-ratio: 6 / 4;
+    object-position: 50% 18%;
+  }
+
+  .bn-mentor img {
+    aspect-ratio: 3 / 4;
+    object-position: 50% 16%;
+  }
+
+  .bn-experience ul,
+  .bn-card ul {
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bn-experience li,
+  .bn-card li {
+    padding: 22px 0 22px 44px;
+    position: relative;
+    color: var(--bn-text);
+    font-weight: 650;
+  }
+
+  .bn-experience li::before,
+  .bn-card li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--bn-accent);
+    font-weight: 900;
+  }
+
+  .bn-video-stats {
+    text-align: left;
+  }
+
+  .bn-video-card {
+    position: relative;
+    width: min(100%, 1280px);
+    aspect-ratio: 16 / 9;
+    display: grid;
+    place-items: center;
+    margin: 0 auto 54px;
+    overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(34, 224, 211, 0.16), transparent 18rem),
+      #111414;
+    border-radius: 14px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.42);
+    transform: translateZ(0);
+    transition:
+      transform 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .bn-video-card iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    border-radius: inherit;
+    display: block;
+  }
+
+  .bn-video-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 34px 92px rgba(0, 0, 0, 0.54), 0 0 0 1px rgba(34, 224, 211, 0.18);
+  }
+
+  .bn-video-card video {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    object-position: 50% 38%;
+    border-radius: 8px;
+    filter: brightness(0.78);
+    transform: scale(1.01);
+    transition:
+      filter 220ms ease,
+      transform 420ms ease;
+  }
+
+  .bn-video-play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background:
+      radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.18));
+    cursor: pointer;
+    z-index: 2;
+    transition: opacity 180ms ease;
+  }
+
+  .bn-video-play span {
+    width: 78px;
+    height: 78px;
+    display: grid;
+    place-items: center;
+    padding-left: 5px;
+    color: #041010;
+    background: var(--bn-accent);
+    border-radius: 999px;
+    font-size: 2rem;
+    box-shadow: 0 0 34px rgba(34, 224, 211, 0.42);
+    transform: scale(1);
+    transition:
+      transform 180ms ease,
+      box-shadow 180ms ease;
+  }
+
+  .bn-video-card:hover .bn-video-play span {
+    transform: scale(1.06);
+    box-shadow: 0 0 46px rgba(34, 224, 211, 0.55);
+  }
+
+  .bn-video-card.is-playing .bn-video-play {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .bn-video-card.is-playing video {
+    filter: brightness(1);
+    transform: scale(1);
+  }
+
+  .bn-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    text-align: center;
+  }
+
+  .bn-stats strong {
+    display: block;
+    color: var(--bn-accent);
+    font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+    font-size: clamp(3.8rem, 5vw, 6.8rem);
+    font-weight: 400;
+    line-height: 0.95;
+  }
+
+  .bn-stats span,
+  .bn-client-row span {
+    color: var(--bn-muted);
+    font-size: 0.76rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .bn-client-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 24px;
+    margin-top: 34px;
+    padding-top: 22px;
+    border-top: 1px solid var(--bn-line-soft);
+  }
+
+  .bn-offer-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 24px;
+  }
+
+  .bn-card {
+    position: relative;
+    padding: clamp(28px, 3vw, 48px);
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid var(--bn-line-soft);
+    border-radius: 14px;
+    transition:
+      transform 220ms ease,
+      border-color 220ms ease,
+      background 220ms ease,
+      box-shadow 220ms ease;
+  }
+
+  .bn-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(34, 224, 211, 0.28);
+    background: rgba(255, 255, 255, 0.05);
+    box-shadow: 0 22px 60px rgba(0, 0, 0, 0.28);
+  }
+
+  .bn-card--highlight {
+    border-color: rgba(34, 224, 211, 0.34);
+  }
+
+  .bn-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    padding: 6px 10px;
+    color: #041010;
+    background: var(--bn-accent);
+    border-radius: 4px;
+    font-size: 0.66rem;
+    font-weight: 900;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .bn-price {
+    display: grid;
+    gap: 8px;
+    margin-top: 26px;
+  }
+
+  .bn-price strong {
+    color: var(--bn-accent);
+    font-family: Outfit, Inter, sans-serif;
+    font-size: clamp(2.3rem, 5vw, 4rem);
+    line-height: 0.95;
+  }
+
+  .bn-price span {
+    color: var(--bn-muted);
+    font-size: 0.86rem;
+  }
+
+  .bn-card .bn-button {
+    width: 100%;
+    margin-top: 28px;
+    text-transform: uppercase;
+  }
+
+  .bn-card .bn-button--primary {
+    color: #071111;
+    background: var(--bn-accent);
+    border-color: var(--bn-accent);
+  }
+
+  .bn-faq__list {
+    max-width: 840px;
+  }
+
+  .bn-faq details {
+    padding: 18px 0;
+    transition:
+      border-color 180ms ease,
+      background 180ms ease;
+  }
+
+  .bn-faq details:hover {
+    border-color: rgba(34, 224, 211, 0.26);
+  }
+
+  .bn-faq details:last-child {
+    border-bottom: 1px solid var(--bn-line);
+  }
+
+  .bn-faq summary {
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+    color: var(--bn-text);
+    cursor: pointer;
+    font-weight: 850;
+  }
+
+  .bn-faq summary::after {
+    content: "⌄";
+    color: var(--bn-muted);
+    transition:
+      transform 180ms ease,
+      color 180ms ease;
+  }
+
+  .bn-faq details[open] summary::after {
+    color: var(--bn-accent);
+    transform: rotate(180deg);
+  }
+
+  .bn-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+
+  .bn-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity 520ms ease,
+      transform 520ms ease;
+  }
+
+  .bn-card.bn-reveal.is-visible:hover,
+  .bn-video-card.bn-reveal.is-visible:hover {
+    transform: translateY(-4px);
+  }
+
+  .bn-grid article.bn-reveal.is-visible:hover,
+  .bn-program article.bn-reveal.is-visible:hover,
+  .bn-audience p.bn-reveal.is-visible:hover {
+    transform: translateX(3px);
+  }
+
+  .bn-program article:nth-child(2),
+  .bn-grid article:nth-child(2),
+  .bn-stats article:nth-child(2) {
+    transition-delay: 70ms;
+  }
+
+  .bn-program article:nth-child(3),
+  .bn-grid article:nth-child(3),
+  .bn-stats article:nth-child(3) {
+    transition-delay: 140ms;
+  }
+
+  .bn-program article:nth-child(4),
+  .bn-grid article:nth-child(4) {
+    transition-delay: 210ms;
+  }
+
+  .bn-final {
+    width: 100%;
+    padding-inline: var(--bn-page-gutter);
+    text-align: center;
+    background:
+      radial-gradient(circle at 50% 42%, rgba(34, 224, 211, 0.08), transparent 21rem),
+      var(--bn-bg);
+  }
+
+  .bn-final h2,
+  .bn-final p {
+    margin-inline: auto;
+  }
+
+  .bn-final p {
+    margin-top: 22px;
+  }
+
+  .bn-final small {
+    display: block;
+    margin-top: 24px;
+    color: var(--bn-faint);
+    font-size: 0.76rem;
+  }
+
+  .bn-footer {
+    padding: 42px 0;
+    border-top: 1px solid var(--bn-line-soft);
+  }
+
+  .bn-footer .bn-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .bn-footer p {
+    margin: 0;
+    color: var(--bn-faint);
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 980px) {
+    .bn-container,
+    .bn-section {
+      width: min(100% - 48px, 1120px);
+    }
+
+    .bn-section--surface,
+    .bn-final {
+      padding-inline: 24px;
+    }
+
+    .bn-split,
+    .bn-experience,
+    .bn-mentor,
+    .bn-offer-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .bn-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 680px) {
+    .bn-container,
+    .bn-section {
+      width: min(100% - 32px, 1120px);
+    }
+
+    .bn-nav__brand {
+      gap: 0;
+    }
+
+    .bn-nav__brand::after,
+    .bn-nav__brand span,
+    .bn-nav__links a:first-child {
+      display: none;
+    }
+
+    .bn-nav__brand img,
+    .bn-footer img {
+      width: 118px;
+    }
+
+    .bn-nav__inner {
+      min-height: 64px;
+    }
+
+    .bn-hero {
+      min-height: auto;
+    }
+
+    .bn-hero__inner {
+      padding: 86px 0 64px;
+    }
+
+    .bn-hero h1 {
+      font-size: clamp(4.2rem, 19vw, 5.8rem);
+    }
+
+    .bn-hero__inner > p:not(.bn-label) {
+      font-size: 1.08rem;
+      line-height: 1.62;
+    }
+
+    .bn-section {
+      padding: 88px 0;
+    }
+
+    .bn-section h2,
+    .bn-final h2 {
+      font-size: clamp(2.1rem, 10vw, 3.1rem);
+    }
+
+    .bn-label {
+      margin-bottom: 24px;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+    }
+
+    .bn-actions,
+    .bn-actions--center {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .bn-button {
+      width: 100%;
+    }
+
+    .bn-meta {
+      margin-top: 38px;
+    }
+
+    .bn-grid,
+    .bn-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .bn-program article {
+      grid-template-columns: 64px minmax(0, 1fr);
+      gap: 18px;
+      padding: 34px 0;
+    }
+
+    .bn-program article > span {
+      font-size: 3.4rem;
+    }
+
+    .bn-video-card {
+      aspect-ratio: 16 / 9;
+    }
+
+    .bn-video-card video {
+      object-position: 50% 36%;
+    }
+
+    .bn-card {
+      padding: 24px 20px;
+    }
+
+    .bn-footer .bn-container {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .boot-mockup--branding *,
+    .boot-mockup--branding *::before,
+    .boot-mockup--branding *::after {
+      scroll-behavior: auto !important;
+      transition-duration: 1ms !important;
+      animation-duration: 1ms !important;
+    }
+
+    .bn-reveal {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .boot-mockup--branding {
+    --bn-bg: #0a0a0a;
+    --bn-surface: #111111;
+    --bn-surface-2: #111111;
+    --bn-line: rgba(255, 255, 255, 0.1);
+    --bn-line-soft: rgba(255, 255, 255, 0.06);
+    --bn-text: #f5f2ec;
+    --bn-muted: #999999;
+    --bn-faint: #444444;
+    --bn-accent: #2dd4bf;
+    --bn-accent-bright: #5eead4;
+    background: var(--bn-bg);
+    color: var(--bn-text);
+    scroll-behavior: smooth;
+  }
+
+  .boot-mockup--branding .bn-container,
+  .boot-mockup--branding .bn-section {
+    width: min(1160px, calc(100% - 48px));
+  }
+
+  .boot-mockup--branding .bn-nav {
+    background: rgba(10, 10, 10, 0.8);
+    border-bottom-color: var(--bn-line-soft);
+    backdrop-filter: blur(12px);
+  }
+
+  .boot-mockup--branding .bn-nav__inner {
+    min-height: 64px;
+  }
+
+  .boot-mockup--branding .bn-nav__brand,
+  .boot-mockup--branding .bn-nav__links {
+    gap: 24px;
+  }
+
+  .boot-mockup--branding .bn-nav__brand::after {
+    height: 22px;
+    background: var(--bn-line-soft);
+  }
+
+  .boot-mockup--branding .bn-nav__brand img {
+    width: auto;
+    height: 22px;
+  }
+
+  .boot-mockup--branding .bn-footer img {
+    width: auto;
+    height: 20px;
+  }
+
+  .boot-mockup--branding .bn-nav__brand span,
+  .boot-mockup--branding .bn-nav__links a:first-child {
+    color: var(--bn-muted);
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .boot-mockup--branding .bn-button,
+  .boot-mockup--branding .bn-nav__links a:last-child {
+    min-height: 0;
+    border-radius: 12px;
+    padding: 16px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    transition: color 200ms ease, background 200ms ease, border-color 200ms ease, box-shadow 200ms ease, transform 200ms ease;
+  }
+
+  .boot-mockup--branding .bn-nav__links a:last-child {
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+
+  .boot-mockup--branding .bn-button--primary,
+  .boot-mockup--branding .bn-card .bn-button--primary {
+    color: var(--bn-bg);
+    background: var(--bn-accent);
+    border-color: var(--bn-accent);
+    text-transform: none;
+  }
+
+  .boot-mockup--branding .bn-button span {
+    display: inline-flex;
+    margin-left: 10px;
+    transition: transform 200ms ease;
+  }
+
+  .boot-mockup--branding .bn-button:hover span {
+    transform: translateX(3px);
+  }
+
+  .boot-mockup--branding .bn-nav__links a:last-child {
+    color: var(--bn-accent);
+    background: transparent;
+    border-color: var(--bn-line);
+  }
+
+  .boot-mockup--branding .bn-button--primary:hover,
+  .boot-mockup--branding .bn-card .bn-button--primary:hover,
+  .boot-mockup--branding .bn-nav__links a:last-child:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(45, 212, 191, 0.3);
+  }
+
+  .boot-mockup--branding .bn-button--secondary {
+    color: var(--bn-text);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--bn-line);
+    font-weight: 500;
+  }
+
+  .boot-mockup--branding .bn-button--secondary:hover {
+    color: var(--bn-accent);
+    border-color: rgba(45, 212, 191, 0.24);
+    transform: translateY(-3px);
+  }
+
+  .boot-mockup--branding .bn-button--ghost {
+    color: var(--bn-muted);
+    background: transparent;
+    border-color: transparent;
+    font-weight: 500;
+  }
+
+  .boot-mockup--branding .bn-button--ghost:hover,
+  .boot-mockup--branding .bn-nav__links a:first-child:hover {
+    color: var(--bn-accent);
+    transform: none;
+  }
+
+  .boot-mockup--branding a:focus-visible,
+  .boot-mockup--branding button:focus-visible,
+  .boot-mockup--branding summary:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.3);
+  }
+
+  .boot-mockup--branding .bn-hero {
+    min-height: auto;
+    border-bottom: 1px solid var(--bn-line-soft);
+  }
+
+  .boot-mockup--branding .bn-hero__photo {
+    filter: saturate(0.55) brightness(0.55);
+  }
+
+  .boot-mockup--branding .bn-hero__scrim {
+    background:
+      linear-gradient(to right, rgba(10, 10, 10, 0.96) 0%, rgba(10, 10, 10, 0.86) 45%, rgba(10, 10, 10, 0.55) 100%),
+      linear-gradient(to top, var(--bn-bg) 0%, rgba(10, 10, 10, 0.25) 30%, rgba(10, 10, 10, 0.55) 100%);
+  }
+
+  .boot-mockup--branding .bn-pulse--hero {
+    width: 420px;
+    height: 420px;
+    right: 6%;
+    top: 18%;
+  }
+
+  .boot-mockup--branding .bn-pulse {
+    border-color: rgba(45, 212, 191, 0.24);
+    opacity: 0.4;
+  }
+
+  .boot-mockup--branding .bn-pulse::after {
+    border-color: rgba(45, 212, 191, 0.24);
+    animation-duration: 7s;
+  }
+
+  .boot-mockup--branding .bn-hero__inner {
+    padding: 128px 0 96px;
+  }
+
+  .boot-mockup--branding .bn-label {
+    margin-bottom: 20px;
+    color: var(--bn-accent);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+
+  .boot-mockup--branding .bn-hero .bn-label {
+    margin-bottom: 36px;
+  }
+
+  .boot-mockup--branding .bn-hero h1 {
+    max-width: 820px;
+    font-family: "Bebas Neue", Inter, sans-serif;
+    font-size: clamp(52px, 6vw, 76px);
+    font-weight: 400;
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+  }
+
+  .boot-mockup--branding .bn-hero__inner > p:not(.bn-label) {
+    max-width: 640px;
+    margin-top: 26px;
+    color: var(--bn-text);
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .boot-mockup--branding .bn-actions {
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  .boot-mockup--branding .bn-meta {
+    max-width: 720px;
+    gap: 12px 36px;
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top-color: var(--bn-line);
+  }
+
+  .boot-mockup--branding .bn-meta span {
+    color: var(--bn-muted);
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  .boot-mockup--branding .bn-section {
+    padding: 120px 0;
+  }
+
+  .boot-mockup--branding .bn-section--surface,
+  .boot-mockup--branding .bn-final {
+    width: 100%;
+    padding-inline: max(24px, calc((100vw - 1160px) / 2));
+  }
+
+  .boot-mockup--branding .bn-split,
+  .boot-mockup--branding .bn-experience,
+  .boot-mockup--branding .bn-mentor {
+    grid-template-columns: 5fr 6fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .boot-mockup--branding .bn-section h2,
+  .boot-mockup--branding .bn-final h2 {
+    max-width: 620px;
+    font-family: Inter, system-ui, sans-serif;
+    font-size: clamp(26px, 3vw, 34px);
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--bn-text);
+  }
+
+  .boot-mockup--branding .bn-final h2 {
+    max-width: 740px;
+    font-size: clamp(40px, 5vw, 64px);
+  }
+
+  .boot-mockup--branding .bn-section__head {
+    max-width: 620px;
+    margin-bottom: 56px;
+  }
+
+  .boot-mockup--branding .bn-section__head--center {
+    max-width: 820px;
+    margin: 56px auto;
+  }
+
+  .boot-mockup--branding .bn-copy p,
+  .boot-mockup--branding .bn-section__head > p:not(.bn-label),
+  .boot-mockup--branding .bn-final p {
+    max-width: 620px;
+    color: var(--bn-muted);
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .boot-mockup--branding .bn-copy p:first-child {
+    color: var(--bn-text);
+    font-weight: 500;
+  }
+
+  .boot-mockup--branding .bn-copy p + p {
+    margin-top: 20px;
+  }
+
+  .boot-mockup--branding .bn-note {
+    margin-top: 28px;
+    padding: 16px 20px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    color: var(--bn-text);
+    background: rgba(45, 212, 191, 0.08);
+    border: 1px solid rgba(45, 212, 191, 0.24);
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .boot-mockup--branding .bn-note::before {
+    content: "✓";
+    color: var(--bn-accent);
+    font-size: 20px;
+  }
+
+  .boot-mockup--branding .bn-grid {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px 48px;
+  }
+
+  .boot-mockup--branding .bn-grid article {
+    padding-top: 20px;
+  }
+
+  .boot-mockup--branding .bn-grid h3,
+  .boot-mockup--branding .bn-program h3,
+  .boot-mockup--branding .bn-card h3 {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .boot-mockup--branding .bn-grid p,
+  .boot-mockup--branding .bn-program p,
+  .boot-mockup--branding .bn-audience p,
+  .boot-mockup--branding .bn-card p,
+  .boot-mockup--branding .bn-card li,
+  .boot-mockup--branding .bn-faq p,
+  .boot-mockup--branding .bn-experience li,
+  .boot-mockup--branding .bn-mentor p {
+    color: var(--bn-muted);
+    font-size: 15.5px;
+    line-height: 1.7;
+  }
+
+  .boot-mockup--branding .bn-program article {
+    grid-template-columns: clamp(80px, 10%, 120px) 1fr;
+    gap: 32px;
+    padding: 36px 0;
+  }
+
+  .boot-mockup--branding .bn-program article > span {
+    font-family: "Bebas Neue", Inter, sans-serif;
+    font-size: 48px;
+    font-weight: 400;
+    line-height: 0.9;
+  }
+
+  .boot-mockup--branding .bn-audience {
+    max-width: 760px;
+  }
+
+  .boot-mockup--branding .bn-audience p {
+    gap: 20px;
+    padding: 20px 0;
+  }
+
+  .boot-mockup--branding .bn-experience img,
+  .boot-mockup--branding .bn-mentor img {
+    border-radius: 16px;
+    box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
+    filter: saturate(0.76) brightness(0.78);
+  }
+
+  .boot-mockup--branding .bn-experience img {
+    aspect-ratio: 6 / 4;
+    object-position: 50% 28%;
+  }
+
+  .boot-mockup--branding .bn-mentor img {
+    aspect-ratio: 3 / 4;
+    object-position: 50% 18%;
+  }
+
+  .boot-mockup--branding .bn-experience li,
+  .boot-mockup--branding .bn-card li {
+    padding: 16px 0 16px 32px;
+    color: var(--bn-text);
+    font-size: 15.5px;
+    font-weight: 600;
+  }
+
+  .boot-mockup--branding .bn-experience li small {
+    display: block;
+    margin-top: 6px;
+    color: var(--bn-muted);
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .boot-mockup--branding .bn-video-card {
+    width: 100%;
+    margin-bottom: 56px;
+    border-radius: 16px;
+    box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
+  }
+
+  .boot-mockup--branding .bn-stats {
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 32px;
+  }
+
+  .boot-mockup--branding .bn-stats strong,
+  .boot-mockup--branding .bn-price strong {
+    font-family: "Bebas Neue", Inter, sans-serif;
+    font-size: 48px;
+    font-weight: 400;
+  }
+
+  .boot-mockup--branding .bn-client-row {
+    display: block;
+    margin-top: 48px;
+    padding-top: 0;
+    border-top: 0;
+  }
+
+  .boot-mockup--branding .bn-client-row > p {
+    margin: 0 0 20px;
+    color: var(--bn-muted);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--branding .bn-client-row > div {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px 32px;
+    align-items: center;
+  }
+
+  .boot-mockup--branding .bn-client-row img {
+    max-width: 110px;
+    max-height: 26px;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    opacity: 0.55;
+    filter: grayscale(1) brightness(1.7);
+    transition: opacity 200ms ease, filter 200ms ease;
+  }
+
+  .boot-mockup--branding .bn-client-row img:hover {
+    opacity: 1;
+    filter: grayscale(0.2) brightness(1);
+  }
+
+  .boot-mockup--branding .bn-offer-grid {
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 32px;
+  }
+
+  .boot-mockup--branding .bn-card {
+    padding: 40px;
+    background: var(--bn-surface);
+    border: 1px solid var(--bn-line-soft);
+    border-radius: 12px;
+    box-shadow: none;
+  }
+
+  .boot-mockup--branding .bn-card:hover {
+    transform: translateY(-3px);
+    border-color: rgba(45, 212, 191, 0.24);
+    box-shadow: 0 8px 24px rgba(45, 212, 191, 0.18);
+  }
+
+  .boot-mockup--branding .bn-card--highlight {
+    border-color: rgba(45, 212, 191, 0.24);
+    overflow: hidden;
+  }
+
+  .boot-mockup--branding .bn-badge {
+    top: 16px;
+    right: 16px;
+    color: var(--bn-bg);
+    background: var(--bn-accent);
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .boot-mockup--branding .bn-price {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .boot-mockup--branding .bn-price span {
+    color: var(--bn-muted);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+
+  .boot-mockup--branding .bn-price__compare em {
+    display: block;
+    margin-top: 2px;
+    color: var(--bn-accent);
+    font-style: normal;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--branding .bn-faq__list {
+    max-width: 760px;
+  }
+
+  .boot-mockup--branding .bn-faq details {
+    padding: 18px 0;
+  }
+
+  .boot-mockup--branding .bn-faq summary {
+    color: var(--bn-text);
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .boot-mockup--branding .bn-faq summary:hover {
+    color: var(--bn-accent);
+  }
+
+  .boot-mockup--branding .bn-final {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .boot-mockup--branding .bn-final p {
+    max-width: 560px;
+    margin-top: 24px;
+    font-size: 17px;
+  }
+
+  .boot-mockup--branding .bn-final small {
+    margin-top: 28px;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+  }
+
+  .boot-mockup--branding .bn-footer {
+    padding: 48px 0;
+  }
+
+  .boot-mockup--branding .bn-footer .bn-container {
+    gap: 24px;
+  }
+
+  .boot-mockup--branding .bn-footer p {
+    font-size: 13px;
+  }
+
+  @media (max-width: 1024px) {
+    .boot-mockup--branding .bn-split,
+    .boot-mockup--branding .bn-experience,
+    .boot-mockup--branding .bn-mentor {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .boot-mockup--branding .bn-container,
+    .boot-mockup--branding .bn-section {
+      width: min(100% - 48px, 1160px);
+    }
+
+    .boot-mockup--branding .bn-nav__brand::after,
+    .boot-mockup--branding .bn-nav__brand span,
+    .boot-mockup--branding .bn-nav__links a:first-child {
+      display: none;
+    }
+
+    .boot-mockup--branding .bn-hero__inner {
+      padding: 96px 0 76px;
+    }
+
+    .boot-mockup--branding .bn-section {
+      padding: 80px 0;
+    }
+
+    .boot-mockup--branding .bn-section--surface,
+    .boot-mockup--branding .bn-final {
+      padding-inline: 24px;
+    }
+
+    .boot-mockup--branding .bn-grid,
+    .boot-mockup--branding .bn-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .boot-mockup--branding .bn-actions,
+    .boot-mockup--branding .bn-actions--center {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .boot-mockup--branding .bn-button {
+      width: 100%;
+    }
+  }
+
+  .city-hero {
+    position: relative;
+    overflow: hidden;
+    grid-template-columns: minmax(0, 0.75fr) minmax(0, 1fr);
+    background:
+      radial-gradient(circle at 86% 12%, rgba(244, 153, 55, 0.2), transparent 24rem),
+      linear-gradient(135deg, #050707 0%, #081212 55%, #16201d 100%);
+  }
+
+  .city-map {
+    position: relative;
+    min-height: 620px;
+    border-radius: 8px;
+    overflow: hidden;
+    background:
+      linear-gradient(135deg, rgba(244, 153, 55, 0.16), transparent 48%),
+      linear-gradient(160deg, #0d1717, #101b19);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .city-map__coast {
+    position: absolute;
+    inset: 11% 12% 9% 42%;
+    border-left: 5px solid rgba(49, 214, 220, 0.86);
+    border-radius: 42% 58% 48% 52%;
+    transform: rotate(12deg);
+    box-shadow: -48px 0 110px rgba(49, 214, 220, 0.16);
+  }
+
+  .city-map__route {
+    position: absolute;
+    inset: 25% 22% 24% 18%;
+    border: 2px dashed rgba(244, 153, 55, 0.9);
+    border-left: 0;
+    border-bottom: 0;
+    border-radius: 0 90% 0 0;
+    transform: rotate(-8deg);
+  }
+
+  .city-map__dot {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 999px;
+    background: #31d6dc;
+    box-shadow: 0 0 0 12px rgba(49, 214, 220, 0.12);
+  }
+
+  .city-map__dot--one {
+    left: 22%;
+    top: 58%;
+  }
+
+  .city-map__dot--two {
+    left: 48%;
+    top: 38%;
+    background: #f49937;
+    box-shadow: 0 0 0 12px rgba(244, 153, 55, 0.14);
+  }
+
+  .city-map__dot--three {
+    right: 18%;
+    top: 24%;
+  }
+
+  .city-context__grid,
+  .city-route__steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .city-whatsapp {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(28px, 6vw, 80px);
+    background:
+      linear-gradient(90deg, rgba(49, 214, 220, 0.12), transparent),
+      #071010;
+  }
+
+  .city-media {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: clamp(28px, 6vw, 70px);
+    align-items: center;
+  }
+
+  .city-video-card {
+    width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.36);
+  }
+
+  .city-video-card video {
+    object-position: 50% 38%;
+  }
+
+  .city-media blockquote {
+    margin: 0;
+    color: #ffffff;
+    font-size: clamp(1.8rem, 4vw, 4rem);
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .city-media p {
+    color: #f49937;
+    font-weight: 900;
+  }
+
+  .city-offers > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (max-width: 980px) {
+    .template-countdown,
+    .template-video,
+    .template-what,
+    .template-audience,
+    .template-mentor,
+    .brand-hero,
+    .brand-program,
+    .brand-mentor,
+    .city-hero,
+    .city-program,
+    .city-whatsapp,
+    .city-media {
+      grid-template-columns: 1fr;
+    }
+
+    .template-grid,
+    .template-location,
+    .template-offers__grid,
+    .template-mentor aside,
+    .brand-facts,
+    .brand-thesis__grid,
+    .brand-offers__grid,
+    .brand-mentor aside,
+    .city-facts,
+    .city-context__grid,
+    .city-route__steps,
+    .city-offers > div {
+      grid-template-columns: 1fr;
+    }
+
+    .template-program article {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .template-countdown div {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .brand-hero__media,
+    .brand-hero__media img,
+    .city-map {
+      min-height: 420px;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .template-header,
+    .brand-header,
+    .city-header {
+      padding: 18px 16px;
+    }
+
+    .template-header a {
+      display: none;
+    }
+
+    .brand-header a:last-child,
+    .city-header a:last-child {
+      min-height: 42px;
+      padding: 0 12px;
+      font-size: 0.88rem;
+    }
+
+    .brand-header,
+    .city-header {
+      gap: 10px;
+    }
+
+    .brand-header img,
+    .city-header img {
+      width: 132px;
+    }
+
+    .template-hero__copy,
+    .template-band,
+    .template-countdown,
+    .template-section,
+    .template-final,
+    .brand-hero,
+    .brand-section,
+    .brand-final,
+    .city-hero,
+    .city-section,
+    .city-final {
+      padding-left: 16px;
+      padding-right: 16px;
+    }
+
+    .template-band--proof {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .template-countdown div {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .template-video__frame {
+      min-height: 260px;
+    }
+
+    .template-hero__copy h1,
+    .brand-hero h1,
+    .city-hero h1 {
+      font-size: clamp(2.45rem, 11vw, 3.05rem);
+      line-height: 1;
+    }
+
+    .template-hero__copy,
+    .brand-hero__copy,
+    .city-hero__copy {
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .template-hero__copy > p:last-of-type,
+    .brand-hero__copy > p:last-of-type,
+    .city-hero__copy > p:last-of-type {
+      max-width: 100%;
+      font-size: 1.04rem;
+    }
+
+    .brand-hero__media img,
+    .city-video-card,
+    .city-map {
+      max-width: 100%;
+    }
+
+    .brand-actions a,
+    .city-actions a,
+    .template-actions a,
+    .template-actions span {
+      width: 100%;
+      justify-content: center;
+      text-align: center;
+    }
+  }
+
+  /* Direction pass: closer to the Petropolis template and quieter Amplify variants. */
+  .template-logo-mark {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .template-header > a:first-child {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .template-hero__copy h1 {
+    max-width: 920px;
+    font-size: clamp(3.2rem, 6.2vw, 6.6rem);
+    line-height: 0.94;
+  }
+
+  .template-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+
+  .template-meta span {
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    padding: 10px 14px;
+    background: rgba(0, 0, 0, 0.38);
+    font-size: 0.88rem;
+    font-weight: 900;
+  }
+
+  .template-band--proof {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+  }
+
+  .template-band--proof p {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: rgba(0, 0, 0, 0.62);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .template-location {
+    grid-template-columns: minmax(0, 1.18fr) repeat(3, minmax(0, 0.8fr));
+  }
+
+  .template-location figure {
+    margin: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #0a0a0a;
+  }
+
+  .template-location figure img {
+    width: 100%;
+    height: 100%;
+    min-height: 230px;
+    object-fit: cover;
+  }
+
+  .template-program article {
+    grid-template-columns: 260px 170px minmax(0, 1fr);
+    align-items: center;
+  }
+
+  .template-program article img {
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .template-mentor {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 0.9fr) minmax(250px, 0.55fr);
+  }
+
+  .template-mentor > img {
+    width: 100%;
+    height: min(58vw, 680px);
+    object-fit: cover;
+    border-radius: 8px;
+  }
+
+  .template-mentor aside {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-hero,
+  .city-hero {
+    min-height: auto;
+    grid-template-columns: minmax(0, 0.92fr) minmax(360px, 0.72fr);
+    gap: clamp(42px, 7vw, 110px);
+    padding-top: clamp(76px, 10vw, 132px);
+    padding-bottom: clamp(76px, 10vw, 132px);
+  }
+
+  .brand-hero h1,
+  .city-hero h1 {
+    max-width: 760px;
+    font-size: clamp(3.15rem, 5.7vw, 6.25rem);
+    line-height: 0.96;
+  }
+
+  .brand-hero__copy > p:last-of-type,
+  .city-hero__copy > p:last-of-type {
+    max-width: 620px;
+    font-size: clamp(1.02rem, 1.45vw, 1.22rem);
+  }
+
+  .brand-hero__media,
+  .brand-hero__media img {
+    min-height: 430px;
+  }
+
+  .brand-system {
+    right: 18px;
+    bottom: 18px;
+  }
+
+  .brand-section,
+  .city-section,
+  .brand-final,
+  .city-final {
+    padding-top: clamp(72px, 8vw, 112px);
+    padding-bottom: clamp(72px, 8vw, 112px);
+  }
+
+  .brand-section h2,
+  .brand-final h2,
+  .city-section h2,
+  .city-final h2 {
+    max-width: 860px;
+    font-size: clamp(2.2rem, 4.1vw, 4.35rem);
+    line-height: 1;
+  }
+
+  .brand-thesis__grid,
+  .brand-offers__grid,
+  .city-context__grid,
+  .city-route__steps,
+  .city-offers > div {
+    margin-top: 30px;
+  }
+
+  .city-map {
+    min-height: 560px;
+    background:
+      linear-gradient(180deg, rgba(49, 214, 220, 0.16), transparent 42%),
+      linear-gradient(135deg, rgba(244, 153, 55, 0.12), transparent 48%),
+      #0c1514;
+  }
+
+  .city-icon {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.84);
+    font-size: 0.68rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .city-icon::before {
+    content: "";
+    display: block;
+    margin-bottom: 8px;
+    background: rgba(255, 255, 255, 0.82);
+  }
+
+  .city-icon--forte {
+    left: 11%;
+    bottom: 15%;
+  }
+
+  .city-icon--forte::before {
+    width: 78px;
+    height: 46px;
+    clip-path: polygon(0 100%, 0 38%, 18% 38%, 18% 18%, 34% 18%, 34% 38%, 55% 38%, 55% 0, 72% 0, 72% 38%, 100% 38%, 100% 100%);
+    background: #f49937;
+  }
+
+  .city-icon--ponte {
+    right: 9%;
+    top: 22%;
+  }
+
+  .city-icon--ponte::before {
+    width: 140px;
+    height: 54px;
+    border-top: 3px solid #31d6dc;
+    border-radius: 50% 50% 0 0;
+    background: repeating-linear-gradient(90deg, transparent 0 18px, rgba(49, 214, 220, 0.8) 18px 20px, transparent 20px 26px);
+  }
+
+  .city-icon--dunas {
+    left: 14%;
+    top: 18%;
+  }
+
+  .city-icon--dunas::before {
+    width: 128px;
+    height: 62px;
+    border-radius: 50% 50% 8px 8px;
+    background: linear-gradient(135deg, #f4c86a, #f49937);
+    clip-path: polygon(0 100%, 18% 58%, 42% 82%, 64% 28%, 100% 100%);
+  }
+
+  .city-icon--morro {
+    right: 16%;
+    bottom: 13%;
+  }
+
+  .city-icon--morro::before {
+    width: 116px;
+    height: 88px;
+    border-radius: 72% 72% 8px 8px;
+    background: linear-gradient(135deg, #e7d095, #f49937);
+    clip-path: polygon(0 100%, 26% 42%, 56% 10%, 100% 100%);
+  }
+
+  @media (max-width: 980px) {
+    .template-location,
+    .template-program article,
+    .template-mentor,
+    .brand-hero,
+    .city-hero {
+      grid-template-columns: 1fr;
+    }
+
+    .template-location figure img,
+    .template-mentor > img {
+      height: auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .template-header > a:first-child {
+      display: inline-flex;
+    }
+
+    .template-hero__copy h1,
+    .brand-hero h1,
+    .city-hero h1 {
+      font-size: clamp(2.25rem, 10vw, 3rem);
+      line-height: 1.02;
+    }
+
+    .template-band--proof {
+      grid-template-columns: 1fr;
+    }
+
+    .city-map {
+      min-height: 420px;
+    }
+
+    .city-icon {
+      font-size: 0.58rem;
+    }
+
+    .city-icon--ponte::before {
+      width: 108px;
+    }
+
+    .city-icon--dunas::before,
+    .city-icon--morro::before {
+      width: 88px;
+    }
+  }
+  /* Cidade v2: Sol + método, regionalidade sutil e conversão premium local. */
+  .boot-mockup--cidade {
+    --city-bg: #050707;
+    --city-surface: #0a0f0e;
+    --city-line: rgba(245, 242, 236, 0.1);
+    --city-line-soft: rgba(245, 242, 236, 0.06);
+    --city-text: #f5f2ec;
+    --city-muted: rgba(245, 242, 236, 0.68);
+    --city-faint: rgba(245, 242, 236, 0.42);
+    --city-cyan: #2dd4bf;
+    --city-sun: #f5a623;
+    --city-sand: #d8b37c;
+    --city-sea: #0f4c5c;
+    background:
+      radial-gradient(circle at 80% 8%, rgba(245, 166, 35, 0.08), transparent 24rem),
+      linear-gradient(180deg, #050707 0%, #08100f 42%, #050707 100%);
+    color: var(--city-text);
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+
+  .boot-mockup--cidade *,
+  .boot-mockup--cidade *::before,
+  .boot-mockup--cidade *::after {
+    box-sizing: border-box;
+  }
+
+  .boot-mockup--cidade .city-header {
+    min-height: 66px;
+    width: 100%;
+    max-width: 100vw;
+    padding: 14px max(24px, calc((100vw - 1160px) / 2));
+    background: rgba(5, 7, 7, 0.78);
+    border-bottom: 1px solid var(--city-line-soft);
+    overflow: hidden;
+  }
+
+  .boot-mockup--cidade .city-header nav,
+  .boot-mockup--cidade .city-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .boot-mockup--cidade .city-header nav a:first-child {
+    color: var(--city-muted);
+    font-weight: 600;
+  }
+
+  .boot-mockup--cidade .city-header nav a:last-child,
+  .boot-mockup--cidade .city-actions a:first-child,
+  .boot-mockup--cidade .city-offers a,
+  .boot-mockup--cidade .city-final a,
+  .boot-mockup--cidade .city-sticky-cta {
+    min-height: 48px;
+    color: #05100f;
+    background: var(--city-cyan);
+    border: 1px solid var(--city-cyan);
+    border-radius: 12px;
+    padding: 0 20px;
+    font-weight: 900;
+    transition: transform 200ms ease, box-shadow 200ms ease, border-color 200ms ease, color 200ms ease, background 200ms ease;
+  }
+
+  .boot-mockup--cidade .city-header nav a:hover,
+  .boot-mockup--cidade .city-actions a:hover,
+  .boot-mockup--cidade .city-offers a:hover,
+  .boot-mockup--cidade .city-final a:hover,
+  .boot-mockup--cidade .city-sticky-cta:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 34px rgba(45, 212, 191, 0.2);
+  }
+
+  .boot-mockup--cidade .city-hero {
+    position: relative;
+    width: 100%;
+    max-width: 100vw;
+    min-height: calc(100vh - 66px);
+    grid-template-columns: minmax(0, 0.95fr) minmax(420px, 0.82fr);
+    gap: clamp(44px, 7vw, 110px);
+    padding: clamp(86px, 11vw, 144px) max(24px, calc((100vw - 1160px) / 2)) clamp(70px, 10vw, 120px);
+    overflow: hidden;
+    background:
+      linear-gradient(90deg, rgba(5, 7, 7, 0.98), rgba(5, 7, 7, 0.78) 52%, rgba(5, 7, 7, 0.96)),
+      radial-gradient(circle at 82% 26%, rgba(245, 166, 35, 0.18), transparent 26rem),
+      var(--city-bg);
+  }
+
+  .boot-mockup--cidade .city-hero > *,
+  .boot-mockup--cidade .city-section > *,
+  .boot-mockup--cidade .city-final > * {
+    min-width: 0;
+  }
+
+  .boot-mockup--cidade .city-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    background-image:
+      radial-gradient(circle, rgba(45, 212, 191, 0.42) 0 1px, transparent 1.5px),
+      repeating-linear-gradient(115deg, transparent 0 22px, rgba(216, 179, 124, 0.12) 22px 23px, transparent 23px 52px);
+    background-size: 44px 44px, 100% 100%;
+    mask-image: linear-gradient(90deg, transparent, #000 18%, #000 76%, transparent);
+  }
+
+  .boot-mockup--cidade .city-hero__copy,
+  .boot-mockup--cidade .city-sun-map {
+    position: relative;
+    z-index: 2;
+  }
+
+  .boot-mockup--cidade .city-hero__copy p:first-child,
+  .boot-mockup--cidade .city-section > p,
+  .boot-mockup--cidade .city-section > div:first-child p,
+  .boot-mockup--cidade .city-final > p {
+    color: var(--city-cyan);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .boot-mockup--cidade .city-hero h1 {
+    max-width: 760px;
+    margin: 0;
+    color: var(--city-text);
+    font-family: "Bebas Neue", Inter, sans-serif;
+    font-size: clamp(58px, 7vw, 96px);
+    font-weight: 400;
+    line-height: 0.92;
+    overflow-wrap: anywhere;
+  }
+
+  .boot-mockup--cidade .city-hero__copy > p:last-of-type {
+    max-width: 660px;
+    margin: 28px 0 0;
+    color: var(--city-muted);
+    font-size: clamp(17px, 1.45vw, 21px);
+    line-height: 1.65;
+  }
+
+  .boot-mockup--cidade .city-actions {
+    margin-top: 38px;
+  }
+
+  .boot-mockup--cidade .city-actions a:nth-child(2) {
+    color: var(--city-text);
+    background: rgba(255, 255, 255, 0.055);
+    border: 1px solid var(--city-line);
+  }
+
+  .boot-mockup--cidade .city-actions a:last-child {
+    color: var(--city-muted);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+
+  .boot-mockup--cidade .city-actions a:nth-child(2):hover,
+  .boot-mockup--cidade .city-actions a:last-child:hover {
+    color: var(--city-cyan);
+    border-color: rgba(45, 212, 191, 0.24);
+  }
+
+  .boot-mockup--cidade .city-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    max-width: 760px;
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid var(--city-line);
+  }
+
+  .boot-mockup--cidade .city-hero__meta span {
+    color: var(--city-faint);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .boot-mockup--cidade .city-sun-map {
+    min-height: 560px;
+    overflow: hidden;
+    border: 1px solid var(--city-line);
+    border-radius: 18px;
+    background: #07100f;
+    box-shadow: 0 34px 100px rgba(0, 0, 0, 0.44);
+  }
+
+  .boot-mockup--cidade .city-sun-map img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 54% 50%;
+    filter: saturate(0.78) contrast(1.05) brightness(0.48);
+    transform: scale(1.02);
+  }
+
+  .boot-mockup--cidade .city-sun-map__halo {
+    position: absolute;
+    right: 10%;
+    top: 9%;
+    width: 330px;
+    height: 330px;
+    border: 1px solid rgba(245, 166, 35, 0.34);
+    border-radius: 999px;
+    box-shadow: inset 0 0 90px rgba(245, 166, 35, 0.08), 0 0 86px rgba(245, 166, 35, 0.14);
+    animation: cityHalo 7s ease-in-out infinite;
+  }
+
+  .boot-mockup--cidade .city-sun-map__coast {
+    position: absolute;
+    inset: 12% 16% 10% 48%;
+    border-left: 4px solid rgba(45, 212, 191, 0.82);
+    border-radius: 42% 58% 48% 52%;
+    transform: rotate(10deg);
+    box-shadow: -36px 0 90px rgba(45, 212, 191, 0.12);
+  }
+
+  .boot-mockup--cidade .city-sun-map__route {
+    position: absolute;
+    inset: 24% 18% 24% 15%;
+    border: 2px dashed rgba(245, 166, 35, 0.82);
+    border-left: 0;
+    border-bottom: 0;
+    border-radius: 0 90% 0 0;
+    transform: rotate(-8deg);
+    animation: cityRoute 8s linear infinite;
+  }
+
+  .boot-mockup--cidade .city-sun-map__dot {
+    position: absolute;
+    display: grid;
+    gap: 8px;
+    color: var(--city-text);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--cidade .city-sun-map__dot::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    background: var(--city-cyan);
+    box-shadow: 0 0 0 10px rgba(45, 212, 191, 0.11);
+  }
+
+  .boot-mockup--cidade .city-sun-map__dot--forte {
+    left: 12%;
+    bottom: 16%;
+  }
+
+  .boot-mockup--cidade .city-sun-map__dot--potengi {
+    left: 44%;
+    top: 38%;
+  }
+
+  .boot-mockup--cidade .city-sun-map__dot--dunas {
+    right: 18%;
+    top: 18%;
+  }
+
+  .boot-mockup--cidade .city-sun-map__dot--ponta {
+    right: 10%;
+    bottom: 14%;
+  }
+
+  .boot-mockup--cidade .city-facts {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    background: var(--city-line-soft);
+  }
+
+  .boot-mockup--cidade .city-facts span {
+    color: var(--city-text);
+    background:
+      linear-gradient(135deg, rgba(245, 166, 35, 0.06), transparent),
+      #090f0e;
+    font-size: 14px;
+  }
+
+  .boot-mockup--cidade .city-section,
+  .boot-mockup--cidade .city-final {
+    padding: clamp(84px, 10vw, 130px) max(24px, calc((100vw - 1160px) / 2));
+    border-top: 1px solid var(--city-line-soft);
+  }
+
+  .boot-mockup--cidade .city-section h2,
+  .boot-mockup--cidade .city-final h2 {
+    max-width: 780px;
+    margin: 0;
+    color: var(--city-text);
+    font-size: clamp(32px, 4.2vw, 58px);
+    font-weight: 700;
+    line-height: 1.08;
+  }
+
+  .boot-mockup--cidade .city-context {
+    display: grid;
+    grid-template-columns: 0.85fr 1fr;
+    gap: clamp(40px, 7vw, 96px);
+    background:
+      linear-gradient(135deg, rgba(15, 76, 92, 0.16), transparent 42%),
+      var(--city-bg);
+  }
+
+  .boot-mockup--cidade .city-context__copy p {
+    max-width: 650px;
+    margin: 0;
+    color: var(--city-muted);
+    font-size: 18px;
+    line-height: 1.75;
+  }
+
+  .boot-mockup--cidade .city-context__copy p + p {
+    margin-top: 22px;
+  }
+
+  .boot-mockup--cidade .city-context__copy aside {
+    margin-top: 32px;
+    padding: 20px 22px;
+    color: var(--city-text);
+    background: rgba(45, 212, 191, 0.08);
+    border: 1px solid rgba(45, 212, 191, 0.22);
+    border-radius: 14px;
+    font-weight: 900;
+  }
+
+  .boot-mockup--cidade .city-route,
+  .boot-mockup--cidade .city-landmarks,
+  .boot-mockup--cidade .city-faq {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .boot-mockup--cidade .city-route::before,
+  .boot-mockup--cidade .city-landmarks::before,
+  .boot-mockup--cidade .city-faq::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.12;
+    background: repeating-linear-gradient(105deg, transparent 0 28px, rgba(216, 179, 124, 0.32) 28px 29px, transparent 29px 62px);
+  }
+
+  .boot-mockup--cidade .city-route > *,
+  .boot-mockup--cidade .city-landmarks > *,
+  .boot-mockup--cidade .city-faq > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .boot-mockup--cidade .city-route__steps {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: 54px;
+    background: var(--city-line);
+    border: 1px solid var(--city-line);
+    border-radius: 18px;
+    overflow: hidden;
+  }
+
+  .boot-mockup--cidade .city-route article,
+  .boot-mockup--cidade .city-program article,
+  .boot-mockup--cidade .city-offers article {
+    position: relative;
+    background:
+      linear-gradient(135deg, rgba(245, 166, 35, 0.055), transparent 52%),
+      var(--city-surface);
+    border: 0;
+    border-radius: 0;
+    transition: transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  .boot-mockup--cidade .city-route article:hover,
+  .boot-mockup--cidade .city-program article:hover,
+  .boot-mockup--cidade .city-offers article:hover,
+  .boot-mockup--cidade .city-landmarks article:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 54px rgba(0, 0, 0, 0.32);
+  }
+
+  .boot-mockup--cidade .city-route article span,
+  .boot-mockup--cidade .city-program span,
+  .boot-mockup--cidade .city-landmarks span {
+    color: var(--city-sun);
+  }
+
+  .boot-mockup--cidade .city-landmarks {
+    background: var(--city-surface);
+  }
+
+  .boot-mockup--cidade .city-landmarks > div {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-top: 52px;
+  }
+
+  .boot-mockup--cidade .city-landmarks article {
+    overflow: hidden;
+    background: #07100f;
+    border: 1px solid var(--city-line);
+    border-radius: 16px;
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  }
+
+  .boot-mockup--cidade .city-landmarks article:hover {
+    border-color: rgba(45, 212, 191, 0.24);
+  }
+
+  .boot-mockup--cidade .city-landmarks img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    filter: brightness(0.72) saturate(0.86);
+    transition: filter 220ms ease, transform 420ms ease;
+  }
+
+  .boot-mockup--cidade .city-landmarks article:hover img {
+    filter: brightness(0.9) saturate(1);
+    transform: scale(1.035);
+  }
+
+  .boot-mockup--cidade .city-landmarks span,
+  .boot-mockup--cidade .city-landmarks h3,
+  .boot-mockup--cidade .city-landmarks p {
+    display: block;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .boot-mockup--cidade .city-landmarks span {
+    margin-top: 20px;
+    color: var(--city-cyan);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--cidade .city-landmarks h3 {
+    margin-top: 10px;
+    color: var(--city-text);
+    font-size: 22px;
+  }
+
+  .boot-mockup--cidade .city-landmarks p {
+    margin-bottom: 24px;
+    color: var(--city-muted);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .boot-mockup--cidade .city-program {
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.2fr);
+    background:
+      radial-gradient(circle at 90% 18%, rgba(45, 212, 191, 0.09), transparent 24rem),
+      var(--city-bg);
+  }
+
+  .boot-mockup--cidade .city-program article {
+    border-top: 1px solid var(--city-line);
+    padding: 28px 0 28px 92px;
+    background: transparent;
+  }
+
+  .boot-mockup--cidade .city-program article span {
+    position: absolute;
+    left: 0;
+    top: 30px;
+    width: 68px;
+    font-family: "Bebas Neue", Inter, sans-serif;
+    font-size: 34px;
+    line-height: 1;
+  }
+
+  .boot-mockup--cidade .city-program h3,
+  .boot-mockup--cidade .city-route h3,
+  .boot-mockup--cidade .city-offers h3 {
+    color: var(--city-text);
+  }
+
+  .boot-mockup--cidade .city-program p,
+  .boot-mockup--cidade .city-route p,
+  .boot-mockup--cidade .city-whatsapp > p,
+  .boot-mockup--cidade .city-offers p,
+  .boot-mockup--cidade .city-offers li,
+  .boot-mockup--cidade .city-faq p {
+    color: var(--city-muted);
+  }
+
+  .boot-mockup--cidade .city-whatsapp {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr);
+    background:
+      linear-gradient(90deg, rgba(45, 212, 191, 0.13), transparent 54%),
+      linear-gradient(135deg, rgba(245, 166, 35, 0.07), transparent),
+      #07100f;
+  }
+
+  .boot-mockup--cidade .city-media {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.9fr);
+    background: var(--city-bg);
+  }
+
+  .boot-mockup--cidade .city-video-card {
+    border: 1px solid var(--city-line);
+    border-radius: 18px;
+  }
+
+  .boot-mockup--cidade .city-media blockquote {
+    color: var(--city-text);
+    font-size: clamp(30px, 4vw, 54px);
+    line-height: 1.05;
+  }
+
+  .boot-mockup--cidade .city-media p {
+    color: var(--city-sun);
+  }
+
+  .boot-mockup--cidade .city-offers {
+    background:
+      radial-gradient(circle at 12% 22%, rgba(245, 166, 35, 0.08), transparent 22rem),
+      var(--city-surface);
+  }
+
+  .boot-mockup--cidade .city-offers > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 46px;
+  }
+
+  .boot-mockup--cidade .city-offers article {
+    border: 1px solid var(--city-line);
+    border-radius: 18px;
+    padding: 34px;
+  }
+
+  .boot-mockup--cidade .city-offers strong {
+    color: var(--city-cyan);
+    font-family: "Bebas Neue", Inter, sans-serif;
+    font-size: clamp(46px, 5vw, 72px);
+    font-weight: 400;
+  }
+
+  .boot-mockup--cidade .city-offers a,
+  .boot-mockup--cidade .city-final a {
+    width: fit-content;
+  }
+
+  .boot-mockup--cidade .city-faq details {
+    max-width: 820px;
+    border-top: 1px solid var(--city-line);
+  }
+
+  .boot-mockup--cidade .city-faq summary {
+    position: relative;
+    padding-right: 34px;
+    color: var(--city-text);
+    font-size: 17px;
+    font-weight: 900;
+  }
+
+  .boot-mockup--cidade .city-faq summary::after {
+    content: "+";
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: var(--city-cyan);
+  }
+
+  .boot-mockup--cidade .city-faq details[open] summary::after {
+    content: "–";
+  }
+
+  .boot-mockup--cidade .city-final {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    justify-items: center;
+    text-align: center;
+    background:
+      linear-gradient(180deg, rgba(5, 7, 7, 0.66), #050707),
+      url("/bootcamp/morro-do-careca-ponta-negra-natal.jpg") center / cover;
+  }
+
+  .boot-mockup--cidade .city-final::before {
+    content: "";
+    position: absolute;
+    inset: auto 10% -42% 10%;
+    height: 70%;
+    background: radial-gradient(ellipse at 50% 50%, rgba(245, 166, 35, 0.16), transparent 68%);
+    pointer-events: none;
+  }
+
+  .boot-mockup--cidade .city-final > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  .boot-mockup--cidade .city-final h2 {
+    max-width: 900px;
+  }
+
+  .boot-mockup--cidade .city-final small {
+    margin-top: 26px;
+    color: var(--city-faint);
+    font-size: 13px;
+  }
+
+  .boot-mockup--cidade .city-sticky-cta {
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 60;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    border-radius: 999px;
+    padding: 0 18px;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(14px);
+    transition: opacity 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  }
+
+  .boot-mockup--cidade .city-sticky-cta.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateY(0);
+  }
+
+  @keyframes cityHalo {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 0.72;
+    }
+    50% {
+      transform: scale(1.045);
+      opacity: 0.42;
+    }
+  }
+
+  @keyframes cityRoute {
+    0% {
+      border-color: rgba(245, 166, 35, 0.38);
+    }
+    50% {
+      border-color: rgba(45, 212, 191, 0.7);
+    }
+    100% {
+      border-color: rgba(245, 166, 35, 0.38);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .boot-mockup--cidade *,
+    .boot-mockup--cidade *::before,
+    .boot-mockup--cidade *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  @media (max-width: 980px) {
+    .boot-mockup--cidade .city-header {
+      padding-inline: 24px;
+    }
+
+    .boot-mockup--cidade .city-hero,
+    .boot-mockup--cidade .city-context,
+    .boot-mockup--cidade .city-program,
+    .boot-mockup--cidade .city-whatsapp,
+    .boot-mockup--cidade .city-media {
+      grid-template-columns: 1fr;
+    }
+
+    .boot-mockup--cidade .city-sun-map {
+      min-height: 460px;
+    }
+
+    .boot-mockup--cidade .city-facts,
+    .boot-mockup--cidade .city-route__steps,
+    .boot-mockup--cidade .city-landmarks > div,
+    .boot-mockup--cidade .city-offers > div {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .boot-mockup--cidade .city-header {
+      gap: 12px;
+      padding-inline: 18px;
+    }
+
+    .boot-mockup--cidade .city-header nav {
+      display: none;
+    }
+
+    .boot-mockup--cidade .city-header nav a:first-child {
+      display: none;
+    }
+
+    .boot-mockup--cidade .city-header img {
+      width: 130px;
+    }
+
+    .boot-mockup--cidade .city-hero,
+    .boot-mockup--cidade .city-section,
+    .boot-mockup--cidade .city-final {
+      padding-left: 18px;
+      padding-right: 18px;
+      width: 100%;
+      max-width: 100vw;
+    }
+
+    .boot-mockup--cidade .city-hero {
+      display: block;
+    }
+
+    .boot-mockup--cidade .city-hero__copy {
+      width: min(calc(100vw - 56px), 340px) !important;
+      max-width: min(calc(100vw - 56px), 340px) !important;
+      overflow: hidden;
+    }
+
+    .boot-mockup--cidade .city-hero__copy p:first-child {
+      max-width: 32ch;
+      letter-spacing: 0.06em;
+      line-height: 1.45;
+    }
+
+    .boot-mockup--cidade .city-hero h1 {
+      max-width: min(100%, 11ch);
+      font-size: clamp(42px, 13vw, 58px);
+    }
+
+    .boot-mockup--cidade .city-hero__copy > p:last-of-type {
+      max-width: 100%;
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .boot-mockup--cidade .city-actions {
+      width: min(calc(100vw - 56px), 340px) !important;
+      max-width: min(calc(100vw - 56px), 340px) !important;
+      flex-direction: column;
+    }
+
+    .boot-mockup--cidade .city-actions a,
+    .boot-mockup--cidade .city-offers a,
+    .boot-mockup--cidade .city-final a {
+      width: min(calc(100vw - 56px), 340px) !important;
+      max-width: min(calc(100vw - 56px), 340px) !important;
+      justify-content: center;
+    }
+
+    .boot-mockup--cidade .city-sun-map {
+      margin-top: 46px;
+      min-height: 360px;
+      max-width: 100%;
+    }
+
+    .boot-mockup--cidade .city-sun-map__halo {
+      width: 220px;
+      height: 220px;
+    }
+
+    .boot-mockup--cidade .city-sun-map__dot {
+      font-size: 9px;
+      max-width: 80px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .boot-mockup--cidade .city-facts,
+    .boot-mockup--cidade .city-route__steps,
+    .boot-mockup--cidade .city-landmarks > div,
+    .boot-mockup--cidade .city-offers > div {
+      grid-template-columns: 1fr;
+    }
+
+    .boot-mockup--cidade .city-program article {
+      padding-left: 0;
+    }
+
+    .boot-mockup--cidade .city-program article span {
+      position: static;
+      display: block;
+      width: auto;
+      margin-bottom: 10px;
+    }
+
+    .boot-mockup--cidade .city-sticky-cta {
+      right: 16px;
+      bottom: 16px;
+      left: 16px;
+      width: auto;
+    }
+  }
+
+  /* Cidade v3: handoff "Tempero Potiguar" */
+  .boot-mockup--cidade {
+    --tp-bg: #0a0a0a;
+    --tp-bg-2: #111111;
+    --tp-bg-3: #161616;
+    --tp-cyan: #2dd4bf;
+    --tp-cyan-strong: #5eead4;
+    --tp-text: #f5f2ec;
+    --tp-muted: #999999;
+    --tp-faint: #777777;
+    --tp-line: rgba(255, 255, 255, 0.1);
+    --tp-line-soft: rgba(255, 255, 255, 0.06);
+    --tp-duna: #d9a85c;
+    --tp-duna-light: #e8c77d;
+    --tp-sol: #e07b2f;
+    --tp-accent: var(--tp-cyan);
+    --tp-potiguar: var(--tp-duna);
+    --tp-container: 1160px;
+    --tp-pad: 24px;
+    --tp-section: 120px;
+    --tp-radius: 12px;
+    --tp-radius-lg: 16px;
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+    background: var(--tp-bg);
+    color: var(--tp-text);
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.7;
+  }
+
+  .boot-mockup--cidade .tp-container {
+    max-width: var(--tp-container);
+    margin: 0 auto;
+    padding: 0 var(--tp-pad);
+  }
+
+  .boot-mockup--cidade .tp-section {
+    position: relative;
+    overflow: hidden;
+    padding: var(--tp-section) 0;
+    border-top: 1px solid var(--tp-line-soft);
+  }
+
+  .boot-mockup--cidade .tp-section--surface {
+    background: var(--tp-bg-2);
+    border-bottom: 1px solid var(--tp-line-soft);
+  }
+
+  .boot-mockup--cidade .tp-h2 {
+    margin: 14px 0 0;
+    max-width: 680px;
+    color: var(--tp-text);
+    font-size: clamp(26px, 3vw, 34px);
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  .boot-mockup--cidade .tp-lead,
+  .boot-mockup--cidade .tp-body,
+  .boot-mockup--cidade .tp-body-strong {
+    max-width: 660px;
+    color: var(--tp-muted);
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .boot-mockup--cidade .tp-body-strong {
+    color: var(--tp-text);
+    font-weight: 500;
+  }
+
+  .boot-mockup--cidade .tp-lead {
+    margin-top: 16px;
+  }
+
+  .boot-mockup--cidade strong {
+    color: var(--tp-text);
+    font-weight: 650;
+  }
+
+  .boot-mockup--cidade .tp-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--tp-muted);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--cidade .tp-star-ico,
+  .boot-mockup--cidade .tp-corner-star {
+    width: 14px;
+    height: 14px;
+    color: var(--tp-duna-light);
+    opacity: 0.92;
+    flex-shrink: 0;
+  }
+
+  .boot-mockup--cidade .tp-star-ico polygon,
+  .boot-mockup--cidade .tp-corner-star polygon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.6;
+    stroke-linejoin: round;
+  }
+
+  .boot-mockup--cidade .tp-star-ico path,
+  .boot-mockup--cidade .tp-star-ico line,
+  .boot-mockup--cidade .tp-corner-star path,
+  .boot-mockup--cidade .tp-corner-star line {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .boot-mockup--cidade .tp-sun-ico {
+    width: 16px;
+    height: 16px;
+    color: var(--tp-potiguar);
+    flex-shrink: 0;
+  }
+
+  .boot-mockup--cidade .tp-sun-ico * {
+    fill: none;
+    stroke: currentColor;
+    stroke-linecap: round;
+    stroke-width: 1.6;
+  }
+
+  .boot-mockup--cidade .tp-btn {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    border-radius: var(--tp-radius);
+    padding: 12px 24px;
+    color: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    white-space: nowrap;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease, color 180ms ease, background 180ms ease;
+  }
+
+  .boot-mockup--cidade .tp-btn--lg {
+    min-height: 56px;
+    padding: 16px 32px;
+    font-size: 15px;
+  }
+
+  .boot-mockup--cidade .tp-btn--primary {
+    color: #0a0a0a;
+    background: var(--tp-accent);
+    border: 1px solid rgba(45, 212, 191, 0.4);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .boot-mockup--cidade .tp-btn--primary::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+    transform: translateX(-120%);
+  }
+
+  .boot-mockup--cidade .tp-btn--primary:hover::after {
+    transition: transform 600ms ease;
+    transform: translateX(120%);
+  }
+
+  .boot-mockup--cidade .tp-btn--primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(45, 212, 191, 0.25);
+  }
+
+  .boot-mockup--cidade .tp-btn--secondary {
+    color: var(--tp-text);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--tp-line);
+  }
+
+  .boot-mockup--cidade .tp-btn--ghost {
+    color: var(--tp-muted);
+    background: transparent;
+    border: 1px solid transparent;
+  }
+
+  .boot-mockup--cidade .tp-btn--secondary:hover,
+  .boot-mockup--cidade .tp-btn--ghost:hover {
+    color: var(--tp-cyan);
+    border-color: rgba(45, 212, 191, 0.24);
+    transform: translateY(-3px);
+  }
+
+  .boot-mockup--cidade .tp-nav {
+    position: sticky;
+    top: 0;
+    z-index: 70;
+    background: rgba(10,10,10,0.8);
+    border-bottom: 1px solid var(--tp-line-soft);
+    backdrop-filter: blur(12px);
+  }
+
+  .boot-mockup--cidade .tp-nav__inner {
+    min-height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .boot-mockup--cidade .tp-nav__brand,
+  .boot-mockup--cidade .tp-nav__right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+  }
+
+  .boot-mockup--cidade .tp-nav__brand img {
+    width: auto;
+    height: 22px;
+  }
+
+  .boot-mockup--cidade .tp-nav__sep {
+    width: 1px;
+    height: 18px;
+    background: var(--tp-line);
+  }
+
+  .boot-mockup--cidade .tp-nav__label,
+  .boot-mockup--cidade .tp-nav__link {
+    color: var(--tp-muted);
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .boot-mockup--cidade .tp-nav__right {
+    gap: 24px;
+  }
+
+  .boot-mockup--cidade .tp-nav__link:hover {
+    color: var(--tp-cyan);
+  }
+
+  .boot-mockup--cidade .tp-nav__cta {
+    min-height: 42px;
+    padding: 10px 22px;
+    color: #0a0a0a;
+  }
+
+  .boot-mockup--cidade .tp-nav__cta-price {
+    display: none;
+  }
+
+  .boot-mockup--cidade .tp-nav__progress {
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 0%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--tp-duna), var(--tp-cyan));
+  }
+
+  .boot-mockup--cidade .tp-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: calc(100vh - 64px);
+  }
+
+  .boot-mockup--cidade .tp-hero__bg {
+    position: absolute;
+    inset: 0;
+    background-position: center 30%;
+    background-size: cover;
+  }
+
+  .boot-mockup--cidade .tp-hero__bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(180deg, rgba(10,10,10,0.24), rgba(10,10,10,0.86) 90%),
+      rgba(0, 0, 0, 0.8);
+  }
+
+  .boot-mockup--cidade .tp-hero__inner {
+    position: relative;
+    z-index: 2;
+    max-width: 840px;
+    padding: 128px 0 120px;
+  }
+
+  .boot-mockup--cidade .tp-hero__eyebrow {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .boot-mockup--cidade .tp-sep {
+    width: 28px;
+    height: 1px;
+    background: var(--tp-line);
+  }
+
+  .boot-mockup--cidade .tp-hero__meta-inline {
+    color: var(--tp-muted);
+    font-size: 13px;
+    letter-spacing: 0.03em;
+  }
+
+  .boot-mockup--cidade .tp-hero h1 {
+    max-width: 820px;
+    margin: 28px 0 0;
+    color: var(--tp-text);
+    font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+    font-size: clamp(52px, 6vw, 76px);
+    font-weight: 600;
+    line-height: 0.92;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+
+  .boot-mockup--cidade .tp-hl,
+  .boot-mockup--cidade .tp-final h2 span {
+    color: var(--tp-cyan);
+  }
+
+  .boot-mockup--cidade .tp-hero__sub {
+    max-width: 640px;
+    margin: 26px 0 0;
+    color: var(--tp-muted);
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  .boot-mockup--cidade .tp-pot {
+    color: var(--tp-duna-light);
+  }
+
+  .boot-mockup--cidade .tp-hero__ctas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 40px;
+  }
+
+  .boot-mockup--cidade .tp-hero__proof {
+    margin-top: 24px;
+    color: var(--tp-faint);
+    font-size: 13px;
+    letter-spacing: 0.03em;
+  }
+
+  .boot-mockup--cidade .tp-hero__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 32px;
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--tp-line);
+    color: var(--tp-muted);
+    font-size: 13px;
+    letter-spacing: 0.03em;
+  }
+
+  .boot-mockup--cidade .tp-hero__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .boot-mockup--cidade .tp-hero__dune {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    z-index: 3;
+    width: 100%;
+    height: 72px;
+  }
+
+  .boot-mockup--cidade .tp-hero__dune path {
+    fill: var(--tp-bg);
+  }
+
+  .boot-mockup--cidade .tp-pulse-ring {
+    position: absolute;
+    top: 18%;
+    right: 6%;
+    z-index: 2;
+    width: 120px;
+    height: 120px;
+    pointer-events: none;
+  }
+
+  .boot-mockup--cidade .tp-pulse-ring::before,
+  .boot-mockup--cidade .tp-pulse-ring::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--tp-sol);
+    border-radius: 50%;
+    opacity: 0;
+    animation: tpPulse 6s ease-out infinite;
+  }
+
+  .boot-mockup--cidade .tp-pulse-ring::after {
+    animation-delay: 3s;
+    border-color: var(--tp-duna);
+  }
+
+  .boot-mockup--cidade .tp-sun-ticks {
+    width: 100%;
+    height: 100%;
+    color: var(--tp-duna);
+  }
+
+  .boot-mockup--cidade .tp-sun-ticks line {
+    stroke: currentColor;
+    stroke-width: 1;
+    opacity: 0.5;
+  }
+
+  @keyframes tpPulse {
+    0% { transform: scale(0.3); opacity: 0.7; }
+    100% { transform: scale(1.6); opacity: 0; }
+  }
+
+  .boot-mockup--cidade .tp-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .boot-mockup--cidade .tp-split--center {
+    align-items: center;
+  }
+
+  .boot-mockup--cidade .tp-section-head {
+    max-width: 720px;
+    margin-bottom: 56px;
+  }
+
+  .boot-mockup--cidade .tp-section-head--center {
+    margin-inline: auto;
+    text-align: center;
+  }
+
+  .boot-mockup--cidade .tp-callout {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    margin-top: 28px;
+    padding: 16px 20px;
+    background: rgba(45, 212, 191, 0.08);
+    border: 1px solid rgba(45, 212, 191, 0.24);
+    border-radius: var(--tp-radius);
+  }
+
+  .boot-mockup--cidade .tp-callout span,
+  .boot-mockup--cidade .tp-callout strong {
+    color: var(--tp-cyan);
+  }
+
+  .boot-mockup--cidade .tp-callout p {
+    margin: 0;
+    color: var(--tp-text);
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .boot-mockup--cidade .tp-callout em {
+    display: block;
+    margin-top: 4px;
+    color: var(--tp-duna-light);
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--cidade .tp-dune-field path,
+  .boot-mockup--cidade .tp-dune-divider path,
+  .boot-mockup--cidade .tp-rays line,
+  .boot-mockup--cidade .tp-card-rays line {
+    fill: none;
+    stroke: currentColor;
+  }
+
+  .boot-mockup--cidade .tp-dune-field {
+    position: absolute;
+    inset: 0;
+    color: var(--tp-duna);
+    opacity: 0.04;
+    pointer-events: none;
+  }
+
+  .boot-mockup--cidade .tp-dune-field path {
+    stroke-width: 1.2;
+  }
+
+  .boot-mockup--cidade .tp-expect-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 40px 48px;
+  }
+
+  .boot-mockup--cidade .tp-expect-card {
+    position: relative;
+    padding-top: 20px;
+    border-top: 1px solid var(--tp-line);
+    transition: border-color 260ms ease, transform 260ms ease;
+  }
+
+  .boot-mockup--cidade .tp-expect-card h3 {
+    margin: 0;
+    padding-right: 28px;
+    color: var(--tp-text);
+    font-size: 16px;
+    font-weight: 650;
+  }
+
+  .boot-mockup--cidade .tp-expect-card p {
+    margin: 10px 0 0;
+    color: var(--tp-muted);
+    font-size: 14.5px;
+  }
+
+  .boot-mockup--cidade .tp-corner-star {
+    position: absolute;
+    top: 20px;
+    right: 0;
+    opacity: 0.78;
+    transition: opacity 260ms ease, transform 260ms ease, filter 260ms ease;
+  }
+
+  .boot-mockup--cidade .tp-expect-card:hover {
+    border-color: rgba(45, 212, 191, 0.24);
+    transform: translateY(-2px);
+  }
+
+  .boot-mockup--cidade .tp-expect-card:hover .tp-corner-star {
+    opacity: 1;
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 6px rgba(217,168,92,0.35));
+  }
+
+  .boot-mockup--cidade .tp-expect-card:hover .tp-corner-star polygon,
+  .boot-mockup--cidade .tp-faq__item.open .tp-star-ico polygon {
+    fill: currentColor;
+  }
+
+  .boot-mockup--cidade .tp-dune-divider {
+    display: block;
+    width: 100%;
+    height: 56px;
+    margin-bottom: 40px;
+    color: var(--tp-duna);
+    opacity: 0.22;
+  }
+
+  .boot-mockup--cidade .tp-dune-divider path {
+    stroke-width: 1.1;
+  }
+
+  .boot-mockup--cidade .tp-w2 { opacity: 0.55; }
+  .boot-mockup--cidade .tp-w3 { opacity: 0.3; }
+
+  .boot-mockup--cidade .tp-session {
+    display: grid;
+    grid-template-columns: clamp(80px, 10%, 120px) 1fr;
+    gap: 32px;
+    align-items: baseline;
+    padding: 36px 0;
+    border-top: 1px solid var(--tp-line-soft);
+  }
+
+  .boot-mockup--cidade .tp-session:last-child {
+    border-bottom: 1px solid var(--tp-line-soft);
+  }
+
+  .boot-mockup--cidade .tp-session__num {
+    background: linear-gradient(to top, var(--tp-duna) 50%, rgba(245,242,236,0.14) 50%);
+    background-size: 100% 200%;
+    background-position: 0 0;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+    font-size: 48px;
+    font-weight: 600;
+    line-height: 0.9;
+    transition: background-position 1100ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .boot-mockup--cidade .tp-session.in-view .tp-session__num {
+    background-position: 0 100%;
+  }
+
+  .boot-mockup--cidade .tp-session h3 {
+    margin: 0;
+    color: var(--tp-text);
+    font-size: 19px;
+    font-weight: 650;
+  }
+
+  .boot-mockup--cidade .tp-session p {
+    max-width: 560px;
+    margin: 8px 0 0;
+    color: var(--tp-muted);
+    font-size: 15px;
+  }
+
+  .boot-mockup--cidade .tp-audience {
+    max-width: 760px;
+  }
+
+  .boot-mockup--cidade .tp-audience__item {
+    display: flex;
+    gap: 20px;
+    align-items: baseline;
+    padding: 20px 0;
+    border-top: 1px solid var(--tp-line-soft);
+  }
+
+  .boot-mockup--cidade .tp-audience__item:last-child {
+    border-bottom: 1px solid var(--tp-line-soft);
+  }
+
+  .boot-mockup--cidade .tp-audience__item p {
+    margin: 0;
+    color: var(--tp-text);
+    font-size: 15.5px;
+  }
+
+  .boot-mockup--cidade .tp-exclusion {
+    max-width: 760px;
+    margin: 28px 0 0;
+    color: var(--tp-faint);
+    font-size: 14px;
+  }
+
+  .boot-mockup--cidade .tp-media-frame {
+    overflow: hidden;
+    background: var(--tp-bg-3);
+    border-radius: var(--tp-radius-lg);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+  }
+
+  .boot-mockup--cidade .tp-media-frame--64 { aspect-ratio: 6 / 4; }
+  .boot-mockup--cidade .tp-media-frame--34 { aspect-ratio: 3 / 4; }
+
+  .boot-mockup--cidade .tp-media-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.78) brightness(0.82);
+  }
+
+  .boot-mockup--cidade .tp-media-frame--34 img {
+    object-position: 50% 14%;
+  }
+
+  .boot-mockup--cidade .tp-checklist {
+    display: flex;
+    flex-direction: column;
+    margin-top: 28px;
+  }
+
+  .boot-mockup--cidade .tp-checklist div {
+    display: flex;
+    gap: 12px;
+    align-items: baseline;
+    padding: 16px 0;
+    border-top: 1px solid var(--tp-line-soft);
+  }
+
+  .boot-mockup--cidade .tp-checklist span {
+    color: var(--tp-cyan);
+    flex-shrink: 0;
+  }
+
+  .boot-mockup--cidade .tp-checklist p {
+    margin: 0;
+    color: var(--tp-text);
+    font-size: 14.5px;
+  }
+
+  .boot-mockup--cidade .tp-checklist small {
+    display: block;
+    color: var(--tp-muted);
+    font-size: 13px;
+  }
+
+  .boot-mockup--cidade .tp-video-wrap {
+    position: relative;
+    overflow: hidden;
+    width: min(100%, 1160px);
+    aspect-ratio: 16 / 9;
+    margin: 0 auto 56px;
+    background: var(--tp-bg-3);
+    border-radius: var(--tp-radius-lg);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.55);
+  }
+
+  .boot-mockup--cidade .tp-video-wrap video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.74) saturate(0.92);
+  }
+
+  .boot-mockup--cidade .tp-video-play {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    border: 0;
+    background: rgba(0,0,0,0.18);
+    cursor: pointer;
+  }
+
+  .boot-mockup--cidade .tp-video-play svg {
+    position: absolute;
+    width: 112px;
+    height: 112px;
+    opacity: 0.78;
+  }
+
+  .boot-mockup--cidade .tp-video-play span {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: var(--tp-cyan);
+    box-shadow: 0 0 34px rgba(45, 212, 191, 0.4);
+  }
+
+  .boot-mockup--cidade .tp-video-play span::after {
+    content: "";
+    position: absolute;
+    left: 31px;
+    top: 23px;
+    border-left: 22px solid #061011;
+    border-top: 15px solid transparent;
+    border-bottom: 15px solid transparent;
+  }
+
+  .boot-mockup--cidade .tp-video-wrap.is-playing .tp-video-play {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .boot-mockup--cidade .tp-video-fullscreen {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+    z-index: 3;
+    border: 0;
+    color: var(--tp-text);
+    background: transparent;
+    font-size: 28px;
+    cursor: pointer;
+  }
+
+  .boot-mockup--cidade .tp-video-dur {
+    position: absolute;
+    right: 18px;
+    top: 18px;
+    z-index: 3;
+    color: var(--tp-text);
+    background: rgba(0,0,0,0.48);
+    border: 1px solid var(--tp-line);
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .boot-mockup--cidade .tp-stats {
+    position: relative;
+    margin-top: 56px;
+    text-align: center;
+  }
+
+  .boot-mockup--cidade .tp-rays {
+    position: absolute;
+    left: 50%;
+    bottom: -40px;
+    width: min(900px, 90vw);
+    height: 220px;
+    color: var(--tp-duna);
+    opacity: 0.07;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .boot-mockup--cidade .tp-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 32px;
+    margin-top: 48px;
+  }
+
+  .boot-mockup--cidade .tp-stat strong {
+    display: block;
+    color: var(--tp-cyan);
+    font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+    font-size: clamp(48px, 5vw, 64px);
+    line-height: 1;
+  }
+
+  .boot-mockup--cidade .tp-stat span {
+    display: block;
+    margin-top: 10px;
+    color: var(--tp-muted);
+    font-size: 13.5px;
+  }
+
+  .boot-mockup--cidade .tp-mentor p {
+    margin: 0;
+    color: var(--tp-muted);
+    font-size: 15.5px;
+  }
+
+  .boot-mockup--cidade .tp-mentor p + p {
+    margin-top: 22px;
+  }
+
+  .boot-mockup--cidade .tp-cascudo-note {
+    border-left: 2px solid var(--tp-duna);
+    padding-left: 14px;
+    color: var(--tp-faint) !important;
+    font-style: italic;
+  }
+
+  .boot-mockup--cidade .tp-clients {
+    margin-top: 64px;
+  }
+
+  .boot-mockup--cidade .tp-clients__row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 18px 32px;
+    margin-top: 20px;
+  }
+
+  .boot-mockup--cidade .tp-clients__row img {
+    max-width: 120px;
+    max-height: 26px;
+    width: auto;
+    height: auto;
+    opacity: 0.62;
+    filter: grayscale(1) brightness(1.7);
+    transition: opacity 200ms ease, filter 200ms ease;
+  }
+
+  .boot-mockup--cidade .tp-clients__row img:hover {
+    opacity: 1;
+    filter: grayscale(0.2) brightness(1);
+  }
+
+  .boot-mockup--cidade .tp-pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 32px;
+  }
+
+  .boot-mockup--cidade .tp-price-card {
+    position: relative;
+    overflow: hidden;
+    padding: 40px;
+    background: var(--tp-bg-2);
+    border: 1px solid var(--tp-line-soft);
+    border-radius: var(--tp-radius);
+    transition: transform 180ms ease, box-shadow 260ms ease, border-color 260ms ease;
+  }
+
+  .boot-mockup--cidade .tp-price-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 24px rgba(45, 212, 191, 0.2);
+  }
+
+  .boot-mockup--cidade .tp-price-card--featured {
+    border-color: rgba(45, 212, 191, 0.24);
+  }
+
+  .boot-mockup--cidade .tp-card-rays {
+    position: absolute;
+    right: -40px;
+    top: -40px;
+    width: 240px;
+    height: 240px;
+    color: var(--tp-duna);
+    opacity: 0.06;
+    pointer-events: none;
+  }
+
+  .boot-mockup--cidade .tp-price-card__badge {
+    display: inline-flex;
+    margin-bottom: 18px;
+    color: var(--tp-duna-light);
+    background: rgba(217, 168, 92, 0.1);
+    border: 1px solid rgba(217, 168, 92, 0.45);
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--cidade .tp-price-card h3 {
+    margin: 0;
+    color: var(--tp-text);
+    font-size: 18px;
+    font-weight: 650;
+  }
+
+  .boot-mockup--cidade .tp-price-card p {
+    color: var(--tp-muted);
+  }
+
+  .boot-mockup--cidade .tp-price-row {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .boot-mockup--cidade .tp-price-row strong {
+    color: var(--tp-cyan);
+    font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+    font-size: 48px;
+    line-height: 1;
+  }
+
+  .boot-mockup--cidade .tp-price-row span {
+    color: var(--tp-muted);
+    font-size: 13px;
+    text-decoration: line-through;
+  }
+
+  .boot-mockup--cidade .tp-price-row em {
+    color: var(--tp-duna-light);
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 800;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--cidade .tp-price-anchor {
+    margin-top: 14px;
+    color: var(--tp-faint);
+    font-size: 13.5px;
+  }
+
+  .boot-mockup--cidade .tp-price-card__info {
+    margin-top: 28px;
+    padding: 20px;
+    background: rgba(45, 212, 191, 0.06);
+    border: 1px solid var(--tp-line-soft);
+    border-radius: var(--tp-radius);
+    color: var(--tp-muted);
+    font-size: 14px;
+  }
+
+  .boot-mockup--cidade .tp-price-card .tp-btn {
+    width: 100%;
+    margin-top: 32px;
+  }
+
+  .boot-mockup--cidade .tp-btn-subtext {
+    margin: 12px 0 0;
+    color: var(--tp-faint);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .boot-mockup--cidade .tp-faq {
+    max-width: 760px;
+  }
+
+  .boot-mockup--cidade .tp-faq__item {
+    border-top: 1px solid var(--tp-line-soft);
+  }
+
+  .boot-mockup--cidade .tp-faq__item:last-child {
+    border-bottom: 1px solid var(--tp-line-soft);
+  }
+
+  .boot-mockup--cidade .tp-faq__q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    width: 100%;
+    padding: 18px 0;
+    color: var(--tp-text);
+    background: none;
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 650;
+    text-align: left;
+  }
+
+  .boot-mockup--cidade .tp-faq__q .tp-star-ico {
+    color: var(--tp-duna-light);
+    opacity: 0.78;
+    transition: transform 220ms ease, color 220ms ease;
+  }
+
+  .boot-mockup--cidade .tp-faq__item.open .tp-faq__q .tp-star-ico {
+    color: var(--tp-potiguar);
+    opacity: 1;
+    transform: rotate(36deg);
+  }
+
+  .boot-mockup--cidade .tp-faq__a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 280ms ease;
+  }
+
+  .boot-mockup--cidade .tp-faq__a p {
+    max-width: 640px;
+    margin: 0;
+    padding: 0 0 18px;
+    color: var(--tp-muted);
+    font-size: 15px;
+  }
+
+  .boot-mockup--cidade .tp-final {
+    position: relative;
+    text-align: center;
+  }
+
+  .boot-mockup--cidade .tp-final__sunset {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .boot-mockup--cidade .tp-final__sunset::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -32%;
+    width: 130%;
+    height: 80%;
+    background: radial-gradient(ellipse at 50% 100%, rgba(224,123,47,0.16), rgba(217,168,92,0.05) 45%, transparent 70%);
+    transform: translateX(-50%);
+    animation: tpSunset 22s ease-in-out infinite alternate;
+  }
+
+  @keyframes tpSunset {
+    from { filter: hue-rotate(-6deg); opacity: 0.85; }
+    to { filter: hue-rotate(6deg); opacity: 1; }
+  }
+
+  .boot-mockup--cidade .tp-final__inner {
+    position: relative;
+    z-index: 2;
+    max-width: 740px;
+    margin: 0 auto;
+  }
+
+  .boot-mockup--cidade .tp-final h2 {
+    margin: 0;
+    color: var(--tp-text);
+    font-family: "Bebas Neue", Impact, "Arial Narrow", sans-serif;
+    font-size: clamp(40px, 5vw, 64px);
+    font-weight: 600;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--cidade .tp-final p {
+    max-width: 560px;
+    margin: 24px auto 0;
+    color: var(--tp-muted);
+    font-size: 17px;
+  }
+
+  .boot-mockup--cidade .tp-final__ctas {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 44px;
+  }
+
+  .boot-mockup--cidade .tp-final small {
+    display: block;
+    margin-top: 28px;
+    color: var(--tp-faint);
+    font-size: 13px;
+    letter-spacing: 0.03em;
+  }
+
+  .boot-mockup--cidade .tp-footer {
+    border-top: 1px solid var(--tp-line-soft);
+    padding: 48px 0;
+  }
+
+  .boot-mockup--cidade .tp-footer__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .boot-mockup--cidade .tp-footer img {
+    width: auto;
+    height: 20px;
+  }
+
+  .boot-mockup--cidade .tp-footer__inner > div {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 18px;
+    color: var(--tp-faint);
+    font-size: 13px;
+  }
+
+  .boot-mockup--cidade .tp-footer__inner span:first-child {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--tp-muted);
+  }
+
+  .boot-mockup--cidade .tp-sticky-cta {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    z-index: 80;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 12px 10px 16px;
+    background: rgba(17,17,17,0.88);
+    border: 1px solid var(--tp-line);
+    border-radius: 999px;
+    box-shadow: 0 18px 56px rgba(0,0,0,0.4);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 18px);
+    transition: opacity 220ms ease, transform 220ms ease;
+  }
+
+  .boot-mockup--cidade .tp-sticky-cta.is-visible {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, 0);
+  }
+
+  .boot-mockup--cidade .tp-sticky-cta strong {
+    display: block;
+    color: var(--tp-cyan);
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .boot-mockup--cidade .tp-sticky-cta span {
+    display: block;
+    color: var(--tp-faint);
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .boot-mockup--cidade .tp-sticky-cta .tp-btn {
+    min-height: 38px;
+    padding: 8px 16px;
+  }
+
+  .boot-mockup--cidade .tp-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 700ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .boot-mockup--cidade .tp-reveal.in-view,
+  .boot-mockup--cidade .tp-session.in-view {
+    opacity: 1;
+    transform: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .boot-mockup--cidade *,
+    .boot-mockup--cidade *::before,
+    .boot-mockup--cidade *::after {
+      animation: none !important;
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+
+    .boot-mockup--cidade .tp-reveal {
+      opacity: 1 !important;
+      transform: none !important;
+    }
+
+    .boot-mockup--cidade .tp-session__num {
+      background-position: 0 100%;
+    }
+  }
+
+  @media (max-width: 860px) {
+    .boot-mockup--cidade .tp-split {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+
+  }
+
+  @media (max-width: 767px) {
+    .boot-mockup--cidade {
+      --tp-section: 80px;
+      --tp-pad: 18px;
+    }
+
+    .boot-mockup--cidade .tp-hide-mobile {
+      display: none !important;
+    }
+
+    .boot-mockup--cidade .tp-nav__right {
+      display: none;
+    }
+
+    .boot-mockup--cidade .tp-nav__cta {
+      min-height: 40px;
+      padding: 9px 14px;
+      font-size: 12px;
+    }
+
+    .boot-mockup--cidade .tp-nav__cta-default {
+      display: none;
+    }
+
+    .boot-mockup--cidade .tp-nav__cta-price {
+      display: inline;
+    }
+
+    .boot-mockup--cidade .tp-hero__inner {
+      padding: 96px 0 100px;
+      width: min(calc(100vw - 36px), 354px);
+      max-width: min(calc(100vw - 36px), 354px);
+      overflow: hidden;
+    }
+
+    .boot-mockup--cidade .tp-hero h1 {
+      max-width: min(calc(100vw - 36px), 354px);
+      font-size: clamp(40px, 12.2vw, 50px);
+      overflow-wrap: normal;
+    }
+
+    .boot-mockup--cidade .tp-hero h1 .tp-hl {
+      display: block;
+    }
+
+    .boot-mockup--cidade .tp-hero h1 .tp-hl > span {
+      display: block;
+    }
+
+    .boot-mockup--cidade .tp-hero__sub {
+      max-width: min(calc(100vw - 36px), 354px);
+      font-size: 16px;
+    }
+
+    .boot-mockup--cidade .tp-hero__ctas,
+    .boot-mockup--cidade .tp-final__ctas {
+      width: min(calc(100vw - 36px), 354px);
+      max-width: min(calc(100vw - 36px), 354px);
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .boot-mockup--cidade .tp-hero__ctas .tp-btn,
+    .boot-mockup--cidade .tp-final__ctas .tp-btn {
+      width: 100%;
+      max-width: 100%;
+      padding-inline: 18px;
+    }
+
+    .boot-mockup--cidade .tp-hero__meta {
+      gap: 10px 22px;
+    }
+
+    .boot-mockup--cidade .tp-pulse-ring {
+      display: none;
+    }
+
+    .boot-mockup--cidade .tp-session {
+      grid-template-columns: 64px 1fr;
+      gap: 20px;
+      padding: 28px 0;
+    }
+
+    .boot-mockup--cidade .tp-pricing-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .boot-mockup--cidade .tp-price-card {
+      padding: 24px;
+    }
+
+    .boot-mockup--cidade .tp-sticky-cta {
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      justify-content: space-between;
+      transform: translateY(18px);
+    }
+
+    .boot-mockup--cidade .tp-sticky-cta.is-visible {
+      transform: translateY(0);
+    }
+  }
+</style>
