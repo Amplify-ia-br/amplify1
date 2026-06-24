@@ -1,0 +1,675 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import logoAmplify from "@/assets/logo-amplify-branco.png";
+import treinamentoPresencial from "@/assets/optimized/treinamento-presencial.webp";
+import forumPalestra from "@/assets/optimized/forum-palestra.webp";
+
+const logoSrc = logoAmplify.src;
+const trainingSrc = treinamentoPresencial.src;
+const citySrc = forumPalestra.src;
+
+const cityName = "Cidade sede";
+const symplaCheckoutUrl = "https://www.sympla.com.br/";
+---
+
+<PageShell
+  title="Bootcamp de IA | Amplify"
+  description="Landing page do Bootcamp de IA da Amplify: imersao presencial de um dia para transformar conhecimento basico em uso pratico de IA."
+  enableChatbot={false}
+>
+  <main class="boot-page">
+    <header class="boot-header" aria-label="Amplify">
+      <a href="/" class="boot-logo-link" aria-label="Voltar para a pagina inicial da Amplify">
+        <img src={logoSrc} alt="Amplify" width="160" height="32" class="boot-logo" />
+      </a>
+      <nav class="boot-nav" aria-label="Versoes da landing page">
+        <a href="#template">Template</a>
+        <a href="#branding">Branding</a>
+        <a href="#cidade">Cidade</a>
+        <a href="#sympla">Sympla</a>
+      </nav>
+    </header>
+
+    <section class="boot-hero" aria-labelledby="boot-title">
+      <div class="boot-hero-media" aria-hidden="true">
+        <img src={trainingSrc} alt="" width="1280" height="720" loading="eager" />
+      </div>
+      <div class="boot-hero-copy">
+        <p class="boot-kicker">Bootcamp Amplify</p>
+        <h1 id="boot-title">Um dia para tirar a IA do improviso.</h1>
+        <p>
+          Uma imersao presencial para pessoas que ja ouviram falar de IA, ja testaram alguma ferramenta,
+          mas ainda precisam de metodo para transformar curiosidade em rotina, decisao e resultado.
+        </p>
+        <div class="boot-actions">
+          <a class="boot-primary" href={symplaCheckoutUrl} target="_blank" rel="noopener noreferrer">Comprar ingresso</a>
+          <a class="boot-secondary" href="#versoes">Ver direcoes criativas</a>
+        </div>
+      </div>
+      <div class="boot-hero-facts" aria-label="Resumo do evento">
+        <span>Imersao de 1 dia</span>
+        <span>IA basica e aplicavel</span>
+        <span>Presencial</span>
+      </div>
+    </section>
+
+    <section id="versoes" class="boot-section boot-intro" aria-label="Direcoes da landing page">
+      <p class="boot-kicker">Tres rotas para decidir</p>
+      <h2>Mesmo produto, tres leituras visuais.</h2>
+      <div class="boot-version-grid">
+        <article>
+          <span>01</span>
+          <h3>Template padrão</h3>
+          <p>Recria a estrutura convencional para mostrar aderencia ao que ja foi aprovado.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>Puro branding</h3>
+          <p>Usa a atmosfera da Ana e a narrativa editorial da LP Nexialista.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>Tematica da cidade</h3>
+          <p>Transforma o lugar do evento em elemento narrativo sem parecer turismo.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="template" class="boot-section boot-template" aria-labelledby="template-title">
+      <div class="boot-section-head">
+        <p class="boot-kicker">Versao 01</p>
+        <h2 id="template-title">Template pronto, refeito no padrão Amplify.</h2>
+        <p>Esta versão existe para comparação e validação: é direta, previsível e fácil de aprovar.</p>
+      </div>
+      <div class="template-layout">
+        <div class="template-copy">
+          <h3>Bootcamp de IA para profissionais e lideres</h3>
+          <p>
+            Aprenda os fundamentos de IA generativa, construa prompts melhores, entenda limites,
+            riscos e oportunidades, e saia com um plano de aplicacao para o seu contexto.
+          </p>
+          <ul>
+            <li>Fundamentos de IA sem excesso tecnico</li>
+            <li>Exercicios guiados com ferramentas atuais</li>
+            <li>Frameworks para aplicar IA no trabalho</li>
+            <li>Diagnostico de oportunidades por area</li>
+          </ul>
+        </div>
+        <aside class="template-card" aria-label="Informacoes do bootcamp">
+          <strong>Proxima turma</strong>
+          <span>Data a confirmar</span>
+          <span>{cityName}</span>
+          <a href={symplaCheckoutUrl} target="_blank" rel="noopener noreferrer">Reservar vaga</a>
+        </aside>
+      </div>
+    </section>
+
+    <section id="branding" class="boot-section boot-branding" aria-labelledby="branding-title">
+      <div class="boot-branding-copy">
+        <p class="boot-kicker">Versao 02</p>
+        <h2 id="branding-title">Branding Amplify: a sala vira um laboratorio de decisao.</h2>
+        <p>
+          A pagina assume o escuro sofisticado da Ana, o ciano como sinal de inteligencia ativa
+          e a tese Nexialista: IA nao é ferramenta isolada, é capacidade de conectar problema,
+          linguagem, processo e criterio.
+        </p>
+      </div>
+      <div class="boot-lab" aria-hidden="true">
+        <span class="lab-node lab-node-main"></span>
+        <span class="lab-node"></span>
+        <span class="lab-node"></span>
+        <span class="lab-node"></span>
+        <span class="lab-line lab-line-one"></span>
+        <span class="lab-line lab-line-two"></span>
+        <span class="lab-line lab-line-three"></span>
+      </div>
+      <div class="boot-branding-stack">
+        <article>
+          <span>Manha</span>
+          <h3>Clareza</h3>
+          <p>O que IA faz, o que ela nao faz e onde ela muda a produtividade de verdade.</p>
+        </article>
+        <article>
+          <span>Tarde</span>
+          <h3>Metodo</h3>
+          <p>Como formular pedidos, avaliar respostas e montar fluxos repetiveis de trabalho.</p>
+        </article>
+        <article>
+          <span>Saida</span>
+          <h3>Aplicacao</h3>
+          <p>Um mapa pratico de oportunidades para aplicar IA na rotina ou na operacao.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="cidade" class="boot-section boot-city" aria-labelledby="city-title">
+      <div class="boot-city-media" aria-hidden="true">
+        <img src={citySrc} alt="" width="1200" height="800" loading="lazy" />
+      </div>
+      <div class="boot-city-copy">
+        <p class="boot-kicker">Versao 03</p>
+        <h2 id="city-title">A cidade como contexto, nao como decoracao.</h2>
+        <p>
+          A narrativa conecta IA ao ritmo de quem trabalha, decide e cria na cidade. Depois que a
+          praca for definida, esta versao pode absorver referencias reais de skyline, bairro,
+          economia local, mobilidade e comunidade empresarial.
+        </p>
+        <div class="city-route" aria-label="Narrativa do dia">
+          <span>Chegada</span>
+          <span>Imersao</span>
+          <span>Prototipo</span>
+          <span>Proximo passo</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="boot-section boot-content" aria-label="Conteudo do Bootcamp">
+      <div class="boot-section-head">
+        <p class="boot-kicker">Conteudo base</p>
+        <h2>O que a pessoa precisa sentir que vai levar.</h2>
+      </div>
+      <div class="boot-content-grid">
+        <article>
+          <h3>Repertorio</h3>
+          <p>Fundamentos de IA generativa, modelos, limites, alucinacao, privacidade e criterios de uso.</p>
+        </article>
+        <article>
+          <h3>Pratica</h3>
+          <p>Prompts, agentes, automacoes simples, pesquisa, criacao de conteudo e apoio a decisao.</p>
+        </article>
+        <article>
+          <h3>Transferencia</h3>
+          <p>Como transformar exercicios em processos de trabalho, com governanca minima e indicadores.</p>
+        </article>
+      </div>
+    </section>
+
+    <section id="sympla" class="boot-section boot-sympla" aria-labelledby="sympla-title">
+      <div class="boot-section-head">
+        <p class="boot-kicker">Integracao Sympla</p>
+        <h2 id="sympla-title">O checkout fica na Sympla. A experiencia pode ser da Amplify.</h2>
+        <p>
+          Pela API publica atual da Sympla, a melhor arquitetura é: LP na Amplify, compra no checkout
+          Sympla, sincronizacao de pedidos/participantes no backend e comunicacao personalizada antes,
+          durante e depois do evento.
+        </p>
+      </div>
+      <div class="sympla-grid">
+        <article>
+          <h3>Antes da compra</h3>
+          <p>Exibir data, local, lote, status e CTA para o evento; manter UTMs na URL de compra para atribuir campanhas.</p>
+        </article>
+        <article>
+          <h3>Depois da compra</h3>
+          <p>Consultar pedidos aprovados, participantes e respostas de campos customizados para acionar Kit/RD e segmentar a jornada.</p>
+        </article>
+        <article>
+          <h3>No dia do evento</h3>
+          <p>Validar check-in por ID do ingresso, numero do ticket ou QR Code dinamico, e liberar materiais conforme presenca.</p>
+        </article>
+        <article>
+          <h3>Depois do evento</h3>
+          <p>Marcar comparecimento, enviar materiais, certificado, pesquisa NPS e ofertas de consultoria ou proximas turmas.</p>
+        </article>
+      </div>
+      <div class="sympla-note">
+        <strong>Limite importante</strong>
+        <p>
+          A API documentada é principalmente de leitura e operacao de check-in. Para venda, criacao de pedido
+          e pagamento, a experiencia deve usar o checkout da Sympla ou um fluxo comercial separado.
+        </p>
+      </div>
+    </section>
+  </main>
+</PageShell>
+
+<style>
+  .boot-page {
+    min-height: 100svh;
+    background:
+      radial-gradient(circle at 72% 8%, hsl(var(--primary) / 0.18), transparent 24rem),
+      linear-gradient(145deg, #050607 0%, #0c0f12 54%, #111111 100%);
+    color: hsl(var(--foreground));
+  }
+
+  .boot-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 4.5rem;
+    padding: 0 clamp(1rem, 4vw, 3rem);
+    border-bottom: 1px solid hsl(var(--border) / 0.72);
+    background: rgba(5, 6, 7, 0.82);
+    backdrop-filter: blur(18px);
+  }
+
+  .boot-logo-link {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .boot-logo {
+    height: 1.65rem;
+    width: auto;
+  }
+
+  .boot-nav {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.75rem, 2vw, 1.3rem);
+    font-size: 0.82rem;
+    font-weight: 700;
+  }
+
+  .boot-nav a {
+    color: hsl(var(--muted-foreground));
+    text-decoration: none;
+  }
+
+  .boot-nav a:hover,
+  .boot-nav a:focus-visible {
+    color: hsl(var(--foreground));
+  }
+
+  .boot-hero {
+    position: relative;
+    min-height: calc(100svh - 4.5rem);
+    display: grid;
+    align-items: end;
+    padding: clamp(5rem, 12vw, 8rem) clamp(1rem, 4vw, 4rem) clamp(1.25rem, 4vw, 3rem);
+    overflow: hidden;
+  }
+
+  .boot-hero-media {
+    position: absolute;
+    inset: 0;
+    opacity: 0.46;
+  }
+
+  .boot-hero-media::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(90deg, rgba(5, 6, 7, 0.94), rgba(5, 6, 7, 0.58) 46%, rgba(5, 6, 7, 0.86)),
+      linear-gradient(0deg, #050607 0%, transparent 42%);
+  }
+
+  .boot-hero-media img,
+  .boot-city-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .boot-hero-copy {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 50rem);
+    display: grid;
+    gap: 1.15rem;
+  }
+
+  .boot-kicker {
+    margin: 0;
+    color: hsl(var(--primary));
+    font-size: 0.78rem;
+    font-weight: 850;
+    letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .boot-hero h1,
+  .boot-section h2 {
+    margin: 0;
+    line-height: 0.98;
+    letter-spacing: 0;
+    text-wrap: balance;
+  }
+
+  .boot-hero h1 {
+    max-width: 13ch;
+    font-size: clamp(3.8rem, 10.5vw, 8.8rem);
+  }
+
+  .boot-hero p,
+  .boot-section-head > p,
+  .boot-branding-copy p,
+  .boot-city-copy p {
+    margin: 0;
+    max-width: 43rem;
+    color: hsl(var(--muted-foreground));
+    font-size: clamp(1rem, 1.8vw, 1.2rem);
+    line-height: 1.65;
+  }
+
+  .boot-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-top: 0.35rem;
+  }
+
+  .boot-primary,
+  .boot-secondary,
+  .template-card a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.1rem;
+    padding: 0 1.15rem;
+    border-radius: 0.45rem;
+    font-weight: 850;
+    text-decoration: none;
+  }
+
+  .boot-primary,
+  .template-card a {
+    background: hsl(var(--primary));
+    color: #041010;
+  }
+
+  .boot-secondary {
+    border: 1px solid hsl(var(--border));
+    color: hsl(var(--foreground));
+    background: rgba(255, 255, 255, 0.04);
+  }
+
+  .boot-hero-facts {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: clamp(1.7rem, 5vw, 4.5rem);
+  }
+
+  .boot-hero-facts span,
+  .city-route span {
+    border: 1px solid hsl(var(--border));
+    border-radius: 999px;
+    padding: 0.55rem 0.82rem;
+    color: hsl(var(--foreground));
+    background: rgba(255, 255, 255, 0.04);
+    font-size: 0.84rem;
+    font-weight: 750;
+  }
+
+  .boot-section {
+    padding: clamp(4rem, 8vw, 7rem) clamp(1rem, 4vw, 4rem);
+  }
+
+  .boot-section-head,
+  .boot-intro {
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .boot-section h2 {
+    max-width: 13ch;
+    font-size: clamp(2.5rem, 7vw, 6rem);
+  }
+
+  .boot-version-grid,
+  .boot-content-grid,
+  .sympla-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1px;
+    margin-top: clamp(1.5rem, 4vw, 3rem);
+    background: hsl(var(--border));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .boot-version-grid article,
+  .boot-content-grid article,
+  .sympla-grid article,
+  .template-card,
+  .boot-branding-stack article,
+  .sympla-note {
+    background: #090b0d;
+    padding: clamp(1.1rem, 2.4vw, 1.7rem);
+  }
+
+  .boot-version-grid span,
+  .boot-branding-stack span {
+    color: hsl(var(--primary));
+    font-size: 0.8rem;
+    font-weight: 850;
+  }
+
+  .boot-page h3 {
+    margin: 0.65rem 0 0.45rem;
+    font-size: clamp(1.35rem, 2.2vw, 2rem);
+    line-height: 1.05;
+  }
+
+  .boot-page article p,
+  .template-copy p,
+  .template-copy li,
+  .template-card span,
+  .sympla-note p {
+    margin: 0;
+    color: hsl(var(--muted-foreground));
+    line-height: 1.6;
+  }
+
+  .template-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(18rem, 0.36fr);
+    gap: clamp(1rem, 3vw, 2rem);
+    margin-top: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .template-copy {
+    padding: clamp(1.2rem, 4vw, 3rem);
+    border: 1px solid hsl(var(--border));
+    background: #f4f1ea;
+    color: #111111;
+  }
+
+  .template-copy p,
+  .template-copy li {
+    color: #3c3b37;
+  }
+
+  .template-copy ul {
+    display: grid;
+    gap: 0.8rem;
+    margin: 1.5rem 0 0;
+    padding-left: 1.1rem;
+  }
+
+  .template-card {
+    display: grid;
+    align-content: start;
+    gap: 0.85rem;
+    border: 1px solid hsl(var(--border));
+  }
+
+  .template-card strong {
+    font-size: 1.4rem;
+  }
+
+  .boot-branding {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(18rem, 0.7fr);
+    gap: clamp(2rem, 5vw, 5rem);
+    overflow: hidden;
+  }
+
+  .boot-branding-copy,
+  .boot-branding-stack {
+    position: relative;
+    z-index: 1;
+  }
+
+  .boot-lab {
+    position: absolute;
+    inset: 8% 6% auto auto;
+    width: min(36rem, 48vw);
+    aspect-ratio: 1;
+    border: 1px solid hsl(var(--primary) / 0.18);
+    border-radius: 999px;
+    opacity: 0.78;
+  }
+
+  .boot-lab::before,
+  .boot-lab::after {
+    content: "";
+    position: absolute;
+    inset: 18%;
+    border: 1px solid hsl(var(--foreground) / 0.1);
+    border-radius: inherit;
+  }
+
+  .boot-lab::after {
+    inset: 35%;
+    border-color: hsl(var(--primary) / 0.28);
+  }
+
+  .lab-node {
+    position: absolute;
+    width: 0.8rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: hsl(var(--primary));
+    box-shadow: 0 0 2rem hsl(var(--primary) / 0.7);
+  }
+
+  .lab-node-main {
+    width: 3.4rem;
+    inset: calc(50% - 1.7rem);
+  }
+
+  .lab-node:nth-child(2) { top: 14%; left: 30%; }
+  .lab-node:nth-child(3) { top: 56%; right: 10%; }
+  .lab-node:nth-child(4) { bottom: 14%; left: 20%; }
+
+  .lab-line {
+    position: absolute;
+    height: 1px;
+    width: 34%;
+    background: hsl(var(--primary) / 0.32);
+    transform-origin: left center;
+  }
+
+  .lab-line-one { top: 40%; left: 32%; transform: rotate(28deg); }
+  .lab-line-two { top: 51%; left: 50%; transform: rotate(-18deg); }
+  .lab-line-three { top: 55%; left: 24%; transform: rotate(136deg); }
+
+  .boot-branding-stack {
+    display: grid;
+    gap: 1px;
+    background: hsl(var(--border));
+    border: 1px solid hsl(var(--border));
+  }
+
+  .boot-city {
+    display: grid;
+    grid-template-columns: minmax(16rem, 0.8fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 5vw, 5rem);
+    align-items: center;
+    background: #10100e;
+  }
+
+  .boot-city-media {
+    min-height: min(58vw, 34rem);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.12);
+  }
+
+  .boot-city-media img {
+    filter: saturate(0.75) contrast(1.1);
+  }
+
+  .boot-city-copy {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .city-route {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 0.8rem;
+  }
+
+  .boot-content-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .sympla-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .sympla-note {
+    margin-top: 1rem;
+    border: 1px solid hsl(var(--border));
+  }
+
+  .sympla-note strong {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: hsl(var(--primary));
+  }
+
+  @media (max-width: 900px) {
+    .boot-header {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 0.8rem;
+      padding-top: 0.95rem;
+      padding-bottom: 0.95rem;
+    }
+
+    .boot-nav {
+      width: 100%;
+      overflow-x: auto;
+      padding-bottom: 0.1rem;
+    }
+
+    .boot-hero {
+      min-height: calc(100svh - 7rem);
+    }
+
+    .boot-hero h1 {
+      font-size: clamp(3.25rem, 14vw, 6rem);
+    }
+
+    .boot-version-grid,
+    .boot-content-grid,
+    .sympla-grid,
+    .template-layout,
+    .boot-branding,
+    .boot-city {
+      grid-template-columns: 1fr;
+    }
+
+    .boot-lab {
+      inset: 18% -20% auto auto;
+      width: 28rem;
+    }
+
+    .boot-city-media {
+      min-height: 18rem;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .boot-actions,
+    .boot-primary,
+    .boot-secondary,
+    .template-card a {
+      width: 100%;
+    }
+
+    .boot-section h2 {
+      font-size: clamp(2.25rem, 13vw, 4rem);
+    }
+  }
+</style>

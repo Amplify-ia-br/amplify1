@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="720" viewBox="0 0 900 720" role="img" aria-labelledby="title desc">
+  <title id="title">Natal, RN</title>
+  <desc id="desc">Arte de Natal com dunas, mar, Ponte Newton Navarro, Forte dos Reis Magos e Morro do Careca.</desc>
+  <rect width="900" height="720" fill="#030909"/>
+  <path d="M0 430C92 382 166 380 246 426C331 475 405 474 497 430C581 389 665 389 750 430C809 458 855 465 900 444V720H0V430Z" fill="#061615"/>
+  <path d="M0 480C90 432 169 434 249 478C330 522 419 522 505 476C586 433 664 433 743 474C809 509 858 514 900 496V720H0V480Z" fill="#0a2b2c"/>
+  <path d="M60 598C142 505 218 498 302 598H60Z" fill="#f7bb4d"/>
+  <path d="M250 598C344 452 463 442 570 598H250Z" fill="#f9cf74"/>
+  <path d="M468 598C548 504 625 503 712 598H468Z" fill="#e5a844"/>
+  <path d="M560 390C636 290 742 275 840 390H560Z" fill="#f7c96b"/>
+  <path d="M603 390C656 330 724 320 790 390H603Z" fill="#e9aa42"/>
+  <path d="M110 374H278V426H110V374Z" fill="#f49937"/>
+  <path d="M130 335H160V374H130V335ZM195 316H226V374H195V316ZM260 345H290V426H260V345Z" fill="#f49937"/>
+  <path d="M110 426H292V447H110V426Z" fill="#b96f23"/>
+  <path d="M472 258C527 178 610 136 704 148C787 159 843 208 874 287" fill="none" stroke="#00d8df" stroke-width="16" stroke-linecap="round"/>
+  <path d="M500 274H868" stroke="#00d8df" stroke-width="10" stroke-linecap="round"/>
+  <path d="M546 274V338M605 274V345M665 274V345M724 274V338M783 274V320" stroke="#00d8df" stroke-width="6" stroke-linecap="round" opacity=".84"/>
+  <circle cx="706" cy="145" r="22" fill="#00d8df"/>
+  <path d="M0 643C89 626 180 626 269 643C356 659 449 659 536 643C658 621 777 622 900 644V720H0V643Z" fill="#041010"/>
+  <text x="110" y="485" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800" letter-spacing="3">FORTE DOS REIS MAGOS</text>
+  <text x="490" y="383" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800" letter-spacing="3">PONTE NEWTON NAVARRO</text>
+  <text x="562" y="660" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800" letter-spacing="3">MORRO DO CARECA</text>
+  <text x="64" y="660" fill="#00d8df" font-family="Arial, Helvetica, sans-serif" font-size="42" font-weight="900" letter-spacing="2">NATAL, RN</text>
+</svg>
