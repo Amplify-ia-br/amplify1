@@ -196,14 +196,64 @@ function scoreGeneric(payload, source) {
   let maturityScore = 0;
   let engagementScore = 5;
   const reasons = [];
+  const eventName = clean(payload.eventName || payload.event_name);
 
   if (clean(payload.email)) engagementScore += 5;
   if (clean(payload.phone)) engagementScore += 5;
   if (clean(payload.company)) fitScore += 8;
   if (clean(payload.role)) fitScore += 8;
+  if (clean(payload.companySize || payload.company_size)) fitScore += 5;
+  if (clean(payload.teamSize || payload.team_size)) fitScore += 7;
+  if (clean(payload.intent)) intentScore += 7;
+  if (clean(payload.interestArea || payload.interest_area)) intentScore += 5;
   if (clean(payload.message || payload.businessChallenge || payload.aiNextStep)) {
     intentScore += textQualityScore(payload.message || payload.businessChallenge || payload.aiNextStep);
     reasons.push("deixou contexto textual");
+  }
+
+  if (source === "bootcamp") {
+    const bootcampTagByEvent = {
+      bootcamp_interest_captured: "bootcamp_interesse",
+      bootcamp_program_requested: "bootcamp_programa_solicitado",
+      bootcamp_checkout_clicked: "bootcamp_checkout_clicado",
+      bootcamp_checkout_started: "bootcamp_checkout_iniciado",
+      bootcamp_corporate_lead: "bootcamp_corporativo",
+      bootcamp_sponsor_lead: "bootcamp_patrocinio",
+      bootcamp_waitlist_joined: "bootcamp_lista_espera",
+      bootcamp_order_approved: "bootcamp_pedido_aprovado",
+      bootcamp_participant_confirmed: "bootcamp_participante_confirmado",
+      bootcamp_attended: "bootcamp_compareceu",
+      bootcamp_missed: "bootcamp_nao_compareceu",
+    };
+
+    if (bootcampTagByEvent[eventName]) tags.push(bootcampTagByEvent[eventName]);
+    if (eventName === "bootcamp_program_requested") engagementScore += 8;
+    if (eventName === "bootcamp_interest_captured") engagementScore += 6;
+    if (eventName === "bootcamp_checkout_clicked" || eventName === "bootcamp_checkout_started") {
+      intentScore += 16;
+      engagementScore += 8;
+      reasons.push("demonstrou intenção de compra");
+    }
+    if (eventName === "bootcamp_corporate_lead") {
+      fitScore += 18;
+      intentScore += 12;
+      reasons.push("solicitou conversa corporativa");
+    }
+    if (eventName === "bootcamp_sponsor_lead") {
+      fitScore += 14;
+      intentScore += 12;
+      reasons.push("solicitou conversa de patrocínio");
+    }
+    if (eventName === "bootcamp_waitlist_joined") {
+      intentScore += 10;
+      reasons.push("entrou na lista de espera");
+    }
+    if (eventName === "bootcamp_order_approved" || eventName === "bootcamp_participant_confirmed") {
+      intentScore += 28;
+      engagementScore += 18;
+      reasons.push("compra ou participação confirmada");
+    }
+    if (eventName === "bootcamp_attended") engagementScore += 22;
   }
 
   const totalScore = clampScore(fitScore + intentScore + maturityScore + engagementScore);

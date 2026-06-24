@@ -28,6 +28,15 @@ const FIELD_LABELS = [
   "bootcamp_ticket_number",
   "bootcamp_checkin_status",
   "bootcamp_whatsapp_url",
+  "bootcamp_entry_point",
+  "bootcamp_intent",
+  "bootcamp_role",
+  "bootcamp_company_size",
+  "bootcamp_team_size",
+  "bootcamp_interest_area",
+  "bootcamp_source_cta",
+  "bootcamp_checkout_url",
+  "bootcamp_whatsapp_message",
   "bootcamp_last_event",
   "ebook_slug",
   "ebook_title",
@@ -48,7 +57,13 @@ const EVENT_TAG_MAP = {
   nexialista_checkout_started: ["nexialista:checkout_iniciado"],
   nexialista_payment_completed: ["nexialista:pagamento_concluido"],
   nexialista_ebook_downloaded: ["nexialista:ebook_baixado"],
+  bootcamp_interest_captured: ["bootcamp:interesse"],
+  bootcamp_program_requested: ["bootcamp:programa_solicitado"],
   bootcamp_checkout_clicked: ["bootcamp:checkout_clicado"],
+  bootcamp_checkout_started: ["bootcamp:checkout_iniciado"],
+  bootcamp_corporate_lead: ["bootcamp:corporativo"],
+  bootcamp_sponsor_lead: ["bootcamp:patrocinio"],
+  bootcamp_waitlist_joined: ["bootcamp:lista_espera"],
   bootcamp_order_approved: ["bootcamp:pedido_aprovado"],
   bootcamp_participant_confirmed: ["bootcamp:participante_confirmado"],
   bootcamp_whatsapp_optin: ["bootcamp:whatsapp_optin"],
@@ -73,6 +88,12 @@ const TAG_MAP = {
   interesse_diagnostico: "lead:interesse_diagnostico",
   quer_diagnostico: "lead:interesse_diagnostico",
   "bootcamp:checkout_clicado": "bootcamp:checkout_clicado",
+  "bootcamp:checkout_iniciado": "bootcamp:checkout_iniciado",
+  "bootcamp:interesse": "bootcamp:interesse",
+  "bootcamp:programa_solicitado": "bootcamp:programa_solicitado",
+  "bootcamp:corporativo": "bootcamp:corporativo",
+  "bootcamp:patrocinio": "bootcamp:patrocinio",
+  "bootcamp:lista_espera": "bootcamp:lista_espera",
   "bootcamp:pedido_aprovado": "bootcamp:pedido_aprovado",
   "bootcamp:participante_confirmado": "bootcamp:participante_confirmado",
   "bootcamp:whatsapp_optin": "bootcamp:whatsapp_optin",
@@ -86,6 +107,11 @@ const TAG_MAP = {
 const NATIVE_FOLLOWUP_SEQUENCES = {
   free_access: Number(process.env.KIT_NEXIALISTA_FREE_FOLLOWUP_SEQUENCE_ID || 2787868),
   purchased_downloaded: Number(process.env.KIT_NEXIALISTA_PURCHASED_FOLLOWUP_SEQUENCE_ID || 2787869),
+  bootcamp_interest: Number(process.env.KIT_BOOTCAMP_INTEREST_SEQUENCE_ID || 0),
+  bootcamp_checkout_abandoned: Number(process.env.KIT_BOOTCAMP_CHECKOUT_ABANDONED_SEQUENCE_ID || 0),
+  bootcamp_corporate: Number(process.env.KIT_BOOTCAMP_CORPORATE_SEQUENCE_ID || 0),
+  bootcamp_sponsor: Number(process.env.KIT_BOOTCAMP_SPONSOR_SEQUENCE_ID || 0),
+  bootcamp_waitlist: Number(process.env.KIT_BOOTCAMP_WAITLIST_SEQUENCE_ID || 0),
   bootcamp_confirmed: Number(process.env.KIT_BOOTCAMP_CONFIRMED_SEQUENCE_ID || 0),
   bootcamp_whatsapp_optin: Number(process.env.KIT_BOOTCAMP_WHATSAPP_SEQUENCE_ID || 0),
   bootcamp_attended: Number(process.env.KIT_BOOTCAMP_ATTENDED_SEQUENCE_ID || 0),
@@ -276,6 +302,31 @@ function mapSequences(payload = {}, lead = {}) {
     return sequences;
   }
 
+  if (eventName === "bootcamp_checkout_started" || eventName === "bootcamp_checkout_clicked") {
+    sequences.push("bootcamp_checkout_abandoned");
+    return sequences;
+  }
+
+  if (eventName === "bootcamp_corporate_lead") {
+    sequences.push("bootcamp_corporate");
+    return sequences;
+  }
+
+  if (eventName === "bootcamp_sponsor_lead") {
+    sequences.push("bootcamp_sponsor");
+    return sequences;
+  }
+
+  if (eventName === "bootcamp_waitlist_joined") {
+    sequences.push("bootcamp_waitlist");
+    return sequences;
+  }
+
+  if (eventName === "bootcamp_program_requested" || eventName === "bootcamp_interest_captured") {
+    sequences.push("bootcamp_interest");
+    return sequences;
+  }
+
   if (eventName === "bootcamp_whatsapp_optin") {
     sequences.push("bootcamp_whatsapp_optin");
     return sequences;
@@ -308,9 +359,31 @@ function getConflictingWorkflowKeys(payload = {}, lead = {}) {
 
   if (
     eventName === "nexialista_checkout_started" ||
-    tags.includes("checkout_iniciado")
+    tags.includes("checkout_iniciado") ||
+    eventName === "bootcamp_checkout_started" ||
+    eventName === "bootcamp_checkout_clicked"
   ) {
     conflicts.push("discovery", "hot_lead");
+  }
+
+  if (eventName === "bootcamp_order_approved" || eventName === "bootcamp_participant_confirmed") {
+    conflicts.push(
+      "bootcamp_interest",
+      "bootcamp_checkout_abandoned",
+      "bootcamp_corporate",
+      "bootcamp_sponsor",
+      "bootcamp_waitlist",
+      "discovery",
+      "hot_lead",
+    );
+  }
+
+  if (eventName === "bootcamp_corporate_lead") {
+    conflicts.push("bootcamp_interest", "bootcamp_checkout_abandoned", "discovery", "hot_lead");
+  }
+
+  if (eventName === "bootcamp_sponsor_lead") {
+    conflicts.push("bootcamp_interest", "bootcamp_checkout_abandoned", "discovery", "hot_lead");
   }
 
   if (
@@ -499,6 +572,15 @@ function buildCustomFields(payload = {}, lead = {}) {
     bootcamp_ticket_number: payload.bootcampTicketNumber || payload.bootcamp_ticket_number || payload.ticketNumber || payload.ticket_number,
     bootcamp_checkin_status: payload.bootcampCheckinStatus || payload.bootcamp_checkin_status || payload.checkinStatus,
     bootcamp_whatsapp_url: payload.bootcampWhatsappUrl || payload.bootcamp_whatsapp_url || payload.whatsappGroupUrl,
+    bootcamp_entry_point: payload.entryPoint || payload.entry_point,
+    bootcamp_intent: payload.intent,
+    bootcamp_role: payload.role,
+    bootcamp_company_size: payload.companySize || payload.company_size,
+    bootcamp_team_size: payload.teamSize || payload.team_size,
+    bootcamp_interest_area: payload.interestArea || payload.interest_area,
+    bootcamp_source_cta: payload.sourceCta || payload.source_cta,
+    bootcamp_checkout_url: payload.checkoutUrl || payload.checkout_url,
+    bootcamp_whatsapp_message: payload.whatsappMessage || payload.whatsapp_message,
     bootcamp_last_event: isBootcampEvent ? eventName : undefined,
     ebook_slug: payload.ebookSlug || payload.ebook_slug,
     ebook_title: payload.ebookTitle || payload.ebook_title,

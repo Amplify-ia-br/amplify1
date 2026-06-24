@@ -35,6 +35,7 @@ const heroSrc = treinamentoPresencial.src;
 const citySrc = forumPalestra.src;
 const checkoutUrl = event ? getBootcampCheckoutUrl(event, Astro.url) : "";
 const sponsorUrl = event?.whatsappGroupUrl || "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20possibilidade%20de%20patrocinar%20o%20Bootcamp%20IA%20para%20neg%C3%B3cios%20em%20Natal";
+const corporateUrl = "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20o%20Bootcamp%20IA%20para%20neg%C3%B3cios%20em%20Natal.";
 const horizontalVideoSrc = "/bootcamp/video-optimized/bootcamp-natal-horizontal-wifi.mp4";
 const verticalVideoSrc = "/bootcamp/video-optimized/bootcamp-natal-vertical-cellular.mp4";
 const horizontalVideoFallbackSrc = "/bootcamp/video-optimized/bootcamp-natal-horizontal-cellular.mp4";
@@ -119,6 +120,14 @@ const cityRoute = [
     copy: "De rocha: você sai com prioridades, próximos passos e convite para o grupo oficial da turma.",
   },
 ];
+const bootcampRoles = [
+  "Dono(a) / CEO",
+  "Diretoria",
+  "Gerência",
+  "Produto / Growth / Receita",
+  "RH / Treinamento",
+  "Consultoria / autônomo",
+];
 const cityFaq = [
   {
     question: "Preciso saber programar?",
@@ -182,7 +191,7 @@ if (!event || !isValidVersion) {
               </div>
               <div class="template-actions">
                 <a href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>{content.template.cta}</a>
-                <a class="template-actions__sponsor" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Seja um Patrocinador</a>
+                <a class="template-actions__sponsor" href={sponsorUrl} target="_blank" rel="noopener noreferrer" data-bootcamp-sponsor>Seja um Patrocinador</a>
                 <span>{event.date} · {event.startTime} às {event.endTime}</span>
               </div>
             </div>
@@ -403,7 +412,7 @@ if (!event || !isValidVersion) {
               <div class="bn-actions">
                 <a class="bn-button bn-button--primary" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Garanta sua vaga <span aria-hidden="true">→</span></a>
                 <a class="bn-button bn-button--secondary" href="#programacao">Ver programação</a>
-                <a class="bn-button bn-button--ghost" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Seja um Patrocinador</a>
+                <a class="bn-button bn-button--ghost" href={sponsorUrl} target="_blank" rel="noopener noreferrer" data-bootcamp-sponsor>Seja um Patrocinador</a>
               </div>
               <div class="bn-meta" aria-label="Resumo do evento">
                 <span>{content.cityLabel}</span>
@@ -573,7 +582,7 @@ if (!event || !isValidVersion) {
                 <p>Acima de 5 ingressos</p>
                 <p>Sua empresa tem condição diferenciada e apoio para organizar a participação da equipe.</p>
                 <div class="bn-note">Desconto sob consulta · Entre em contato com nosso consultor.</div>
-                <a class="bn-button bn-button--primary" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Fale com nosso consultor <span aria-hidden="true">→</span></a>
+                <a class="bn-button bn-button--primary" href={corporateUrl} target="_blank" rel="noopener noreferrer" data-bootcamp-whatsapp>Fale com nosso consultor <span aria-hidden="true">→</span></a>
               </article>
             </div>
           </section>
@@ -704,7 +713,7 @@ if (!event || !isValidVersion) {
                 <div class="tp-hero__ctas">
                   <a class="tp-btn tp-btn--primary tp-btn--lg" href="#oferta">Garanta sua vaga&nbsp;→</a>
                   <a class="tp-btn tp-btn--secondary tp-btn--lg" href="#programacao">Ver programação</a>
-                  <a class="tp-btn tp-btn--ghost tp-btn--lg" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Seja um Patrocinador</a>
+                  <a class="tp-btn tp-btn--ghost tp-btn--lg" href={sponsorUrl} target="_blank" rel="noopener noreferrer" data-bootcamp-sponsor>Seja um Patrocinador</a>
                 </div>
                 <p class="tp-hero__proof">+100 mil profissionais capacitados · NPS 98 · Vagas limitadas</p>
                 <div class="tp-hero__meta" aria-label="Resumo do evento">
@@ -742,6 +751,42 @@ if (!event || !isValidVersion) {
                   <p><strong>92%</strong> dos participantes aplicam IA em tarefas reais nos 7 dias seguintes.<em>De rocha.</em></p>
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section class="tp-section tp-section--surface tp-conversion" aria-labelledby="tp-conversion-title">
+            <div class="tp-container tp-conversion__grid">
+              <div class="tp-reveal">
+                <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Ainda decidindo?</span>
+                <h2 id="tp-conversion-title" class="tp-h2">Receba a programação completa antes de comprar.</h2>
+                <p class="tp-lead">
+                  Enviamos o roteiro da imersão, detalhes de local, formato e próximos passos para você avaliar com calma.
+                  Se fizer sentido, o link do 1º lote vai junto.
+                </p>
+              </div>
+              <form class="tp-lead-form tp-reveal" data-bootcamp-form data-success-message="Programação enviada. Confira seu email e, se quiser garantir o 1º lote, use o link da Sympla.">
+                <input type="hidden" name="eventName" value="bootcamp_program_requested" />
+                <input type="hidden" name="entryPoint" value="programacao_completa" />
+                <input type="hidden" name="intent" value="avaliar_ingresso_individual" />
+                <input type="hidden" name="sourceCta" value="receber_programacao" />
+                <label>
+                  Nome
+                  <input name="name" type="text" autocomplete="name" required placeholder="Seu nome" />
+                </label>
+                <label>
+                  Email
+                  <input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com" />
+                </label>
+                <label>
+                  Perfil
+                  <select name="role" required>
+                    <option value="">Selecione</option>
+                    {bootcampRoles.map((role) => <option value={role}>{role}</option>)}
+                  </select>
+                </label>
+                <button class="tp-btn tp-btn--primary" type="submit">Receber programação&nbsp;→</button>
+                <p class="tp-form-status" role="status" aria-live="polite"></p>
+              </form>
             </div>
           </section>
 
@@ -949,9 +994,53 @@ if (!event || !isValidVersion) {
                   <p>Acima de 5 ingressos</p>
                   <p class="tp-body">Sua empresa tem condição diferenciada e apoio para organizar a participação de toda a equipe.</p>
                   <div class="tp-price-card__info"><strong>Desconto sob consulta</strong> — Entre em contato com nosso consultor.</div>
-                  <a class="tp-btn tp-btn--primary" href={sponsorUrl} target="_blank" rel="noopener noreferrer">Fale com Nosso Consultor&nbsp;→</a>
+                  <form class="tp-lead-form tp-lead-form--compact" data-bootcamp-form data-whatsapp-form data-success-message="Abrindo WhatsApp com a mensagem pronta.">
+                    <input type="hidden" name="eventName" value="bootcamp_corporate_lead" />
+                    <input type="hidden" name="entryPoint" value="plano_corporativo" />
+                    <input type="hidden" name="intent" value="comprar_para_equipe" />
+                    <input type="hidden" name="sourceCta" value="plano_corporativo" />
+                    <label>
+                      Nome
+                      <input name="name" type="text" autocomplete="name" required placeholder="Seu nome" />
+                    </label>
+                    <label>
+                      Email
+                      <input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com" />
+                    </label>
+                    <label>
+                      Empresa
+                      <input name="company" type="text" autocomplete="organization" required placeholder="Nome da empresa" />
+                    </label>
+                    <label>
+                      Quantas pessoas?
+                      <select name="teamSize" required>
+                        <option value="">Selecione</option>
+                        <option value="5-9">5 a 9</option>
+                        <option value="10-19">10 a 19</option>
+                        <option value="20+">20+</option>
+                      </select>
+                    </label>
+                    <button class="tp-btn tp-btn--primary" type="submit">Gerar mensagem no WhatsApp&nbsp;→</button>
+                    <p class="tp-form-status" role="status" aria-live="polite"></p>
+                  </form>
                 </article>
               </div>
+              <form class="tp-waitlist tp-reveal" data-bootcamp-form data-success-message="Você entrou na lista de prioridade para a possível turma de 24/07.">
+                <input type="hidden" name="eventName" value="bootcamp_waitlist_joined" />
+                <input type="hidden" name="entryPoint" value="lista_espera_24_07" />
+                <input type="hidden" name="intent" value="segunda_turma" />
+                <input type="hidden" name="sourceCta" value="lista_espera_24_07" />
+                <div>
+                  <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Possível segunda turma</span>
+                  <p>Se 23/07 esgotar, avisamos primeiro quem estiver na lista de prioridade para 24/07.</p>
+                </div>
+                <label>
+                  Email
+                  <input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com" />
+                </label>
+                <button class="tp-btn tp-btn--secondary" type="submit">Entrar na lista</button>
+                <p class="tp-form-status" role="status" aria-live="polite"></p>
+              </form>
             </div>
           </section>
 
@@ -1016,7 +1105,7 @@ if (!event || !isValidVersion) {
 </PageShell>
 
 {event && isValidVersion && (
-  <script is:inline define:vars={{ slug: event.slug, version: activeVersion }}>
+  <script is:inline define:vars={{ slug: event.slug, version: activeVersion, checkoutUrl }}>
     function preserveUtm(link) {
       try {
         const url = new URL(link.href);
@@ -1029,13 +1118,39 @@ if (!event || !isValidVersion) {
       } catch (_error) {}
     }
 
-    function track(eventName) {
-      const payload = JSON.stringify({ slug, version, eventName, pageUrl: window.location.href });
-      if (navigator.sendBeacon) {
+    const bootcampLeadStorageKey = `bootcamp:${slug}:lead`;
+
+    function getStoredLead() {
+      try {
+        return JSON.parse(window.localStorage.getItem(bootcampLeadStorageKey) || "{}");
+      } catch (_error) {
+        return {};
+      }
+    }
+
+    function storeLead(fields) {
+      try {
+        const current = getStoredLead();
+        window.localStorage.setItem(bootcampLeadStorageKey, JSON.stringify({ ...current, ...fields }));
+      } catch (_error) {}
+    }
+
+    function track(eventName, extra = {}) {
+      const storedLead = getStoredLead();
+      const payload = JSON.stringify({
+        slug,
+        version,
+        eventName,
+        pageUrl: window.location.href,
+        checkoutUrl,
+        ...storedLead,
+        ...extra,
+      });
+      if (!extra.forceFetch && navigator.sendBeacon) {
         navigator.sendBeacon("/api/bootcamp-track", new Blob([payload], { type: "application/json" }));
         return;
       }
-      fetch("/api/bootcamp-track", {
+      return fetch("/api/bootcamp-track", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: payload,
@@ -1043,9 +1158,121 @@ if (!event || !isValidVersion) {
       }).catch(() => {});
     }
 
+    function getCorporateTicketLabel(value) {
+      const labels = {
+        "5-9": "5 a 9",
+        "10-19": "10 a 19",
+        "20+": "20 ou mais",
+      };
+      return labels[value] || value || "mais de 5";
+    }
+
+    function getCorporateWhatsappUrl(payload) {
+      const name = String(payload.name || "").trim();
+      const company = String(payload.company || "").trim();
+      const teamSize = getCorporateTicketLabel(String(payload.teamSize || "").trim());
+      const email = String(payload.email || "").trim();
+      const identity = [name, company ? `da empresa ${company}` : ""].filter(Boolean).join(", ");
+      const message = [
+        "Olá Adriano,",
+        identity ? `eu sou ${identity}` : "eu gostaria de falar com você",
+        `e gostaria de ver condições para ${teamSize} ingressos corporativos para o Bootcamp IA para negócios em Natal.`,
+        email ? `Meu email é ${email}.` : "",
+      ].filter(Boolean).join(" ");
+
+      return {
+        message,
+        url: `https://wa.me/5511950350002?text=${encodeURIComponent(message)}`,
+      };
+    }
+
     document.querySelectorAll("[data-checkout-link]").forEach((link) => {
       preserveUtm(link);
-      link.addEventListener("click", () => track("bootcamp:checkout_clicado"));
+      link.addEventListener("click", () => track("bootcamp_checkout_started", { sourceCta: link.textContent?.trim() || "checkout" }));
+    });
+
+    document.querySelectorAll("[data-bootcamp-whatsapp]").forEach((link) => {
+      link.addEventListener("click", () => track("bootcamp_whatsapp_optin", { sourceCta: link.textContent?.trim() || "whatsapp" }));
+    });
+
+    document.querySelectorAll("[data-bootcamp-sponsor]").forEach((link) => {
+      link.addEventListener("click", () => track("bootcamp_sponsor_lead", { intent: "patrocinio", sourceCta: link.textContent?.trim() || "patrocinio" }));
+    });
+
+    document.querySelectorAll("[data-bootcamp-form]").forEach((form) => {
+      const status = form.querySelector(".tp-form-status");
+      const button = form.querySelector("button[type='submit']");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData.entries());
+        const email = String(payload.email || "").trim().toLowerCase();
+        if (!email) return;
+
+        storeLead({
+          email,
+          name: payload.name,
+          company: payload.company,
+          role: payload.role,
+          teamSize: payload.teamSize,
+        });
+
+        if (status) status.textContent = "Enviando...";
+        if (button) button.disabled = true;
+
+        if (form.hasAttribute("data-whatsapp-form")) {
+          const whatsapp = getCorporateWhatsappUrl(payload);
+          const trackingPayload = {
+            slug,
+            version,
+            pageUrl: window.location.href,
+            checkoutUrl,
+            ...payload,
+            email,
+            whatsappMessage: whatsapp.message,
+            sourceCta: payload.sourceCta || "plano_corporativo_whatsapp",
+            forceFetch: true,
+          };
+
+          if (status) status.textContent = form.dataset.successMessage || "Abrindo WhatsApp...";
+          form.classList.add("is-submitted");
+          fetch("/api/bootcamp-track", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(trackingPayload),
+            keepalive: true,
+          }).catch(() => {});
+          window.open(whatsapp.url, "_blank", "noopener,noreferrer");
+          if (button) button.disabled = false;
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/bootcamp-track", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              slug,
+              version,
+              pageUrl: window.location.href,
+              checkoutUrl,
+              ...payload,
+              email,
+              forceFetch: true,
+            }),
+          });
+          const result = await response.json().catch(() => ({}));
+          if (!response.ok || result.error) {
+            throw new Error(result.error || "Não foi possível registrar seu interesse.");
+          }
+          form.classList.add("is-submitted");
+          if (status) status.textContent = form.dataset.successMessage || "Recebido. Confira seu email.";
+        } catch (error) {
+          if (status) status.textContent = error.message || "Erro ao enviar. Tente novamente.";
+        } finally {
+          if (button) button.disabled = false;
+        }
+      });
     });
 
     const cityRoot = document.querySelector(".boot-mockup--cidade");
@@ -5501,6 +5728,109 @@ if (!event || !isValidVersion) {
     text-transform: uppercase;
   }
 
+  .boot-mockup--cidade .tp-conversion__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(320px, 0.72fr);
+    gap: clamp(26px, 5vw, 72px);
+    align-items: start;
+  }
+
+  .boot-mockup--cidade .tp-lead-form,
+  .boot-mockup--cidade .tp-waitlist {
+    display: grid;
+    gap: 14px;
+    padding: clamp(18px, 3vw, 28px);
+    border: 1px solid rgba(245, 242, 236, 0.14);
+    border-radius: 8px;
+    background:
+      linear-gradient(140deg, rgba(45, 212, 191, 0.1), transparent 46%),
+      rgba(5, 7, 7, 0.72);
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.28);
+  }
+
+  .boot-mockup--cidade .tp-lead-form--compact {
+    margin-top: 20px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .boot-mockup--cidade .tp-lead-form label,
+  .boot-mockup--cidade .tp-waitlist label {
+    display: grid;
+    gap: 8px;
+    color: rgba(245, 242, 236, 0.72);
+    font-size: 0.78rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .boot-mockup--cidade .tp-lead-form input,
+  .boot-mockup--cidade .tp-lead-form select,
+  .boot-mockup--cidade .tp-waitlist input {
+    width: 100%;
+    min-height: 48px;
+    border: 1px solid rgba(245, 242, 236, 0.18);
+    border-radius: 8px;
+    padding: 0 13px;
+    color: var(--tp-text);
+    background: rgba(255, 255, 255, 0.055);
+    font: inherit;
+    outline: none;
+  }
+
+  .boot-mockup--cidade .tp-lead-form input::placeholder,
+  .boot-mockup--cidade .tp-waitlist input::placeholder {
+    color: rgba(245, 242, 236, 0.36);
+  }
+
+  .boot-mockup--cidade .tp-lead-form input:focus,
+  .boot-mockup--cidade .tp-lead-form select:focus,
+  .boot-mockup--cidade .tp-waitlist input:focus {
+    border-color: rgba(45, 212, 191, 0.78);
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.14);
+  }
+
+  .boot-mockup--cidade .tp-lead-form button:disabled,
+  .boot-mockup--cidade .tp-waitlist button:disabled {
+    cursor: wait;
+    opacity: 0.62;
+  }
+
+  .boot-mockup--cidade .tp-form-status {
+    min-height: 1.35em;
+    margin: 0;
+    color: var(--tp-cyan);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  .boot-mockup--cidade .tp-lead-form.is-submitted {
+    border-color: rgba(45, 212, 191, 0.42);
+  }
+
+  .boot-mockup--cidade .tp-waitlist {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 0.46fr) auto;
+    align-items: end;
+    margin-top: clamp(20px, 3vw, 34px);
+  }
+
+  .boot-mockup--cidade .tp-waitlist > div {
+    align-self: center;
+  }
+
+  .boot-mockup--cidade .tp-waitlist p {
+    margin: 8px 0 0;
+    color: var(--tp-muted);
+    line-height: 1.5;
+  }
+
+  .boot-mockup--cidade .tp-waitlist .tp-form-status {
+    grid-column: 1 / -1;
+  }
+
   .boot-mockup--cidade .tp-dune-field path,
   .boot-mockup--cidade .tp-dune-divider path,
   .boot-mockup--cidade .tp-rays line,
@@ -6288,9 +6618,15 @@ if (!event || !isValidVersion) {
   }
 
   @media (max-width: 860px) {
-    .boot-mockup--cidade .tp-split {
+    .boot-mockup--cidade .tp-split,
+    .boot-mockup--cidade .tp-conversion__grid,
+    .boot-mockup--cidade .tp-waitlist {
       grid-template-columns: 1fr;
       gap: 40px;
+    }
+
+    .boot-mockup--cidade .tp-waitlist {
+      align-items: stretch;
     }
 
   }
@@ -6380,6 +6716,16 @@ if (!event || !isValidVersion) {
 
     .boot-mockup--cidade .tp-pricing-grid {
       grid-template-columns: 1fr;
+    }
+
+    .boot-mockup--cidade .tp-lead-form,
+    .boot-mockup--cidade .tp-waitlist {
+      padding: 20px;
+    }
+
+    .boot-mockup--cidade .tp-lead-form .tp-btn,
+    .boot-mockup--cidade .tp-waitlist .tp-btn {
+      width: 100%;
     }
 
     .boot-mockup--cidade .tp-price-card {
