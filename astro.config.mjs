@@ -7,5 +7,5 @@ export default defineConfig({
   output: "server",
   adapter: vercel(),
   integrations: [tailwind(), react()],
-  site: "https://aplify-site.vercel.app",
+  site: "https://amplify.ia.br",
 });
