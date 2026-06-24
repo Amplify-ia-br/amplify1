@@ -1,6 +1,7 @@
 import { getBootcampEventBySlug, getBootcampPublicConfig } from "./bootcamp-events.js";
 
-const SYMPLA_API_BASE_URL = "https://api.sympla.com.br/public/v1.5.1";
+const SYMPLA_EVENT_API_BASE_URL = "https://api.sympla.com.br/public/v4";
+const SYMPLA_COLLECTION_API_BASE_URL = "https://api.sympla.com.br/public/v3";
 const REQUEST_TIMEOUT_MS = 7000;
 
 function clean(value) {
@@ -41,14 +42,14 @@ async function readJson(response) {
   }
 }
 
-export async function symplaRequest(path, { query = {} } = {}) {
+export async function symplaRequest(path, { query = {}, baseUrl = SYMPLA_COLLECTION_API_BASE_URL } = {}) {
   const token = getToken();
 
   if (!token) {
     return { ok: false, skipped: true, reason: "SYMPLA_TOKEN ausente" };
   }
 
-  const url = new URL(`${SYMPLA_API_BASE_URL}${path}`);
+  const url = new URL(`${baseUrl}${path}`);
   Object.entries(query).forEach(([key, value]) => {
     if (value !== undefined && value !== null && clean(value) !== "") {
       url.searchParams.set(key, String(value));
@@ -83,12 +84,6 @@ function getItem(payload) {
   return payload?.data || payload?.body?.data || null;
 }
 
-function hasOnlineSalePresentation(presentation) {
-  const sectors = Array.isArray(presentation?.sectors) ? presentation.sectors : [];
-  if (!sectors.length) return true;
-  return sectors.some((sector) => sector.has_online_sale_available === true);
-}
-
 export async function getBootcampSymplaStatus(slug) {
   const event = getBootcampEventBySlug(slug);
   const publicConfig = getBootcampPublicConfig(event);
@@ -113,12 +108,9 @@ export async function getBootcampSymplaStatus(slug) {
     };
   }
 
-  const [eventResult, presentationsResult] = await Promise.all([
-    symplaRequest(`/events/${encodeURIComponent(eventId)}`),
-    symplaRequest(`/events/${encodeURIComponent(eventId)}/presentations`, {
-      query: { published: true, filter_online_sector: true },
-    }),
-  ]);
+  const eventResult = await symplaRequest(`/events/${encodeURIComponent(eventId)}`, {
+    baseUrl: SYMPLA_EVENT_API_BASE_URL,
+  });
 
   if (!eventResult.ok) {
     return {
@@ -136,22 +128,11 @@ export async function getBootcampSymplaStatus(slug) {
   }
 
   const symplaEvent = getItem(eventResult.body);
-  const presentations = getItems(presentationsResult.body);
   const published = toBooleanFlag(symplaEvent?.published);
   const cancelled = toBooleanFlag(symplaEvent?.cancelled);
   const eventStart = parseSymplaDate(symplaEvent?.start_date);
   const futureEvent = eventStart ? eventStart.getTime() >= Date.now() : true;
-  const availablePresentation = presentations.find((presentation) => {
-    const startDate = parseSymplaDate(presentation?.start_date);
-    const futurePresentation = startDate ? startDate.getTime() >= Date.now() : true;
-    const presentationPublished = presentation?.presentation_published === undefined
-      ? true
-      : toBooleanFlag(presentation.presentation_published);
-    const presentationCancelled = toBooleanFlag(presentation?.presentation_cancelled);
-    return futurePresentation && presentationPublished && !presentationCancelled && hasOnlineSalePresentation(presentation);
-  });
-  const onlineSaleAvailable = presentations.length ? Boolean(availablePresentation) : true;
-  const isAvailable = published && !cancelled && futureEvent && onlineSaleAvailable;
+  const isAvailable = published && !cancelled && futureEvent;
 
   return {
     ok: true,
@@ -170,12 +151,11 @@ export async function getBootcampSymplaStatus(slug) {
       isAvailable,
       label: isAvailable ? "Inscrições abertas" : "Ver disponibilidade na Sympla",
       reason: isAvailable
-        ? "Evento publicado, futuro e com venda online ativa."
-        : "Evento indisponível, cancelado, encerrado ou sem setor online ativo.",
+        ? "Evento publicado e futuro na Sympla."
+        : "Evento indisponível, cancelado ou encerrado.",
     },
     sympla: {
       event: { ok: eventResult.ok, status: eventResult.status },
-      presentations: { ok: presentationsResult.ok, status: presentationsResult.status, count: presentations.length },
     },
   };
 }
