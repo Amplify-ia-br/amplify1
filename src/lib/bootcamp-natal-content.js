@@ -17,7 +17,7 @@ export const BOOTCAMP_NATAL = {
     session02: "/bootcamp/midias/work-session-02.BYfk3fhH_BOY55.webp",
     session03: "https://bootcampiaparanegocios.com.br/_astro/work-session-03.9hWaWOd9_ZCin5l.webp",
     session04: "/bootcamp/midias/work-session-04.CGYyZcYH_Z21NlvG.webp",
-    mentor: "/bootcamp/midias/foto-fernando-godoy.C8YGBEfD_ZRrIHd.webp",
+    mentor: "/bootcamp/midias/leonardo-camacho-bootcamp-natal.jpg",
     venue: "/bootcamp/midias/arte-natal.L_hCh7pg_Z1WK1aM.webp",
     stage01: "/bootcamp/midias/foto-fernando-godoy-palestrando-01.D2LFt-1r_Z1qdTzS.webp",
     stage02: "/bootcamp/midias/foto-fernando-godoy-palestrando-02.gI7OwYlQ_XJAbf.webp",
@@ -37,7 +37,7 @@ export const BOOTCAMP_NATAL = {
     whatTitle: "O que é o Bootcamp IA para Negócios®",
     whatCopy: [
       "O Bootcamp IA para Negócios® é uma imersão de 10 horas, pensada estrategicamente para profissionais de todas as áreas que desejam acelerar seus resultados, aplicando Inteligência Artificial de forma prática e inteligente.",
-      "Com uma metodologia exclusiva e aplicável, desenvolvida por Fernando Godoy, especialista em IA aplicada e mentor de lideranças inovadoras, o participante sai com um plano claro para aumentar a lucratividade, ganhar tempo e liberdade, e transformar seu negócio sem precisar se tornar refém da operação.",
+      "Com uma metodologia exclusiva e aplicável, conduzida por Leonardo Camacho, cofundador da Amplify, o participante sai com um plano claro para aumentar a lucratividade, ganhar tempo e liberdade, e transformar seu negócio sem precisar se tornar refém da operação.",
       "Essa é uma experiência transformadora, onde tecnologia, estratégia e visão de futuro se unem para gerar impacto real, sustentável e escalável.",
     ],
   },
@@ -126,10 +126,10 @@ export const BOOTCAMP_NATAL = {
     },
   ],
   mentor: {
-    name: "Fernando Godoy",
-    title: "Especialista em IA aplicada e mentor de lideranças inovadoras",
+    name: "Leonardo Camacho",
+    title: "Cofundador da Amplify e especialista em IA aplicada aos negócios",
     bio:
-      "Empreendedor serial com mais de 25 anos de experiência em tecnologia e inovação no Brasil e nos Estados Unidos. Cofundador da Amplify, lidera experiências de aprendizado que conectam inteligência artificial, estratégia, negócios e execução prática.",
+      "Cofundador da Amplify, conduz experiências de aprendizado que conectam inteligência artificial, estratégia, negócios e execução prática. Bio completa em atualização.",
   },
   stats: [
     { value: "+28", label: "ferramentas de IA trabalhadas" },
