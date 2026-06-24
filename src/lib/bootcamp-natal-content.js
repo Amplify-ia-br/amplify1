@@ -127,9 +127,25 @@ export const BOOTCAMP_NATAL = {
   ],
   mentor: {
     name: "Leonardo Camacho",
-    title: "Professor, pesquisador e executivo de crescimento",
+    title: "Educador de IA e Head de Soluções da Amplify",
     bio:
-      "Leonardo Camacho pesquisa inteligência artificial aplicada ao aprendizado organizacional em empresas de alto crescimento. Como executivo de receita e produto, implantou data science e IA em diferentes contextos de negócio, especialmente em frentes de crescimento de receita, go-to-market, analytics e gestão de produtos. É mestre pela Fundação Dom Cabral, doutorando pela Burgundy School of Business, educador de IA e Head de Soluções da Amplify.",
+      "Leonardo Camacho pesquisa inteligência artificial aplicada ao aprendizado organizacional em empresas de alto crescimento. Como executivo de receita e produto, implantou data science e IA em diferentes contextos de negócio, especialmente em frentes de crescimento de receita, go-to-market, analytics e gestão de produtos.",
+    application:
+      "No Bootcamp, traduz essa experiência em método: como líderes e equipes podem sair do uso improvisado de ferramentas para rotinas de decisão, execução e aprendizagem apoiadas por IA.",
+    credentials: [
+      {
+        label: "Pesquisa",
+        text: "IA aplicada ao aprendizado organizacional, estratégia e performance em empresas de alto crescimento.",
+      },
+      {
+        label: "Implantação",
+        text: "Projetos de data science e IA conectados a receita, produto, analytics, GTM e operação comercial.",
+      },
+      {
+        label: "Formação",
+        text: "Mestre pela Fundação Dom Cabral, doutorando pela Burgundy School of Business, Educador de IA e Head de Soluções da Amplify.",
+      },
+    ],
   },
   stats: [
     { value: "+28", label: "ferramentas de IA trabalhadas" },
