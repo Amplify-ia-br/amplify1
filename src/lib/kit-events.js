@@ -34,6 +34,11 @@ const FIELD_LABELS = [
   "ebook_url",
   "ebook_site",
   "ebook_last_event",
+  "ana_resposta_1",
+  "ana_resposta_2",
+  "ana_resposta_3",
+  "ana_resposta_4",
+  "ana_last_event",
 ];
 
 const EVENT_TAG_MAP = {
@@ -50,6 +55,7 @@ const EVENT_TAG_MAP = {
   bootcamp_attended: ["bootcamp:compareceu"],
   bootcamp_missed: ["bootcamp:nao_compareceu"],
   ebook_executivo_x0_lead_captured: ["ebook:executivo_x0", "ebook:download", "lead:ebook"],
+  ana_lead_captured: ["ana:amplify", "lead:qualificacao_ia"],
 };
 
 const TAG_MAP = {
@@ -467,6 +473,7 @@ function buildCustomFields(payload = {}, lead = {}) {
   const isNexialistaEvent = eventName.startsWith("nexialista_") || clean(payload.source) === "nexialista";
   const isBootcampEvent = eventName.startsWith("bootcamp_") || Boolean(payload.bootcampSlug || payload.bootcamp_slug);
   const isEbookEvent = Boolean(payload.ebookSlug || payload.ebook_slug);
+  const isAnaEvent = eventName.startsWith("ana_") || clean(payload.source) === "ana";
 
   return compactObject({
     lead_score: lead.total_score ?? payload.totalScore ?? payload.score,
@@ -498,6 +505,11 @@ function buildCustomFields(payload = {}, lead = {}) {
     ebook_url: payload.ebookUrl || payload.ebook_url,
     ebook_site: payload.site || payload.website,
     ebook_last_event: isEbookEvent ? eventName : undefined,
+    ana_resposta_1: payload.resposta_1,
+    ana_resposta_2: payload.resposta_2,
+    ana_resposta_3: payload.resposta_3,
+    ana_resposta_4: payload.resposta_4,
+    ana_last_event: isAnaEvent ? eventName : undefined,
   });
 }
 
