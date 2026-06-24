@@ -37,7 +37,7 @@ export const BOOTCAMP_NATAL = {
     whatTitle: "O que é o Bootcamp IA para Negócios®",
     whatCopy: [
       "O Bootcamp IA para Negócios® é uma imersão de 10 horas, pensada estrategicamente para profissionais de todas as áreas que desejam acelerar seus resultados, aplicando Inteligência Artificial de forma prática e inteligente.",
-      "Com uma metodologia exclusiva e aplicável, conduzida por Leonardo Camacho, cofundador da Amplify, o participante sai com um plano claro para aumentar a lucratividade, ganhar tempo e liberdade, e transformar seu negócio sem precisar se tornar refém da operação.",
+      "Com uma metodologia exclusiva e aplicável, conduzida por Leonardo Camacho, professor e pesquisador de inteligência artificial aplicada ao aprendizado organizacional, o participante sai com um plano claro para aumentar a lucratividade, ganhar tempo e liberdade, e transformar seu negócio sem precisar se tornar refém da operação.",
       "Essa é uma experiência transformadora, onde tecnologia, estratégia e visão de futuro se unem para gerar impacto real, sustentável e escalável.",
     ],
   },
@@ -127,9 +127,9 @@ export const BOOTCAMP_NATAL = {
   ],
   mentor: {
     name: "Leonardo Camacho",
-    title: "Cofundador da Amplify e especialista em IA aplicada aos negócios",
+    title: "Professor, pesquisador e executivo de crescimento",
     bio:
-      "Cofundador da Amplify, conduz experiências de aprendizado que conectam inteligência artificial, estratégia, negócios e execução prática para empresas que precisam tirar a IA do improviso.",
+      "Leonardo Camacho pesquisa inteligência artificial aplicada ao aprendizado organizacional em empresas de alto crescimento. Como executivo de receita e produto, implantou data science e IA em diferentes contextos de negócio, especialmente em frentes de crescimento de receita, go-to-market, analytics e gestão de produtos. É mestre pela Fundação Dom Cabral, doutorando pela Burgundy School of Business e cofundador da Amplify.",
   },
   stats: [
     { value: "+28", label: "ferramentas de IA trabalhadas" },

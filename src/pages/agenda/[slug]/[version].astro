@@ -333,7 +333,7 @@ if (!event || !isValidVersion) {
           <section class="template-section template-mentor" aria-labelledby="mentor-title">
             <img src={content.templateAssets.mentor} alt="Leonardo Camacho" width="720" height="900" loading="lazy" />
             <div>
-              <p>Seu mentor</p>
+              <p>Seu professor</p>
               <h2 id="mentor-title">{content.mentor.name}</h2>
               <strong>{content.mentor.title}</strong>
               <p>{content.mentor.bio}</p>
@@ -530,7 +530,7 @@ if (!event || !isValidVersion) {
           <section class="bn-section bn-section--surface bn-mentor" aria-labelledby="bn-mentor-title">
             <img src={content.templateAssets.mentor} alt="Leonardo Camacho" width="720" height="900" loading="lazy" />
             <div>
-              <p class="bn-label">Quem será seu mentor?</p>
+              <p class="bn-label">Quem será seu professor?</p>
               <h2 id="bn-mentor-title">{content.mentor.name}</h2>
               <p>{content.mentor.bio}</p>
               <div class="bn-client-row" aria-label="Empresas que confiam na Amplify">
@@ -730,7 +730,7 @@ if (!event || !isValidVersion) {
                   para quem quer transformar curiosidade em método, método em operação, operação em resultado.
                 </p>
                 <p class="tp-lead">
-                  10 horas de imersão estratégica com <strong>Leonardo Camacho</strong>, especialista em IA aplicada.
+                  10 horas de imersão estratégica com <strong>Leonardo Camacho</strong>, professor e pesquisador de IA aplicada ao aprendizado organizacional.
                   Você sai com um plano claro, ferramentas escolhidas e confiança de implementar.
                 </p>
                 <div class="tp-callout">
@@ -874,8 +874,9 @@ if (!event || !isValidVersion) {
                   <img src={content.templateAssets.mentor} alt="Leonardo Camacho" width="720" height="900" loading="lazy" />
                 </div>
                 <div class="tp-mentor tp-reveal">
-                  <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Quem será seu mentor?</span>
+                  <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Quem será seu professor?</span>
                   <h2 id="tp-mentor-title" class="tp-h2">{content.mentor.name}</h2>
+                  <strong>{content.mentor.title}</strong>
                   <p>{content.mentor.bio}</p>
                   <p class="tp-cascudo-note">Na terra de Câmara Cascudo, método e ofício são tradição.</p>
                 </div>
@@ -5825,6 +5826,14 @@ if (!event || !isValidVersion) {
     margin: 0;
     color: var(--tp-muted);
     font-size: 15.5px;
+  }
+
+  .boot-mockup--cidade .tp-mentor strong {
+    display: block;
+    margin: -12px 0 18px;
+    color: var(--tp-cyan);
+    font-size: 15px;
+    font-weight: 700;
   }
 
   .boot-mockup--cidade .tp-mentor p + p {
