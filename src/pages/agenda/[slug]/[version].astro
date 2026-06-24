@@ -138,10 +138,14 @@ const cityFaq = [
   },
 ];
 const pageTitle = event && isValidVersion
-  ? `${BOOTCAMP_VERSION_LABELS[activeVersion]} | Bootcamp ${event.city} | Amplify`
+  ? event.slug === "natal-23-07-26" && activeVersion === "cidade"
+    ? "Bootcamp IA para Negócios em Natal | Amplify"
+    : `${BOOTCAMP_VERSION_LABELS[activeVersion]} | Bootcamp ${event.city} | Amplify`
   : "Bootcamp não encontrado | Amplify";
 const pageDescription = event && isValidVersion
-  ? `Mockup ${BOOTCAMP_VERSION_LABELS[activeVersion]} da landing page do Bootcamp Amplify em ${event.city}, no dia ${event.date}.`
+  ? event.slug === "natal-23-07-26" && activeVersion === "cidade"
+    ? "Dia 23/07, uma imersão presencial para líderes e profissionais que querem aplicar IA com método, clareza e resultado."
+    : `Mockup ${BOOTCAMP_VERSION_LABELS[activeVersion]} da landing page do Bootcamp Amplify em ${event.city}, no dia ${event.date}.`
   : "Turma de Bootcamp não encontrada.";
 
 if (!event || !isValidVersion) {
