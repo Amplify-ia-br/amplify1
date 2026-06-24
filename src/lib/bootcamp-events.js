@@ -37,7 +37,7 @@ export const BOOTCAMP_EVENTS = [
     endTime: "18:00",
     symplaEventId: "3426958",
     symplaCheckoutUrl: "https://www.sympla.com.br/evento/bootcamp-ia-para-negocios-natal/3426958",
-    whatsappGroupUrl: "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20o%20Bootcamp%20IA%20para%20neg%C3%B3cios%20em%20Natal",
+    whatsappGroupUrl: "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20possibilidade%20de%20patrocinar%20o%20Bootcamp%20IA%20para%20neg%C3%B3cios%20em%20Natal",
     version: "cidade",
     localContext: "a energia de uma cidade costeira que conecta turismo, serviços, criatividade e novos negócios",
   },

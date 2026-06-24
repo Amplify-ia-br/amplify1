@@ -129,7 +129,7 @@ export const BOOTCAMP_NATAL = {
     name: "Leonardo Camacho",
     title: "Professor, pesquisador e executivo de crescimento",
     bio:
-      "Leonardo Camacho pesquisa inteligência artificial aplicada ao aprendizado organizacional em empresas de alto crescimento. Como executivo de receita e produto, implantou data science e IA em diferentes contextos de negócio, especialmente em frentes de crescimento de receita, go-to-market, analytics e gestão de produtos. É mestre pela Fundação Dom Cabral, doutorando pela Burgundy School of Business e cofundador da Amplify.",
+      "Leonardo Camacho pesquisa inteligência artificial aplicada ao aprendizado organizacional em empresas de alto crescimento. Como executivo de receita e produto, implantou data science e IA em diferentes contextos de negócio, especialmente em frentes de crescimento de receita, go-to-market, analytics e gestão de produtos. É mestre pela Fundação Dom Cabral, doutorando pela Burgundy School of Business, educador de IA e Head de Soluções da Amplify.",
   },
   stats: [
     { value: "+28", label: "ferramentas de IA trabalhadas" },
