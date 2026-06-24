@@ -2,13 +2,40 @@ import { fetchBootcampOrdersAndParticipants } from "../src/lib/sympla.js";
 import { persistLeadEvent } from "../src/lib/lead-scoring/store.js";
 import { scoreLead } from "../src/lib/lead-scoring/engine.js";
 
-export const config = { runtime: "edge" };
-
 function jsonResponse(payload, status = 200) {
   return new Response(JSON.stringify(payload), {
     status,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+function sendJson(response, payload, status = 200) {
+  if (!response) return jsonResponse(payload, status);
+  response.statusCode = status;
+  response.setHeader("Content-Type", "application/json");
+  response.end(JSON.stringify(payload));
+}
+
+async function readJsonBody(request) {
+  if (typeof request.json === "function") {
+    return request.json();
+  }
+
+  const chunks = [];
+  for await (const chunk of request) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  const text = Buffer.concat(chunks).toString("utf8");
+  return text ? JSON.parse(text) : {};
+}
+
+function getHeader(request, name) {
+  if (typeof request.headers?.get === "function") {
+    return request.headers.get(name);
+  }
+
+  return request.headers?.[name.toLowerCase()] || request.headers?.[name];
 }
 
 function clean(value) {
@@ -30,7 +57,7 @@ function isAuthorized(request, body = {}) {
   const configuredSecret = cleanSecret(process.env.BOOTCAMP_SYNC_SECRET);
   if (!configuredSecret) return true;
 
-  const headerSecret = cleanSecret(request.headers.get("x-bootcamp-sync-secret"));
+  const headerSecret = cleanSecret(getHeader(request, "x-bootcamp-sync-secret"));
   const bodySecret = cleanSecret(body.secret);
   return headerSecret === configuredSecret || bodySecret === configuredSecret;
 }
@@ -79,29 +106,29 @@ async function persistBootcampPayload(payload) {
   return { scoring, database };
 }
 
-export default async function handler(request) {
+export default async function handler(request, response) {
   if (request.method !== "POST") {
-    return jsonResponse({ error: "Método não permitido." }, 405);
+    return sendJson(response, { error: "Método não permitido." }, 405);
   }
 
   let body;
 
   try {
-    body = await request.json();
+    body = await readJsonBody(request);
   } catch (_error) {
-    return jsonResponse({ error: "Payload JSON inválido." }, 400);
+    return sendJson(response, { error: "Payload JSON inválido." }, 400);
   }
 
   if (!isAuthorized(request, body)) {
-    return jsonResponse({ error: "Não autorizado." }, 401);
+    return sendJson(response, { error: "Não autorizado." }, 401);
   }
 
   const slug = clean(body.slug).toLowerCase();
-  if (!slug) return jsonResponse({ error: "Slug é obrigatório." }, 400);
+  if (!slug) return sendJson(response, { error: "Slug é obrigatório." }, 400);
 
   const sync = await fetchBootcampOrdersAndParticipants(slug);
   if (!sync.ok) {
-    return jsonResponse({ ok: false, error: sync.error || "Erro ao sincronizar Sympla.", details: sync.errors }, 502);
+    return sendJson(response, { ok: false, error: sync.error || "Erro ao sincronizar Sympla.", details: sync.errors }, 502);
   }
 
   const ordersById = indexOrdersById(sync.orders);
@@ -175,7 +202,7 @@ export default async function handler(request) {
     results.push({ type: "participant", email, participantId, ticketNumber, eventName, ...persisted });
   }
 
-  return jsonResponse({
+  return sendJson(response, {
     ok: true,
     slug,
     orders: sync.orders.length,
