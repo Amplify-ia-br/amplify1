@@ -118,6 +118,18 @@ const NATIVE_FOLLOWUP_SEQUENCES = {
   bootcamp_missed: Number(process.env.KIT_BOOTCAMP_MISSED_SEQUENCE_ID || 2805418),
 };
 
+const BOOTCAMP_SEQUENCE_ENV_BY_SLUG = {
+  "crea-rn-25-07-26": {
+    bootcamp_interest: "KIT_BOOTCAMP_CREA_RN_INTEREST_SEQUENCE_ID",
+    bootcamp_checkout_abandoned: "KIT_BOOTCAMP_CREA_RN_CHECKOUT_ABANDONED_SEQUENCE_ID",
+    bootcamp_corporate: "KIT_BOOTCAMP_CREA_RN_CORPORATE_SEQUENCE_ID",
+    bootcamp_sponsor: "KIT_BOOTCAMP_CREA_RN_SPONSOR_SEQUENCE_ID",
+    bootcamp_confirmed: "KIT_BOOTCAMP_CREA_RN_CONFIRMED_SEQUENCE_ID",
+    bootcamp_attended: "KIT_BOOTCAMP_CREA_RN_ATTENDED_SEQUENCE_ID",
+    bootcamp_missed: "KIT_BOOTCAMP_CREA_RN_MISSED_SEQUENCE_ID",
+  },
+};
+
 let customFieldsPromise = null;
 const tagIdPromises = new Map();
 
@@ -131,6 +143,23 @@ function compactObject(object) {
 
 function unique(values) {
   return [...new Set(values.filter(Boolean))];
+}
+
+function getBootcampSlug(payload = {}) {
+  return clean(payload.bootcampSlug || payload.bootcamp_slug || payload.slug).toLowerCase();
+}
+
+function getBootcampSpecificSequenceId(workflowKey, payload = {}) {
+  const slug = getBootcampSlug(payload);
+  const envName = BOOTCAMP_SEQUENCE_ENV_BY_SLUG[slug]?.[workflowKey];
+
+  if (!envName) return 0;
+
+  return Number(process.env[envName] || 0);
+}
+
+function getNativeFollowupSequenceId(workflowKey, payload = {}) {
+  return getBootcampSpecificSequenceId(workflowKey, payload) || NATIVE_FOLLOWUP_SEQUENCES[workflowKey] || null;
 }
 
 function getApiKey() {
@@ -245,9 +274,21 @@ function mapTags(payload = {}, lead = {}) {
   const tags = getAllTags(payload, lead);
   const eventName = getEventName(payload);
   const leadStage = clean(lead.lead_stage || lead.leadStage || payload.leadStage);
+  const bootcampSlug = getBootcampSlug(payload);
   const mapped = [];
 
   if (eventName && EVENT_TAG_MAP[eventName]) mapped.push(...EVENT_TAG_MAP[eventName]);
+
+  if (bootcampSlug) {
+    mapped.push(`bootcamp:${bootcampSlug}`);
+
+    if (eventName && EVENT_TAG_MAP[eventName]) {
+      EVENT_TAG_MAP[eventName]
+        .filter((tag) => tag.startsWith("bootcamp:"))
+        .map((tag) => tag.replace(/^bootcamp:/, ""))
+        .forEach((tagSuffix) => mapped.push(`bootcamp:${bootcampSlug}:${tagSuffix}`));
+    }
+  }
 
   for (const tag of tags) {
     if (TAG_MAP[tag]) mapped.push(TAG_MAP[tag]);
@@ -453,7 +494,7 @@ async function createWorkflowBroadcast({ workflowKey, step, leadIdentity, flowTa
 
 async function scheduleWorkflowBroadcasts({ workflowKey, subscriberId, email, payload }) {
   const workflow = getWorkflow(workflowKey);
-  const nativeFollowupSequenceId = NATIVE_FOLLOWUP_SEQUENCES[workflowKey] || null;
+  const nativeFollowupSequenceId = getNativeFollowupSequenceId(workflowKey, payload);
 
   if (!workflow && nativeFollowupSequenceId) {
     const nativeSequence = await addSubscriberToSequenceByEmail(nativeFollowupSequenceId, email);
