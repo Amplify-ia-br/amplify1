@@ -46,7 +46,7 @@ export const BOOTCAMP_EVENTS = [
     city: "Natal",
     date: "25/07/26",
     venue: "CREA-RN",
-    address: "R. da Saudade - Lagoa Nova, Natal - RN, 59056-400",
+    address: "Av. Senador Salgado Filho, 1840, Lagoa Nova - CEP: 59056-000",
     startTime: "09:00",
     endTime: "18:00",
     symplaEventId: "3468714",
