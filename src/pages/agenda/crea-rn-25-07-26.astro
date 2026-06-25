@@ -819,6 +819,10 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
     align-items: start;
   }
 
+  .crea-mentor__profile {
+    align-items: stretch;
+  }
+
   .crea-section h2,
   .crea-final h2 {
     max-width: 720px;
@@ -854,11 +858,11 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
   }
 
   .crea-form--compact {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+    display: grid;
+    grid-template-rows: repeat(4, auto) 1fr auto minmax(0, 22px);
+    align-self: stretch;
     min-height: 0;
-    margin-top: 22px;
+    margin-top: 0;
     padding: 0;
     border: 0;
     background: transparent;
@@ -879,7 +883,8 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
     width: 100%;
     border: 1px solid var(--line);
     border-radius: 10px;
-    padding: 13px 15px;
+    min-height: 52px;
+    padding: 12px 15px;
     color: var(--text);
     background: rgba(255, 255, 255, 0.06);
     font: inherit;
@@ -967,7 +972,9 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
   }
 
   .crea-mentor__photo {
-    aspect-ratio: 3 / 4;
+    height: 100%;
+    min-height: 100%;
+    aspect-ratio: auto;
     object-position: 50% 18%;
   }
 
@@ -1118,22 +1125,26 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
 
   .crea-card {
     position: relative;
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-rows: 34px 38px minmax(144px, auto) 1fr 58px minmax(0, 22px);
+    align-items: start;
     border: 1px solid var(--line-soft);
     border-radius: 14px;
     padding: 28px;
     background: var(--surface);
   }
 
-  .crea-card > p {
-    min-height: 116px;
-    margin-bottom: 0;
+  .crea-card h3 {
+    align-self: end;
   }
 
-  .crea-card > .crea-button,
-  .crea-card .crea-form--compact > .crea-button {
-    margin-top: auto;
+  .crea-card > p {
+    min-height: 0;
+    margin: 0;
+  }
+
+  .crea-card > .crea-button {
+    align-self: end;
   }
 
   .crea-card--highlight {
@@ -1145,7 +1156,7 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
     align-self: flex-start;
     align-items: center;
     min-height: 34px;
-    margin-bottom: 18px;
+    margin-bottom: 0;
     border-radius: 999px;
     padding: 8px 13px;
     color: #061018;
@@ -1163,7 +1174,7 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
   }
 
   .crea-card-list {
-    flex: 1;
+    align-self: start;
     min-height: 0;
   }
 
@@ -1242,6 +1253,15 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
     .crea-offer-grid {
       grid-template-columns: 1fr;
     }
+
+    .crea-card {
+      grid-template-rows: auto auto auto auto auto minmax(0, 22px);
+      gap: 14px;
+    }
+
+    .crea-form--compact {
+      grid-template-rows: repeat(4, auto) auto minmax(0, 22px);
+    }
   }
 
   @media (max-width: 760px) {
@@ -1303,6 +1323,12 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
 
     .crea-card {
       padding: 26px;
+    }
+
+    .crea-mentor__photo {
+      height: auto;
+      min-height: 0;
+      aspect-ratio: 3 / 4;
     }
 
     .crea-client-row div {
