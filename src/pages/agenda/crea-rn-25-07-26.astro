@@ -282,25 +282,34 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
         <div class="crea-section__head">
           <p class="crea-label">Inscrição, empresas e patrocínio</p>
           <h2 id="offer-title">Escolha como participar do Boot Camp.</h2>
-          <p>Inscrição individual pelo Sympla. Plano corporativo e patrocínio abrem conversa com Adriano com a mensagem pronta.</p>
+          <p>Garanta sua vaga individual, leve sua equipe ou associe sua marca a uma formação prática para profissionais técnicos do RN.</p>
         </div>
         <div class="crea-offer-grid">
-          <article class="crea-card crea-card--highlight">
-            <span class="crea-badge" data-sympla-badge>Vagas abertas</span>
-            <h3>Ingresso individual</h3>
-            <p>Um dia para transformar IA em ganho real de produtividade: menos retrabalho, documentos melhores e decisões técnicas mais organizadas.</p>
-            <ul class="crea-card-list">
-              <li>Relatórios, propostas e rotinas técnicas com IA</li>
-              <li>Certificado digital</li>
-              <li>Aplicações para engenharia, agronomia e gestão técnica</li>
-            </ul>
-            <a class="crea-button crea-button--primary" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Garantir minha vaga</a>
+          <article class="crea-card crea-card--highlight crea-card--purchase">
+            <div class="crea-card__intro">
+              <span class="crea-badge" data-sympla-badge>Inscrições abertas</span>
+              <h3>Ingresso individual</h3>
+              <p>Um dia para transformar IA em ganho real de produtividade: menos retrabalho, documentos melhores e decisões técnicas mais organizadas.</p>
+            </div>
+            <div class="crea-card__body">
+              <ul class="crea-card-list">
+                <li>Relatórios, propostas e rotinas técnicas com IA</li>
+                <li>Certificado digital</li>
+                <li>Aplicações para engenharia, agronomia e gestão técnica</li>
+              </ul>
+              <p class="crea-card-note">Compra e confirmação pela plataforma oficial do evento.</p>
+            </div>
+            <div class="crea-card__action">
+              <a class="crea-button crea-button--primary" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Garantir minha vaga</a>
+            </div>
           </article>
 
-          <article class="crea-card">
-            <span class="crea-badge crea-badge--outline">Equipes técnicas</span>
-            <h3>Plano corporativo</h3>
-            <p>Leve a equipe para sair com uma linguagem comum de IA, casos de uso priorizados e próximos passos aplicáveis no trabalho.</p>
+          <article class="crea-card crea-card--form">
+            <div class="crea-card__intro">
+              <span class="crea-badge crea-badge--outline">Equipes técnicas</span>
+              <h3>Plano corporativo</h3>
+              <p>Leve a equipe para sair com uma linguagem comum de IA, casos de uso priorizados e próximos passos aplicáveis no trabalho.</p>
+            </div>
             <form class="crea-form crea-form--compact" data-bootcamp-form data-whatsapp-form data-whatsapp-kind="corporate" data-success-message="Abrindo WhatsApp com a mensagem pronta.">
               <input type="hidden" name="eventName" value="bootcamp_corporate_lead" />
               <input type="hidden" name="entryPoint" value="plano_corporativo_crea_rn" />
@@ -322,10 +331,12 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
             </form>
           </article>
 
-          <article class="crea-card" id="patrocinio">
-            <span class="crea-badge crea-badge--outline">Marca parceira</span>
-            <h3>Patrocínio</h3>
-            <p>Associe sua marca a uma agenda prática de inovação para engenheiros, empresas técnicas e lideranças profissionais do RN.</p>
+          <article class="crea-card crea-card--form" id="patrocinio">
+            <div class="crea-card__intro">
+              <span class="crea-badge crea-badge--outline">Marca parceira</span>
+              <h3>Patrocínio</h3>
+              <p>Associe sua marca a uma agenda prática de inovação para engenheiros, empresas técnicas e lideranças profissionais do RN.</p>
+            </div>
             <form class="crea-form crea-form--compact" data-bootcamp-form data-whatsapp-form data-whatsapp-kind="sponsor" data-success-message="Abrindo WhatsApp com a mensagem pronta.">
               <input type="hidden" name="eventName" value="bootcamp_sponsor_lead" />
               <input type="hidden" name="entryPoint" value="patrocinio_crea_rn" />
@@ -859,8 +870,9 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
 
   .crea-form--compact {
     display: grid;
-    grid-template-rows: repeat(4, auto) 1fr auto minmax(0, 22px);
-    align-self: stretch;
+    grid-template-rows: repeat(4, auto);
+    gap: 14px;
+    align-self: start;
     min-height: 0;
     margin-top: 0;
     padding: 0;
@@ -1138,25 +1150,79 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
   .crea-card {
     position: relative;
     display: grid;
-    grid-template-rows: 34px 38px minmax(144px, auto) 1fr 58px minmax(0, 22px);
-    align-items: start;
+    grid-template-rows: 214px minmax(0, 1fr);
+    gap: 24px;
+    min-height: 690px;
+    padding-bottom: 128px;
     border: 1px solid var(--line-soft);
     border-radius: 14px;
-    padding: 28px;
+    padding-top: 28px;
+    padding-right: 28px;
+    padding-left: 28px;
     background: var(--surface);
   }
 
-  .crea-card h3 {
-    align-self: end;
+  .crea-card--purchase {
+    grid-template-rows: 214px minmax(0, 1fr) auto;
   }
 
-  .crea-card > p {
+  .crea-card__intro {
+    display: grid;
+    grid-template-rows: 34px 38px 1fr;
+    gap: 18px;
+    align-items: start;
+    min-height: 0;
+  }
+
+  .crea-card h3 {
+    margin-top: 0;
+  }
+
+  .crea-card__intro p {
     min-height: 0;
     margin: 0;
   }
 
-  .crea-card > .crea-button {
-    align-self: end;
+  .crea-card__body {
+    display: grid;
+    align-content: space-between;
+    gap: 18px;
+    min-height: 0;
+  }
+
+  .crea-card__action {
+    display: contents;
+  }
+
+  .crea-card__action::after {
+    content: none;
+  }
+
+  .crea-offer-grid .crea-card .crea-button {
+    position: absolute;
+    right: 28px;
+    bottom: 58px;
+    left: 28px;
+    width: auto;
+  }
+
+  .crea-offer-grid .crea-card .crea-form-status {
+    position: absolute;
+    right: 28px;
+    bottom: 28px;
+    left: 28px;
+    min-height: 18px;
+    margin: 0;
+  }
+
+  .crea-card-note {
+    margin: 0;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 18px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.45;
   }
 
   .crea-card--highlight {
@@ -1167,6 +1233,8 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
     display: inline-flex;
     align-self: flex-start;
     align-items: center;
+    justify-content: center;
+    width: fit-content;
     min-height: 34px;
     margin-bottom: 0;
     border-radius: 999px;
@@ -1266,13 +1334,27 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
       grid-template-columns: 1fr;
     }
 
-    .crea-card {
-      grid-template-rows: auto auto auto auto auto minmax(0, 22px);
+    .crea-card,
+    .crea-card--purchase {
+      grid-template-rows: auto;
+      gap: 18px;
+      min-height: 0;
+      padding: 26px;
+    }
+
+    .crea-card__intro {
+      grid-template-rows: auto;
       gap: 14px;
     }
 
     .crea-form--compact {
       grid-template-rows: repeat(4, auto) auto minmax(0, 22px);
+    }
+
+    .crea-offer-grid .crea-card .crea-button,
+    .crea-offer-grid .crea-card .crea-form-status {
+      position: static;
+      width: 100%;
     }
   }
 
@@ -1331,10 +1413,6 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
     .crea-program article {
       grid-template-columns: 1fr;
       gap: 12px;
-    }
-
-    .crea-card {
-      padding: 26px;
     }
 
     .crea-mentor__photo {
