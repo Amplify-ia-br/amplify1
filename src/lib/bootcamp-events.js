@@ -51,7 +51,7 @@ export const BOOTCAMP_EVENTS = [
     endTime: "18:00",
     symplaEventId: "3468714",
     symplaCheckoutUrl: "https://www.sympla.com.br/evento/bootcamp-ia-para-engenharia-crea-rn/3468714",
-    whatsappGroupUrl: "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20patroc%C3%ADnio%20ou%20plano%20corporativo%20para%20o%20Boot%20Camp%20IA%20para%20os%20Desafios%20de%20Engenharia%20em%20parceria%20com%20o%20CREA-RN.",
+    whatsappGroupUrl: "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20patroc%C3%ADnio%20ou%20plano%20corporativo%20para%20o%20Bootcamp%20IA%20para%20os%20Desafios%20de%20Engenharia%20em%20parceria%20com%20o%20CREA-RN.",
     version: "branding",
     localContext: "o contexto técnico de engenharia, agronomia, geociências, fiscalização, empresas registradas e responsabilidade profissional no Rio Grande do Norte",
   },
