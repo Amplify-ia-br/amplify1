@@ -66,7 +66,7 @@ const brandingFaq = [
   },
   {
     question: "Tem estacionamento?",
-    answer: "O evento será no Bright Coworking Natal. Detalhes finais de acesso, estacionamento e chegada serão enviados aos inscritos antes da imersão.",
+    answer: "O evento será na Arena das Dunas. Detalhes finais de acesso, estacionamento e chegada serão enviados aos inscritos antes da imersão.",
   },
 ];
 const cityHeroImage = "/bootcamp/parque-cidade-natal-torre.jpg";
@@ -143,7 +143,7 @@ const cityFaq = [
   },
   {
     question: "O local já está definido?",
-    answer: "Sim. O Bootcamp será no Bright Coworking Natal, na Av. Dão Silveira, 3860 - Loja 03 - Parque das Colinas, Natal - RN, 59066-180.",
+    answer: "Sim. O Bootcamp será na Arena das Dunas, na Av. Prudente de Morais, 5121 - Lagoa Nova, Natal - RN, 59064-625.",
   },
 ];
 const pageTitle = event && isValidVersion
@@ -153,7 +153,7 @@ const pageTitle = event && isValidVersion
   : "Bootcamp não encontrado | Amplify";
 const pageDescription = event && isValidVersion
   ? event.slug === "natal-23-07-26" && activeVersion === "cidade"
-    ? "Dia 23/07, uma imersão presencial para líderes e profissionais que querem aplicar IA com método, clareza e resultado."
+    ? "Dia 24/07, uma imersão presencial para líderes e profissionais que querem aplicar IA com método, clareza e resultado."
     : `Mockup ${BOOTCAMP_VERSION_LABELS[activeVersion]} da landing page do Bootcamp Amplify em ${event.city}, no dia ${event.date}.`
   : "Turma de Bootcamp não encontrada.";
 
@@ -610,7 +610,7 @@ if (!event || !isValidVersion) {
               <a class="bn-button bn-button--primary" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Garanta sua vaga agora <span aria-hidden="true">→</span></a>
               <a class="bn-button bn-button--secondary" href="#oferta">Ver preços</a>
             </div>
-            <small>Bootcamp IA para Negócios® · Bright Coworking Natal · {content.longDateLabel} · {event.startTime} às {event.endTime}</small>
+            <small>Bootcamp IA para Negócios® · {event.venue} · {content.longDateLabel} · {event.startTime} às {event.endTime}</small>
           </section>
 
           <footer class="bn-footer">
@@ -961,7 +961,7 @@ if (!event || !isValidVersion) {
               <div class="tp-section-head tp-reveal">
                 <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Garanta sua vaga</span>
                 <h2 id="tp-offer-title" class="tp-h2">Escolha seu plano.</h2>
-                <p class="tp-lead"><strong>Vagas limitadas. Quando acabarem, acabou.</strong> 1º lote até 10 de julho por R$ 1.890. Depois sobe para R$ 2.170. Se a primeira turma esgotar, abriremos lista de espera para uma possível segunda turma em 24 de julho.</p>
+                <p class="tp-lead"><strong>Vagas limitadas. Quando acabarem, acabou.</strong> 1º lote até 10 de julho por R$ 1.890. Depois sobe para R$ 2.170. Se a turma esgotar, abriremos lista de espera para uma próxima edição.</p>
               </div>
               <div class="tp-pricing-grid">
                 <article class="tp-price-card tp-price-card--featured tp-reveal">
@@ -1025,14 +1025,14 @@ if (!event || !isValidVersion) {
                   </form>
                 </article>
               </div>
-              <form class="tp-waitlist tp-reveal" data-bootcamp-form data-success-message="Você entrou na lista de prioridade para a possível turma de 24/07.">
+              <form class="tp-waitlist tp-reveal" data-bootcamp-form data-success-message="Você entrou na lista de prioridade para uma próxima turma.">
                 <input type="hidden" name="eventName" value="bootcamp_waitlist_joined" />
-                <input type="hidden" name="entryPoint" value="lista_espera_24_07" />
-                <input type="hidden" name="intent" value="segunda_turma" />
-                <input type="hidden" name="sourceCta" value="lista_espera_24_07" />
+                <input type="hidden" name="entryPoint" value="lista_espera_proxima_turma" />
+                <input type="hidden" name="intent" value="proxima_turma" />
+                <input type="hidden" name="sourceCta" value="lista_espera_proxima_turma" />
                 <div>
-                  <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Possível segunda turma</span>
-                  <p>Se 23/07 esgotar, avisamos primeiro quem estiver na lista de prioridade para 24/07.</p>
+                  <span class="tp-label"><svg class="tp-star-ico"><use href="#city-sol"></use></svg>Lista de prioridade</span>
+                  <p>Se a turma de 24/07 esgotar, avisamos primeiro quem estiver na lista de prioridade para uma próxima edição.</p>
                 </div>
                 <label>
                   Email
@@ -1065,13 +1065,13 @@ if (!event || !isValidVersion) {
             <div class="tp-final__sunset"><span></span></div>
             <div class="tp-container">
               <div class="tp-final__inner tp-reveal">
-                <h2>Em 23 de julho, uma turma sai <span>com método.</span> O resto continua testando.</h2>
+                <h2>Em 24 de julho, uma turma sai <span>com método.</span> O resto continua testando.</h2>
                 <p>Transforme dados em inteligência e inteligência em resultados. O Bootcamp te mostra o caminho prático.</p>
                 <div class="tp-final__ctas">
                   <a class="tp-btn tp-btn--primary tp-btn--lg" href={checkoutUrl} target="_blank" rel="noopener noreferrer" data-checkout-link>Avia, garanta sua vaga&nbsp;→</a>
                   <a class="tp-btn tp-btn--secondary tp-btn--lg" href="#oferta">Ver preços</a>
                 </div>
-                <small>Bootcamp IA para Negócios® · Bright Coworking Natal · {content.longDateLabel} · {event.startTime} às {event.endTime} · Vagas limitadas</small>
+                <small>Bootcamp IA para Negócios® · {event.venue} · {content.longDateLabel} · {event.startTime} às {event.endTime} · Vagas limitadas</small>
               </div>
             </div>
           </section>
@@ -1409,7 +1409,10 @@ if (!event || !isValidVersion) {
     });
 
     fetch(`/api/bootcamp-status?slug=${encodeURIComponent(slug)}`)
-      .then((response) => (response.ok ? response.json() : null))
+      .then((response) => {
+        const contentType = response.headers.get("content-type") || "";
+        return response.ok && contentType.includes("application/json") ? response.json() : null;
+      })
       .then((data) => {
         const label = document.querySelector("[data-status-label]");
         if (!label || !data?.statusLabel) return;

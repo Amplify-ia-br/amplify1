@@ -1,12 +1,12 @@
 export const BOOTCAMP_NATAL = {
   city: "Natal",
   cityLabel: "Natal, RN",
-  dateLabel: "23/07/26",
-  longDateLabel: "23 de julho de 2026",
+  dateLabel: "24/07/26",
+  longDateLabel: "24 de julho de 2026",
   timeLabel: "09:00 às 18:00",
   durationLabel: "10 horas de imersão",
-  venueLabel: "Bright Coworking Natal",
-  addressLabel: "Av. Dão Silveira, 3860 - Loja 03 - Parque das Colinas, Natal - RN, 59066-180",
+  venueLabel: "Arena das Dunas",
+  addressLabel: "Av. Prudente de Morais, 5121 - Lagoa Nova, Natal - RN, 59064-625, Brazil",
   templateAssets: {
     logo: "/bootcamp/midias/logo-bootcamp-natal.0aNeW5nV_18RP4m.webp",
     hero: "/bootcamp/midias/main.Cm_Af4Lq_FfKRY.webp",
@@ -186,7 +186,7 @@ export const BOOTCAMP_NATAL = {
     {
       question: "O local já está confirmado?",
       answer:
-        "Sim. O encontro será no Bright Coworking Natal, na Av. Dão Silveira, 3860 - Loja 03 - Parque das Colinas, Natal - RN, 59066-180.",
+        "Sim. O encontro será na Arena das Dunas, na Av. Prudente de Morais, 5121 - Lagoa Nova, Natal - RN, 59064-625.",
     },
     {
       question: "Há condições para empresas?",

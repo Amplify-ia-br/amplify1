@@ -30,9 +30,9 @@ export const BOOTCAMP_EVENTS = [
   {
     slug: "natal-23-07-26",
     city: "Natal",
-    date: "23/07/26",
-    venue: "Bright Coworking Natal",
-    address: "Av. Dão Silveira, 3860 - Loja 03 - Parque das Colinas, Natal - RN, 59066-180",
+    date: "24/07/26",
+    venue: "Arena das Dunas",
+    address: "Av. Prudente de Morais, 5121 - Lagoa Nova, Natal - RN, 59064-625, Brazil",
     startTime: "09:00",
     endTime: "18:00",
     symplaEventId: "3426958",

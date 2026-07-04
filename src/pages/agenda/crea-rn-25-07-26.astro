@@ -21,8 +21,8 @@ const sponsorUrl = event?.whatsappGroupUrl || "https://wa.me/5511950350002";
 const logoSrc = logoAmplify.src;
 const heroSrc = treinamentoPresencial.src;
 const secondaryImage = forumPalestra.src;
-const creaLogo = "/bootcamp/crea-rn/logo-crea-rn-white.png";
-const creaLogoColor = "/bootcamp/crea-rn/logo-crea-rn.png";
+const creaLogoHorizontal = "/bootcamp/crea-rn/logo-hub-crea-horizontal.png";
+const creaLogoVertical = "/bootcamp/crea-rn/logo-hub-crea.png";
 const professorImage = content.templateAssets.mentor;
 const companyLogos = [
   { src: logoGrupoPrimo.src, alt: "Grupo Primo" },
@@ -118,9 +118,11 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
     <header class="crea-nav">
       <div class="crea-container crea-nav__inner">
         <a class="crea-brand" href="/" aria-label="Voltar para a pagina inicial da Amplify">
-          <img src={logoSrc} alt="Amplify" width="120" height="24" />
-          <span></span>
-          <img src={creaLogo} alt="CREA-RN" width="236" height="60" />
+          <img class="crea-brand__amplify" src={logoSrc} alt="Amplify" width="120" height="24" />
+          <span class="crea-brand__divider"></span>
+          <span class="crea-logo-chip crea-logo-chip--nav">
+            <img src={creaLogoHorizontal} alt="HUB CREA-RN" width="320" height="122" />
+          </span>
         </a>
         <nav aria-label="Navegação principal">
           <a href="#programacao">Programação</a>
@@ -380,7 +382,9 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
 
     <section class="crea-final" aria-label="Inscrição">
       <div class="crea-container">
-        <img src={creaLogoColor} alt="CREA-RN" width="200" height="50" loading="lazy" />
+        <span class="crea-logo-chip crea-logo-chip--final">
+          <img src={creaLogoVertical} alt="HUB CREA-RN" width="280" height="464" loading="lazy" />
+        </span>
         <h2>IA aplicada ao trabalho técnico, com método e responsabilidade.</h2>
         <p>25 de julho, das 09:00 às 18:00, no CREA-RN.</p>
         <div class="crea-actions crea-actions--center">
@@ -484,12 +488,17 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
   const symplaBadge = document.querySelector("[data-sympla-badge]");
   if (symplaBadge) {
     fetch(`/api/bootcamp-status?slug=${encodeURIComponent(slug)}`)
-      .then((response) => response.json())
+      .then((response) => {
+        const contentType = response.headers.get("content-type") || "";
+        return response.ok && contentType.includes("application/json") ? response.json() : null;
+      })
       .then((payload) => {
+        if (!payload) return;
         const label = payload?.availability?.label || "Inscrições via Sympla";
         symplaBadge.textContent = payload?.availability?.isAvailable ? "Inscrições abertas" : label;
         symplaBadge.dataset.available = payload?.availability?.isAvailable ? "true" : "false";
-      });
+      })
+      .catch(() => {});
   }
 
   document.querySelectorAll("[data-bootcamp-form]").forEach((form) => {
@@ -636,20 +645,39 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
     text-decoration: none;
   }
 
-  .crea-brand img:first-child {
+  .crea-brand__amplify {
     width: auto;
     height: 22px;
   }
 
-  .crea-brand img:last-child {
-    width: auto;
-    height: 30px;
-  }
-
-  .crea-brand span {
+  .crea-brand__divider {
     width: 1px;
     height: 28px;
     background: var(--line);
+  }
+
+  .crea-logo-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.96);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  }
+
+  .crea-logo-chip img {
+    display: block;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .crea-logo-chip--nav {
+    padding: 6px 9px;
+  }
+
+  .crea-logo-chip--nav img {
+    height: 36px;
   }
 
   .crea-nav nav {
@@ -1282,11 +1310,14 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
       var(--surface-2);
   }
 
-  .crea-final img {
-    width: auto;
-    height: 50px;
+  .crea-logo-chip--final {
     margin-bottom: 32px;
-    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.28));
+    padding: 18px 22px;
+  }
+
+  .crea-logo-chip--final img {
+    width: min(170px, 52vw);
+    height: auto;
   }
 
   .crea-final h2,
@@ -1368,11 +1399,15 @@ const pageDescription = "Imersão presencial no CREA-RN para engenheiros, empres
       display: none;
     }
 
-    .crea-brand img:first-child {
+    .crea-brand__amplify {
       height: 18px;
     }
 
-    .crea-brand img:last-child {
+    .crea-logo-chip--nav {
+      padding: 5px 7px;
+    }
+
+    .crea-logo-chip--nav img {
       height: 24px;
     }
 
