@@ -1,14 +1,16 @@
 ---
 import PageShell from "@/layouts/PageShell.astro";
 import logoAmplify from "@/assets/logo-amplify-branco.png";
-import { getBootcampEventBySlug } from "@/lib/bootcamp-events.js";
+import { getBootcampEventBySlug, getCanonicalBootcampSlug } from "@/lib/bootcamp-events.js";
 import { BOOTCAMP_VERSION_LABELS } from "@/lib/bootcamp-natal-content.js";
 
 export const prerender = false;
 
 const { slug = "" } = Astro.params;
-if (slug === "natal-25-07-26") {
-  return Astro.redirect("/agenda/natal-23-07-26", 301);
+const canonicalSlug = getCanonicalBootcampSlug(slug);
+
+if (slug !== canonicalSlug) {
+  return Astro.redirect(`/agenda/${canonicalSlug}`, 301);
 }
 
 const event = getBootcampEventBySlug(slug);

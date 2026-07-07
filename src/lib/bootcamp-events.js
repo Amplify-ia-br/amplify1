@@ -1,3 +1,8 @@
+const BOOTCAMP_SLUG_ALIASES = {
+  "natal-23-07-26": "natal-24-07-26",
+  "natal-25-07-26": "natal-24-07-26",
+};
+
 export const BOOTCAMP_EVENTS = [
   {
     slug: "cidade-dd-mm-aa",
@@ -28,7 +33,7 @@ export const BOOTCAMP_EVENTS = [
     localContext: "o ritmo de negócios, tecnologia e serviços de São Paulo",
   },
   {
-    slug: "natal-23-07-26",
+    slug: "natal-24-07-26",
     city: "Natal",
     date: "24/07/26",
     venue: "Arena das Dunas",
@@ -61,9 +66,14 @@ function clean(value) {
   return String(value || "").trim();
 }
 
-export function getBootcampEventBySlug(slug) {
+export function getCanonicalBootcampSlug(slug) {
   const cleanSlug = clean(slug).toLowerCase();
-  return BOOTCAMP_EVENTS.find((event) => event.slug === cleanSlug) || null;
+  return BOOTCAMP_SLUG_ALIASES[cleanSlug] || cleanSlug;
+}
+
+export function getBootcampEventBySlug(slug) {
+  const canonicalSlug = getCanonicalBootcampSlug(slug);
+  return BOOTCAMP_EVENTS.find((event) => event.slug === canonicalSlug) || null;
 }
 
 export function getBootcampCheckoutUrl(event, currentUrl) {

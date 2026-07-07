@@ -9,7 +9,7 @@ import logoGouvea from "@/assets/logos/logo-gouvea.png";
 import logoTecfil from "@/assets/logos/logo-tecfil.png";
 import logoUfg from "@/assets/logos/logo-ufg.png";
 import logoCreaPr from "@/assets/logos/logo-crea-pr.png";
-import { getBootcampCheckoutUrl, getBootcampEventBySlug } from "@/lib/bootcamp-events.js";
+import { getBootcampCheckoutUrl, getBootcampEventBySlug, getCanonicalBootcampSlug } from "@/lib/bootcamp-events.js";
 import {
   BOOTCAMP_NATAL,
   BOOTCAMP_VERSION_LABELS,
@@ -19,11 +19,10 @@ import {
 export const prerender = false;
 
 const { slug = "", version = "" } = Astro.params;
-const legacyNatalSlug = "natal-25-07-26";
-const canonicalNatalSlug = "natal-23-07-26";
+const canonicalSlug = getCanonicalBootcampSlug(slug);
 
-if (slug === legacyNatalSlug && version) {
-  return Astro.redirect(`/agenda/${canonicalNatalSlug}/${version}`, 301);
+if (slug !== canonicalSlug && version) {
+  return Astro.redirect(`/agenda/${canonicalSlug}/${version}`, 301);
 }
 
 const event = getBootcampEventBySlug(slug);
@@ -147,12 +146,12 @@ const cityFaq = [
   },
 ];
 const pageTitle = event && isValidVersion
-  ? event.slug === "natal-23-07-26" && activeVersion === "cidade"
+  ? event.slug === "natal-24-07-26" && activeVersion === "cidade"
     ? "Bootcamp IA para Negócios em Natal | Amplify"
     : `${BOOTCAMP_VERSION_LABELS[activeVersion]} | Bootcamp ${event.city} | Amplify`
   : "Bootcamp não encontrado | Amplify";
 const pageDescription = event && isValidVersion
-  ? event.slug === "natal-23-07-26" && activeVersion === "cidade"
+  ? event.slug === "natal-24-07-26" && activeVersion === "cidade"
     ? "Dia 24/07, uma imersão presencial para líderes e profissionais que querem aplicar IA com método, clareza e resultado."
     : `Mockup ${BOOTCAMP_VERSION_LABELS[activeVersion]} da landing page do Bootcamp Amplify em ${event.city}, no dia ${event.date}.`
   : "Turma de Bootcamp não encontrada.";
