@@ -1,6 +1,7 @@
 const BOOTCAMP_SLUG_ALIASES = {
   "natal-23-07-26": "natal-24-07-26",
   "natal-25-07-26": "natal-24-07-26",
+  "crea-rn-25-07-26": "crea-rn-24-08-26",
 };
 
 export const BOOTCAMP_EVENTS = [
@@ -47,16 +48,16 @@ export const BOOTCAMP_EVENTS = [
     localContext: "a energia de uma cidade costeira que conecta turismo, serviços, criatividade e novos negócios",
   },
   {
-    slug: "crea-rn-25-07-26",
+    slug: "crea-rn-24-08-26",
     city: "Natal",
-    date: "25/07/26",
+    date: "24/08/26",
     venue: "CREA-RN",
-    address: "Av. Senador Salgado Filho, 1840, Lagoa Nova - CEP: 59056-000",
+    address: "Av. Sen. Salgado Filho, 1840 - Lagoa Nova, Natal - RN",
     startTime: "09:00",
     endTime: "18:00",
-    symplaEventId: "3468714",
-    symplaCheckoutUrl: "https://www.sympla.com.br/evento/bootcamp-ia-para-engenharia-crea-rn/3468714",
-    whatsappGroupUrl: "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20patroc%C3%ADnio%20ou%20plano%20corporativo%20para%20o%20Bootcamp%20IA%20para%20os%20Desafios%20de%20Engenharia%20em%20parceria%20com%20o%20CREA-RN.",
+    symplaEventId: "",
+    symplaCheckoutUrl: "",
+    whatsappGroupUrl: "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20o%20Bootcamp%20Engineering%20AI%20Experience%20Natal%20no%20CREA-RN.",
     version: "branding",
     localContext: "o contexto técnico de engenharia, agronomia, geociências, fiscalização, empresas registradas e responsabilidade profissional no Rio Grande do Norte",
   },

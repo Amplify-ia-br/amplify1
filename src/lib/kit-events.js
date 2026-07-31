@@ -123,6 +123,15 @@ const NATIVE_FOLLOWUP_SEQUENCES = {
 };
 
 const BOOTCAMP_SEQUENCE_ENV_BY_SLUG = {
+  "crea-rn-24-08-26": {
+    bootcamp_interest: "KIT_BOOTCAMP_CREA_RN_INTEREST_SEQUENCE_ID",
+    bootcamp_checkout_abandoned: "KIT_BOOTCAMP_CREA_RN_CHECKOUT_ABANDONED_SEQUENCE_ID",
+    bootcamp_corporate: "KIT_BOOTCAMP_CREA_RN_CORPORATE_SEQUENCE_ID",
+    bootcamp_sponsor: "KIT_BOOTCAMP_CREA_RN_SPONSOR_SEQUENCE_ID",
+    bootcamp_confirmed: "KIT_BOOTCAMP_CREA_RN_CONFIRMED_SEQUENCE_ID",
+    bootcamp_attended: "KIT_BOOTCAMP_CREA_RN_ATTENDED_SEQUENCE_ID",
+    bootcamp_missed: "KIT_BOOTCAMP_CREA_RN_MISSED_SEQUENCE_ID",
+  },
   "crea-rn-25-07-26": {
     bootcamp_interest: "KIT_BOOTCAMP_CREA_RN_INTEREST_SEQUENCE_ID",
     bootcamp_checkout_abandoned: "KIT_BOOTCAMP_CREA_RN_CHECKOUT_ABANDONED_SEQUENCE_ID",
