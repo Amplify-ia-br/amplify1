@@ -61,6 +61,20 @@ export const BOOTCAMP_EVENTS = [
     version: "branding",
     localContext: "o contexto técnico de engenharia, agronomia, geociências, fiscalização, empresas registradas e responsabilidade profissional no Rio Grande do Norte",
   },
+  {
+    slug: "crc-rn-25-08-26",
+    city: "Natal",
+    date: "25/08/26",
+    venue: "CRC-RN",
+    address: "Avenida Nevaldo Rocha (antiga Bernardo Vieira), 4545, Bairro Tirol, Natal - RN",
+    startTime: "A confirmar",
+    endTime: "",
+    symplaEventId: "",
+    symplaCheckoutUrl: "",
+    whatsappGroupUrl: "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20o%20Bootcamp%20IA%20para%20Neg%C3%B3cios%20Cont%C3%A1beis%20no%20CRC-RN.",
+    version: "branding",
+    localContext: "o contexto de escritórios contábeis, departamentos financeiros, rotinas fiscais, atendimento a clientes e gestão contábil no Rio Grande do Norte",
+  },
 ];
 
 function clean(value) {

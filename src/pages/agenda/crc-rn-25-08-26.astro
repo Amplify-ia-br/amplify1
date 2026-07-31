@@ -1,0 +1,1492 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import logoAmplify from "@/assets/logo-amplify-branco.png";
+import treinamentoPresencial from "@/assets/optimized/treinamento-presencial.webp";
+import forumPalestra from "@/assets/optimized/forum-palestra.webp";
+import { getBootcampCheckoutUrl, getBootcampEventBySlug } from "@/lib/bootcamp-events.js";
+import { BOOTCAMP_NATAL } from "@/lib/bootcamp-natal-content.js";
+
+export const prerender = false;
+
+const event = getBootcampEventBySlug("crc-rn-25-08-26");
+const content = BOOTCAMP_NATAL;
+const checkoutUrl = event ? getBootcampCheckoutUrl(event, Astro.url) : "";
+const eventTitle = "Bootcamp IA para Negócios Contábeis";
+const eventLongDate = "25 de agosto de 2026";
+const eventAddress = "Avenida Nevaldo Rocha (antiga Bernardo Vieira), 4545, Bairro Tirol, Natal - RN";
+const eventTimeLabel = "Horário a confirmar";
+const logoSrc = logoAmplify.src;
+const heroSrc = treinamentoPresencial.src;
+const secondaryImage = forumPalestra.src;
+const partnerName = "CRC-RN";
+const partnerDescriptor = "Conselho Regional de Contabilidade do RN";
+const partnerLogoSrc = "/bootcamp/crc-rn/logo-crc-rn-white.png";
+const professorImage = content.templateAssets.mentor;
+const companyNames = ["Grupo Primo", "Amcham", "Gouvêa", "Tecfil", "UFG", "CREA-PR"];
+
+const mentorHighlights = [
+  {
+    title: "Pesquisa",
+    copy: "IA aplicada ao aprendizado organizacional, estratégia e performance em empresas de alto crescimento.",
+  },
+  {
+    title: "Implantação",
+    copy: "Projetos de data science e IA conectados a receita, produto, analytics, go-to-market e operação comercial.",
+  },
+  {
+    title: "Formação",
+    copy: "Mestre pela Fundação Dom Cabral, doutorando pela Burgundy School of Business, Educador de IA e Head de Soluções da Amplify.",
+  },
+];
+
+const roles = [
+  "Contador(a)",
+  "Empresário(a) contábil",
+  "Gestão de escritório contábil",
+  "Fiscal / tributário",
+  "Departamento pessoal",
+  "Financeiro / controladoria",
+  "Consultoria ou BPO financeiro",
+  "Estudante ou recém-formado",
+];
+
+const modules = [
+  {
+    title: "IA para produtividade contábil",
+    copy: "Como usar IA para acelerar leitura, síntese, conferência, comunicação com clientes, organização de tarefas e rotinas de escritório contábil sem perder critério profissional.",
+  },
+  {
+    title: "Documentos, obrigações e atendimento",
+    copy: "Como estruturar contexto, revisar respostas, preparar comunicados, apoiar análise de documentos e definir limites claros para usar IA com responsabilidade.",
+  },
+  {
+    title: "Rotinas fiscais, financeiras e consultivas",
+    copy: "Exemplos aplicados a apuração, organização fiscal, relatórios gerenciais, BPO financeiro, planejamento de tarefas, checklists, atendimento e gestão de pendências.",
+  },
+  {
+    title: "Da ferramenta ao método no escritório",
+    copy: "Um roteiro para escolher casos de uso, priorizar ganhos reais, padronizar prompts e voltar com próximos passos aplicáveis em escritórios, equipes e rotinas contábeis.",
+  },
+];
+
+const audiences = [
+  "Contadores e contadoras que querem usar IA com produtividade, clareza e responsabilidade.",
+  "Escritórios contábeis que precisam qualificar equipes e padronizar rotinas de atendimento, análise e entrega.",
+  "Profissionais de fiscal, tributário, departamento pessoal, financeiro e controladoria com alto volume de documentos e prazos.",
+  "Gestores e empresários contábeis que precisam decidir onde a IA entra no processo sem criar risco operacional.",
+  "Estudantes e recém-formados que querem desenvolver repertório prático para o mercado contábil.",
+];
+
+const faq = [
+  {
+    question: "Preciso saber programar?",
+    answer: "Não. O Bootcamp foi desenhado para profissionais contábeis que precisam aplicar IA no trabalho, mesmo sem formação em programação.",
+  },
+  {
+    question: "A IA substitui o contador?",
+    answer: "Não. A proposta é mostrar como usar IA como apoio ao raciocínio, documentação, atendimento e produtividade, preservando responsabilidade profissional, revisão humana e critério contábil.",
+  },
+  {
+    question: "O evento será pago?",
+    answer: "Os detalhes de inscrição serão enviados pelos canais oficiais da Amplify. Use a página para receber as próximas informações sobre a turma.",
+  },
+  {
+    question: "Empresas podem levar equipes?",
+    answer: "Sim. O formato pode ser levado para escritórios, equipes financeiras e empresas contábeis. O formulário da página gera uma mensagem personalizada para falar com Adriano no WhatsApp.",
+  },
+  {
+    question: "Haverá possibilidade de patrocínio?",
+    answer: "Sim. A página mantém contato para marcas que queiram apoiar novas edições, ações institucionais ou turmas corporativas.",
+  },
+];
+
+const pageTitle = `${eventTitle} | CRC-RN + Amplify`;
+const pageDescription = `${eventTitle}: imersão presencial no CRC-RN, em Natal, para profissionais contábeis aplicarem IA com método, produtividade e responsabilidade.`;
+---
+
+<PageShell title={pageTitle} description={pageDescription} chatbot={false}>
+  <main class="crea-lp" data-bootcamp-slug={event.slug} data-bootcamp-version="crc-rn">
+    <header class="crea-nav">
+      <div class="crea-container crea-nav__inner">
+        <a class="crea-brand" href="/" aria-label="Voltar para a pagina inicial da Amplify">
+          <img class="crea-brand__amplify" src={logoSrc} alt="Amplify" width="120" height="24" />
+          <span class="crea-brand__divider"></span>
+          <span class="crea-logo-chip crea-logo-chip--nav">
+            <img class="crc-logo crc-logo--nav" src={partnerLogoSrc} alt={`${partnerName} - ${partnerDescriptor}`} width="1414" height="456" />
+          </span>
+        </a>
+        <nav aria-label="Navegação principal">
+          <a href="#programacao">Programação</a>
+          <a href="#inscricao">Inscrição</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="crea-hero" aria-labelledby="crea-title">
+      <img class="crea-hero__photo" src={heroSrc} alt="" width="1280" height="720" loading="eager" />
+      <div class="crea-hero__scrim"></div>
+      <div class="crea-blueprint" aria-hidden="true"></div>
+      <div class="crea-container crea-hero__inner">
+        <p class="crea-label">CRC-RN + Amplify · Natal · {eventLongDate}</p>
+        <h1 id="crea-title">{eventTitle}</h1>
+        <p>
+          Uma experiência presencial para profissionais contábeis aplicarem inteligência artificial
+          em atendimento, documentos, rotinas fiscais, decisões gerenciais e crescimento do escritório
+          com método, produtividade e responsabilidade. Dia {eventLongDate}, no CRC-RN, em Natal.
+        </p>
+        <div class="crea-actions">
+          <a class="crea-button crea-button--primary" href="#inscricao">Fazer inscrição</a>
+          <a class="crea-button crea-button--secondary" href="#programacao">Ver programação</a>
+          <a class="crea-button crea-button--ghost" href="#patrocinio">Conversar sobre parceria</a>
+        </div>
+        <div class="crea-meta" aria-label="Resumo do evento">
+          <span>CRC-RN</span>
+          <span>{eventAddress}</span>
+          <span>{eventTimeLabel}</span>
+          <span>Inscrições em breve</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="crea-section crea-split" aria-labelledby="why-title">
+      <div>
+        <p class="crea-label">Por que no CRC-RN</p>
+        <h2 id="why-title">IA precisa entrar no negócio contábil sem desmontar o critério profissional.</h2>
+      </div>
+      <div class="crea-copy">
+        <p>
+          Escritórios e equipes contábeis lidam com documentos, obrigações, prazos, atendimento,
+          conferência, orientação a clientes e decisões que não aceitam improviso.
+        </p>
+        <p>
+          Por isso, este Bootcamp não vende IA como atalho mágico. A proposta é ensinar um método
+          para usar IA como apoio ao raciocínio, à organização e à execução, mantendo revisão humana,
+          rastreabilidade e responsabilidade profissional.
+        </p>
+        <div class="crea-note">Pensado para profissionais, escritórios e empresas do ecossistema contábil do RN.</div>
+      </div>
+    </section>
+
+    <section id="programacao" class="crea-section" aria-labelledby="program-title">
+      <div class="crea-container">
+        <div class="crea-section__head">
+          <p class="crea-label">Programação</p>
+          <h2 id="program-title">Quatro blocos práticos para aplicar IA em negócios contábeis.</h2>
+        </div>
+        <div class="crea-program">
+          {modules.map((module, index) => (
+            <article>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <div>
+                <h3>{module.title}</h3>
+                <p>{module.copy}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div class="crea-program-cta">
+          <p>Tem interesse, mas quer ver a programação completa?</p>
+          <a class="crea-button crea-button--primary" href="#programacao-completa">Receber programação completa</a>
+        </div>
+      </div>
+    </section>
+
+    <section id="programacao-completa" class="crea-section crea-section--surface" aria-labelledby="conversion-title">
+      <div class="crea-container crea-conversion">
+        <div>
+          <p class="crea-label">Programação completa</p>
+          <h2 id="conversion-title">Receba o roteiro completo antes de decidir.</h2>
+          <p>Enviamos detalhes da imersão, formato, local e próximos passos para você avaliar a participação na turma do CRC-RN.</p>
+        </div>
+        <form class="crea-form" data-bootcamp-form data-success-message="Programação solicitada. Enviaremos a programação completa e os próximos passos por email.">
+          <input type="hidden" name="eventName" value="bootcamp_program_requested" />
+          <input type="hidden" name="entryPoint" value="programacao_completa_crc_rn_25_08" />
+          <input type="hidden" name="intent" value="receber_programacao_completa" />
+          <input type="hidden" name="sourceCta" value="receber_programacao_completa_crc_rn" />
+          <label>Nome<input name="name" type="text" autocomplete="name" required placeholder="Seu nome" /></label>
+          <label>Email<input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com" /></label>
+          <label>Perfil
+            <select name="role" required>
+              <option value="">Selecione</option>
+              {roles.map((role) => <option value={role}>{role}</option>)}
+            </select>
+          </label>
+          <button class="crea-button crea-button--primary" type="submit">Receber programação completa</button>
+          <p class="crea-form-status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="crea-section crea-section--surface" aria-labelledby="audience-title">
+      <div class="crea-container">
+        <div class="crea-section__head">
+          <p class="crea-label">Para quem é</p>
+          <h2 id="audience-title">Um evento para quem responde por entrega, prazo e relacionamento contábil.</h2>
+        </div>
+        <div class="crea-audience">
+          {audiences.map((item) => <p><span>→</span>{item}</p>)}
+        </div>
+      </div>
+    </section>
+
+    <section class="crea-section crea-experience" aria-labelledby="included-title">
+      <img src={secondaryImage} alt="Treinamento presencial da Amplify" width="720" height="480" loading="eager" />
+      <div>
+        <p class="crea-label">O que está incluído</p>
+        <h2 id="included-title">O formato da experiência presencial no CRC-RN.</h2>
+        <ul>
+          <li>Um dia de imersão prática presencial</li>
+          <li>Exercícios aplicados a rotinas fiscais, financeiras, atendimento e gestão contábil</li>
+          <li>Certificado digital de participação</li>
+          <li>Formato reaplicável para turmas abertas, equipes e ações institucionais</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="crea-section crea-section--surface crea-mentor" aria-labelledby="mentor-title">
+      <div class="crea-mentor__profile">
+        <img class="crea-mentor__photo" src={professorImage} alt="Leonardo Camacho" width="720" height="900" loading="eager" />
+        <div class="crea-mentor__content">
+          <p class="crea-label">Quem será seu professor?</p>
+          <h2 id="mentor-title">Leonardo Camacho</h2>
+          <strong>Educador de IA e Head de Soluções da Amplify</strong>
+          <div class="crea-mentor__bio">
+            <p>{content.mentor.bio}</p>
+            <p>{content.mentor.application}</p>
+          </div>
+          <div class="crea-mentor__proof">
+            {mentorHighlights.map((item) => (
+              <article>
+                <h3>{item.title}</h3>
+                <p>{item.copy}</p>
+              </article>
+            ))}
+          </div>
+          <p class="crea-mentor__quote">Na contabilidade, IA só vira ganho quando respeita método, contexto e responsabilidade.</p>
+        </div>
+      </div>
+      <div class="crea-client-row" aria-label="Empresas que confiam na Amplify">
+        <span>Empresas e instituições que confiam na Amplify</span>
+        <div>
+          {companyNames.map((client) => (
+            <span class="crea-client-chip">{client}</span>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="inscricao" class="crea-section" aria-labelledby="offer-title">
+      <div class="crea-container">
+        <div class="crea-section__head">
+          <p class="crea-label">Inscrição, equipes e parceria</p>
+          <h2 id="offer-title">Escolha como participar do {eventTitle}.</h2>
+          <p>Faça inscrição na turma de Natal, leve a experiência para sua equipe ou associe sua marca a uma formação prática para profissionais contábeis.</p>
+        </div>
+        <div class="crea-offer-grid">
+          <article class="crea-card crea-card--highlight crea-card--purchase">
+            <div class="crea-card__intro">
+              <span class="crea-badge">25/08 em Natal</span>
+              <h3>Participação individual</h3>
+              <p>Entre na lista de interesse para receber informações sobre inscrição e próximos passos da turma presencial no CRC-RN.</p>
+            </div>
+            <div class="crea-card__body">
+              <ul class="crea-card-list">
+                <li>Relatórios, comunicados e rotinas contábeis com IA</li>
+                <li>Certificado digital</li>
+                <li>Aplicações para fiscal, financeiro, atendimento e gestão de escritório</li>
+              </ul>
+              <p class="crea-card-note">Assim que o canal de inscrição estiver disponível, os interessados receberão a orientação pelos canais oficiais.</p>
+            </div>
+            <div class="crea-card__action">
+              <a class="crea-button crea-button--primary" href="#programacao-completa">Quero receber informações</a>
+            </div>
+          </article>
+
+          <article class="crea-card crea-card--form">
+            <div class="crea-card__intro">
+              <span class="crea-badge crea-badge--outline">Equipes contábeis</span>
+              <h3>Plano corporativo</h3>
+              <p>Leve a equipe para sair com uma linguagem comum de IA, casos de uso priorizados e próximos passos aplicáveis ao trabalho contábil.</p>
+            </div>
+            <form class="crea-form crea-form--compact" data-bootcamp-form data-whatsapp-form data-whatsapp-kind="corporate" data-success-message="Abrindo WhatsApp com a mensagem pronta.">
+              <input type="hidden" name="eventName" value="bootcamp_corporate_lead" />
+              <input type="hidden" name="entryPoint" value="plano_corporativo_crc_rn" />
+              <input type="hidden" name="intent" value="levar_para_equipe" />
+              <input type="hidden" name="sourceCta" value="plano_corporativo_crc_rn" />
+              <label>Nome<input name="name" type="text" autocomplete="name" required placeholder="Seu nome" /></label>
+              <label>Email<input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com" /></label>
+              <label>Empresa<input name="company" type="text" autocomplete="organization" required placeholder="Nome da empresa" /></label>
+              <label>Quantas pessoas?
+                <select name="teamSize" required>
+                  <option value="">Selecione</option>
+                  <option value="5-9">5 a 9</option>
+                  <option value="10-19">10 a 19</option>
+                  <option value="20+">20+</option>
+                </select>
+              </label>
+              <button class="crea-button crea-button--primary" type="submit">Pedir condição corporativa</button>
+              <p class="crea-form-status" role="status" aria-live="polite"></p>
+            </form>
+          </article>
+
+          <article class="crea-card crea-card--form" id="patrocinio">
+            <div class="crea-card__intro">
+              <span class="crea-badge crea-badge--outline">Marca parceira</span>
+              <h3>Patrocínio</h3>
+              <p>Associe sua marca a uma agenda prática de inovação para contadores, escritórios, empresas e lideranças financeiras.</p>
+            </div>
+            <form class="crea-form crea-form--compact" data-bootcamp-form data-whatsapp-form data-whatsapp-kind="sponsor" data-success-message="Abrindo WhatsApp com a mensagem pronta.">
+              <input type="hidden" name="eventName" value="bootcamp_sponsor_lead" />
+              <input type="hidden" name="entryPoint" value="patrocinio_crc_rn" />
+              <input type="hidden" name="intent" value="patrocinio" />
+              <input type="hidden" name="sourceCta" value="patrocinio_crc_rn" />
+              <label>Nome<input name="name" type="text" autocomplete="name" required placeholder="Seu nome" /></label>
+              <label>Email<input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com" /></label>
+              <label>Empresa<input name="company" type="text" autocomplete="organization" required placeholder="Nome da empresa" /></label>
+              <label>Interesse
+                <select name="sponsorInterest" required>
+                  <option value="">Selecione</option>
+                  <option value="patrocinio">Patrocínio</option>
+                  <option value="apoio_institucional">Apoio institucional</option>
+                  <option value="plano_corporativo">Plano corporativo</option>
+                </select>
+              </label>
+              <button class="crea-button crea-button--secondary" type="submit">Conversar sobre patrocínio</button>
+              <p class="crea-form-status" role="status" aria-live="polite"></p>
+            </form>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="crea-section crea-faq" aria-labelledby="faq-title">
+      <div class="crea-container">
+        <div class="crea-section__head">
+          <p class="crea-label">Perguntas frequentes</p>
+          <h2 id="faq-title">O essencial antes de decidir.</h2>
+        </div>
+        <div class="crea-faq__list">
+          {faq.map((item) => (
+            <details>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="crea-final" aria-label="Inscrição">
+      <div class="crea-container">
+        <span class="crea-logo-chip crea-logo-chip--final">
+          <img class="crc-logo crc-logo--final" src={partnerLogoSrc} alt={`${partnerName} - ${partnerDescriptor}`} width="1414" height="456" loading="lazy" />
+        </span>
+        <h2>IA aplicada ao negócio contábil, com método e responsabilidade.</h2>
+        <p>{eventLongDate}, {eventTimeLabel.toLowerCase()}, no CRC-RN. {eventAddress}.</p>
+        <div class="crea-actions crea-actions--center">
+          <a class="crea-button crea-button--primary" href="#inscricao">Fazer inscrição</a>
+          <a class="crea-button crea-button--secondary" href="#patrocinio">Conversar sobre parceria</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="crea-footer">
+      <div class="crea-container">
+        <img src={logoSrc} alt="Amplify" width="120" height="24" />
+        <span>Parceria CRC-RN + Amplify · {eventTitle}</span>
+      </div>
+    </footer>
+  </main>
+</PageShell>
+
+<script is:inline define:vars={{ slug: event.slug, checkoutUrl }}>
+  const leadStorageKey = `bootcamp:${slug}:lead`;
+
+  function getStoredLead() {
+    try {
+      return JSON.parse(window.localStorage.getItem(leadStorageKey) || "{}");
+    } catch (_error) {
+      return {};
+    }
+  }
+
+  function storeLead(fields) {
+    try {
+      window.localStorage.setItem(leadStorageKey, JSON.stringify({ ...getStoredLead(), ...fields }));
+    } catch (_error) {}
+  }
+
+  function getTicketLabel(value) {
+    return ({ "5-9": "5 a 9", "10-19": "10 a 19", "20+": "20 ou mais" })[value] || value || "mais de 5";
+  }
+
+  function getWhatsappPayload(payload, kind) {
+    const name = String(payload.name || "").trim();
+    const company = String(payload.company || "").trim();
+    const email = String(payload.email || "").trim();
+    const identity = [name, company ? `da empresa ${company}` : ""].filter(Boolean).join(", ");
+    const teamSize = getTicketLabel(String(payload.teamSize || "").trim());
+    const base = kind === "sponsor"
+      ? "gostaria de falar sobre patrocínio para o Bootcamp IA para Negócios Contábeis em parceria com o CRC-RN."
+      : `gostaria de ver condições para ${teamSize} inscrições corporativas para o Bootcamp IA para Negócios Contábeis em parceria com o CRC-RN.`;
+    const message = [
+      "Olá Adriano,",
+      identity ? `eu sou ${identity}` : "eu gostaria de falar com você",
+      `e ${base}`,
+      email ? `Meu email é ${email}.` : "",
+    ].filter(Boolean).join(" ");
+
+    return {
+      message,
+      url: `https://wa.me/5511950350002?text=${encodeURIComponent(message)}`,
+    };
+  }
+
+  document.querySelectorAll("[data-bootcamp-form]").forEach((form) => {
+    const status = form.querySelector(".crea-form-status");
+    const button = form.querySelector("button[type='submit']");
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      const email = String(payload.email || "").trim().toLowerCase();
+      if (!email) return;
+
+      storeLead({
+        email,
+        name: payload.name,
+        company: payload.company,
+        role: payload.role,
+        teamSize: payload.teamSize,
+      });
+
+      if (status) status.textContent = "Enviando...";
+      if (button) button.disabled = true;
+
+      if (form.hasAttribute("data-whatsapp-form")) {
+        const whatsapp = getWhatsappPayload(payload, form.dataset.whatsappKind);
+        fetch("/api/bootcamp-track", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slug,
+            version: "crc-rn",
+            pageUrl: window.location.href,
+            checkoutUrl,
+            ...payload,
+            email,
+            whatsappMessage: whatsapp.message,
+            forceFetch: true,
+          }),
+          keepalive: true,
+        }).catch(() => {});
+        if (status) status.textContent = form.dataset.successMessage || "Abrindo WhatsApp...";
+        form.classList.add("is-submitted");
+        window.open(whatsapp.url, "_blank", "noopener,noreferrer");
+        if (button) button.disabled = false;
+        return;
+      }
+
+      try {
+        const response = await fetch("/api/bootcamp-track", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            slug,
+            version: "crc-rn",
+            pageUrl: window.location.href,
+            checkoutUrl,
+            ...payload,
+            email,
+            forceFetch: true,
+          }),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || result.error) throw new Error(result.error || "Não foi possível enviar sua solicitação.");
+        form.classList.add("is-submitted");
+        if (status) status.textContent = form.dataset.successMessage || "Recebido. Confira seu email.";
+      } catch (error) {
+        if (status) status.textContent = error.message || "Erro ao enviar. Tente novamente.";
+      } finally {
+        if (button) button.disabled = false;
+      }
+    });
+  });
+</script>
+
+<style>
+  :global(html),
+  :global(body) {
+    margin: 0;
+    background: #071119;
+    overflow-x: hidden;
+  }
+
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+  }
+
+  .crea-lp {
+    --nav-height: 62px;
+    --hero-fold-peek: 12px;
+    --bg: #071119;
+    --surface: #0d1a24;
+    --surface-2: #102534;
+    --line: rgba(255, 255, 255, 0.12);
+    --line-soft: rgba(255, 255, 255, 0.07);
+    --text: #f7fbff;
+    --muted: #a9b8c3;
+    --blue: #236fa1;
+    --blue-bright: #3aa0d8;
+    --yellow: #f2c84b;
+    --green: #2fb56d;
+    min-height: 100vh;
+    color: var(--text);
+    background:
+      radial-gradient(circle at 88% 12%, rgba(35, 111, 161, 0.32), transparent 28rem),
+      radial-gradient(circle at 10% 70%, rgba(47, 181, 109, 0.16), transparent 26rem),
+      var(--bg);
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .crea-container,
+  .crea-section {
+    width: min(1160px, calc(100% - 48px));
+    margin-inline: auto;
+  }
+
+  .crea-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(7, 17, 25, 0.82);
+    border-bottom: 1px solid var(--line-soft);
+    backdrop-filter: blur(14px);
+  }
+
+  .crea-nav__inner,
+  .crea-brand,
+  .crea-nav nav,
+  .crea-actions,
+  .crea-meta,
+  .crea-footer .crea-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .crea-nav__inner {
+    min-height: var(--nav-height);
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .crea-brand {
+    gap: 18px;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .crea-brand__amplify {
+    width: auto;
+    height: 22px;
+  }
+
+  .crea-brand__divider {
+    width: 1px;
+    height: 28px;
+    background: var(--line);
+  }
+
+  .crea-logo-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .crea-logo-chip img {
+    display: block;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 22px rgba(0, 0, 0, 0.28));
+  }
+
+  .crc-logo--nav {
+    max-width: 150px;
+  }
+
+  .crea-logo-chip--nav {
+    padding: 0;
+  }
+
+  .crea-logo-chip--nav img {
+    height: 36px;
+  }
+
+  .crea-nav nav {
+    gap: 12px;
+  }
+
+  .crea-nav nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .crea-nav nav a:last-child {
+    color: #061018;
+    background: var(--yellow);
+    border-radius: 10px;
+    padding: 10px 16px;
+  }
+
+  .crea-hero {
+    position: relative;
+    overflow: hidden;
+    min-height: calc(100svh - var(--nav-height) - var(--hero-fold-peek));
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .crea-hero__photo,
+  .crea-hero__scrim,
+  .crea-blueprint {
+    position: absolute;
+    inset: 0;
+  }
+
+  .crea-hero__photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.5) brightness(0.45);
+  }
+
+  .crea-hero__scrim {
+    background:
+      linear-gradient(to right, rgba(7, 17, 25, 0.98) 0%, rgba(7, 17, 25, 0.88) 48%, rgba(7, 17, 25, 0.5) 100%),
+      linear-gradient(to top, var(--bg) 0%, rgba(7, 17, 25, 0.2) 40%);
+  }
+
+  .crea-blueprint {
+    opacity: 0.22;
+    background-image:
+      linear-gradient(rgba(58, 160, 216, 0.22) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(58, 160, 216, 0.22) 1px, transparent 1px);
+    background-size: 56px 56px;
+    mask-image: linear-gradient(to right, black, transparent 78%);
+  }
+
+  .crea-hero__inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    min-height: calc(100svh - var(--nav-height) - var(--hero-fold-peek));
+    flex-direction: column;
+    justify-content: center;
+    padding: clamp(34px, 7svh, 68px) 0 clamp(26px, 5svh, 44px);
+  }
+
+  .crea-label {
+    margin: 0 0 14px;
+    color: var(--yellow);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .crea-hero h1 {
+    max-width: 780px;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(42px, 5.5vw, 76px);
+    font-weight: 800;
+    line-height: 0.96;
+    letter-spacing: 0;
+  }
+
+  .crea-hero__inner > p:not(.crea-label),
+  .crea-copy p,
+  .crea-section__head > p,
+  .crea-card p,
+  .crea-faq p,
+  .crea-mentor p {
+    color: var(--muted);
+    font-size: 17px;
+    line-height: 1.7;
+  }
+
+  .crea-hero__inner > p:not(.crea-label) {
+    max-width: 650px;
+    margin-top: 18px;
+    color: #e8f2f7;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .crea-actions {
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .crea-actions--center {
+    justify-content: center;
+  }
+
+  .crea-button {
+    display: inline-flex;
+    min-height: 52px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 24px;
+    color: var(--text);
+    text-decoration: none;
+    font-weight: 800;
+    transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+  }
+
+  .crea-hero .crea-button {
+    min-height: 46px;
+    padding: 12px 18px;
+    font-size: 14px;
+  }
+
+  .crea-button--primary {
+    color: #061018;
+    background: var(--yellow);
+    border-color: var(--yellow);
+  }
+
+  .crea-button--secondary {
+    color: var(--text);
+    background: rgba(35, 111, 161, 0.22);
+    border-color: rgba(58, 160, 216, 0.35);
+  }
+
+  .crea-button--ghost {
+    color: var(--muted);
+    border-color: transparent;
+  }
+
+  .crea-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 34px rgba(35, 111, 161, 0.26);
+  }
+
+  .crea-meta {
+    max-width: 820px;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin-top: 28px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+  }
+
+  .crea-meta span {
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  .crea-section {
+    padding: 110px 0;
+  }
+
+  .crea-section--surface {
+    width: 100%;
+    padding-inline: max(24px, calc((100vw - 1160px) / 2));
+    background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.015));
+    border-block: 1px solid var(--line-soft);
+  }
+
+  .crea-split,
+  .crea-experience,
+  .crea-mentor__profile,
+  .crea-conversion {
+    display: grid;
+    grid-template-columns: 5fr 6fr;
+    gap: 56px;
+    align-items: start;
+  }
+
+  .crea-mentor__profile {
+    align-items: stretch;
+  }
+
+  .crea-section h2,
+  .crea-final h2 {
+    max-width: 720px;
+    margin: 0;
+    color: var(--text);
+    font-size: clamp(30px, 4vw, 48px);
+    line-height: 1.08;
+    letter-spacing: 0;
+  }
+
+  .crea-copy p:first-child {
+    color: var(--text);
+    font-weight: 650;
+  }
+
+  .crea-note {
+    margin-top: 26px;
+    border: 1px solid rgba(242, 200, 75, 0.32);
+    border-radius: 12px;
+    padding: 18px 20px;
+    color: var(--text);
+    background: rgba(242, 200, 75, 0.08);
+    font-weight: 800;
+  }
+
+  .crea-form {
+    display: grid;
+    gap: 14px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 28px;
+    background: rgba(6, 16, 24, 0.72);
+  }
+
+  .crea-form--compact {
+    display: grid;
+    grid-template-rows: repeat(4, auto);
+    gap: 14px;
+    align-self: start;
+    min-height: 0;
+    margin-top: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+  }
+
+  .crea-form label {
+    display: grid;
+    gap: 7px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .crea-form input,
+  .crea-form select {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    min-height: 52px;
+    padding: 12px 15px;
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.06);
+    font: inherit;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+
+  .crea-form-status {
+    min-height: 22px;
+    margin: 0;
+    color: var(--yellow);
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  .crea-section__head {
+    max-width: 760px;
+    margin-bottom: 52px;
+  }
+
+  .crea-program article {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 34px;
+    border-top: 1px solid var(--line-soft);
+    padding: 34px 0;
+  }
+
+  .crea-program article:last-child {
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .crea-program span {
+    color: var(--blue-bright);
+    font-size: 44px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .crea-program h3,
+  .crea-card h3 {
+    margin: 0 0 10px;
+    color: var(--text);
+    font-size: 20px;
+  }
+
+  .crea-program p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .crea-program-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-top: 32px;
+    border: 1px solid rgba(242, 200, 75, 0.32);
+    border-radius: 14px;
+    padding: 20px 22px;
+    background: rgba(242, 200, 75, 0.08);
+  }
+
+  .crea-program-cta p {
+    margin: 0;
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.35;
+  }
+
+  .crea-program-cta .crea-button {
+    min-height: 46px;
+    padding: 12px 18px;
+    white-space: nowrap;
+  }
+
+  .crea-audience {
+    max-width: 850px;
+  }
+
+  .crea-audience p {
+    display: flex;
+    gap: 18px;
+    margin: 0;
+    border-top: 1px solid var(--line-soft);
+    padding: 18px 0;
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .crea-audience span {
+    color: var(--yellow);
+    font-weight: 900;
+  }
+
+  .crea-experience img,
+  .crea-mentor__photo {
+    width: 100%;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+    filter: saturate(0.78) brightness(0.82);
+  }
+
+  .crea-experience img {
+    aspect-ratio: 6 / 4;
+  }
+
+  .crea-mentor__photo {
+    height: 100%;
+    min-height: 100%;
+    aspect-ratio: auto;
+    object-position: 50% 18%;
+  }
+
+  .crea-experience ul,
+  .crea-card ul {
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .crea-experience li,
+  .crea-card li {
+    border-top: 1px solid var(--line-soft);
+    padding: 14px 0 14px 28px;
+    color: var(--text);
+    font-weight: 700;
+    position: relative;
+  }
+
+  .crea-experience li::before,
+  .crea-card li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    color: var(--green);
+  }
+
+  .crea-mentor__content .crea-label {
+    color: var(--muted);
+  }
+
+  .crea-mentor__content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+  }
+
+  .crea-mentor__content h2 {
+    margin-top: 18px;
+    font-size: clamp(34px, 4vw, 48px);
+    line-height: 1;
+  }
+
+  .crea-mentor strong {
+    display: block;
+    margin: 4px 0 18px;
+    color: #34d5c6;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .crea-mentor__bio {
+    display: grid;
+    gap: 14px;
+    max-width: 780px;
+  }
+
+  .crea-mentor__bio p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.62;
+  }
+
+  .crea-mentor__proof {
+    display: grid;
+    gap: 10px;
+    margin: 22px 0;
+  }
+
+  .crea-mentor__proof article {
+    border-top: 1px solid var(--line-soft);
+    border-left: 1px solid rgba(47, 181, 109, 0.42);
+    padding: 14px 0 14px 16px;
+    background: rgba(255, 255, 255, 0.018);
+  }
+
+  .crea-mentor__proof article:last-child {
+    border-bottom: 1px solid var(--line-soft);
+  }
+
+  .crea-mentor__proof h3 {
+    margin: 0 0 5px;
+    color: var(--yellow);
+    font-size: 10.5px;
+    font-weight: 900;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .crea-mentor__proof p {
+    margin: 0;
+    color: #e6edf1;
+    font-size: 13.5px;
+    line-height: 1.45;
+  }
+
+  .crea-mentor__quote {
+    margin: 0;
+    border-left: 2px solid var(--yellow);
+    padding-left: 16px;
+    color: var(--muted);
+    font-size: 14.5px;
+    font-style: italic;
+    line-height: 1.5;
+  }
+
+  .crea-client-row {
+    margin-top: 44px;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 24px;
+  }
+
+  .crea-client-row span {
+    display: block;
+    margin-bottom: 20px;
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .crea-client-row div {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    align-items: center;
+  }
+
+  .crea-client-chip {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--line-soft);
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #e8f2f7;
+    background: rgba(255, 255, 255, 0.055);
+    font-size: 13px;
+    font-weight: 850;
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .crea-offer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    align-items: stretch;
+  }
+
+  .crea-card {
+    position: relative;
+    display: grid;
+    grid-template-rows: 214px minmax(0, 1fr);
+    gap: 24px;
+    min-height: 690px;
+    padding-bottom: 128px;
+    border: 1px solid var(--line-soft);
+    border-radius: 14px;
+    padding-top: 28px;
+    padding-right: 28px;
+    padding-left: 28px;
+    background: var(--surface);
+  }
+
+  .crea-card--purchase {
+    grid-template-rows: 214px minmax(0, 1fr) auto;
+  }
+
+  .crea-card__intro {
+    display: grid;
+    grid-template-rows: 34px 38px 1fr;
+    gap: 18px;
+    align-items: start;
+    min-height: 0;
+  }
+
+  .crea-card h3 {
+    margin-top: 0;
+  }
+
+  .crea-card__intro p {
+    min-height: 0;
+    margin: 0;
+  }
+
+  .crea-card__body {
+    display: grid;
+    align-content: space-between;
+    gap: 18px;
+    min-height: 0;
+  }
+
+  .crea-card__action {
+    display: contents;
+  }
+
+  .crea-card__action::after {
+    content: none;
+  }
+
+  .crea-offer-grid .crea-card .crea-button {
+    position: absolute;
+    right: 28px;
+    bottom: 58px;
+    left: 28px;
+    width: auto;
+  }
+
+  .crea-offer-grid .crea-card .crea-form-status {
+    position: absolute;
+    right: 28px;
+    bottom: 28px;
+    left: 28px;
+    min-height: 18px;
+    margin: 0;
+  }
+
+  .crea-card-note {
+    margin: 0;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 18px;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 800;
+    line-height: 1.45;
+  }
+
+  .crea-card--highlight {
+    border-color: rgba(242, 200, 75, 0.38);
+  }
+
+  .crea-badge {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-height: 34px;
+    margin-bottom: 0;
+    border-radius: 999px;
+    padding: 8px 13px;
+    color: #061018;
+    background: var(--yellow);
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .crea-badge--outline {
+    color: var(--yellow);
+    border: 1px solid rgba(242, 200, 75, 0.38);
+    background: rgba(242, 200, 75, 0.08);
+  }
+
+  .crea-card-list {
+    align-self: start;
+    min-height: 0;
+  }
+
+  .crea-faq__list {
+    max-width: 820px;
+  }
+
+  .crea-faq details {
+    border-top: 1px solid var(--line-soft);
+    padding: 20px 0;
+  }
+
+  .crea-faq summary {
+    cursor: pointer;
+    color: var(--text);
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  .crea-final {
+    padding: 100px 0;
+    text-align: center;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(242, 200, 75, 0.16), transparent 34rem),
+      var(--surface-2);
+  }
+
+  .crea-logo-chip--final {
+    margin-bottom: 32px;
+    padding: 0;
+  }
+
+  .crea-logo-chip--final img {
+    width: min(270px, 68vw);
+    height: auto;
+  }
+
+  .crea-final h2,
+  .crea-final p {
+    margin-inline: auto;
+  }
+
+  .crea-final p {
+    max-width: 620px;
+    color: var(--muted);
+    font-size: 18px;
+    line-height: 1.7;
+  }
+
+  .crea-footer {
+    border-top: 1px solid var(--line-soft);
+    padding: 40px 0;
+  }
+
+  .crea-footer .crea-container {
+    justify-content: space-between;
+    gap: 20px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .crea-footer img {
+    width: auto;
+    height: 22px;
+  }
+
+  @media (max-width: 1024px) {
+    .crea-split,
+    .crea-experience,
+    .crea-mentor__profile,
+    .crea-conversion {
+      grid-template-columns: 1fr;
+    }
+
+    .crea-client-row div {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .crea-offer-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .crea-card,
+    .crea-card--purchase {
+      grid-template-rows: auto;
+      gap: 18px;
+      min-height: 0;
+      padding: 26px;
+    }
+
+    .crea-card__intro {
+      grid-template-rows: auto;
+      gap: 14px;
+    }
+
+    .crea-form--compact {
+      grid-template-rows: repeat(4, auto) auto minmax(0, 22px);
+    }
+
+    .crea-offer-grid .crea-card .crea-button,
+    .crea-offer-grid .crea-card .crea-form-status {
+      position: static;
+      width: 100%;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .crea-lp {
+      --nav-height: 56px;
+      --hero-fold-peek: 8px;
+    }
+
+    .crea-container,
+    .crea-section {
+      width: min(100% - 40px, 1160px);
+    }
+
+    .crea-nav nav a:first-child {
+      display: none;
+    }
+
+    .crea-brand__amplify {
+      height: 18px;
+    }
+
+    .crea-logo-chip--nav {
+      padding: 0;
+    }
+
+    .crea-logo-chip--nav img {
+      height: 22px;
+    }
+
+    .crc-logo--nav {
+      max-width: 96px;
+    }
+
+    .crea-brand {
+      gap: 12px;
+    }
+
+    .crea-hero {
+      min-height: calc(100svh - var(--nav-height) - var(--hero-fold-peek));
+    }
+
+    .crea-hero__inner {
+      min-height: calc(100svh - var(--nav-height) - var(--hero-fold-peek));
+      padding: 24px 0 22px;
+    }
+
+    .crea-hero h1 {
+      max-width: 340px;
+      font-size: clamp(31px, 10vw, 42px);
+      line-height: 0.98;
+    }
+
+    .crea-hero__inner > p:not(.crea-label) {
+      max-width: 340px;
+      margin-top: 14px;
+      font-size: 14px;
+      line-height: 1.42;
+    }
+
+    .crea-hero .crea-actions {
+      gap: 8px;
+      margin-top: 18px;
+    }
+
+    .crea-hero .crea-button {
+      min-height: 42px;
+      padding: 10px 14px;
+    }
+
+    .crea-meta {
+      gap: 6px 12px;
+      margin-top: 18px;
+      padding-top: 10px;
+    }
+
+    .crea-meta span {
+      font-size: 11px;
+    }
+
+    .crea-actions,
+    .crea-actions--center {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .crea-button {
+      width: 100%;
+    }
+
+    .crea-section {
+      padding: 76px 0;
+    }
+
+    .crea-section--surface {
+      padding-inline: 20px;
+    }
+
+    .crea-program article {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .crea-program-cta {
+      align-items: stretch;
+      flex-direction: column;
+      padding: 18px;
+    }
+
+    .crea-program-cta p {
+      font-size: 16px;
+    }
+
+    .crea-mentor__photo {
+      height: auto;
+      min-height: 0;
+      aspect-ratio: 3 / 4;
+    }
+
+    .crea-client-row div {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+</style>

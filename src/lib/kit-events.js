@@ -123,6 +123,15 @@ const NATIVE_FOLLOWUP_SEQUENCES = {
 };
 
 const BOOTCAMP_SEQUENCE_ENV_BY_SLUG = {
+  "crc-rn-25-08-26": {
+    bootcamp_interest: "KIT_BOOTCAMP_CRC_RN_INTEREST_SEQUENCE_ID",
+    bootcamp_checkout_abandoned: "KIT_BOOTCAMP_CRC_RN_CHECKOUT_ABANDONED_SEQUENCE_ID",
+    bootcamp_corporate: "KIT_BOOTCAMP_CRC_RN_CORPORATE_SEQUENCE_ID",
+    bootcamp_sponsor: "KIT_BOOTCAMP_CRC_RN_SPONSOR_SEQUENCE_ID",
+    bootcamp_confirmed: "KIT_BOOTCAMP_CRC_RN_CONFIRMED_SEQUENCE_ID",
+    bootcamp_attended: "KIT_BOOTCAMP_CRC_RN_ATTENDED_SEQUENCE_ID",
+    bootcamp_missed: "KIT_BOOTCAMP_CRC_RN_MISSED_SEQUENCE_ID",
+  },
   "crea-rn-24-08-26": {
     bootcamp_interest: "KIT_BOOTCAMP_CREA_RN_INTEREST_SEQUENCE_ID",
     bootcamp_checkout_abandoned: "KIT_BOOTCAMP_CREA_RN_CHECKOUT_ABANDONED_SEQUENCE_ID",
@@ -631,7 +640,7 @@ function buildCustomFields(payload = {}, lead = {}) {
     bootcamp_role: payload.role,
     bootcamp_company_size: payload.companySize || payload.company_size,
     bootcamp_team_size: payload.teamSize || payload.team_size,
-    bootcamp_interest_area: payload.interestArea || payload.interest_area,
+    bootcamp_interest_area: payload.interestArea || payload.interest_area || payload.sponsorInterest || payload.sponsor_interest,
     bootcamp_source_cta: payload.sourceCta || payload.source_cta,
     bootcamp_checkout_url: payload.checkoutUrl || payload.checkout_url,
     bootcamp_whatsapp_message: payload.whatsappMessage || payload.whatsapp_message,
