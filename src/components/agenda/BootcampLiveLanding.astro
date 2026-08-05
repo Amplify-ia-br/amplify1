@@ -1,0 +1,908 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import logoAmplify from "@/assets/logo-amplify-branco.png";
+import treinamentoPresencial from "@/assets/optimized/treinamento-presencial.webp";
+import forumPalestra from "@/assets/optimized/forum-palestra.webp";
+
+const { live } = Astro.props;
+
+if (!live) {
+  throw new Error("Bootcamp live event not found.");
+}
+
+const pageTitle = `Live gratuita: ${live.title} | ${live.partnerName} + Amplify`;
+const pageDescription = `Participe da live gratuita ${live.partnerName} + Amplify em ${live.dateLabel}, às ${live.timeLabel}, com Leonardo Camacho.`;
+const logoSrc = logoAmplify.src;
+const heroSrc = treinamentoPresencial.src;
+const secondaryImage = forumPalestra.src;
+const mentorImage = "/bootcamp/midias/leonardo-camacho-bootcamp-natal.jpg";
+---
+
+<PageShell title={pageTitle} description={pageDescription} chatbot={false}>
+  <main class={`live-lp live-lp--${live.partnerKey}`} data-live-slug={live.slug}>
+    <header class="live-nav">
+      <div class="live-container live-nav__inner">
+        <a class="live-brand" href="/" aria-label="Voltar para a página inicial da Amplify">
+          <img class="live-brand__amplify" src={logoSrc} alt="Amplify" width="120" height="24" />
+          <span class="live-brand__divider"></span>
+          <span class="live-logo-chip">
+            <img src={live.partnerLogoSrc} alt={`${live.partnerName} - ${live.partnerDescriptor}`} width="320" height="122" />
+          </span>
+        </a>
+        <nav aria-label="Navegação principal">
+          <a href="#live">Live</a>
+          <a href="#facilitador">Facilitador</a>
+          <a href="#bootcamp">Bootcamp</a>
+        </nav>
+      </div>
+    </header>
+
+    <section class="live-hero" aria-labelledby="live-title">
+      <img class="live-hero__photo" src={heroSrc} alt="" width="1280" height="720" loading="eager" />
+      <div class="live-hero__scrim"></div>
+      <div class="live-container live-hero__inner">
+        <div class="live-hero__copy">
+          <p class="live-meta-line">Live gratuita · {live.dateLabel} · {live.timeLabel} · {live.partnerName} + Amplify</p>
+          <h1 id="live-title">{live.title}</h1>
+          <p class="live-hero__lead">{live.subtitle}</p>
+          <div class="live-actions">
+            <a class="live-button live-button--primary" href="#inscricao">Solicitar entrada no grupo</a>
+            <a class="live-button live-button--secondary" href="#live">Ver o que será abordado</a>
+          </div>
+          <div class="live-hero__facts" aria-label="Resumo da live">
+            <span>Online</span>
+            <span>Gratuita</span>
+            <span>{live.audienceLabel}</span>
+          </div>
+        </div>
+
+        <aside id="inscricao" class="live-form-panel" aria-labelledby="form-title">
+          <h2 id="form-title">Entrar no grupo da live</h2>
+          <p>Preencha seus dados e abra uma mensagem pronta para Adriano adicionar você ao grupo dos participantes.</p>
+          <form class="live-form" data-live-form data-success-message="Abrindo WhatsApp com a mensagem pronta.">
+            <input type="hidden" name="eventName" value="bootcamp_whatsapp_optin" />
+            <input type="hidden" name="entryPoint" value={live.entryPoint} />
+            <input type="hidden" name="intent" value="entrar_grupo_live" />
+            <input type="hidden" name="sourceCta" value={live.sourceCta} />
+            <label>Nome<input name="name" type="text" autocomplete="name" required placeholder="Seu nome" /></label>
+            <label>Email<input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com" /></label>
+            <label>Celular<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="(84) 99999-9999" /></label>
+            <button class="live-button live-button--primary" type="submit">Entrar no grupo gratuito</button>
+            <p class="live-form__status" role="status" aria-live="polite"></p>
+            <a class="live-form__fallback" href="#" target="_blank" rel="noopener noreferrer" hidden>Não abriu? Toque aqui para falar com Adriano.</a>
+          </form>
+        </aside>
+      </div>
+    </section>
+
+    <section id="live" class="live-section live-section--intro" aria-labelledby="about-title">
+      <div class="live-container live-split">
+        <div>
+          <p class="live-section-label">Por que participar</p>
+          <h2 id="about-title">{live.sectorTitle}</h2>
+        </div>
+        <div class="live-copy">
+          <p>{live.sectorCopy}</p>
+          <div class="live-points">
+            {live.keyPoints.map((point, index) => (
+              <article>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <p>{point}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="live-section live-section--surface" aria-labelledby="use-cases-title">
+      <div class="live-container">
+        <div class="live-section__head">
+          <p class="live-section-label">{live.audienceLabel}</p>
+          <h2 id="use-cases-title">Temas que conectam IA ao trabalho real.</h2>
+        </div>
+        <div class="live-use-cases">
+          {live.useCases.map((item) => (
+            <article>
+              <h3>{item}</h3>
+              <p>Aplicações que ajudam a transformar curiosidade em decisão, prioridade e próximo passo.</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="facilitador" class="live-section live-mentor" aria-labelledby="mentor-title">
+      <img src={mentorImage} alt="Leonardo Camacho" width="720" height="900" loading="lazy" />
+      <div>
+        <p class="live-section-label">Facilitador</p>
+        <h2 id="mentor-title">Leonardo Camacho</h2>
+        <strong>Educador de IA e Head de Soluções da Amplify</strong>
+        <p>
+          Leonardo conduz formações e projetos de inteligência artificial conectando estratégia,
+          produtividade, aprendizado organizacional e aplicação prática em empresas.
+        </p>
+        <p class="live-mentor__quote">IA só vira ganho quando encontra método, contexto e responsabilidade.</p>
+      </div>
+    </section>
+
+    <section id="bootcamp" class="live-section live-bootcamp" aria-labelledby="bootcamp-title">
+      <img src={secondaryImage} alt="Treinamento presencial da Amplify" width="720" height="480" loading="lazy" />
+      <div>
+        <p class="live-section-label">Próximo passo</p>
+        <h2 id="bootcamp-title">Da live gratuita para o {live.bootcampTitle}.</h2>
+        <p>
+          A live ajuda a entender o impacto da IA. O Bootcamp presencial aprofunda a aplicação
+          com prática, exercícios e roteiro de implementação para o contexto de {live.partnerName}.
+        </p>
+        <div class="live-bootcamp__meta">
+          <span>{live.partnerName}</span>
+          <span>{live.bootcampDateLabel}</span>
+          <span>Presencial em Natal</span>
+        </div>
+        <a class="live-button live-button--secondary" href={live.bootcampHref}>Ver Bootcamp presencial</a>
+      </div>
+    </section>
+
+    <section class="live-section live-section--surface live-faq" aria-labelledby="faq-title">
+      <div class="live-container">
+        <div class="live-section__head">
+          <p class="live-section-label">Perguntas frequentes</p>
+          <h2 id="faq-title">O essencial antes da live.</h2>
+        </div>
+        <div class="live-faq__list">
+          {live.faq.map((item) => (
+            <details>
+              <summary>{item.question}</summary>
+              <p>{item.answer}</p>
+            </details>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="live-final" aria-label="Inscrição na live">
+      <div class="live-container">
+        <img src={live.partnerLogoSrc} alt={`${live.partnerName} - ${live.partnerDescriptor}`} width="320" height="122" loading="lazy" />
+        <h2>{live.title}</h2>
+        <p>{live.dateLabel}, às {live.timeLabel}, com Leonardo Camacho.</p>
+        <a class="live-button live-button--primary" href="#inscricao">Solicitar entrada no grupo</a>
+      </div>
+    </section>
+
+    <footer class="live-footer">
+      <div class="live-container">
+        <img src={logoSrc} alt="Amplify" width="120" height="24" />
+        <span>{live.partnerName} + Amplify · Live gratuita</span>
+      </div>
+    </footer>
+  </main>
+</PageShell>
+
+<script is:inline define:vars={{
+  bootcampSlug: live.bootcampSlug,
+  pageVersion: live.partnerKey,
+  liveTitle: live.title,
+  partnerLabel: live.partnerName,
+  whatsappNumber: live.whatsappNumber,
+}}>
+  const leadStorageKey = `bootcamp-live:${bootcampSlug}:lead`;
+
+  function getStoredLead() {
+    try {
+      return JSON.parse(window.localStorage.getItem(leadStorageKey) || "{}");
+    } catch (_error) {
+      return {};
+    }
+  }
+
+  function storeLead(fields) {
+    try {
+      window.localStorage.setItem(leadStorageKey, JSON.stringify({ ...getStoredLead(), ...fields }));
+    } catch (_error) {}
+  }
+
+  function clean(value) {
+    return String(value || "").trim();
+  }
+
+  function buildWhatsappPayload(payload) {
+    const name = clean(payload.name);
+    const message = `Olá Adriano, aqui é ${name}. Me inscrevi na Live ${liveTitle} do ${partnerLabel}. Por favor, pode me adicionar ao grupo de WhatsApp dos participantes?`;
+    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+    return { message, url };
+  }
+
+  document.querySelectorAll("[data-live-form]").forEach((form) => {
+    const status = form.querySelector(".live-form__status");
+    const button = form.querySelector("button[type='submit']");
+    const fallback = form.querySelector(".live-form__fallback");
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const payload = Object.fromEntries(formData.entries());
+      const email = clean(payload.email).toLowerCase();
+      const phone = clean(payload.phone);
+
+      if (!email || !phone) return;
+
+      storeLead({
+        email,
+        phone,
+        name: payload.name,
+        entryPoint: payload.entryPoint,
+      });
+
+      const whatsapp = buildWhatsappPayload(payload);
+
+      if (status) status.textContent = "Abrindo WhatsApp...";
+      if (button) button.disabled = true;
+      if (fallback) {
+        fallback.href = whatsapp.url;
+        fallback.hidden = false;
+      }
+
+      fetch("/api/bootcamp-track", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          slug: bootcampSlug,
+          version: pageVersion,
+          pageUrl: window.location.href,
+          ...payload,
+          email,
+          phone,
+          whatsappMessage: whatsapp.message,
+          bootcampWhatsappUrl: whatsapp.url,
+          forceFetch: true,
+        }),
+        keepalive: true,
+      }).catch(() => {});
+
+      form.classList.add("is-submitted");
+      const opened = window.open(whatsapp.url, "_blank", "noopener,noreferrer");
+      if (!opened && status) {
+        status.textContent = "Use o link abaixo para abrir a conversa no WhatsApp.";
+      } else if (status) {
+        status.textContent = form.dataset.successMessage || "Abrindo WhatsApp com a mensagem pronta.";
+      }
+      if (button) button.disabled = false;
+    });
+  });
+</script>
+
+<style>
+  :global(html),
+  :global(body) {
+    margin: 0;
+    background: #081018;
+    overflow-x: hidden;
+  }
+
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+  }
+
+  .live-lp {
+    --bg: #081018;
+    --surface: #0f1c26;
+    --surface-strong: #142837;
+    --text: #f7fbff;
+    --muted: #a8b8c3;
+    --line: rgba(255, 255, 255, 0.13);
+    --line-soft: rgba(255, 255, 255, 0.08);
+    --accent: #f2c84b;
+    --accent-strong: #ffd84f;
+    --blue: #2d8fc4;
+    --green: #39b978;
+    min-height: 100vh;
+    color: var(--text);
+    background: var(--bg);
+    font-family: Inter, system-ui, sans-serif;
+  }
+
+  .live-container,
+  .live-section {
+    width: min(1160px, calc(100% - 48px));
+    margin-inline: auto;
+  }
+
+  .live-nav {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(8, 16, 24, 0.86);
+    border-bottom: 1px solid var(--line-soft);
+    backdrop-filter: blur(14px);
+  }
+
+  .live-nav__inner,
+  .live-brand,
+  .live-nav nav,
+  .live-actions,
+  .live-hero__facts,
+  .live-footer .live-container,
+  .live-bootcamp__meta {
+    display: flex;
+    align-items: center;
+  }
+
+  .live-nav__inner {
+    min-height: 64px;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .live-brand {
+    gap: 18px;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .live-brand__amplify {
+    width: auto;
+    height: 22px;
+  }
+
+  .live-brand__divider {
+    width: 1px;
+    height: 28px;
+    background: var(--line);
+  }
+
+  .live-logo-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .live-logo-chip img {
+    display: block;
+    width: auto;
+    max-width: 150px;
+    max-height: 38px;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.28));
+  }
+
+  .live-nav nav {
+    gap: 20px;
+  }
+
+  .live-nav a {
+    color: rgba(247, 251, 255, 0.82);
+    font-size: 0.88rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .live-nav a:hover {
+    color: var(--text);
+  }
+
+  .live-hero {
+    position: relative;
+    min-height: 630px;
+    isolation: isolate;
+    overflow: hidden;
+  }
+
+  .live-hero__photo,
+  .live-hero__scrim {
+    position: absolute;
+    inset: 0;
+  }
+
+  .live-hero__photo {
+    z-index: -3;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(0.86) contrast(1.05);
+  }
+
+  .live-hero__scrim {
+    z-index: -2;
+    background:
+      linear-gradient(90deg, rgba(8, 16, 24, 0.96) 0%, rgba(8, 16, 24, 0.82) 44%, rgba(8, 16, 24, 0.36) 100%),
+      linear-gradient(180deg, rgba(8, 16, 24, 0.2) 0%, #081018 100%);
+  }
+
+  .live-hero__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 420px);
+    gap: 44px;
+    align-items: center;
+    min-height: 630px;
+    padding-block: 48px 56px;
+  }
+
+  .live-meta-line,
+  .live-section-label {
+    margin: 0 0 18px;
+    color: var(--accent);
+    font-size: 0.82rem;
+    font-weight: 800;
+    line-height: 1.35;
+    text-transform: uppercase;
+  }
+
+  .live-hero h1,
+  .live-section h2,
+  .live-final h2 {
+    margin: 0;
+    color: var(--text);
+    font-weight: 850;
+    line-height: 1;
+    letter-spacing: 0;
+  }
+
+  .live-hero h1 {
+    max-width: 780px;
+    font-size: 3.65rem;
+  }
+
+  .live-hero__lead {
+    max-width: 680px;
+    margin: 20px 0 0;
+    color: rgba(247, 251, 255, 0.84);
+    font-size: 1.08rem;
+    line-height: 1.58;
+  }
+
+  .live-actions {
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .live-button {
+    display: inline-flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    padding: 0 18px;
+    border: 1px solid transparent;
+    font-size: 0.92rem;
+    font-weight: 850;
+    line-height: 1.2;
+    text-decoration: none;
+    transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+  }
+
+  .live-button:hover {
+    transform: translateY(-1px);
+  }
+
+  .live-button--primary {
+    background: var(--accent);
+    color: #101820;
+    box-shadow: 0 16px 30px rgba(242, 200, 75, 0.2);
+  }
+
+  .live-button--primary:hover {
+    background: var(--accent-strong);
+  }
+
+  .live-button--secondary {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: var(--line);
+    color: var(--text);
+  }
+
+  .live-hero__facts {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .live-hero__facts span,
+  .live-bootcamp__meta span {
+    display: inline-flex;
+    min-height: 34px;
+    align-items: center;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0 12px;
+    color: rgba(247, 251, 255, 0.86);
+    font-size: 0.86rem;
+    font-weight: 750;
+  }
+
+  .live-form-panel {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(15, 28, 38, 0.92);
+    padding: 26px;
+    box-shadow: 0 28px 90px rgba(0, 0, 0, 0.34);
+    backdrop-filter: blur(16px);
+  }
+
+  .live-form-panel h2 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.58rem;
+    line-height: 1.1;
+  }
+
+  .live-form-panel p {
+    margin: 12px 0 0;
+    color: var(--muted);
+    font-size: 0.98rem;
+    line-height: 1.55;
+  }
+
+  .live-form {
+    display: grid;
+    gap: 14px;
+    margin-top: 22px;
+  }
+
+  .live-form label {
+    display: grid;
+    gap: 8px;
+    color: rgba(247, 251, 255, 0.9);
+    font-size: 0.83rem;
+    font-weight: 800;
+  }
+
+  .live-form input {
+    width: 100%;
+    min-height: 46px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.96rem;
+    outline: none;
+    padding: 0 14px;
+  }
+
+  @media (min-width: 1440px) {
+    .live-hero h1 {
+      font-size: 4.6rem;
+    }
+  }
+
+  .live-form input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(242, 200, 75, 0.18);
+  }
+
+  .live-form input::placeholder {
+    color: rgba(247, 251, 255, 0.42);
+  }
+
+  .live-form button {
+    width: 100%;
+    margin-top: 4px;
+    cursor: pointer;
+  }
+
+  .live-form button:disabled {
+    cursor: wait;
+    opacity: 0.72;
+  }
+
+  .live-form__status,
+  .live-form__fallback {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  .live-form__fallback {
+    color: var(--accent);
+    font-weight: 800;
+  }
+
+  .live-section {
+    padding-block: 96px;
+  }
+
+  .live-section--surface {
+    width: 100%;
+    background: var(--surface);
+  }
+
+  .live-section--surface .live-container {
+    width: min(1160px, calc(100% - 48px));
+    margin-inline: auto;
+  }
+
+  .live-split,
+  .live-mentor,
+  .live-bootcamp {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    gap: 56px;
+    align-items: start;
+  }
+
+  .live-section h2 {
+    max-width: 660px;
+    font-size: 3rem;
+  }
+
+  .live-copy p,
+  .live-mentor p,
+  .live-bootcamp p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 1.05rem;
+    line-height: 1.75;
+  }
+
+  .live-points {
+    display: grid;
+    gap: 14px;
+    margin-top: 28px;
+  }
+
+  .live-points article {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 16px;
+    align-items: start;
+    border-top: 1px solid var(--line-soft);
+    padding-top: 16px;
+  }
+
+  .live-points span {
+    color: var(--green);
+    font-size: 0.88rem;
+    font-weight: 900;
+  }
+
+  .live-points p {
+    margin: 0;
+  }
+
+  .live-section__head {
+    max-width: 720px;
+    margin-bottom: 34px;
+  }
+
+  .live-use-cases {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .live-use-cases article {
+    min-height: 178px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 20px;
+  }
+
+  .live-use-cases h3 {
+    margin: 0;
+    color: var(--text);
+    font-size: 1.05rem;
+    line-height: 1.25;
+  }
+
+  .live-use-cases p {
+    margin: 18px 0 0;
+    color: var(--muted);
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .live-mentor,
+  .live-bootcamp {
+    align-items: center;
+  }
+
+  .live-mentor img,
+  .live-bootcamp img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+  }
+
+  .live-mentor img {
+    aspect-ratio: 4 / 5;
+  }
+
+  .live-bootcamp img {
+    aspect-ratio: 4 / 3;
+  }
+
+  .live-mentor strong {
+    display: block;
+    margin: 18px 0;
+    color: var(--accent);
+    font-size: 1.02rem;
+    line-height: 1.5;
+  }
+
+  .live-mentor__quote {
+    margin-top: 24px !important;
+    border-left: 3px solid var(--accent);
+    padding-left: 18px;
+    color: var(--text) !important;
+    font-weight: 800;
+  }
+
+  .live-bootcamp__meta {
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 26px 0;
+  }
+
+  .live-faq__list {
+    display: grid;
+    gap: 12px;
+  }
+
+  .live-faq details {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.04);
+    padding: 18px 20px;
+  }
+
+  .live-faq summary {
+    cursor: pointer;
+    color: var(--text);
+    font-weight: 850;
+  }
+
+  .live-faq p {
+    margin: 12px 0 0;
+    color: var(--muted);
+    line-height: 1.65;
+  }
+
+  .live-final {
+    padding-block: 94px;
+    text-align: center;
+    background: linear-gradient(180deg, var(--surface-strong), #081018);
+  }
+
+  .live-final .live-container {
+    display: grid;
+    justify-items: center;
+  }
+
+  .live-final img {
+    width: auto;
+    max-width: 220px;
+    max-height: 74px;
+    object-fit: contain;
+    margin-bottom: 28px;
+  }
+
+  .live-final h2 {
+    max-width: 820px;
+    font-size: 3.4rem;
+  }
+
+  .live-final p {
+    margin: 22px 0 32px;
+    color: var(--muted);
+    font-size: 1.08rem;
+  }
+
+  .live-footer {
+    border-top: 1px solid var(--line-soft);
+    padding-block: 26px;
+    background: #081018;
+  }
+
+  .live-footer .live-container {
+    justify-content: space-between;
+    gap: 18px;
+  }
+
+  .live-footer img {
+    width: auto;
+    height: 22px;
+  }
+
+  .live-footer span {
+    color: var(--muted);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 980px) {
+    .live-nav nav {
+      display: none;
+    }
+
+    .live-hero,
+    .live-hero__inner {
+      min-height: auto;
+    }
+
+    .live-hero__inner,
+    .live-split,
+    .live-mentor,
+    .live-bootcamp {
+      grid-template-columns: 1fr;
+    }
+
+    .live-hero__inner {
+      padding-block: 64px;
+    }
+
+    .live-hero h1 {
+      font-size: 3.6rem;
+    }
+
+    .live-use-cases {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 640px) {
+    .live-container,
+    .live-section--surface .live-container,
+    .live-section {
+      width: min(100% - 32px, 1160px);
+    }
+
+    .live-brand {
+      gap: 12px;
+    }
+
+    .live-logo-chip img {
+      max-width: 112px;
+      max-height: 32px;
+    }
+
+    .live-hero__inner {
+      gap: 32px;
+      padding-block: 44px 56px;
+    }
+
+    .live-hero h1 {
+      font-size: 2.55rem;
+      line-height: 1.05;
+    }
+
+    .live-hero__lead {
+      font-size: 1rem;
+      line-height: 1.58;
+    }
+
+    .live-actions,
+    .live-actions .live-button {
+      width: 100%;
+    }
+
+    .live-section {
+      padding-block: 64px;
+    }
+
+    .live-section h2,
+    .live-final h2 {
+      font-size: 2.15rem;
+      line-height: 1.08;
+    }
+
+    .live-form-panel {
+      padding: 22px;
+    }
+
+    .live-use-cases {
+      grid-template-columns: 1fr;
+    }
+
+    .live-footer .live-container {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+  }
+</style>
