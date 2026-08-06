@@ -58,7 +58,7 @@ export const BOOTCAMP_LIVE_EVENTS = [
     partnerShortName: "CREA-RN",
     partnerName: "CREA-RN",
     partnerDescriptor: "Conselho Regional de Engenharia e Agronomia do RN",
-    partnerLogoSrc: "/bootcamp/crea-rn/logo-crea-rn-white.png",
+    partnerLogoSrc: "/bootcamp/crea-rn/logo-hub-crea-horizontal.png",
     dateLabel: "12 de agosto de 2026",
     timeLabel: "19h",
     title: "Sua empresa está preparada para a nova economia movida por Inteligência Artificial?",
