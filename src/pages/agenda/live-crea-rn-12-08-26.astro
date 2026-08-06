@@ -4,7 +4,8 @@ import { getBootcampLiveBySlug } from "@/lib/bootcamp-live-events.js";
 
 export const prerender = false;
 
-const live = getBootcampLiveBySlug("live-crea-rn-12-08-26");
+const liveSlug = "live-crea-rn-12-08-26";
+const live = getBootcampLiveBySlug(liveSlug);
 ---
 
 <BootcampLiveLanding live={live} />
