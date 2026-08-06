@@ -24,6 +24,7 @@ export const BOOTCAMP_LIVE_EVENTS = [
     entryPoint: "live_crc_rn_11_08",
     sourceCta: "entrar_grupo_live_crc",
     whatsappNumber: ADRIANO_WHATSAPP_NUMBER,
+    whatsappGroupUrl: "https://chat.whatsapp.com/DzqJsKWUj7D5YWpkFwpjj",
     keyPoints: [
       "Como a IA já muda a rotina de escritórios contábeis e departamentos financeiros.",
       "Onde usar IA com responsabilidade em documentos, atendimento, fiscal e gestão.",
@@ -74,6 +75,7 @@ export const BOOTCAMP_LIVE_EVENTS = [
     entryPoint: "live_crea_rn_12_08",
     sourceCta: "entrar_grupo_live_crea",
     whatsappNumber: ADRIANO_WHATSAPP_NUMBER,
+    whatsappGroupUrl: "https://chat.whatsapp.com/JU9Oq0YGHpkAFxSggW03pp",
     keyPoints: [
       "Como a IA já muda o trabalho de engenheiros, empresas técnicas e equipes de projeto.",
       "Onde aplicar IA em relatórios, propostas, planejamento e comunicação com clientes.",

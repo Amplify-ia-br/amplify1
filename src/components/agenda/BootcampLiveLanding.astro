@@ -16,6 +16,7 @@ const logoSrc = logoAmplify.src;
 const heroSrc = treinamentoPresencial.src;
 const secondaryImage = forumPalestra.src;
 const mentorImage = "/bootcamp/midias/leonardo-camacho-bootcamp-natal.jpg";
+const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
 ---
 
 <PageShell title={pageTitle} description={pageDescription} chatbot={false}>
@@ -58,18 +59,30 @@ const mentorImage = "/bootcamp/midias/leonardo-camacho-bootcamp-natal.jpg";
 
         <aside id="inscricao" class="live-form-panel" aria-labelledby="form-title">
           <h2 id="form-title">Entrar no grupo da live</h2>
-          <p>Preencha seus dados e abra uma mensagem pronta para Adriano adicionar você ao grupo dos participantes.</p>
-          <form class="live-form" data-live-form data-success-message="Abrindo WhatsApp com a mensagem pronta.">
+          <p>
+            {hasWhatsappGroup
+              ? "Preencha seus dados e entre no grupo de WhatsApp dos participantes da live."
+              : "Preencha seus dados e abra uma mensagem pronta para Adriano adicionar você ao grupo dos participantes."}
+          </p>
+          <form class="live-form" data-live-form data-success-message={hasWhatsappGroup ? "Mensagem copiada. Agora entre no grupo e cole sua apresentação." : "Abrindo WhatsApp com a mensagem pronta."}>
             <input type="hidden" name="eventName" value="bootcamp_whatsapp_optin" />
             <input type="hidden" name="entryPoint" value={live.entryPoint} />
             <input type="hidden" name="intent" value="entrar_grupo_live" />
             <input type="hidden" name="sourceCta" value={live.sourceCta} />
             <label>Nome<input name="name" type="text" autocomplete="name" required placeholder="Seu nome" /></label>
+            <label>Empresa<input name="company" type="text" autocomplete="organization" required placeholder="Nome da empresa" /></label>
             <label>Email<input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com" /></label>
             <label>Celular<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="(84) 99999-9999" /></label>
             <button class="live-button live-button--primary" type="submit">Entrar no grupo gratuito</button>
             <p class="live-form__status" role="status" aria-live="polite"></p>
-            <a class="live-form__fallback" href="#" target="_blank" rel="noopener noreferrer" hidden>Não abriu? Toque aqui para falar com Adriano.</a>
+            <div class="live-form__message" data-message-fallback hidden>
+              <span>Mensagem para copiar:</span>
+              <p data-message-text></p>
+              <button type="button" data-copy-message>Copiar mensagem</button>
+            </div>
+            <a class="live-form__fallback" href="#" target="_blank" rel="noopener noreferrer" hidden>
+              {hasWhatsappGroup ? "Não abriu? Toque aqui para entrar no grupo." : "Não abriu? Toque aqui para falar com Adriano."}
+            </a>
           </form>
         </aside>
       </div>
@@ -185,6 +198,7 @@ const mentorImage = "/bootcamp/midias/leonardo-camacho-bootcamp-natal.jpg";
   liveTitle: live.title,
   partnerLabel: live.partnerName,
   whatsappNumber: live.whatsappNumber,
+  whatsappGroupUrl: live.whatsappGroupUrl || "",
 }}>
   const leadStorageKey = `bootcamp-live:${bootcampSlug}:lead`;
 
@@ -208,34 +222,69 @@ const mentorImage = "/bootcamp/midias/leonardo-camacho-bootcamp-natal.jpg";
 
   function buildWhatsappPayload(payload) {
     const name = clean(payload.name);
-    const message = `Olá Adriano, aqui é ${name}. Me inscrevi na Live ${liveTitle} do ${partnerLabel}. Por favor, pode me adicionar ao grupo de WhatsApp dos participantes?`;
-    const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    const company = clean(payload.company);
+    const groupUrl = clean(whatsappGroupUrl);
+    const message = groupUrl
+      ? `Olá! Eu me chamo ${name}, sou da empresa ${company}. É um prazer participar desse grupo.`
+      : `Olá Adriano, aqui é ${name}. Me inscrevi na Live ${liveTitle} do ${partnerLabel}. Por favor, pode me adicionar ao grupo de WhatsApp dos participantes?`;
+    const url = groupUrl || `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-    return { message, url };
+    return { isGroup: Boolean(groupUrl), message, url };
+  }
+
+  async function copyText(text) {
+    if (!navigator.clipboard?.writeText) return false;
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch (_error) {
+      return false;
+    }
   }
 
   document.querySelectorAll("[data-live-form]").forEach((form) => {
     const status = form.querySelector(".live-form__status");
     const button = form.querySelector("button[type='submit']");
     const fallback = form.querySelector(".live-form__fallback");
+    const messageFallback = form.querySelector("[data-message-fallback]");
+    const messageText = form.querySelector("[data-message-text]");
+    const copyButton = form.querySelector("[data-copy-message]");
+
+    if (copyButton) {
+      copyButton.addEventListener("click", async () => {
+        const copied = await copyText(messageText?.textContent || "");
+        if (status) {
+          status.textContent = copied
+            ? "Mensagem copiada. Agora entre no grupo e cole sua apresentação."
+            : "Copie a mensagem manualmente e cole no grupo.";
+        }
+      });
+    }
 
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const formData = new FormData(form);
       const payload = Object.fromEntries(formData.entries());
+      const name = clean(payload.name);
+      const company = clean(payload.company);
       const email = clean(payload.email).toLowerCase();
       const phone = clean(payload.phone);
 
-      if (!email || !phone) return;
+      if (!name || !company || !email || !phone) return;
 
       storeLead({
         email,
         phone,
-        name: payload.name,
+        name,
+        company,
         entryPoint: payload.entryPoint,
       });
 
       const whatsapp = buildWhatsappPayload(payload);
+      const copyPromise = whatsapp.isGroup ? copyText(whatsapp.message) : Promise.resolve(false);
+
+      if (messageText) messageText.textContent = whatsapp.message;
+      if (messageFallback) messageFallback.hidden = true;
 
       if (status) status.textContent = "Abrindo WhatsApp...";
       if (button) button.disabled = true;
@@ -263,12 +312,21 @@ const mentorImage = "/bootcamp/midias/leonardo-camacho-bootcamp-natal.jpg";
 
       form.classList.add("is-submitted");
       const opened = window.open(whatsapp.url, "_blank", "noopener,noreferrer");
-      if (!opened && status) {
-        status.textContent = "Use o link abaixo para abrir a conversa no WhatsApp.";
-      } else if (status) {
-        status.textContent = form.dataset.successMessage || "Abrindo WhatsApp com a mensagem pronta.";
-      }
-      if (button) button.disabled = false;
+      copyPromise.then((copied) => {
+        if (whatsapp.isGroup && messageFallback) messageFallback.hidden = copied;
+        if (!opened && status) {
+          status.textContent = whatsapp.isGroup
+            ? copied
+              ? "Mensagem copiada. Use o link abaixo para entrar no grupo."
+              : "Copie a mensagem abaixo e use o link para entrar no grupo."
+            : "Use o link abaixo para abrir a conversa no WhatsApp.";
+        } else if (status) {
+          status.textContent = copied || !whatsapp.isGroup
+            ? form.dataset.successMessage || "Abrindo WhatsApp com a mensagem pronta."
+            : "Copie a mensagem abaixo e cole no grupo ao entrar.";
+        }
+        if (button) button.disabled = false;
+      });
     });
   });
 </script>
@@ -611,6 +669,47 @@ const mentorImage = "/bootcamp/midias/leonardo-camacho-bootcamp-natal.jpg";
     color: var(--muted);
     font-size: 0.86rem;
     line-height: 1.45;
+  }
+
+  .live-form__message {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    padding: 12px;
+    color: var(--muted);
+    font-size: 0.86rem;
+    line-height: 1.45;
+  }
+
+  .live-form__message[hidden] {
+    display: none;
+  }
+
+  .live-form__message span {
+    color: rgba(247, 251, 255, 0.9);
+    font-weight: 800;
+  }
+
+  .live-form__message p {
+    margin: 0;
+    color: rgba(247, 251, 255, 0.82);
+  }
+
+  .live-form__message button {
+    width: fit-content;
+    min-height: 34px;
+    border: 1px solid rgba(242, 200, 75, 0.42);
+    border-radius: 8px;
+    background: rgba(242, 200, 75, 0.12);
+    color: var(--accent);
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 800;
+    padding: 0 12px;
   }
 
   .live-form__fallback {
