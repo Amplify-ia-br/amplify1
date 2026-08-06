@@ -220,6 +220,27 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
     return String(value || "").trim();
   }
 
+  function getWhatsappGroupInviteCode(url) {
+    try {
+      const parsedUrl = new URL(url);
+      if (parsedUrl.hostname !== "chat.whatsapp.com") return "";
+      return parsedUrl.pathname.split("/").filter(Boolean).pop() || "";
+    } catch (_error) {
+      return "";
+    }
+  }
+
+  function isMobileWhatsappDevice() {
+    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  }
+
+  function getWhatsappGroupUrl(groupUrl) {
+    const inviteCode = getWhatsappGroupInviteCode(groupUrl);
+    if (!inviteCode || isMobileWhatsappDevice()) return groupUrl;
+
+    return `https://web.whatsapp.com/accept?code=${encodeURIComponent(inviteCode)}`;
+  }
+
   function buildWhatsappPayload(payload) {
     const name = clean(payload.name);
     const company = clean(payload.company);
@@ -227,9 +248,9 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
     const message = groupUrl
       ? `Olá! Eu me chamo ${name}, sou da empresa ${company}. É um prazer participar desse grupo.`
       : `Olá Adriano, aqui é ${name}. Me inscrevi na Live ${liveTitle} do ${partnerLabel}. Por favor, pode me adicionar ao grupo de WhatsApp dos participantes?`;
-    const url = groupUrl || `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    const url = groupUrl ? getWhatsappGroupUrl(groupUrl) : `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
-    return { isGroup: Boolean(groupUrl), message, url };
+    return { groupUrl, isGroup: Boolean(groupUrl), message, url };
   }
 
   async function copyText(text) {
