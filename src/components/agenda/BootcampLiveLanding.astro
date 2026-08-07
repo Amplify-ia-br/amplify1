@@ -26,9 +26,18 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
         <a class="live-brand" href="/" aria-label="Voltar para a página inicial da Amplify">
           <img class="live-brand__amplify" src={logoSrc} alt="Amplify" width="120" height="24" />
           <span class="live-brand__divider"></span>
-          <span class="live-logo-chip">
-            <img src={live.partnerLogoSrc} alt={`${live.partnerName} - ${live.partnerDescriptor}`} width="320" height="122" />
-          </span>
+          {live.partnerSecondaryLogoSrc ? (
+            <span class="live-partner-lockup" aria-label={`${live.partnerName} - ${live.partnerDescriptor}`}>
+              <img class="live-partner-logo live-partner-logo--primary" src={live.partnerLogoSrc} alt="" width="320" height="122" />
+              <span class="live-logo-chip live-logo-chip--secondary">
+                <img src={live.partnerSecondaryLogoSrc} alt="" width="320" height="122" />
+              </span>
+            </span>
+          ) : (
+            <span class="live-logo-chip">
+              <img src={live.partnerLogoSrc} alt={`${live.partnerName} - ${live.partnerDescriptor}`} width="320" height="122" />
+            </span>
+          )}
         </a>
         <nav aria-label="Navegação principal">
           <a href="#live">Live</a>
@@ -178,7 +187,16 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
 
     <section class="live-final" aria-label="Inscrição na live">
       <div class="live-container">
-        <img src={live.partnerLogoSrc} alt={`${live.partnerName} - ${live.partnerDescriptor}`} width="320" height="122" loading="lazy" />
+        {live.partnerSecondaryLogoSrc ? (
+          <div class="live-final-logos" aria-label={`${live.partnerName} - ${live.partnerDescriptor}`}>
+            <img class="live-partner-logo live-partner-logo--final" src={live.partnerLogoSrc} alt="" width="320" height="122" loading="lazy" />
+            <span class="live-logo-chip live-logo-chip--final-secondary">
+              <img src={live.partnerSecondaryLogoSrc} alt="" width="320" height="122" loading="lazy" />
+            </span>
+          </div>
+        ) : (
+          <img src={live.partnerLogoSrc} alt={`${live.partnerName} - ${live.partnerDescriptor}`} width="320" height="122" loading="lazy" />
+        )}
         <h2>{live.title}</h2>
         <p>{live.dateLabel}, às {live.timeLabel}, com Leonardo Camacho.</p>
         <a class="live-button live-button--primary" href="#inscricao">Solicitar entrada no grupo</a>
@@ -420,6 +438,27 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
     justify-content: center;
   }
 
+  .live-partner-lockup,
+  .live-final-logos {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .live-partner-lockup {
+    gap: 14px;
+  }
+
+  .live-partner-logo {
+    display: block;
+    width: auto;
+    object-fit: contain;
+  }
+
+  .live-partner-logo--primary {
+    height: 28px;
+    filter: brightness(0) invert(1);
+  }
+
   .live-logo-chip img {
     display: block;
     width: auto;
@@ -439,6 +478,21 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
 
   .live-lp--crea-rn .live-logo-chip img {
     height: 36px;
+    max-width: none;
+    max-height: none;
+    filter: none;
+  }
+
+  .live-lp--rui-cadete .live-logo-chip--secondary {
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.96);
+    padding: 6px 9px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+  }
+
+  .live-lp--rui-cadete .live-logo-chip--secondary img {
+    height: 30px;
     max-width: none;
     max-height: none;
     filter: none;
@@ -892,12 +946,38 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
     justify-items: center;
   }
 
-  .live-final img {
+  .live-final > .live-container > img {
     width: auto;
     max-width: 220px;
     max-height: 74px;
     object-fit: contain;
     margin-bottom: 28px;
+  }
+
+  .live-final-logos {
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 28px;
+  }
+
+  .live-partner-logo--final {
+    height: clamp(36px, 5vw, 58px);
+    filter: brightness(0) invert(1);
+  }
+
+  .live-logo-chip--final-secondary {
+    border: 1px solid rgba(255, 255, 255, 0.86);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.96);
+    padding: 8px 12px;
+  }
+
+  .live-logo-chip--final-secondary img {
+    width: min(220px, 56vw);
+    height: auto;
+    max-width: none;
+    max-height: none;
+    filter: none;
   }
 
   .live-final h2 {
@@ -976,6 +1056,18 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
     .live-logo-chip img {
       max-width: 112px;
       max-height: 32px;
+    }
+
+    .live-partner-lockup {
+      gap: 0;
+    }
+
+    .live-partner-logo--primary {
+      height: 22px;
+    }
+
+    .live-lp--rui-cadete .live-logo-chip--secondary {
+      display: none;
     }
 
     .live-lp--crea-rn .live-logo-chip {

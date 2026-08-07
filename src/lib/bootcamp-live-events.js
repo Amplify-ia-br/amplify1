@@ -109,6 +109,7 @@ export const BOOTCAMP_LIVE_EVENTS = [
     partnerName: "Rui Cadete / RC Hub",
     partnerDescriptor: "Ecossistema empresarial B2B",
     partnerLogoSrc: "/bootcamp/rui-cadete/logo-rui-cadete-horizontal.webp",
+    partnerSecondaryLogoSrc: "/bootcamp/rui-cadete/logo-rc-hub-official.webp",
     dateLabel: "13 de agosto de 2026",
     timeLabel: "19h",
     title: "Sua empresa está preparada para a nova economia movida por Inteligência Artificial?",
