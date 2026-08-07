@@ -484,18 +484,22 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
   }
 
   .live-lp--rui-cadete .live-logo-chip--secondary {
-    border: 1px solid rgba(255, 255, 255, 0.86);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.96);
-    padding: 6px 9px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+    width: 106px;
+    height: 34px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
   .live-lp--rui-cadete .live-logo-chip--secondary img {
-    height: 30px;
+    width: 82px;
+    height: auto;
     max-width: none;
     max-height: none;
-    filter: none;
+    filter: brightness(0) invert(1) drop-shadow(0 8px 18px rgba(0, 0, 0, 0.34));
+    transform: translateY(3px) scale(1.22);
+    transform-origin: top center;
   }
 
   .live-nav nav {
@@ -966,18 +970,15 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
   }
 
   .live-logo-chip--final-secondary {
-    border: 1px solid rgba(255, 255, 255, 0.86);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.96);
-    padding: 8px 12px;
+    padding: 0;
   }
 
   .live-logo-chip--final-secondary img {
-    width: min(220px, 56vw);
+    width: min(260px, 68vw);
     height: auto;
     max-width: none;
     max-height: none;
-    filter: none;
   }
 
   .live-final h2 {
