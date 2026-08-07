@@ -70,16 +70,18 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
             <input type="hidden" name="intent" value="entrar_grupo_live" />
             <input type="hidden" name="sourceCta" value={live.sourceCta} />
             <label>Nome<input name="name" type="text" autocomplete="name" required placeholder="Seu nome" /></label>
-            <label>Empresa<input name="company" type="text" autocomplete="organization" required placeholder="Nome da empresa" /></label>
+            {hasWhatsappGroup && <label>Empresa<input name="company" type="text" autocomplete="organization" required placeholder="Nome da empresa" /></label>}
             <label>Email<input name="email" type="email" autocomplete="email" required placeholder="voce@empresa.com" /></label>
             <label>Celular<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="(84) 99999-9999" /></label>
             <button class="live-button live-button--primary" type="submit">Entrar no grupo gratuito</button>
             <p class="live-form__status" role="status" aria-live="polite"></p>
-            <div class="live-form__message" data-message-fallback hidden>
-              <span>Mensagem para copiar:</span>
-              <p data-message-text></p>
-              <button type="button" data-copy-message>Copiar mensagem</button>
-            </div>
+            {hasWhatsappGroup && (
+              <div class="live-form__message" data-message-fallback hidden>
+                <span>Mensagem para copiar:</span>
+                <p data-message-text></p>
+                <button type="button" data-copy-message>Copiar mensagem</button>
+              </div>
+            )}
             <a class="live-form__fallback" href="#" target="_blank" rel="noopener noreferrer" hidden>
               {hasWhatsappGroup ? "Não abriu? Toque aqui para entrar no grupo." : "Não abriu? Toque aqui para falar com Adriano."}
             </a>
@@ -220,27 +222,6 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
     return String(value || "").trim();
   }
 
-  function getWhatsappGroupInviteCode(url) {
-    try {
-      const parsedUrl = new URL(url);
-      if (parsedUrl.hostname !== "chat.whatsapp.com") return "";
-      return parsedUrl.pathname.split("/").filter(Boolean).pop() || "";
-    } catch (_error) {
-      return "";
-    }
-  }
-
-  function isMobileWhatsappDevice() {
-    return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-  }
-
-  function getWhatsappGroupUrl(groupUrl) {
-    const inviteCode = getWhatsappGroupInviteCode(groupUrl);
-    if (!inviteCode || isMobileWhatsappDevice()) return groupUrl;
-
-    return `https://web.whatsapp.com/accept?code=${encodeURIComponent(inviteCode)}`;
-  }
-
   function buildWhatsappPayload(payload) {
     const name = clean(payload.name);
     const company = clean(payload.company);
@@ -248,7 +229,7 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
     const message = groupUrl
       ? `Olá! Eu me chamo ${name}, sou da empresa ${company}. É um prazer participar desse grupo.`
       : `Olá Adriano, aqui é ${name}. Me inscrevi na Live ${liveTitle} do ${partnerLabel}. Por favor, pode me adicionar ao grupo de WhatsApp dos participantes?`;
-    const url = groupUrl ? getWhatsappGroupUrl(groupUrl) : `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+    const url = groupUrl || `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
 
     return { groupUrl, isGroup: Boolean(groupUrl), message, url };
   }
@@ -291,7 +272,7 @@ const hasWhatsappGroup = Boolean(live.whatsappGroupUrl);
       const email = clean(payload.email).toLowerCase();
       const phone = clean(payload.phone);
 
-      if (!name || !company || !email || !phone) return;
+      if (!name || (whatsappGroupUrl && !company) || !email || !phone) return;
 
       storeLead({
         email,

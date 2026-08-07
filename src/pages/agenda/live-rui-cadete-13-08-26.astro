@@ -1,0 +1,11 @@
+---
+import BootcampLiveLanding from "@/components/agenda/BootcampLiveLanding.astro";
+import { getBootcampLiveBySlug } from "@/lib/bootcamp-live-events.js";
+
+export const prerender = false;
+
+const liveSlug = "live-rui-cadete-13-08-26";
+const live = getBootcampLiveBySlug(liveSlug);
+---
+
+<BootcampLiveLanding live={live} />
