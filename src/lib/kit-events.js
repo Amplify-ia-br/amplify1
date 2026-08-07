@@ -132,6 +132,15 @@ const BOOTCAMP_SEQUENCE_ENV_BY_SLUG = {
     bootcamp_attended: "KIT_BOOTCAMP_CRC_RN_ATTENDED_SEQUENCE_ID",
     bootcamp_missed: "KIT_BOOTCAMP_CRC_RN_MISSED_SEQUENCE_ID",
   },
+  "rui-cadete-26-08-26": {
+    bootcamp_interest: "KIT_BOOTCAMP_RUI_CADETE_INTEREST_SEQUENCE_ID",
+    bootcamp_checkout_abandoned: "KIT_BOOTCAMP_RUI_CADETE_CHECKOUT_ABANDONED_SEQUENCE_ID",
+    bootcamp_corporate: "KIT_BOOTCAMP_RUI_CADETE_CORPORATE_SEQUENCE_ID",
+    bootcamp_sponsor: "KIT_BOOTCAMP_RUI_CADETE_SPONSOR_SEQUENCE_ID",
+    bootcamp_confirmed: "KIT_BOOTCAMP_RUI_CADETE_CONFIRMED_SEQUENCE_ID",
+    bootcamp_attended: "KIT_BOOTCAMP_RUI_CADETE_ATTENDED_SEQUENCE_ID",
+    bootcamp_missed: "KIT_BOOTCAMP_RUI_CADETE_MISSED_SEQUENCE_ID",
+  },
   "crea-rn-24-08-26": {
     bootcamp_interest: "KIT_BOOTCAMP_CREA_RN_INTEREST_SEQUENCE_ID",
     bootcamp_checkout_abandoned: "KIT_BOOTCAMP_CREA_RN_CHECKOUT_ABANDONED_SEQUENCE_ID",

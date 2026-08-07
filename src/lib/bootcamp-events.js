@@ -75,6 +75,20 @@ export const BOOTCAMP_EVENTS = [
     version: "branding",
     localContext: "o contexto de escritórios contábeis, departamentos financeiros, rotinas fiscais, atendimento a clientes e gestão contábil no Rio Grande do Norte",
   },
+  {
+    slug: "rui-cadete-26-08-26",
+    city: "Natal",
+    date: "26/08/26",
+    venue: "Rui Cadete / RC Hub",
+    address: "Rua Apodi, 209 - Cidade Alta, Natal - RN",
+    startTime: "A confirmar",
+    endTime: "",
+    symplaEventId: "",
+    symplaCheckoutUrl: "",
+    whatsappGroupUrl: "https://wa.me/5511950350002?text=Ol%C3%A1%20Adriano%2C%20gostaria%20de%20falar%20sobre%20o%20Bootcamp%20IA%20para%20Neg%C3%B3cio%20com%20Rui%20Cadete%2C%20RC%20Hub%20e%20Amplify.",
+    version: "branding",
+    localContext: "o contexto de empresários, sócios, lideranças e clientes B2B conectados ao ecossistema Rui Cadete e RC Hub em Natal",
+  },
 ];
 
 function clean(value) {
