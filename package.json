@@ -11,7 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lighthouse": "lighthouse http://localhost:4173 --output html --output-path ./lighthouse-report.html",
-    "lhci:audit": "lhci autorun",
+    "lhci:audit": "lhci autorun --config=./lighthouserc.cjs",
     "lighthouse:prod:mobile:median": "node scripts/lighthouse-prod-mobile-median.mjs https://aplify-site.vercel.app 5",
     "migrate:blog:sanity:dry": "node scripts/migrate-blog-posts-to-sanity.mjs",
     "migrate:blog:sanity": "node scripts/migrate-blog-posts-to-sanity.mjs --apply"
