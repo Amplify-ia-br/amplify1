@@ -1,0 +1,114 @@
+---
+/**
+ * EIXO — o cruzamento monumental.
+ *
+ * Uma reta longa que se desenha, o eixo vertical fixo, o arco por cima
+ * e o ponto de encontro em acento. Serve como divisor de seção e
+ * assinatura de rodapé.
+ */
+import { kitStyle, a11y, type VisualKitProps } from "../kit";
+
+const props = Astro.props as VisualKitProps;
+const { class: className, animated = true, title } = props;
+---
+
+<svg
+  viewBox="0 0 220 150"
+  preserveAspectRatio="xMidYMid meet"
+  class:list={["vk-eixo", className]}
+  style={kitStyle(props)}
+  data-vk-animated={String(animated)}
+  {...a11y(title)}
+>
+  <path class="vk-eixo__reta" d="M8 96 H212"></path>
+  <path class="vk-eixo__vertical" d="M110 26 V150"></path>
+  <path class="vk-eixo__arco" d="M18 62 Q110 4 202 62"></path>
+  <circle class="vk-eixo__marco" cx="110" cy="96" r="4"></circle>
+  <g class="vk-eixo__carro">
+    <rect x="26" y="93" width="10" height="6"></rect>
+  </g>
+</svg>
+
+<style>
+  .vk-eixo {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 220 / 150;
+    overflow: visible;
+    color: var(--vk-color, currentColor);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-eixo path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: calc(1.5px * var(--vk-intensity, 1));
+  }
+
+  .vk-eixo__reta {
+    stroke-dasharray: 204;
+    stroke-dashoffset: 0;
+    animation: vkEixoReta calc(6s / var(--vk-speed, 1)) ease-in-out infinite;
+  }
+
+  .vk-eixo__vertical {
+    opacity: 0.35;
+  }
+
+  .vk-eixo__arco {
+    opacity: 0.5;
+    stroke-dasharray: 230;
+    stroke-dashoffset: 0;
+    animation: vkEixoArco calc(6s / var(--vk-speed, 1)) ease-in-out
+      calc(0.4s / var(--vk-speed, 1)) infinite;
+  }
+
+  .vk-eixo__marco,
+  .vk-eixo__carro rect {
+    fill: var(--vk-accent, #2dd4bf);
+  }
+
+  .vk-eixo__carro {
+    animation: vkEixoCarro calc(6s / var(--vk-speed, 1)) linear infinite;
+  }
+
+  @keyframes vkEixoReta {
+    0% {
+      stroke-dashoffset: 204;
+    }
+    55%,
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes vkEixoArco {
+    0% {
+      stroke-dashoffset: 230;
+    }
+    55%,
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes vkEixoCarro {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(150px);
+    }
+  }
+
+  .vk-eixo[data-vk-animated="false"] :where(path, g) {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-eixo :where(path, g) {
+      animation: none;
+    }
+  }
+</style>

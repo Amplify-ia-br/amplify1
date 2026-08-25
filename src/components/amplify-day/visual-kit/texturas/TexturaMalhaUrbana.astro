@@ -1,0 +1,74 @@
+---
+/**
+ * MALHA URBANA — grade de 22px em deriva lenta.
+ *
+ * Fundo de seções escuras e de cabeçalhos. Pensada para viver atrás de
+ * conteúdo: por isso o padrão é `opacity` baixa e `pointer-events: none`.
+ */
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** Passo da grade. Padrão: `22px`. */
+  step?: string;
+  /** Preenche o elemento posicionado mais próximo, em vez de ocupar fluxo. */
+  inset?: boolean;
+}
+
+const props = Astro.props as Props;
+const { class: className, animated = true, step, inset = false } = props;
+---
+
+<div
+  class:list={["vk-malha", inset && "is-inset", className]}
+  style={kitStyle(props, { "--vk-step": step })}
+  data-vk-animated={String(animated)}
+  aria-hidden="true"
+>
+</div>
+
+<style>
+  .vk-malha {
+    --vk-step-resolved: var(--vk-step, 22px);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-color: var(--vk-surface, transparent);
+    background-image:
+      repeating-linear-gradient(
+        90deg,
+        color-mix(in srgb, var(--vk-color, currentColor) 16%, transparent) 0 1px,
+        transparent 1px var(--vk-step-resolved)
+      ),
+      repeating-linear-gradient(
+        0deg,
+        color-mix(in srgb, var(--vk-color, currentColor) 8%, transparent) 0 1px,
+        transparent 1px var(--vk-step-resolved)
+      );
+    opacity: var(--vk-opacity, 1);
+    animation: vkMalhaDrift calc(14s / var(--vk-speed, 1)) linear infinite;
+  }
+
+  .vk-malha.is-inset {
+    position: absolute;
+    inset: 0;
+  }
+
+  @keyframes vkMalhaDrift {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 24px 24px;
+    }
+  }
+
+  .vk-malha[data-vk-animated="false"] {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-malha {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,79 @@
+---
+/**
+ * CANDANGOS — os dois guerreiros e as torres ao fundo, reduzidos a linha.
+ *
+ * Grafismo de "quem constrói": abertura de seções sobre pessoas e
+ * palestrantes. As duas lanças em acento pulsam fora de fase.
+ */
+import { kitStyle, a11y, type VisualKitProps } from "../kit";
+
+const props = Astro.props as VisualKitProps;
+const { class: className, animated = true, title } = props;
+---
+
+<svg
+  viewBox="0 0 220 150"
+  preserveAspectRatio="xMidYMid meet"
+  class:list={["vk-candangos", className]}
+  style={kitStyle(props)}
+  data-vk-animated={String(animated)}
+  {...a11y(title)}
+>
+  <path class="vk-candangos__corpo" d="M62 148 C 70 100 58 74 74 58 L 92 40"></path>
+  <path class="vk-candangos__corpo" d="M96 148 C 104 100 92 76 108 62 L 128 46"></path>
+  <circle class="vk-candangos__cabeca" cx="94" cy="34" r="7"></circle>
+  <circle class="vk-candangos__cabeca" cx="130" cy="42" r="6"></circle>
+  <path class="vk-candangos__lanca" d="M52 8 L 88 132"></path>
+  <path class="vk-candangos__lanca is-late" d="M118 20 L 148 128"></path>
+  <path class="vk-candangos__torres" d="M176 62 V148 M196 62 V148"></path>
+</svg>
+
+<style>
+  .vk-candangos {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 220 / 150;
+    color: var(--vk-color, currentColor);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-candangos :where(path, circle) {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: calc(1.5px * var(--vk-intensity, 1));
+  }
+
+  .vk-candangos__torres {
+    opacity: 0.35;
+  }
+
+  .vk-candangos__lanca {
+    stroke: var(--vk-accent, #2dd4bf);
+    animation: vkCandangosGlint calc(3.6s / var(--vk-speed, 1)) ease-in-out infinite;
+  }
+
+  .vk-candangos__lanca.is-late {
+    animation-delay: calc(1s / var(--vk-speed, 1));
+  }
+
+  @keyframes vkCandangosGlint {
+    0%,
+    100% {
+      opacity: 0.25;
+    }
+    45% {
+      opacity: 1;
+    }
+  }
+
+  .vk-candangos[data-vk-animated="false"] .vk-candangos__lanca {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-candangos__lanca {
+      animation: none;
+    }
+  }
+</style>

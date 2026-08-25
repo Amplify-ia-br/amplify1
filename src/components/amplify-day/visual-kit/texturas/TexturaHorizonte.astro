@@ -1,0 +1,89 @@
+---
+/**
+ * HORIZONTE DO PLANALTO — o céu queimado das fotos, reduzido a um
+ * degradê e uma linha de horizonte.
+ *
+ * É o único uso de cor quente do kit. Use uma vez por peça, no máximo.
+ */
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** Altura da linha de horizonte, em % da caixa. Padrão: `74%`. */
+  horizon?: string;
+  /** Preenche o elemento posicionado mais próximo, em vez de ocupar fluxo. */
+  inset?: boolean;
+}
+
+const props = Astro.props as Props;
+const { class: className, animated = true, horizon, inset = false } = props;
+---
+
+<div
+  class:list={["vk-horizonte", inset && "is-inset", className]}
+  style={kitStyle(props, { "--vk-horizon": horizon })}
+  data-vk-animated={String(animated)}
+  aria-hidden="true"
+>
+  <div class="vk-horizonte__ceu"></div>
+  <div class="vk-horizonte__linha"></div>
+</div>
+
+<style>
+  .vk-horizonte {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    background: var(--vk-surface, #0d0d0d);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-horizonte.is-inset {
+    position: absolute;
+    inset: 0;
+  }
+
+  .vk-horizonte__ceu {
+    position: absolute;
+    inset: -12px 0;
+    background: linear-gradient(
+      180deg,
+      var(--vk-surface, #0d0d0d) 0%,
+      #241a12 42%,
+      #b4652a 74%,
+      #f0a75c 92%,
+      var(--vk-surface, #0d0d0d) 100%
+    );
+    animation: vkHorizonteSway calc(9s / var(--vk-speed, 1)) ease-in-out infinite;
+  }
+
+  .vk-horizonte__linha {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: var(--vk-horizon, 74%);
+    height: 1px;
+    background: color-mix(in srgb, var(--vk-color, #f6f7f4) 60%, transparent);
+  }
+
+  @keyframes vkHorizonteSway {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .vk-horizonte[data-vk-animated="false"] .vk-horizonte__ceu {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-horizonte__ceu {
+      animation: none;
+    }
+  }
+</style>

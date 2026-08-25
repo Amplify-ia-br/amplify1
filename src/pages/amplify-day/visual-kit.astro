@@ -1,0 +1,721 @@
+---
+/**
+ * /amplify-day/visual-kit — catálogo do kit visual do Amplify Day.
+ *
+ * Página isolada: existe só para mostrar os elementos do kit lado a lado.
+ * Não substitui, não importa e não altera nada da LP do evento.
+ *
+ * Tudo que ela desenha vem de `@/components/amplify-day/visual-kit/`.
+ */
+import PageShell from "@/layouts/PageShell.astro";
+import "@/components/amplify-day/visual-kit/visual-kit.css";
+
+import GrafismoEixo from "@/components/amplify-day/visual-kit/grafismos/GrafismoEixo.astro";
+import GrafismoTesourinha from "@/components/amplify-day/visual-kit/grafismos/GrafismoTesourinha.astro";
+import GrafismoNave from "@/components/amplify-day/visual-kit/grafismos/GrafismoNave.astro";
+import GrafismoCandangos from "@/components/amplify-day/visual-kit/grafismos/GrafismoCandangos.astro";
+import GrafismoCupulas from "@/components/amplify-day/visual-kit/grafismos/GrafismoCupulas.astro";
+import GrafismoSuperquadra from "@/components/amplify-day/visual-kit/grafismos/GrafismoSuperquadra.astro";
+
+import TexturaMalhaUrbana from "@/components/amplify-day/visual-kit/texturas/TexturaMalhaUrbana.astro";
+import TexturaConcreto from "@/components/amplify-day/visual-kit/texturas/TexturaConcreto.astro";
+import TexturaHorizonte from "@/components/amplify-day/visual-kit/texturas/TexturaHorizonte.astro";
+
+import ImagemDuotone from "@/components/amplify-day/visual-kit/imagem/ImagemDuotone.astro";
+import ImagemLavada from "@/components/amplify-day/visual-kit/imagem/ImagemLavada.astro";
+import ImagemReticula from "@/components/amplify-day/visual-kit/imagem/ImagemReticula.astro";
+
+import SublinhadoEixo from "@/components/amplify-day/visual-kit/motion/SublinhadoEixo.astro";
+import PulsoMarcoZero from "@/components/amplify-day/visual-kit/motion/PulsoMarcoZero.astro";
+import FitaDeDados from "@/components/amplify-day/visual-kit/motion/FitaDeDados.astro";
+import BotaoEixo from "@/components/amplify-day/visual-kit/motion/BotaoEixo.astro";
+
+import AplicacaoHero from "@/components/amplify-day/visual-kit/aplicacoes/AplicacaoHero.astro";
+import AplicacaoConvite from "@/components/amplify-day/visual-kit/aplicacoes/AplicacaoConvite.astro";
+
+import tesourinhaAerea from "@/assets/amplify-day/visual-kit/tesourinha-aerea.webp";
+import catedral from "@/assets/amplify-day/visual-kit/catedral-tres-poderes.webp";
+import candangos from "@/assets/amplify-day/visual-kit/candangos.webp";
+
+const grafismos = [
+  {
+    Peca: GrafismoEixo,
+    nome: "EIXO",
+    rotulo: "Grafismo Eixo",
+    descricao:
+      "O cruzamento monumental: uma reta longa, um eixo curvo e o ponto de encontro. Serve como divisor de seção e assinatura de rodapé.",
+  },
+  {
+    Peca: GrafismoTesourinha,
+    nome: "TESOURINHA",
+    rotulo: "Grafismo Tesourinha",
+    descricao:
+      "A curva de retorno do Eixo Rodoviário. Metáfora direta de fluxo sem semáforo — bom para blocos de “como funciona” e transições entre etapas do formulário.",
+  },
+  {
+    Peca: GrafismoNave,
+    nome: "NAVE",
+    rotulo: "Grafismo Nave",
+    descricao:
+      "As nervuras da Catedral abertas para cima: muitas linhas partindo de um mesmo ponto. Usar em “para quem é” e em capas de palestra.",
+  },
+  {
+    Peca: GrafismoCandangos,
+    nome: "CANDANGOS",
+    rotulo: "Grafismo Candangos",
+    descricao:
+      "Os dois guerreiros e as torres ao fundo, reduzidos a linha. Grafismo de “quem constrói” — abertura de seção sobre pessoas e palestrantes.",
+  },
+  {
+    Peca: GrafismoCupulas,
+    nome: "CÚPULAS",
+    rotulo: "Grafismo Cúpulas",
+    descricao:
+      "Côncavo e convexo: receber e emitir. O par de cúpulas vira ícone de conversa — duas posições, uma decisão.",
+  },
+  {
+    Peca: GrafismoSuperquadra,
+    nome: "SUPERQUADRA",
+    rotulo: "Grafismo Superquadra",
+    descricao:
+      "A malha residencial: módulos iguais, poucos acesos. Grade base de layout e também estado vago/ocupado — bom para “participação por convite”.",
+  },
+];
+---
+
+<PageShell
+  title="Kit visual — Amplify Day | Amplify"
+  description="Catálogo dos grafismos, texturas, tratamentos de imagem e micro-animações do Amplify Day: a geometria de Brasília como sistema gráfico."
+  chatbot={false}
+>
+  <main class="vk-page" data-vk-root data-vk-theme="creme">
+    <div class="vk-container">
+      <!-- Cabeçalho ------------------------------------------------ -->
+      <header class="vk-head">
+        <div class="vk-head__meta">
+          <span>Kit visual · Amplify Day</span>
+          <span>Brasília, DF · 23 set 2026</span>
+          <span class="vk-head__badge">1a</span>
+        </div>
+
+        <hr class="vk-head__rule" />
+
+        <h1 class="vk-head__title">A geometria de Brasília<br />como sistema gráfico.</h1>
+
+        <p class="vk-head__lead">
+          Seis grafismos, três texturas, três tratamentos de imagem e quatro micro-animações
+          derivados do Plano Piloto e das fotos enviadas. Tudo em traço fino, um único acento ciano
+          e movimento contido — para usar na landing do Amplify Day, em convites e em peças de
+          social.
+        </p>
+
+        <div class="vk-head__controls">
+          <nav class="vk-head__index" aria-label="Seções do kit">
+            <a href="#grafismos">01 · Grafismos</a>
+            <a href="#texturas">02 · Texturas</a>
+            <a href="#imagem">03 · Imagem</a>
+            <a href="#animacoes">04 · Micro-animações</a>
+            <a href="#aplicacoes">05 · Aplicações</a>
+          </nav>
+
+          <div class="vk-switch" role="group" aria-label="Paleta do catálogo">
+            <span class="vk-switch__label">Paleta</span>
+            <button type="button" data-vk-theme-btn="creme" aria-pressed="true">Creme</button>
+            <button type="button" data-vk-theme-btn="tinta" aria-pressed="false">Tinta</button>
+          </div>
+        </div>
+      </header>
+
+      <!-- 01 Grafismos --------------------------------------------- -->
+      <section class="vk-section" id="grafismos" aria-labelledby="vk-h-grafismos">
+        <header class="vk-section__head">
+          <span class="vk-section__num">01</span>
+          <h2 class="vk-section__title" id="vk-h-grafismos">Grafismos</h2>
+          <span class="vk-section__rule"></span>
+          <span class="vk-section__note">Traço 1,5px · monocromo + ciano</span>
+        </header>
+
+        <div class="vk-grid vk-grid--tiles">
+          {
+            grafismos.map(({ Peca, nome, rotulo, descricao }) => (
+              <article class="vk-tile">
+                <div class="vk-tile__art">
+                  <Peca title={rotulo} />
+                </div>
+                <div class="vk-tile__copy">
+                  <span class="vk-tile__label">{nome}</span>
+                  <p class="vk-tile__desc">{descricao}</p>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </section>
+
+      <!-- 02 Texturas ---------------------------------------------- -->
+      <section class="vk-section" id="texturas" aria-labelledby="vk-h-texturas">
+        <header class="vk-section__head">
+          <span class="vk-section__num">02</span>
+          <h2 class="vk-section__title" id="vk-h-texturas">Texturas</h2>
+          <span class="vk-section__rule"></span>
+          <span class="vk-section__note">Fundos de seção · opacidade baixa</span>
+        </header>
+
+        <div class="vk-grid vk-grid--thirds">
+          <figure class="vk-spec">
+            <div class="vk-spec__frame vk-spec__frame--dark">
+              <TexturaMalhaUrbana />
+            </div>
+            <figcaption class="vk-spec__copy">
+              <span class="vk-spec__label">Malha urbana</span>
+              <p class="vk-spec__desc">
+                Grade de 22px em deriva lenta. Fundo de seções escuras e de cabeçalhos.
+              </p>
+            </figcaption>
+          </figure>
+
+          <figure class="vk-spec">
+            <div class="vk-spec__frame vk-spec__frame--dark">
+              <TexturaConcreto />
+            </div>
+            <figcaption class="vk-spec__copy">
+              <span class="vk-spec__label">Concreto / retícula</span>
+              <p class="vk-spec__desc">
+                Meio-tom impresso, referência ao concreto aparente. Usar atrás de números grandes.
+              </p>
+            </figcaption>
+          </figure>
+
+          <figure class="vk-spec">
+            <div class="vk-spec__frame vk-spec__frame--dark">
+              <TexturaHorizonte />
+            </div>
+            <figcaption class="vk-spec__copy">
+              <span class="vk-spec__label">Horizonte do Planalto</span>
+              <p class="vk-spec__desc">
+                O céu queimado das fotos, reduzido a um degradê e uma linha de horizonte. Único uso
+                de cor quente.
+              </p>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- 03 Tratamento de imagem ---------------------------------- -->
+      <section class="vk-section" id="imagem" aria-labelledby="vk-h-imagem">
+        <header class="vk-section__head">
+          <span class="vk-section__num">03</span>
+          <h2 class="vk-section__title" id="vk-h-imagem">Tratamento de imagem</h2>
+          <span class="vk-section__rule"></span>
+          <span class="vk-section__note">Fotos do acervo</span>
+        </header>
+
+        <div class="vk-grid vk-grid--thirds">
+          <figure class="vk-spec">
+            <div class="vk-spec__frame vk-spec__frame--tall">
+              <ImagemDuotone src={tesourinhaAerea.src} alt="Tesourinha vista de cima" />
+            </div>
+            <figcaption class="vk-spec__copy">
+              <span class="vk-spec__label">Duotone ciano</span>
+              <p class="vk-spec__desc">
+                Preto e branco + ciano em blend. Silhuetas primeiro, cor depois.
+              </p>
+            </figcaption>
+          </figure>
+
+          <figure class="vk-spec">
+            <div class="vk-spec__frame vk-spec__frame--tall">
+              <ImagemLavada src={catedral.src} alt="Praça dos Três Poderes e Catedral" />
+            </div>
+            <figcaption class="vk-spec__copy">
+              <span class="vk-spec__label">Lavada carmim + scanline</span>
+              <p class="vk-spec__desc">
+                Para as telas de formulário, no mesmo carmim da jornada de conversão. A sede do
+                evento entra como fundo, não como protagonista.
+              </p>
+            </figcaption>
+          </figure>
+
+          <figure class="vk-spec">
+            <div class="vk-spec__frame vk-spec__frame--tall">
+              <ImagemReticula src={candangos.src} alt="Os Candangos em silhueta" />
+            </div>
+            <figcaption class="vk-spec__copy">
+              <span class="vk-spec__label">Retícula sobre creme</span>
+              <p class="vk-spec__desc">
+                Imagem impressa sobre o creme da landing. Fecha com a varredura ciano na base.
+              </p>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- 04 Micro-animações --------------------------------------- -->
+      <section class="vk-section" id="animacoes" aria-labelledby="vk-h-animacoes">
+        <header class="vk-section__head">
+          <span class="vk-section__num">04</span>
+          <h2 class="vk-section__title" id="vk-h-animacoes">Micro-animações</h2>
+          <span class="vk-section__rule"></span>
+          <span class="vk-section__note">240–600ms · ease-out · respeita reduced-motion</span>
+        </header>
+
+        <div class="vk-grid vk-grid--halves">
+          <article class="vk-tile vk-tile--light">
+            <div class="vk-tile__stage">
+              <SublinhadoEixo />
+            </div>
+            <div class="vk-tile__copy">
+              <span class="vk-tile__label vk-tile__label--ink">Sublinhado-eixo</span>
+              <p class="vk-tile__desc vk-tile__desc--ink">
+                Entra da esquerda sob títulos e sob a data ao aparecer na viewport. Substitui
+                qualquer fade genérico.
+              </p>
+            </div>
+          </article>
+
+          <article class="vk-tile vk-tile--light">
+            <div class="vk-tile__stage">
+              <PulsoMarcoZero />
+            </div>
+            <div class="vk-tile__copy">
+              <span class="vk-tile__label vk-tile__label--ink">Pulso no marco zero</span>
+              <p class="vk-tile__desc vk-tile__desc--ink">
+                Anel lento sobre o ponto de cruzamento dos eixos. Só um ponto por tela: o CTA ou o
+                local do evento.
+              </p>
+            </div>
+          </article>
+
+          <article class="vk-tile vk-tile--bleed">
+            <div class="vk-tile__stage vk-tile__stage--bleed">
+              <FitaDeDados />
+            </div>
+            <div class="vk-tile__copy">
+              <span class="vk-tile__label">Fita de dados</span>
+              <p class="vk-tile__desc">
+                Faixa mono contínua entre seções. Repete data, cidade e formato sem ocupar um bloco
+                inteiro.
+              </p>
+            </div>
+          </article>
+
+          <article class="vk-tile">
+            <div class="vk-tile__stage vk-tile__stage--start">
+              <BotaoEixo>Entrar na lista</BotaoEixo>
+            </div>
+            <div class="vk-tile__copy">
+              <span class="vk-tile__label">CTA: elevação 2px + seta</span>
+              <p class="vk-tile__desc">
+                Passe o mouse. Sobe 2px, o halo ciano intensifica e a seta avança 6px. Sem bounce.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- 05 Aplicações -------------------------------------------- -->
+      <section class="vk-section" id="aplicacoes" aria-labelledby="vk-h-aplicacoes">
+        <header class="vk-section__head">
+          <span class="vk-section__num">05</span>
+          <h2 class="vk-section__title" id="vk-h-aplicacoes">Aplicações</h2>
+          <span class="vk-section__rule"></span>
+          <span class="vk-section__note">Exemplos de composição</span>
+        </header>
+
+        <div class="vk-grid vk-grid--apps">
+          <AplicacaoHero />
+          <AplicacaoConvite src={tesourinhaAerea.src} alt="Tesourinha vista de cima" />
+        </div>
+      </section>
+
+      <footer class="vk-foot">
+        <p>
+          Catálogo interno. Os elementos vivem em
+          <code>src/components/amplify-day/visual-kit/</code> e podem ser usados em qualquer página
+          sem tocar nesta.
+        </p>
+      </footer>
+    </div>
+  </main>
+</PageShell>
+
+<script>
+  // Troca a paleta do catálogo. É a única interação da página.
+  const raiz = document.querySelector<HTMLElement>("[data-vk-root]");
+  const botoes = document.querySelectorAll<HTMLButtonElement>("[data-vk-theme-btn]");
+
+  if (raiz && botoes.length) {
+    for (const botao of botoes) {
+      botao.addEventListener("click", () => {
+        const tema = botao.dataset.vkThemeBtn;
+        if (!tema) return;
+        raiz.dataset.vkTheme = tema;
+        for (const outro of botoes) {
+          outro.setAttribute("aria-pressed", String(outro === botao));
+        }
+      });
+    }
+  }
+</script>
+
+<style>
+  /* Tudo nesta folha é escopado pelo Astro e vive sob `.vk-page`.
+     Nenhuma regra alcança outra rota do site. */
+
+  .vk-page {
+    min-height: 100vh;
+    padding: clamp(40px, 6vw, 72px) clamp(20px, 4vw, 56px) 96px;
+    background: var(--vk-canvas, #eae6d9);
+    color: var(--vk-ink, #0d0d0d);
+    font-family: var(--vk-font-sans, system-ui, sans-serif);
+  }
+
+  .vk-container {
+    max-width: 1180px;
+    margin-inline: auto;
+  }
+
+  /* --- Cabeçalho --------------------------------------------------- */
+
+  .vk-head__meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    font-family: var(--vk-font-mono, monospace);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--vk-ink-3, #5b5b55);
+  }
+
+  .vk-head__badge {
+    border: 1px solid var(--vk-rule-strong, rgba(13, 13, 13, 0.25));
+    padding: 4px 10px;
+  }
+
+  .vk-head__rule {
+    height: 1px;
+    border: 0;
+    margin: 18px 0 40px;
+    background: var(--vk-rule, rgba(13, 13, 13, 0.22));
+  }
+
+  .vk-head__title {
+    margin: 0;
+    max-width: 900px;
+    font-size: clamp(38px, 6.4vw, 76px);
+    line-height: 0.92;
+    letter-spacing: -0.035em;
+    font-weight: 800;
+    text-wrap: balance;
+  }
+
+  .vk-head__lead {
+    margin: 24px 0 0;
+    max-width: 620px;
+    min-width: min(100%, 320px);
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--vk-ink-2, #3a3a36);
+  }
+
+  .vk-head__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-top: 56px;
+  }
+
+  .vk-head__index {
+    display: flex;
+    flex-wrap: wrap;
+    gap: clamp(20px, 3vw, 56px);
+    font-family: var(--vk-font-mono, monospace);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .vk-head__index a {
+    color: var(--vk-ink-3, #5b5b55);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 2px;
+    transition: color 140ms ease, border-color 140ms ease;
+  }
+
+  .vk-head__index a:hover,
+  .vk-head__index a:focus-visible {
+    color: var(--vk-ink, #0d0d0d);
+    border-bottom-color: var(--vk-accent, #2dd4bf);
+  }
+
+  .vk-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--vk-font-mono, monospace);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .vk-switch__label {
+    color: var(--vk-ink-3, #5b5b55);
+  }
+
+  .vk-switch button {
+    padding: 6px 12px;
+    border: 1px solid var(--vk-rule-strong, rgba(13, 13, 13, 0.25));
+    background: transparent;
+    color: var(--vk-ink-3, #5b5b55);
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    cursor: pointer;
+    transition: color 140ms ease, border-color 140ms ease, background-color 140ms ease;
+  }
+
+  .vk-switch button:hover {
+    color: var(--vk-ink, #0d0d0d);
+  }
+
+  .vk-switch button[aria-pressed="true"] {
+    border-color: var(--vk-accent, #2dd4bf);
+    color: var(--vk-ink, #0d0d0d);
+    background: color-mix(in srgb, var(--vk-accent, #2dd4bf) 14%, transparent);
+  }
+
+  .vk-switch button:focus-visible {
+    outline: 2px solid var(--vk-accent, #2dd4bf);
+    outline-offset: 2px;
+  }
+
+  /* --- Seções ------------------------------------------------------ */
+
+  .vk-section {
+    margin-top: clamp(64px, 8vw, 96px);
+    scroll-margin-top: 24px;
+  }
+
+  .vk-section__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .vk-section__num {
+    font-family: var(--vk-font-mono, monospace);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--vk-accent-ink, #0d6b6b);
+  }
+
+  .vk-section__title {
+    margin: 0;
+    font-size: clamp(26px, 3.4vw, 34px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .vk-section__rule {
+    flex: 1;
+    min-width: 40px;
+    height: 1px;
+    background: var(--vk-rule, rgba(13, 13, 13, 0.18));
+  }
+
+  .vk-section__note {
+    font-family: var(--vk-font-mono, monospace);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--vk-ink-3, #5b5b55);
+  }
+
+  /* --- Grades ------------------------------------------------------ */
+
+  .vk-grid {
+    display: grid;
+  }
+
+  /* Fio de 1px entre as peças: o "gap" é a própria régua do sistema. */
+  .vk-grid--tiles,
+  .vk-grid--halves {
+    gap: 1px;
+    background: var(--vk-rule, rgba(13, 13, 13, 0.18));
+    border: 1px solid var(--vk-rule, rgba(13, 13, 13, 0.18));
+  }
+
+  /* Contagens explícitas: as peças são 6, 3, 4 e 2 — divisores exatos das
+     colunas em cada faixa. Com `auto-fit` sobrariam células vazias, e no
+     grid de fio de 1px uma célula vazia vira um retângulo de régua. */
+  .vk-grid--tiles,
+  .vk-grid--halves,
+  .vk-grid--thirds,
+  .vk-grid--apps {
+    grid-template-columns: 1fr;
+  }
+
+  .vk-grid--thirds,
+  .vk-grid--apps {
+    gap: 24px;
+  }
+
+  @media (min-width: 640px) {
+    .vk-grid--tiles,
+    .vk-grid--halves {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 900px) {
+    .vk-grid--tiles,
+    .vk-grid--thirds {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .vk-grid--apps {
+      grid-template-columns: 1.4fr 1fr;
+    }
+  }
+
+  /* --- Tile (grafismo / micro-animação) ---------------------------- */
+
+  .vk-tile {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    padding: 28px 26px 24px;
+    background: var(--vk-panel, #0d0d0d);
+    color: var(--vk-on-panel, #f6f7f4);
+  }
+
+  .vk-tile--light {
+    padding: 34px 30px;
+    background: var(--vk-panel-alt, #eae6d9);
+    color: var(--vk-ink, #0d0d0d);
+  }
+
+  .vk-tile--bleed {
+    padding-inline: 0;
+    overflow: hidden;
+  }
+
+  .vk-tile__art {
+    /* Reproduz a caixa do desenho: a peça ocupa a largura do tile. */
+    width: 100%;
+  }
+
+  .vk-tile__stage {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 70px;
+  }
+
+  .vk-tile__stage--start {
+    justify-content: flex-start;
+  }
+
+  .vk-tile__stage--bleed {
+    display: block;
+  }
+
+  .vk-tile__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .vk-tile--bleed .vk-tile__copy {
+    padding-inline: 30px;
+  }
+
+  .vk-tile__label {
+    font-family: var(--vk-font-mono, monospace);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--vk-accent, #2dd4bf);
+  }
+
+  .vk-tile__label--ink {
+    color: var(--vk-ink, #0d0d0d);
+  }
+
+  .vk-tile__desc {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--vk-on-panel-2, #9b9f9d);
+  }
+
+  .vk-tile__desc--ink {
+    color: var(--vk-ink-4, #4a4a45);
+  }
+
+  /* --- Specimen (textura / imagem) --------------------------------- */
+
+  .vk-spec {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin: 0;
+  }
+
+  .vk-spec__frame {
+    height: 200px;
+    overflow: hidden;
+  }
+
+  .vk-spec__frame--dark {
+    background: var(--vk-panel, #0d0d0d);
+    color: var(--vk-on-panel, #f6f7f4);
+  }
+
+  .vk-spec__frame--tall {
+    height: 280px;
+  }
+
+  .vk-spec__label {
+    font-family: var(--vk-font-mono, monospace);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--vk-ink, #0d0d0d);
+  }
+
+  .vk-spec__desc {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--vk-ink-4, #4a4a45);
+  }
+
+  /* --- Rodapé ------------------------------------------------------ */
+
+  .vk-foot {
+    margin-top: clamp(64px, 8vw, 96px);
+    padding-top: 24px;
+    border-top: 1px solid var(--vk-rule, rgba(13, 13, 13, 0.18));
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--vk-ink-3, #5b5b55);
+  }
+
+  .vk-foot p {
+    margin: 0;
+  }
+
+  .vk-foot code {
+    font-family: var(--vk-font-mono, monospace);
+    font-size: 12px;
+  }
+</style>

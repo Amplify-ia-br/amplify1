@@ -1,0 +1,110 @@
+---
+/**
+ * SUPERQUADRA — a malha residencial: módulos iguais, poucos acesos.
+ *
+ * Serve como grade base de layout e também como estado vago/ocupado —
+ * é o grafismo de "participação por convite".
+ *
+ * Além das props do kit, aceita a forma da malha e quais módulos ficam
+ * acesos, para que a mesma peça sirva a contagens diferentes.
+ */
+import { kitStyle, a11y, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** Colunas da malha. Padrão: 6. */
+  columns?: number;
+  /** Linhas da malha. Padrão: 4. */
+  rows?: number;
+  /** Índices (base zero) dos módulos acesos. Padrão: `[3, 9, 14, 20]`. */
+  lit?: number[];
+  /** Espaço entre módulos. Padrão: `6px`. */
+  gap?: string;
+}
+
+const props = Astro.props as Props;
+const {
+  class: className,
+  animated = true,
+  title,
+  columns = 6,
+  rows = 4,
+  lit = [3, 9, 14, 20],
+  gap,
+} = props;
+
+const total = columns * rows;
+const litSet = new Set(lit);
+const modulos = Array.from({ length: total }, (_, i) => ({
+  aceso: litSet.has(i),
+  delay: `${(i % 7) * 0.5}s`,
+}));
+---
+
+<div
+  class:list={["vk-superquadra", className]}
+  style={kitStyle(props, {
+    "--vk-columns": columns,
+    "--vk-rows": rows,
+    "--vk-gap": gap,
+  })}
+  data-vk-animated={String(animated)}
+  {...a11y(title)}
+>
+  {
+    modulos.map((modulo) => (
+      <span
+        class:list={["vk-superquadra__modulo", modulo.aceso && "is-lit"]}
+        style={`--vk-delay: ${modulo.delay}`}
+      />
+    ))
+  }
+</div>
+
+<style>
+  .vk-superquadra {
+    display: grid;
+    width: 100%;
+    aspect-ratio: 220 / 150;
+    grid-template-columns: repeat(var(--vk-columns, 6), 1fr);
+    grid-template-rows: repeat(var(--vk-rows, 4), 1fr);
+    gap: var(--vk-gap, 6px);
+    color: var(--vk-color, currentColor);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-superquadra__modulo {
+    display: block;
+    border: calc(1px * var(--vk-intensity, 1)) solid currentColor;
+    /* O contorno é um filete, não um traço cheio: 35% da cor do módulo. */
+    border-color: color-mix(in srgb, currentColor 35%, transparent);
+    opacity: 0.35;
+    animation: vkSuperquadraCell calc(6s / var(--vk-speed, 1)) ease-in-out
+      calc(var(--vk-delay, 0s) / var(--vk-speed, 1)) infinite;
+  }
+
+  .vk-superquadra__modulo.is-lit {
+    background: var(--vk-accent, #2dd4bf);
+  }
+
+  @keyframes vkSuperquadraCell {
+    0%,
+    70%,
+    100% {
+      opacity: 0.12;
+    }
+    12%,
+    40% {
+      opacity: 1;
+    }
+  }
+
+  .vk-superquadra[data-vk-animated="false"] .vk-superquadra__modulo {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-superquadra__modulo {
+      animation: none;
+    }
+  }
+</style>

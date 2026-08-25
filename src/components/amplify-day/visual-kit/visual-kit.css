@@ -1,0 +1,59 @@
+/* ============================================================
+   Amplify Day — Visual Kit · tokens de tema
+
+   Opt-in: este arquivo NÃO é carregado globalmente. Importe-o na
+   página que for usar o kit (`import "@/components/amplify-day/visual-kit/visual-kit.css"`)
+   e marque o container com `data-vk-theme="creme"` ou `data-vk-theme="tinta"`.
+
+   Todos os componentes do kit funcionam sem estes tokens — eles só
+   caem nos valores-padrão embutidos. O tema serve para trocar a
+   paleta inteira de uma vez.
+
+   Nada aqui vaza para fora de um elemento com `[data-vk-theme]`.
+   ============================================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Hanken+Grotesque:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap");
+
+[data-vk-theme] {
+  /* Famílias — o kit usa grotesca para texto e mono para metadados */
+  --vk-font-sans: "Hanken Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --vk-font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  /* Acento único do sistema Amplify */
+  --vk-accent: #2dd4bf;
+  /* Carmim: só na jornada de conversão (pop-up e confirmação) */
+  --vk-carmim: #c01a4e;
+}
+
+/* --- Creme: a paleta do kit como desenhado --------------------- */
+[data-vk-theme="creme"] {
+  --vk-canvas: #eae6d9;
+  --vk-panel: #0d0d0d; /* tile escuro sobre o creme */
+  --vk-panel-alt: #eae6d9; /* tile claro */
+  --vk-ink: #0d0d0d;
+  --vk-ink-2: #3a3a36;
+  --vk-ink-3: #5b5b55;
+  --vk-ink-4: #4a4a45;
+  --vk-on-panel: #f6f7f4;
+  --vk-on-panel-2: #9b9f9d;
+  --vk-rule: rgba(13, 13, 13, 0.18);
+  --vk-rule-strong: rgba(13, 13, 13, 0.25);
+  /* Ciano escurecido: o #2dd4bf não segura contraste sobre o creme */
+  --vk-accent-ink: #0d6b6b;
+}
+
+/* --- Tinta: o kit sobre o canvas escuro do Design System ------- */
+[data-vk-theme="tinta"] {
+  --vk-canvas: #0a0a0a;
+  --vk-panel: #111212;
+  --vk-panel-alt: #151818;
+  --vk-ink: #f6f7f4;
+  --vk-ink-2: #9b9f9d;
+  --vk-ink-3: #737977;
+  --vk-ink-4: #9b9f9d;
+  --vk-on-panel: #f6f7f4;
+  --vk-on-panel-2: #9b9f9d;
+  --vk-rule: rgba(246, 247, 244, 0.1);
+  --vk-rule-strong: rgba(246, 247, 244, 0.16);
+  --vk-accent-ink: #2dd4bf;
+}

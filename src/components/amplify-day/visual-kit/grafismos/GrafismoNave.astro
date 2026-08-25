@@ -1,0 +1,95 @@
+---
+/**
+ * NAVE — as nervuras da Catedral abertas para cima.
+ *
+ * Muitas linhas partindo de um mesmo ponto. Usar em "para quem é" e em
+ * capas de palestra. Uma nervura fica em acento: a que abre a leitura.
+ */
+import { kitStyle, a11y, type VisualKitProps } from "../kit";
+
+const props = Astro.props as VisualKitProps;
+const { class: className, animated = true, title } = props;
+
+/** Nervuras da esquerda para a direita; `delay` em segundos. */
+const nervuras = [
+  { d: "M110 146 C 96 96 66 66 40 52", delay: 0 },
+  { d: "M110 146 C 100 92 82 56 66 34", delay: 0.2 },
+  { d: "M110 146 C 106 88 100 50 96 24", delay: 0.4 },
+  { d: "M110 146 C 114 88 120 50 124 24", delay: 0.4, accent: true },
+  { d: "M110 146 C 120 92 138 56 154 34", delay: 0.2 },
+  { d: "M110 146 C 124 96 154 66 180 52", delay: 0 },
+];
+---
+
+<svg
+  viewBox="0 0 220 150"
+  preserveAspectRatio="xMidYMid meet"
+  class:list={["vk-nave", className]}
+  style={kitStyle(props)}
+  data-vk-animated={String(animated)}
+  {...a11y(title)}
+>
+  <g class="vk-nave__nervuras">
+    {
+      nervuras.map((nervura) => (
+        <path
+          class:list={["vk-nave__nervura", nervura.accent && "is-accent"]}
+          d={nervura.d}
+          style={`--vk-delay: ${nervura.delay}s`}
+        />
+      ))
+    }
+  </g>
+  <path class="vk-nave__base" d="M22 146 H198"></path>
+</svg>
+
+<style>
+  .vk-nave {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 220 / 150;
+    color: var(--vk-color, currentColor);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-nave path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: calc(1.5px * var(--vk-intensity, 1));
+  }
+
+  .vk-nave__nervura {
+    transform-origin: 110px 146px;
+    animation: vkNaveSway calc(4.4s / var(--vk-speed, 1)) ease-in-out
+      calc(var(--vk-delay, 0s) / var(--vk-speed, 1)) infinite;
+  }
+
+  .vk-nave__nervura.is-accent {
+    stroke: var(--vk-accent, #2dd4bf);
+  }
+
+  .vk-nave__base {
+    opacity: 0.3;
+  }
+
+  @keyframes vkNaveSway {
+    0%,
+    100% {
+      transform: scaleY(1);
+    }
+    50% {
+      transform: scaleY(1.12);
+    }
+  }
+
+  .vk-nave[data-vk-animated="false"] .vk-nave__nervura {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-nave__nervura {
+      animation: none;
+    }
+  }
+</style>

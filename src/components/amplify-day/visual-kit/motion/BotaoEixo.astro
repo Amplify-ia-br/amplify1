@@ -1,0 +1,122 @@
+---
+/**
+ * CTA — elevação de 2px + seta.
+ *
+ * No hover sobe 2px, o halo de acento intensifica e a seta avança 6px.
+ * Sem bounce: o movimento é executivo, não gamificado.
+ *
+ * Sai como `<a>` quando recebe `href`, e como `<button>` quando não.
+ * Nenhum JavaScript: hover e foco são CSS.
+ */
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** Destino. Com `href` o componente vira link; sem, vira botão. */
+  href?: string;
+  type?: "button" | "submit" | "reset";
+  /** Variante: `solida` (fundo de acento) ou `contorno` (só filete). */
+  variant?: "solida" | "contorno";
+  /** Esconde a seta. Padrão: `false`. */
+  noArrow?: boolean;
+}
+
+const props = Astro.props as Props;
+const {
+  class: className,
+  href,
+  type = "button",
+  variant = "solida",
+  noArrow = false,
+} = props;
+
+const Tag = href ? "a" : "button";
+const tagProps = href ? { href } : { type };
+---
+
+<Tag
+  class:list={["vk-cta", `vk-cta--${variant}`, className]}
+  style={kitStyle(props)}
+  {...tagProps}
+>
+  <span class="vk-cta__rotulo"><slot /></span>
+  {!noArrow && <span class="vk-cta__seta" aria-hidden="true">→</span>}
+</Tag>
+
+<style>
+  .vk-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 24px;
+    border: 1px solid var(--vk-accent, #2dd4bf);
+    font-family: var(--vk-font-mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    cursor: pointer;
+    opacity: var(--vk-opacity, 1);
+    transition:
+      transform calc(0.24s / var(--vk-speed, 1)) cubic-bezier(0.22, 0.61, 0.36, 1),
+      box-shadow calc(0.24s / var(--vk-speed, 1)) cubic-bezier(0.22, 0.61, 0.36, 1),
+      background-color calc(0.24s / var(--vk-speed, 1)) cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .vk-cta--solida {
+    background: var(--vk-accent, #2dd4bf);
+    color: var(--vk-color, #0d0d0d);
+  }
+
+  .vk-cta--contorno {
+    background: transparent;
+    color: var(--vk-accent, #2dd4bf);
+  }
+
+  .vk-cta__seta {
+    display: inline-block;
+    transition: transform calc(0.24s / var(--vk-speed, 1)) cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  .vk-cta:hover,
+  .vk-cta:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px -12px
+      color-mix(in srgb, var(--vk-accent, #2dd4bf) 70%, transparent);
+  }
+
+  .vk-cta--contorno:hover,
+  .vk-cta--contorno:focus-visible {
+    background: color-mix(in srgb, var(--vk-accent, #2dd4bf) 12%, transparent);
+  }
+
+  .vk-cta:hover .vk-cta__seta,
+  .vk-cta:focus-visible .vk-cta__seta {
+    transform: translateX(6px);
+  }
+
+  .vk-cta:focus-visible {
+    outline: 2px solid var(--vk-accent, #2dd4bf);
+    outline-offset: 3px;
+  }
+
+  .vk-cta:active {
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-cta,
+    .vk-cta__seta {
+      transition: none;
+    }
+
+    .vk-cta:hover,
+    .vk-cta:focus-visible {
+      transform: none;
+    }
+
+    .vk-cta:hover .vk-cta__seta,
+    .vk-cta:focus-visible .vk-cta__seta {
+      transform: none;
+    }
+  }
+</style>

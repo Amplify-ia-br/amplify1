@@ -1,0 +1,69 @@
+---
+/**
+ * CONCRETO / RETÍCULA — meio-tom impresso, referência ao concreto aparente.
+ *
+ * Usar atrás de números grandes e de blocos de destaque.
+ */
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** Distância entre pontos da retícula. Padrão: `14px`. */
+  step?: string;
+  /** Raio do ponto. Padrão: `1px`. */
+  dot?: string;
+  /** Preenche o elemento posicionado mais próximo, em vez de ocupar fluxo. */
+  inset?: boolean;
+}
+
+const props = Astro.props as Props;
+const { class: className, animated = true, step, dot, inset = false } = props;
+---
+
+<div
+  class:list={["vk-concreto", inset && "is-inset", className]}
+  style={kitStyle(props, { "--vk-step": step, "--vk-dot": dot })}
+  data-vk-animated={String(animated)}
+  aria-hidden="true"
+>
+</div>
+
+<style>
+  .vk-concreto {
+    --vk-dot-resolved: var(--vk-dot, 1px);
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    background-color: var(--vk-surface, transparent);
+    background-image: radial-gradient(
+      color-mix(in srgb, var(--vk-color, currentColor) 50%, transparent) var(--vk-dot-resolved),
+      transparent calc(var(--vk-dot-resolved) + 0.4px)
+    );
+    background-size: var(--vk-step, 14px) var(--vk-step, 14px);
+    opacity: var(--vk-opacity, 1);
+    animation: vkConcretoDrift calc(22s / var(--vk-speed, 1)) linear infinite;
+  }
+
+  .vk-concreto.is-inset {
+    position: absolute;
+    inset: 0;
+  }
+
+  @keyframes vkConcretoDrift {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 24px 24px;
+    }
+  }
+
+  .vk-concreto[data-vk-animated="false"] {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-concreto {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,89 @@
+---
+/**
+ * PULSO NO MARCO ZERO — anel lento sobre o ponto de cruzamento dos eixos.
+ *
+ * Regra de uso: só um ponto por tela. Ou o CTA, ou o local do evento —
+ * nunca os dois.
+ */
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** Lado do quadrado central. Padrão: `12px`. */
+  dot?: string;
+  /** Diâmetro inicial dos anéis. Padrão: `44px`. */
+  ring?: string;
+}
+
+const props = Astro.props as Props;
+const { class: className, animated = true, dot, ring } = props;
+---
+
+<div
+  class:list={["vk-pulso", className]}
+  style={kitStyle(props, { "--vk-dot": dot, "--vk-ring": ring })}
+  data-vk-animated={String(animated)}
+  aria-hidden="true"
+>
+  <span class="vk-pulso__anel"></span>
+  <span class="vk-pulso__anel is-late"></span>
+  <span class="vk-pulso__marco"></span>
+</div>
+
+<style>
+  .vk-pulso {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: var(--vk-ring, 44px);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-pulso__anel {
+    position: absolute;
+    width: var(--vk-ring, 44px);
+    height: var(--vk-ring, 44px);
+    border: 1px solid var(--vk-accent, #2dd4bf);
+    border-radius: 50%;
+    opacity: 0;
+    animation: vkPulsoAnel calc(2.8s / var(--vk-speed, 1)) ease-out infinite;
+  }
+
+  .vk-pulso__anel.is-late {
+    animation-delay: calc(1.4s / var(--vk-speed, 1));
+  }
+
+  .vk-pulso__marco {
+    width: var(--vk-dot, 12px);
+    height: var(--vk-dot, 12px);
+    background: var(--vk-color, currentColor);
+  }
+
+  @keyframes vkPulsoAnel {
+    0% {
+      transform: scale(0.7);
+      opacity: 0.9;
+    }
+    100% {
+      transform: scale(calc(2.1 * var(--vk-intensity, 1)));
+      opacity: 0;
+    }
+  }
+
+  .vk-pulso[data-vk-animated="false"] .vk-pulso__anel {
+    animation: none;
+    opacity: 0.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-pulso__anel {
+      animation: none;
+      opacity: 0.5;
+    }
+
+    .vk-pulso__anel.is-late {
+      display: none;
+    }
+  }
+</style>

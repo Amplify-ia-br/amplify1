@@ -1,0 +1,83 @@
+---
+/**
+ * TESOURINHA — a curva de retorno do Eixo Rodoviário.
+ *
+ * Metáfora direta de fluxo sem semáforo: o desvio que se faz para
+ * entrar. Boa para blocos de "como funciona" e para transições entre
+ * etapas de um formulário.
+ */
+import { kitStyle, a11y, type VisualKitProps } from "../kit";
+
+const props = Astro.props as VisualKitProps;
+const { class: className, animated = true, title } = props;
+---
+
+<svg
+  viewBox="0 0 220 150"
+  preserveAspectRatio="xMidYMid meet"
+  class:list={["vk-tesourinha", className]}
+  style={kitStyle(props)}
+  data-vk-animated={String(animated)}
+  {...a11y(title)}
+>
+  <path class="vk-tesourinha__eixo" d="M104 4 V146 M116 4 V146"></path>
+  <path class="vk-tesourinha__ida" d="M104 46 H62 C18 46 18 94 62 94 H104"></path>
+  <path class="vk-tesourinha__volta" d="M116 56 H158 C202 56 202 104 158 104 H116"></path>
+</svg>
+
+<style>
+  .vk-tesourinha {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 220 / 150;
+    color: var(--vk-color, currentColor);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-tesourinha path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: calc(1.5px * var(--vk-intensity, 1));
+  }
+
+  .vk-tesourinha__eixo {
+    opacity: 0.3;
+  }
+
+  .vk-tesourinha__ida,
+  .vk-tesourinha__volta {
+    stroke-dasharray: 230;
+    stroke-dashoffset: 0;
+  }
+
+  .vk-tesourinha__ida {
+    animation: vkTesourinhaDraw calc(5s / var(--vk-speed, 1)) ease-in-out infinite;
+  }
+
+  .vk-tesourinha__volta {
+    stroke: var(--vk-accent, #2dd4bf);
+    animation: vkTesourinhaDraw calc(5s / var(--vk-speed, 1)) ease-in-out
+      calc(0.6s / var(--vk-speed, 1)) infinite;
+  }
+
+  @keyframes vkTesourinhaDraw {
+    0% {
+      stroke-dashoffset: 230;
+    }
+    55%,
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .vk-tesourinha[data-vk-animated="false"] path {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-tesourinha path {
+      animation: none;
+    }
+  }
+</style>

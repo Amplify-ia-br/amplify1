@@ -1,0 +1,99 @@
+---
+/**
+ * FITA DE DADOS — faixa mono contínua entre seções.
+ *
+ * Repete data, cidade e formato sem ocupar um bloco inteiro. Os itens
+ * são duplicados para que o laço seja imperceptível.
+ */
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** Termos repetidos na fita. */
+  items?: string[];
+  /** Quantas vezes a sequência aparece em cada metade. Padrão: `4`. */
+  repeat?: number;
+}
+
+const props = Astro.props as Props;
+const {
+  class: className,
+  animated = true,
+  items = ["23 SET 2026", "BRASÍLIA", "PRESENCIAL"],
+  repeat = 4,
+} = props;
+
+const sequencia = Array.from({ length: repeat }, () => items).flat();
+/** A metade é duplicada: o keyframe anda -50% e volta ao ponto de partida. */
+const fita = [...sequencia, ...sequencia];
+---
+
+<div
+  class:list={["vk-fita", className]}
+  style={kitStyle(props)}
+  data-vk-animated={String(animated)}
+  role="img"
+  aria-label={items.join(" · ")}
+>
+  <div class="vk-fita__trilha">
+    {
+      fita.map((item) => (
+        <span class="vk-fita__item">
+          {item}
+          <span class="vk-fita__sep" aria-hidden="true">
+            ·
+          </span>
+        </span>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .vk-fita {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-fita__trilha {
+    display: flex;
+    flex: none;
+    white-space: nowrap;
+    font-family: var(--vk-font-mono, ui-monospace, "SFMono-Regular", Menlo, monospace);
+    font-size: var(--vk-size, 13px);
+    letter-spacing: 0.2em;
+    color: var(--vk-color, currentColor);
+    animation: vkFitaMarquee calc(18s / var(--vk-speed, 1)) linear infinite;
+  }
+
+  .vk-fita__item {
+    padding-inline-end: 28px;
+  }
+
+  .vk-fita__sep {
+    padding-inline-start: 28px;
+    color: var(--vk-accent, #2dd4bf);
+  }
+
+  @keyframes vkFitaMarquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+
+  .vk-fita[data-vk-animated="false"] .vk-fita__trilha {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-fita__trilha {
+      animation: none;
+    }
+  }
+</style>

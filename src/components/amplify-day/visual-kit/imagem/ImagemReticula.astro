@@ -1,0 +1,109 @@
+---
+/**
+ * RETÍCULA SOBRE CREME — imagem impressa sobre o fundo claro da landing.
+ *
+ * Meio-tom por multiplicação e a varredura em acento fechando a base.
+ * É o tratamento de imagem para as dobras claras.
+ */
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** URL da imagem (ou `.src` de um asset importado). */
+  src: string;
+  /** Texto alternativo. Vazio = imagem decorativa. */
+  alt?: string;
+  /** Passo da retícula. Padrão: `6px`. */
+  step?: string;
+  /** Mostra a varredura de acento na base. Padrão: `true`. */
+  sweep?: boolean;
+  loading?: "eager" | "lazy";
+  width?: number | string;
+  height?: number | string;
+}
+
+const props = Astro.props as Props;
+const {
+  class: className,
+  src,
+  alt = "",
+  step,
+  sweep = true,
+  animated = true,
+  loading = "lazy",
+} = props;
+---
+
+<div
+  class:list={["vk-reticula", className]}
+  style={kitStyle(props, { "--vk-step": step })}
+  data-vk-animated={String(animated)}
+>
+  <img class="vk-reticula__img" src={src} alt={alt} loading={loading} decoding="async" />
+  <div class="vk-reticula__meiotom"></div>
+  {sweep && <div class="vk-reticula__varredura" />}
+</div>
+
+<style>
+  .vk-reticula {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1 / 1;
+    overflow: hidden;
+    background: var(--vk-surface, #eae6d9);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-reticula__img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(0.7) contrast(1.05) brightness(1.05);
+  }
+
+  .vk-reticula__meiotom {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image: radial-gradient(
+      color-mix(in srgb, var(--vk-color, #0d0d0d) 45%, transparent) 1px,
+      transparent 1.4px
+    );
+    background-size: var(--vk-step, 6px) var(--vk-step, 6px);
+    mix-blend-mode: multiply;
+    opacity: calc(0.5 * var(--vk-intensity, 1));
+  }
+
+  .vk-reticula__varredura {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--vk-accent, #2dd4bf);
+    transform-origin: left;
+    animation: vkReticulaSweep calc(5s / var(--vk-speed, 1)) ease-in-out infinite;
+  }
+
+  @keyframes vkReticulaSweep {
+    0% {
+      transform: scaleX(0);
+    }
+    60%,
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  .vk-reticula[data-vk-animated="false"] .vk-reticula__varredura {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-reticula__varredura {
+      animation: none;
+    }
+  }
+</style>

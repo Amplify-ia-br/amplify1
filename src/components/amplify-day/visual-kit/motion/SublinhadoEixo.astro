@@ -1,0 +1,96 @@
+---
+/**
+ * SUBLINHADO-EIXO — o filete que entra pela esquerda.
+ *
+ * Vai sob títulos e sob a data. Substitui qualquer fade genérico.
+ *
+ * Por padrão anima em laço, como no kit. Com `once`, desenha uma vez
+ * quando entra na viewport — é assim que se usa numa página real.
+ */
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** Espessura do filete. Padrão: `2px`. */
+  thickness?: string;
+  /** Anima uma única vez, ao entrar na viewport, em vez de repetir. */
+  once?: boolean;
+}
+
+const props = Astro.props as Props;
+const { class: className, animated = true, thickness, once = false } = props;
+---
+
+<div
+  class:list={["vk-sublinhado", once && "is-once", className]}
+  style={kitStyle(props, { "--vk-thickness": thickness })}
+  data-vk-animated={String(animated)}
+  aria-hidden="true"
+>
+</div>
+
+<script>
+  // Só existe para o modo `once`: marca o filete quando ele entra na
+  // viewport, e então a transição CSS o desenha. Sem `once` na página,
+  // não encontra alvo nenhum e não faz nada.
+  const alvos = document.querySelectorAll(".vk-sublinhado.is-once:not([data-vk-seen])");
+  if (alvos.length) {
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        for (const entrada of entradas) {
+          if (!entrada.isIntersecting) continue;
+          entrada.target.setAttribute("data-vk-seen", "true");
+          observador.unobserve(entrada.target);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    for (const alvo of alvos) observador.observe(alvo);
+  }
+</script>
+
+<style>
+  .vk-sublinhado {
+    width: 100%;
+    height: var(--vk-thickness, 2px);
+    background: var(--vk-accent, #2dd4bf);
+    opacity: var(--vk-opacity, 1);
+    transform-origin: left;
+    animation: vkSublinhadoSweep calc(3.6s / var(--vk-speed, 1)) ease-in-out infinite;
+  }
+
+  /* Modo "uma vez": fica recolhido até ser visto, aí desenha e para. */
+  .vk-sublinhado.is-once {
+    transform: scaleX(0);
+    animation: none;
+  }
+
+  .vk-sublinhado.is-once[data-vk-seen] {
+    transform: scaleX(1);
+    transition: transform calc(0.52s / var(--vk-speed, 1))
+      cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+
+  @keyframes vkSublinhadoSweep {
+    0% {
+      transform: scaleX(0);
+    }
+    60%,
+    100% {
+      transform: scaleX(1);
+    }
+  }
+
+  .vk-sublinhado[data-vk-animated="false"] {
+    animation: none;
+    transform: scaleX(1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-sublinhado,
+    .vk-sublinhado.is-once {
+      animation: none;
+      transition: none;
+      transform: scaleX(1);
+    }
+  }
+</style>

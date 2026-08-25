@@ -1,0 +1,131 @@
+---
+/**
+ * APLICAÇÃO — convite (social 1:1).
+ *
+ * Mesmo kit em formato quadrado: foto tratada em duotone no topo,
+ * tipografia mono para os dados, filete de assinatura no rodapé.
+ *
+ * É um exemplo de composição do catálogo, não um bloco de produção.
+ */
+import ImagemDuotone from "../imagem/ImagemDuotone.astro";
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  /** URL da foto do topo. */
+  src: string;
+  alt?: string;
+  eyebrow?: string;
+  titulo?: string;
+  texto?: string;
+  assinatura?: string;
+}
+
+const props = Astro.props as Props;
+const {
+  class: className,
+  src,
+  alt = "",
+  eyebrow = "CONVITE · SOCIAL 1:1",
+  titulo = "Participação por convite.",
+  texto = "Foto tratada em duotone, grafismo em rodapé, tipografia mono para os dados. Mesmo kit, formato quadrado.",
+  assinatura = "AMPLIFY + SHOCK WAVE",
+} = props;
+---
+
+<article class:list={["vk-convite", className]} style={kitStyle(props)}>
+  <div class="vk-convite__foto">
+    <ImagemDuotone src={src} alt={alt} tint={0.45} scrim={0.1} height="100%" />
+    <div class="vk-convite__fade"></div>
+  </div>
+
+  <div class="vk-convite__corpo">
+    <span class="vk-convite__eyebrow">{eyebrow}</span>
+    <h3 class="vk-convite__titulo">{titulo}</h3>
+    <p class="vk-convite__texto">{texto}</p>
+    <div class="vk-convite__rodape">
+      <span>{assinatura}</span>
+      <span class="vk-convite__seta" aria-hidden="true">→</span>
+    </div>
+  </div>
+</article>
+
+<style>
+  .vk-convite {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--vk-rule, rgba(13, 13, 13, 0.18));
+    background: var(--vk-surface, var(--vk-panel, #0d0d0d));
+    font-family: var(--vk-font-sans, system-ui, sans-serif);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-convite__foto {
+    position: relative;
+    height: 200px;
+    flex: none;
+    overflow: hidden;
+  }
+
+  /* Fecha a foto no fundo do card, para a tipografia começar no escuro. */
+  .vk-convite__fade {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      var(--vk-surface, var(--vk-panel, #0d0d0d))
+    );
+  }
+
+  .vk-convite__corpo {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 16px;
+    padding: 30px;
+  }
+
+  .vk-convite__eyebrow {
+    font-family: var(--vk-font-mono, ui-monospace, Menlo, monospace);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--vk-accent, #2dd4bf);
+  }
+
+  .vk-convite__titulo {
+    margin: 0;
+    max-width: 14ch;
+    font-size: clamp(24px, 3.2vw, 30px);
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--vk-on-panel, #f6f7f4);
+  }
+
+  .vk-convite__texto {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--vk-on-panel-2, #9b9f9d);
+  }
+
+  .vk-convite__rodape {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid color-mix(in srgb, var(--vk-on-panel, #f6f7f4) 14%, transparent);
+    font-family: var(--vk-font-mono, ui-monospace, Menlo, monospace);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    color: var(--vk-ink-3, #737977);
+  }
+
+  .vk-convite__seta {
+    color: var(--vk-accent, #2dd4bf);
+  }
+</style>

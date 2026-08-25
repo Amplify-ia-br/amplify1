@@ -1,0 +1,174 @@
+---
+/**
+ * APLICAÇÃO — hero.
+ *
+ * Como o kit se comporta junto: retícula de concreto no fundo, o Eixo
+ * grande deitado no canto, o sublinhado sob a marca e a linha de dados
+ * no rodapé. Um grafismo dominante por peça, nada mais.
+ *
+ * É um exemplo de composição do catálogo, não um bloco de produção —
+ * copie a estrutura e troque a copy.
+ */
+import TexturaConcreto from "../texturas/TexturaConcreto.astro";
+import SublinhadoEixo from "../motion/SublinhadoEixo.astro";
+import { kitStyle, type VisualKitProps } from "../kit";
+
+interface Props extends VisualKitProps {
+  eyebrow?: string[];
+  titulo?: string;
+  lead?: string;
+  keyword?: string;
+  data?: string;
+  local?: string;
+}
+
+const props = Astro.props as Props;
+const {
+  class: className,
+  eyebrow = ["EVENTO PRESENCIAL", "BRASÍLIA", "EDIÇÃO 01"],
+  titulo = "AMPLIFY DAY",
+  lead = "Um dia de evento. Palestrantes de impacto. Conversas relevantes.",
+  keyword = "Sua inteligência amplificada.",
+  data = "23 SET 2026",
+  local = "CENTRO DE CONVENÇÕES ULYSSES GUIMARÃES",
+} = props;
+---
+
+<article class:list={["vk-hero", className]} style={kitStyle(props)}>
+  <TexturaConcreto class="vk-hero__fundo" inset step="16px" opacity={0.5} animated={false} />
+
+  <svg class="vk-hero__eixo" viewBox="0 0 600 420" aria-hidden="true" focusable="false">
+    <path class="vk-hero__eixo-v" d="M300 20 V420"></path>
+    <path class="vk-hero__eixo-h" d="M40 300 H560"></path>
+    <path class="vk-hero__eixo-curva" d="M300 200 H180 C60 200 60 320 180 320 H300"></path>
+  </svg>
+
+  <div class="vk-hero__topo">
+    {eyebrow.map((item) => <span>{item}</span>)}
+  </div>
+
+  <div class="vk-hero__corpo">
+    <h3 class="vk-hero__titulo">{titulo}</h3>
+    <SublinhadoEixo class="vk-hero__filete" width={180} />
+    <p class="vk-hero__lead">
+      {lead}<br /><em>{keyword}</em>
+    </p>
+  </div>
+
+  <div class="vk-hero__rodape">
+    <span>{data}</span>
+    <span class="vk-hero__ponto" aria-hidden="true">·</span>
+    <span>{local}</span>
+  </div>
+</article>
+
+<style>
+  .vk-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 32px;
+    min-height: 420px;
+    padding: clamp(28px, 4vw, 44px) clamp(24px, 3.6vw, 40px);
+    overflow: hidden;
+    border: 1px solid var(--vk-rule, rgba(13, 13, 13, 0.18));
+    background: var(--vk-surface, var(--vk-panel-alt, #eae6d9));
+    color: var(--vk-color, var(--vk-ink, #0d0d0d));
+    font-family: var(--vk-font-sans, system-ui, sans-serif);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-hero__eixo {
+    position: absolute;
+    right: -60px;
+    bottom: -40px;
+    z-index: 0;
+    width: min(520px, 88%);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .vk-hero__eixo path {
+    fill: none;
+    stroke-width: 1.5px;
+  }
+
+  .vk-hero__eixo-v,
+  .vk-hero__eixo-h {
+    stroke: color-mix(in srgb, currentColor 40%, transparent);
+  }
+
+  .vk-hero__eixo-curva {
+    stroke: var(--vk-accent, #2dd4bf);
+    stroke-dasharray: 600;
+    stroke-dashoffset: 0;
+    animation: vkHeroDraw calc(7s / var(--vk-speed, 1)) ease-in-out infinite;
+  }
+
+  @keyframes vkHeroDraw {
+    0% {
+      stroke-dashoffset: 600;
+    }
+    55%,
+    100% {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  .vk-hero__topo,
+  .vk-hero__rodape {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    font-family: var(--vk-font-mono, ui-monospace, Menlo, monospace);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    color: var(--vk-ink-4, #4a4a45);
+  }
+
+  .vk-hero__topo {
+    justify-content: space-between;
+  }
+
+  .vk-hero__rodape {
+    align-items: baseline;
+  }
+
+  .vk-hero__ponto {
+    color: var(--vk-accent, #2dd4bf);
+  }
+
+  .vk-hero__corpo {
+    position: relative;
+    z-index: 1;
+  }
+
+  .vk-hero__titulo {
+    margin: 0 0 18px;
+    font-size: clamp(38px, 6vw, 64px);
+    line-height: 0.9;
+    font-weight: 800;
+    letter-spacing: -0.04em;
+  }
+
+  .vk-hero__lead {
+    margin: 22px 0 0;
+    max-width: 42ch;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--vk-ink-2, #3a3a36);
+  }
+
+  .vk-hero__lead em {
+    color: var(--vk-accent-ink, #0d6b6b);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-hero__eixo-curva {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,90 @@
+---
+/**
+ * CÚPULAS — côncavo e convexo: receber e emitir.
+ *
+ * O par de cúpulas do Congresso vira ícone de conversa: duas posições,
+ * uma decisão. A varredura desce entre as torres.
+ *
+ * A linha de varredura vive dentro do próprio `viewBox`, em unidades de
+ * usuário, para escalar junto com o desenho em qualquer tamanho.
+ */
+import { kitStyle, a11y, type VisualKitProps } from "../kit";
+
+const props = Astro.props as VisualKitProps;
+const { class: className, animated = true, title } = props;
+---
+
+<svg
+  viewBox="0 0 220 150"
+  preserveAspectRatio="xMidYMid meet"
+  class:list={["vk-cupulas", className]}
+  style={kitStyle(props)}
+  data-vk-animated={String(animated)}
+  {...a11y(title)}
+>
+  <path class="vk-cupulas__solo" d="M14 128 H206"></path>
+  <rect class="vk-cupulas__torre" x="98" y="24" width="9" height="104"></rect>
+  <rect class="vk-cupulas__torre" x="113" y="24" width="9" height="104"></rect>
+  <path class="vk-cupulas__convexa" d="M28 128 A 26 14 0 0 1 80 128"></path>
+  <path class="vk-cupulas__concava" d="M140 128 A 26 14 0 0 0 192 128"></path>
+  <line class="vk-cupulas__varredura" x1="14" y1="60" x2="206" y2="60"></line>
+</svg>
+
+<style>
+  .vk-cupulas {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 220 / 150;
+    overflow: hidden;
+    color: var(--vk-color, currentColor);
+    opacity: var(--vk-opacity, 1);
+  }
+
+  .vk-cupulas :where(path, rect, line) {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: calc(1.5px * var(--vk-intensity, 1));
+  }
+
+  .vk-cupulas__solo {
+    opacity: 0.3;
+  }
+
+  .vk-cupulas__concava {
+    stroke: var(--vk-accent, #2dd4bf);
+  }
+
+  .vk-cupulas__varredura {
+    stroke: var(--vk-accent, #2dd4bf);
+    stroke-width: 1px;
+    /* Estado de repouso (sem animação): a linha fica parada no meio. */
+    opacity: 0.7;
+    animation: vkCupulasScan calc(4.5s / var(--vk-speed, 1)) ease-in-out infinite;
+  }
+
+  @keyframes vkCupulasScan {
+    0% {
+      transform: translateY(-6px);
+      opacity: 0;
+    }
+    20%,
+    60% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateY(64px);
+      opacity: 0;
+    }
+  }
+
+  .vk-cupulas[data-vk-animated="false"] .vk-cupulas__varredura {
+    animation: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .vk-cupulas__varredura {
+      animation: none;
+    }
+  }
+</style>
