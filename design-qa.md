@@ -3,6 +3,7 @@
 Date: 2026-08-25
 Branch: `feat/amplify-day-expanded-lp`
 Route: `/amplify-day`
+Preview: `https://aplify-site-2573wmq3b-leonardocamacho-7240s-projects.vercel.app/amplify-day`
 
 ## Visual review
 
@@ -38,8 +39,9 @@ Route: `/amplify-day`
 - `npm test`: passed.
 - `npm run lint`: passed.
 - `npm run build`: passed.
-- Lighthouse mobile on the deployed Preview: performance 91, accessibility 96, best practices 100.
-- Laboratory Web Vitals: LCP 2.492 s, CLS 0, TBT 0 ms. INP is unavailable in a non-interactive Lighthouse navigation run.
+- Lighthouse mobile on the deployed Preview: performance 93, accessibility 100, best practices 100.
+- Laboratory Web Vitals: LCP 2.137 s, CLS 0, TBT 0 ms. INP is unavailable in a non-interactive Lighthouse navigation run.
+- SEO reports 69 only because Vercel Preview deployments are intentionally served with `noindex`; this is expected before production promotion.
 
 ## Production gates
 
