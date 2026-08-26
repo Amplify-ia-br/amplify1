@@ -6,6 +6,9 @@ const {
   title = "Amplify | Inteligencia Artificial para empresas",
   description = "A Amplify conecta estrategia, educacao corporativa e consultoria para ajudar empresas a aplicar Inteligencia Artificial com impacto real.",
   chatbot = true,
+  globalStylesheet = true,
+  analytics = true,
+  marketingScripts = true,
 } = Astro.props;
 
 const pageTitle = String(title).trim() || "Amplify | Inteligencia Artificial para empresas";
@@ -28,7 +31,7 @@ const canonical = new URL(Astro.url.pathname, baseUrl).toString();
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
-    <link rel="stylesheet" href={globalStyles} />
+    {globalStylesheet && <link rel="stylesheet" href={globalStyles} />}
     {chatbot && (
       <Fragment>
       <link rel="preconnect" href="https://code.jquery.com" crossorigin />
@@ -88,7 +91,7 @@ const canonical = new URL(Astro.url.pathname, baseUrl).toString();
   </head>
   <body>
     <slot />
-    <Analytics />
-    <script type="text/javascript" async src="https://d335luupugsy2.cloudfront.net/js/loader-scripts/78f58b17-d323-4a2c-8a67-a7574e2f61f1-loader.js"></script>
+    {analytics && <Analytics />}
+    {marketingScripts && <script type="text/javascript" async src="https://d335luupugsy2.cloudfront.net/js/loader-scripts/78f58b17-d323-4a2c-8a67-a7574e2f61f1-loader.js"></script>}
   </body>
 </html>

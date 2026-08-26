@@ -1,7 +1,6 @@
 ---
 import PageShell from "@/layouts/PageShell.astro";
 import { Picture } from "astro:assets";
-import "@/components/amplify-day/visual-kit/visual-kit.css";
 import logoAmplify from "@/assets/logo-amplify-color.png";
 import logoShockwave from "@/assets/amplify-day/shockwave.webp";
 import logoXvia from "@/assets/amplify-day/xvia-white.png";
@@ -68,7 +67,7 @@ const eventJsonLd = {
 };
 ---
 
-<PageShell title={title} description={description} chatbot={false} marketingScripts={false} analytics={false}>
+<PageShell title={title} description={description} chatbot={false} marketingScripts={false} globalStylesheet={false}>
   <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
   <main class="page" data-page data-view="invite" aria-labelledby="event-title" style={`--paper-texture:url(${paperTexture.src})`}>
     <section class="invite" aria-label="Convite para o Amplify Day" aria-hidden="false">
