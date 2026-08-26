@@ -38,6 +38,8 @@ Route: `/amplify-day`
 - `npm test`: passed.
 - `npm run lint`: passed.
 - `npm run build`: passed.
+- Lighthouse mobile on the deployed Preview: performance 91, accessibility 96, best practices 100.
+- Laboratory Web Vitals: LCP 2.492 s, CLS 0, TBT 0 ms. INP is unavailable in a non-interactive Lighthouse navigation run.
 
 ## Production gates
 
