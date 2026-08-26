@@ -1,0 +1,704 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import { Picture } from "astro:assets";
+import "@/components/amplify-day/visual-kit/visual-kit.css";
+import logoAmplify from "@/assets/logo-amplify-color.png";
+import logoShockwave from "@/assets/amplify-day/shockwave.webp";
+import logoXvia from "@/assets/amplify-day/xvia-white.png";
+import paperTexture from "@/assets/amplify-day/editorial-paper.webp";
+import brasiliaVertical from "@/assets/amplify-day/visual-kit/catedral-tres-poderes.webp";
+import tesourinhaAerea from "@/assets/amplify-day/visual-kit/tesourinha-aerea.webp";
+import candangosPhoto from "@/assets/amplify-day/visual-kit/candangos.webp";
+import ulyssesPhoto from "@/assets/amplify-day/ulysses-preview.jpeg";
+import logoTecfil from "@/assets/logos/logo-tecfil.png";
+import logoToccato from "@/assets/logos/logo-toccato.png";
+import logoCrea from "@/assets/logos/logo-crea-pr.png";
+import logoUfg from "@/assets/logos/logo-ufg.png";
+import logoGouvea from "@/assets/logos/logo-gouvea.png";
+import logoAmcham from "@/assets/logos/logo-amcham.png";
+import logoGrupoPrimo from "@/assets/logos/logo-grupo-primo.png";
+import logoDwx from "@/assets/logos/logo-dwx.png";
+import GrafismoCupulas from "@/components/amplify-day/visual-kit/grafismos/GrafismoCupulas.astro";
+import GrafismoNave from "@/components/amplify-day/visual-kit/grafismos/GrafismoNave.astro";
+import GrafismoCandangos from "@/components/amplify-day/visual-kit/grafismos/GrafismoCandangos.astro";
+import GrafismoTesourinha from "@/components/amplify-day/visual-kit/grafismos/GrafismoTesourinha.astro";
+import GrafismoSuperquadra from "@/components/amplify-day/visual-kit/grafismos/GrafismoSuperquadra.astro";
+import GrafismoEixo from "@/components/amplify-day/visual-kit/grafismos/GrafismoEixo.astro";
+import FitaDeDados from "@/components/amplify-day/visual-kit/motion/FitaDeDados.astro";
+import ImagemReticula from "@/components/amplify-day/visual-kit/imagem/ImagemReticula.astro";
+import ImagemDuotone from "@/components/amplify-day/visual-kit/imagem/ImagemDuotone.astro";
+const title = "Amplify Day 2026 | Reserve a data";
+const description = "Amplify Day. Evento presencial em Brasília, 23 de setembro de 2026. Participação por convite.";
+const echoes = [-92, -72, -54, -39, -26, -15, -7];
+const organizationLogos = [
+  { src: logoTecfil.src, alt: "Tecfil" },
+  { src: logoToccato.src, alt: "Toccato" },
+  { src: logoCrea.src, alt: "CREA-PR" },
+  { src: logoUfg.src, alt: "UFG" },
+  { src: logoGouvea.src, alt: "Gouvêa Ecosystem" },
+  { src: logoAmcham.src, alt: "Amcham" },
+  { src: logoGrupoPrimo.src, alt: "Grupo Primo" },
+  { src: logoDwx.src, alt: "DWX" },
+];
+const eventJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Event",
+  name: "Amplify Day 2026",
+  description,
+  startDate: "2026-09-23",
+  eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+  eventStatus: "https://schema.org/EventScheduled",
+  location: {
+    "@type": "Place",
+    name: "Ulysses Centro de Convenções",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "SDC, Eixo Monumental, Lote 05",
+      addressLocality: "Brasília",
+      addressRegion: "DF",
+      postalCode: "70655-775",
+      addressCountry: "BR",
+    },
+  },
+  organizer: [
+    { "@type": "Organization", name: "Amplify", url: "https://amplify.ia.br/" },
+    { "@type": "Organization", name: "Shock Wave", url: "https://shockwave.academy/" },
+    { "@type": "Organization", name: "X-VIA" },
+  ],
+};
+---
+
+<PageShell title={title} description={description} chatbot={false} marketingScripts={false} analytics={false}>
+  <script type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
+  <main class="page" data-page data-view="invite" aria-labelledby="event-title" style={`--paper-texture:url(${paperTexture.src})`}>
+    <section class="invite" aria-label="Convite para o Amplify Day" aria-hidden="false">
+      <nav class="editorial-nav" aria-label="Navegação do Amplify Day">
+        <a class="nav-brand" href="#inicio">Amplify Day</a>
+        <div class="nav-meta"><span>23 set 2026</span><span>Ulysses · Brasília</span></div>
+        <div class="nav-links">
+          <a href="#experiencia">Experiência</a><a href="#para-quem">Para quem</a><a href="#local">Local</a><a href="#coalizadoras">Coalizadoras</a>
+        </div>
+        <button class="nav-cta" type="button" data-open data-cta-position="nav">Entrar na lista prioritária</button>
+      </nav>
+
+      <section class="hero" id="inicio">
+        <div class="hero-head">
+          <p class="event-name" id="event-title">Amplify Day</p>
+          <p class="purpose">
+            <span>Um dia de imersão em inteligência artificial.</span>
+            <span>Conversas que geram decisão.</span>
+            <span>Palestrantes de impacto.</span>
+            <em>Sua inteligência amplificada.</em>
+          </p>
+        </div>
+
+        <div class="hero-date" aria-label="23 de setembro de 2026">
+          <div class="field" aria-hidden="true">
+            {echoes.map((offset, index) => (
+              <span class="echo" style={`--offset:${offset}px;--peak:${offset * 1.08}px;--delay:${index * 52}ms;--alpha:${0.07 + index * 0.02}`}>23</span>
+            ))}
+            <span class="core">23</span><span class="signal"></span>
+          </div>
+          <div class="date-caption"><span>Set</span><span>2026</span></div>
+        </div>
+
+        <div class="hero-image" aria-label="Brasília, sede do Amplify Day">
+          <ImagemReticula src={brasiliaVertical.src} alt="Arquitetura de Brasília sob o céu azul" loading="eager" step="7px" speed={0.18} />
+          <span class="hero-image-label">Brasília · DF</span>
+        </div>
+
+        <aside class="hero-action">
+          <div class="save"><span>01</span><h1>Reserve<br />a data</h1></div>
+          <p class="hero-audience">Um encontro presencial, por convite, para quem decide, influencia ou coloca IA em prática.</p>
+          <button class="primary" type="button" data-open data-cta-position="hero"><span>Entrar na lista prioritária</span></button>
+          <p class="cta-note">Cadastre seu interesse. Nosso time entra em contato após analisar seu perfil.</p>
+        </aside>
+
+        <footer class="hero-foot">
+          <div class="brands" aria-label="Coalizadoras: Amplify, Shock Wave e X-VIA">
+            <img class="amplify" src={logoAmplify.src} alt="Amplify" width="1301" height="204" />
+            <span aria-hidden="true">+</span>
+            <img class="shock" src={logoShockwave.src} alt="Shock Wave" width="500" height="331" />
+            <span aria-hidden="true">+</span>
+            <img class="xvia" src={logoXvia.src} alt="X-VIA" width="3426" height="774" />
+          </div>
+          <p>23 set 2026 <i>·</i> Brasília <i>·</i> Presencial</p>
+        </footer>
+      </section>
+
+      <div class="data-strip"><FitaDeDados items={["AMPLIFY DAY", "23 SET 2026", "BRASÍLIA", "PRESENCIAL", "POR CONVITE"]} repeat={3} speed={0.28} /></div>
+
+      <section class="experience section-shell" id="experiencia">
+        <header class="section-heading">
+          <span>02 · Experiência</span>
+          <h2>Duas plenárias.<br />Conversas em escalas diferentes.</h2>
+        </header>
+        <div class="stage-grid">
+          <article class="stage stage-main">
+            <div class="stage-art"><GrafismoCupulas animated={true} speed={0.18} title="Duas cúpulas representam conversa e decisão" /></div>
+            <p class="stage-index">Plenária 01</p>
+            <h3>Plenária principal</h3>
+            <p>Palestras de impacto, visões e decisões que precisam chegar à liderança.</p>
+          </article>
+          <article class="stage stage-panels">
+            <div class="stage-art"><GrafismoNave animated={false} title="Linhas da Catedral se expandem em várias direções" /></div>
+            <p class="stage-index">Plenária 02</p>
+            <h3>Palco de painéis</h3>
+            <p>Conversas com mais contexto, confronto de experiências e espaço para perguntas.</p>
+          </article>
+        </div>
+        <p class="program-note">Temas e participantes serão anunciados durante a curadoria da programação.</p>
+      </section>
+
+      <section class="city-transition" aria-label="Brasília vista de cima">
+        <ImagemDuotone src={tesourinhaAerea.src} alt="Vista aérea das tesourinhas de Brasília" tint={0.24} scrim={0.1} />
+        <p><span>Não é sobre assistir.</span><strong>É sobre sair com critério.</strong></p>
+      </section>
+
+      <section class="audience section-shell" id="para-quem">
+        <div class="audience-heading">
+          <span>03 · Para quem</span>
+          <h2>Para quem a IA já virou responsabilidade.</h2>
+        </div>
+        <div class="audience-graphic"><GrafismoCandangos animated={true} speed={0.22} title="Os Candangos representam quem constrói e implementa" /></div>
+        <ol class="responsibility-list">
+          <li><span>01</span><p>Decide prioridades, investimentos ou políticas.</p></li>
+          <li><span>02</span><p>Lidera equipes, produtos, operações ou transformação.</p></li>
+          <li><span>03</span><p>Implementa IA e precisa conectar execução a impacto.</p></li>
+        </ol>
+        <div class="curation">
+          <p class="curation-label">Como funciona a curadoria</p>
+          <ol><li>Você entra na lista prioritária.</li><li>Nosso time conhece o seu contexto.</li><li>Os convites são enviados conforme a composição da sala.</li></ol>
+          <button class="secondary-cta" type="button" data-open data-cta-position="audience">Entrar na lista prioritária <span>→</span></button>
+        </div>
+      </section>
+
+      <section class="location" id="local">
+        <div class="location-media">
+          <Picture src={ulyssesPhoto} formats={["avif", "webp"]} widths={[640, 960, 1280]} sizes="(max-width: 760px) 100vw, 58vw" alt="Centro de Convenções Ulysses Guimarães visto do alto" loading="lazy" />
+          <p>Ulysses Centro de Convenções · Brasília</p>
+        </div>
+        <div class="location-copy">
+          <span>04 · Local</span>
+          <h2>Brasília, no centro das decisões.</h2>
+          <div class="location-mark"><GrafismoTesourinha animated={false} /></div>
+          <p class="venue">Ulysses Centro de Convenções</p>
+          <address>SDC, Eixo Monumental, Lote 05<br />Brasília · DF · 70655-775</address>
+          <p>Desembarque fácil por táxi ou aplicativo, próximo aos setores hoteleiros e com estacionamento terceirizado no complexo.</p>
+          <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Ulysses+Centro+de+Conven%C3%A7%C3%B5es+Bras%C3%ADlia" target="_blank" rel="noopener" data-map>Ver no mapa <span>↗</span></a>
+        </div>
+      </section>
+
+      <section class="coalition section-shell" id="coalizadoras">
+        <div class="coalition-image"><ImagemReticula src={candangosPhoto.src} alt="Monumento Os Candangos e Congresso Nacional ao pôr do sol" step="8px" animated={false} /></div>
+        <header class="coalition-heading">
+          <span>05 · Coalizadoras</span>
+          <h2>Três trajetórias.<br />Uma sala em comum.</h2>
+        </header>
+        <div class="coalition-grid">
+          <article><p class="org-name">Amplify</p><h3>IA aplicada à transformação real.</h3><p>Educação corporativa, consultoria e comunidades para transformar conhecimento em capacidade de execução.</p><dl><div><dt>130 mil+</dt><dd>alunos capacitados</dd></div><div><dt>1 mil+</dt><dd>treinamentos</dd></div></dl></article>
+          <article><p class="org-name">Shock Wave</p><h3>Criatividade e fluência para mover negócios.</h3><p>Aprendizado prático, repertório e aplicação de inteligência artificial no trabalho e nas decisões.</p></article>
+          <article><p class="org-name">X‑VIA</p><h3>Pioneirismo em governo digital no Brasil.</h3><p>Desde 2014, aproxima governo e cidadão por meio de tecnologia, serviços e novas experiências públicas.</p></article>
+        </div>
+        <div class="amplify-fronts" aria-label="Frentes de atuação da Amplify"><span>Capacitação</span><span>Consultoria e Serviços</span><span>Comunidades</span></div>
+      </section>
+
+      <section class="proof section-shell" aria-labelledby="proof-title">
+        <div class="proof-art"><GrafismoSuperquadra columns={12} rows={4} lit={[3, 9, 14, 20, 27, 34, 41]} animated={false} /></div>
+        <header><span>06 · Histórico</span><h2 id="proof-title">Organizações já impactadas pelas coalizadoras.</h2><p>Relações de trabalho e transformação. Estas marcas não indicam patrocínio, participação ou apoio ao evento.</p></header>
+        <div class="logo-wall">{organizationLogos.map((logo) => <img src={logo.src} alt={logo.alt} loading="lazy" decoding="async" />)}</div>
+      </section>
+
+      <section class="faq section-shell" id="faq">
+        <header><span>07 · Perguntas frequentes</span><h2>O que você precisa saber agora.</h2></header>
+        <div class="faq-list">
+          <details><summary>Para quem é o Amplify Day?</summary><p>Para quem decide, influencia ou implementa inteligência artificial e já precisa conectar escolhas a impacto.</p></details>
+          <details><summary>O cadastro confirma a participação?</summary><p>Não. Ele registra seu interesse para a curadoria. Os convites serão enviados conforme a composição da sala.</p></details>
+          <details><summary>Quando programação e palestrantes serão anunciados?</summary><p>Durante a curadoria da programação. Quem estiver na lista prioritária receberá as novidades primeiro.</p></details>
+          <details><summary>Onde será realizado?</summary><p>No Ulysses Centro de Convenções, em Brasília, no dia 23 de setembro de 2026.</p></details>
+          <details><summary>Como receberei as próximas informações?</summary><p>Pelo e-mail informado no cadastro. Após concluir o perfil, você também poderá entrar no grupo de WhatsApp.</p></details>
+        </div>
+      </section>
+
+      <section class="final-cta section-shell">
+        <div class="final-axis"><GrafismoEixo animated={false} /></div>
+        <p>23 set 2026 · Brasília · Presencial</p>
+        <h2>Entre agora.<br />O convite vem depois.</h2>
+        <p class="final-copy">Cadastre seu interesse para acompanhar a construção do Amplify Day e participar da curadoria.</p>
+        <button class="primary final-button" type="button" data-open data-cta-position="final"><span>Entrar na lista prioritária</span></button>
+      </section>
+
+      <footer class="site-foot section-shell">
+        <div class="brands" aria-label="Coalizadoras: Amplify, Shock Wave e X-VIA"><img class="amplify" src={logoAmplify.src} alt="Amplify" width="1301" height="204" /><span aria-hidden="true">+</span><img class="shock" src={logoShockwave.src} alt="Shock Wave" width="500" height="331" /><span aria-hidden="true">+</span><img class="xvia" src={logoXvia.src} alt="X-VIA" width="3426" height="774" /></div>
+        <p>Uma conversa à altura de quem decide.</p>
+      </footer>
+    </section>
+
+    <section class="response" aria-labelledby="response-title" aria-hidden="true" inert>
+      <header class="response-head"><p>Amplify Day</p><button type="button" data-close>Voltar ao convite</button></header>
+      <div class="response-grid">
+        <div class="response-copy">
+          <p>Lista prioritária · 01</p>
+          <h2 id="response-title">Entre<br />na lista</h2>
+          <p>Deixe seu nome e e-mail para receber primeiro as próximas informações sobre o Amplify Day.</p>
+        </div>
+        <form class="form" data-form novalidate>
+          <label><span>Nome</span><input type="text" name="name" autocomplete="name" required /><small data-error="name" hidden>Informe seu nome.</small></label>
+          <label><span>E-mail</span><input type="email" name="email" autocomplete="email" inputmode="email" required /><small data-error="email" hidden>Informe um e-mail válido.</small></label>
+          <label class="website-field" aria-hidden="true"><span>Website</span><input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+          <button class="submit" type="submit">Continuar</button>
+          <p class="note" data-note role="status" aria-live="polite">Ao continuar, você autoriza o contato sobre o Amplify Day. Consulte nossa <a href="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a>.</p>
+        </form>
+      </div>
+      <footer class="response-foot">
+        <p>23 set 2026 · Brasília · Presencial</p>
+        <div class="brands" aria-label="Coalizadoras: Amplify, Shockwave e X-VIA">
+          <img class="amplify" src={logoAmplify.src} alt="Amplify" width="1301" height="204" /><span aria-hidden="true">+</span>
+          <img class="shock" src={logoShockwave.src} alt="Shockwave" width="500" height="331" />
+          <span aria-hidden="true">+</span><img class="xvia" src={logoXvia.src} alt="X-VIA" width="3426" height="774" />
+        </div>
+      </footer>
+    </section>
+
+    <section class="qualification" aria-labelledby="qualification-title" aria-hidden="true" inert>
+      <button class="qualification-backdrop" type="button" data-qualification-close aria-label="Voltar ao formulário inicial"></button>
+      <div class="qualification-panel" role="dialog" aria-modal="true" aria-labelledby="qualification-title">
+        <div class="pink-echoes" aria-hidden="true"><span>Liderança</span><span>Liderança</span><span>Liderança</span><span>Liderança</span></div>
+        <header class="qualification-head"><p>Amplify Day · Contexto</p><button type="button" data-qualification-close>Voltar</button></header>
+        <div class="qualification-grid">
+          <div class="qualification-copy">
+            <p class="qualification-index">02 · Sua presença importa</p>
+            <h2 id="qualification-title">Onde a sua<br />liderança acontece?</h2>
+            <p>Esta sala está sendo formada por líderes que movem empresas, setores e causas relevantes. Conte-nos sobre o lugar que você ocupa nessa conversa.</p>
+          </div>
+          <form class="qualification-form" data-qualification-form novalidate>
+            <label><span>Organização</span><input type="text" name="organization" autocomplete="organization" required /><small data-q-error="organization" hidden>Informe sua organização.</small></label>
+            <label><span>Cargo ou papel de liderança</span><input type="text" name="role" autocomplete="organization-title" required /><small data-q-error="role" hidden>Informe seu cargo ou papel.</small></label>
+            <label><span>LinkedIn <i>opcional</i></span><input type="url" name="linkedin" inputmode="url" placeholder="linkedin.com/in/seu-perfil" /></label>
+            <label class="content-consent"><input type="checkbox" name="marketingConsent" value="true" /><span>Quero receber também conteúdos, análises e convites da Amplify e Shock Wave.</span></label>
+            <button class="qualification-submit" type="submit"><span>Concluir meu cadastro</span><b aria-hidden="true">→</b></button>
+            <p class="qualification-note" data-qualification-note role="status" aria-live="polite">Seus dados ficam salvos conforme você avança.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section class="thanks" aria-labelledby="thanks-title" aria-hidden="true" inert>
+      <header class="thanks-head"><p>Amplify Day</p><p>23 set 2026 · Brasília</p><p>Perfil recebido</p></header>
+      <div class="thanks-main">
+        <h2 id="thanks-title"><span>Sua presença</span><span>Amplifica <em>tudo.</em></span></h2>
+        <p class="thanks-index">03 · Lista prioritária</p>
+        <p>Obrigado por contar um pouco sobre você. Você entrou na lista prioritária. Avisaremos por e-mail quando a curadoria de convites abrir.<strong> Reserve 23 de setembro.</strong></p>
+        <div class="thanks-actions"><button type="button" data-calendar>Adicionar à agenda</button><a href="#" data-whatsapp hidden target="_blank" rel="noopener">Entrar no grupo de WhatsApp</a><button type="button" data-restart>Rever o convite</button></div>
+      </div>
+      <footer class="thanks-foot">
+        <div class="brands" aria-label="Coalizadoras: Amplify, Shockwave e X-VIA"><img class="amplify" src={logoAmplify.src} alt="Amplify" width="1301" height="204" /><span aria-hidden="true">+</span><img class="shock" src={logoShockwave.src} alt="Shockwave" width="500" height="331" /><span aria-hidden="true">+</span><img class="xvia" src={logoXvia.src} alt="X-VIA" width="3426" height="774" /></div>
+        <p>Uma conversa à altura de quem decide.</p>
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    const STORAGE_KEY = "amplify-day-lead";
+    const page = document.querySelector<HTMLElement>("[data-page]");
+    const response = document.querySelector<HTMLElement>(".response");
+    const invite = document.querySelector<HTMLElement>(".invite");
+    const form = document.querySelector<HTMLFormElement>("[data-form]");
+    const openButtons = document.querySelectorAll<HTMLButtonElement>("[data-open]");
+    const open = openButtons[0] || null;
+    const close = document.querySelector<HTMLButtonElement>("[data-close]");
+    const qualification = document.querySelector<HTMLElement>(".qualification");
+    const thanks = document.querySelector<HTMLElement>(".thanks");
+    const qualificationForm = document.querySelector<HTMLFormElement>("[data-qualification-form]");
+    const responseNote = document.querySelector<HTMLElement>("[data-note]");
+    const qualificationNote = document.querySelector<HTMLElement>("[data-qualification-note]");
+    const whatsapp = document.querySelector<HTMLAnchorElement>("[data-whatsapp]");
+    const track = (eventName: string, properties: Record<string, string | number | boolean> = {}) => {
+      const analytics = (window as typeof window & { va?: (command: string, payload: unknown) => void }).va;
+      analytics?.("event", { name: eventName, data: properties });
+      window.dispatchEvent(new CustomEvent("amplify:analytics", { detail: { eventName, ...properties } }));
+    };
+    type View = "invite" | "form" | "qualification" | "thanks";
+    const setView = (view: View) => {
+      if (!page || !response) return;
+      page.dataset.view = view;
+      invite?.setAttribute("aria-hidden", String(view !== "invite"));
+      response.setAttribute("aria-hidden", String(view !== "form"));
+      qualification?.setAttribute("aria-hidden", String(view !== "qualification"));
+      thanks?.setAttribute("aria-hidden", String(view !== "thanks"));
+      invite?.toggleAttribute("inert", view !== "invite");
+      response.toggleAttribute("inert", view !== "form");
+      qualification?.toggleAttribute("inert", view !== "qualification");
+      thanks?.toggleAttribute("inert", view !== "thanks");
+      document.documentElement.style.overflow = view === "invite" ? "" : "hidden";
+      window.setTimeout(() => {
+        if (view === "form") form?.querySelector<HTMLInputElement>("input")?.focus();
+        else if (view === "qualification") qualificationForm?.querySelector<HTMLInputElement>("input")?.focus();
+        else if (view === "invite") open?.focus();
+      }, 540);
+    };
+    openButtons.forEach((button) => button.addEventListener("click", () => {
+      track("amplify_day_cta_clicked", { position: button.dataset.ctaPosition || "unknown" });
+      track("amplify_day_form_opened", { position: button.dataset.ctaPosition || "unknown" });
+      setView("form");
+    }));
+    close?.addEventListener("click", () => setView("invite"));
+    const readProgress = (): Record<string, unknown> => {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch { return {}; }
+    };
+    const saveProgress = (stage: string, values: Record<string, unknown>) => {
+      const detail = { ...readProgress(), ...values, stage, updatedAt: new Date().toISOString() };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(detail));
+      window.dispatchEvent(new CustomEvent("amplify:lead-progress", { detail }));
+      return detail;
+    };
+    const eventId = () => globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const sendLeadEvent = async (eventName: string, values: Record<string, unknown> = {}, keepalive = false) => {
+      const detail = { ...readProgress(), ...values };
+      const response = await fetch("/api/amplify-day-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        keepalive,
+        body: JSON.stringify({ ...detail, eventName, idempotencyKey: eventId() }),
+      });
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result?.ok) throw new Error(result?.error || "capture_failed");
+      return result;
+    };
+    const setBusy = (button: HTMLButtonElement | null, busy: boolean, idleLabel: string, busyLabel: string) => {
+      if (!button) return;
+      button.disabled = busy;
+      button.setAttribute("aria-busy", String(busy));
+      const label = button.querySelector("span") || button;
+      label.textContent = busy ? busyLabel : idleLabel;
+    };
+    const validate = (input: HTMLInputElement, valid: boolean) => {
+      input.setAttribute("aria-invalid", String(!valid));
+      const error = document.querySelector<HTMLElement>(`[data-error="${input.name}"]`);
+      if (error) error.hidden = valid;
+    };
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const name = form.elements.namedItem("name") as HTMLInputElement;
+      const email = form.elements.namedItem("email") as HTMLInputElement;
+      const website = form.elements.namedItem("website") as HTMLInputElement;
+      const nameOK = Boolean(name.value.trim());
+      const emailOK = Boolean(email.value.trim()) && email.validity.valid;
+      validate(name, nameOK); validate(email, emailOK);
+      if (!nameOK || !emailOK) return (!nameOK ? name : email).focus();
+      const values = { name: name.value.trim(), email: email.value.trim(), website: website?.value || "" };
+      const previous = readProgress();
+      if (previous.email && previous.email !== values.email) localStorage.removeItem(STORAGE_KEY);
+      saveProgress("identity", values);
+      const submit = form.querySelector<HTMLButtonElement>(".submit");
+      setBusy(submit, true, "Continuar", "Salvando");
+      if (responseNote) { responseNote.textContent = "Salvando seus dados…"; responseNote.classList.add("active"); }
+      try {
+        await sendLeadEvent("amplify_day_interest_captured", values);
+        track("amplify_day_identity_submitted");
+        if (responseNote) responseNote.textContent = "Dados recebidos. Agora, conte um pouco sobre sua atuação.";
+        setView("qualification");
+      } catch {
+        if (responseNote) responseNote.textContent = "Não conseguimos salvar agora. Seus dados continuam aqui; tente novamente.";
+      } finally {
+        setBusy(submit, false, "Continuar", "Salvando");
+      }
+    });
+    document.querySelectorAll<HTMLButtonElement>("[data-qualification-close]").forEach((button) => button.addEventListener("click", () => setView("form")));
+    let saveTimer = 0;
+    let lastPartialPayload = "";
+    const collectQualification = () => {
+      if (!qualificationForm) return {};
+      const data = Object.fromEntries(new FormData(qualificationForm).entries()) as Record<string, unknown>;
+      return { ...data, marketingConsent: Boolean(qualificationForm.elements.namedItem("marketingConsent") && (qualificationForm.elements.namedItem("marketingConsent") as HTMLInputElement).checked) };
+    };
+    const persistPartial = async () => {
+      const current = readProgress();
+      if (current.stage === "complete") return;
+      const values = collectQualification();
+      const serialized = JSON.stringify(values);
+      if (serialized === lastPartialPayload || !current.email) return;
+      lastPartialPayload = serialized;
+      saveProgress("qualification_partial", values);
+      try {
+        await sendLeadEvent("amplify_day_qualification_updated", values);
+        if (qualificationNote) qualificationNote.textContent = "Progresso salvo.";
+      } catch {
+        if (qualificationNote) qualificationNote.textContent = "Progresso salvo neste navegador; tentaremos sincronizar novamente ao concluir.";
+      }
+    };
+    qualificationForm?.addEventListener("input", () => {
+      window.clearTimeout(saveTimer);
+      saveTimer = window.setTimeout(persistPartial, 1200);
+    });
+    qualificationForm?.addEventListener("focusout", () => {
+      window.clearTimeout(saveTimer);
+      void persistPartial();
+    });
+    qualificationForm?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      window.clearTimeout(saveTimer);
+      const organization = qualificationForm.elements.namedItem("organization") as HTMLInputElement;
+      const role = qualificationForm.elements.namedItem("role") as HTMLInputElement;
+      const linkedin = qualificationForm.elements.namedItem("linkedin") as HTMLInputElement;
+      const fields = [organization, role];
+      let firstInvalid: HTMLInputElement | undefined;
+      fields.forEach((input) => {
+        const valid = Boolean(input.value.trim());
+        input.setAttribute("aria-invalid", String(!valid));
+        const error = document.querySelector<HTMLElement>(`[data-q-error="${input.name}"]`);
+        if (error) error.hidden = valid;
+        if (!valid && !firstInvalid) firstInvalid = input;
+      });
+      if (firstInvalid) return firstInvalid.focus();
+      const linkedinOK = !linkedin.value.trim() || linkedin.validity.valid;
+      linkedin.setAttribute("aria-invalid", String(!linkedinOK));
+      if (!linkedinOK) {
+        if (qualificationNote) qualificationNote.textContent = "Informe uma URL válida do LinkedIn.";
+        return linkedin.focus();
+      }
+      const values = { ...collectQualification(), profileCompletedAt: new Date().toISOString() };
+      const submit = qualificationForm.querySelector<HTMLButtonElement>(".qualification-submit");
+      setBusy(submit, true, "Concluir meu cadastro", "Salvando perfil");
+      saveProgress("complete", values);
+      try {
+        const result = await sendLeadEvent("amplify_day_profile_completed", values);
+        const whatsappUrl = typeof result?.actions?.whatsappUrl === "string" ? result.actions.whatsappUrl : "";
+        if (whatsapp && whatsappUrl) {
+          whatsapp.href = whatsappUrl;
+          whatsapp.hidden = false;
+        }
+        track("amplify_day_profile_completed");
+        if (qualificationNote) qualificationNote.textContent = "Perfil recebido.";
+        setView("thanks");
+      } catch {
+        saveProgress("qualification_partial", values);
+        if (qualificationNote) qualificationNote.textContent = "Não conseguimos concluir agora. Seus dados continuam aqui; tente novamente.";
+      } finally {
+        setBusy(submit, false, "Concluir meu cadastro", "Salvando perfil");
+      }
+    });
+    document.querySelector<HTMLButtonElement>("[data-restart]")?.addEventListener("click", () => setView("invite"));
+    document.querySelector<HTMLButtonElement>("[data-calendar]")?.addEventListener("click", () => {
+      void sendLeadEvent("amplify_day_calendar_added", {}, true).catch(() => null);
+      track("amplify_day_calendar_added");
+      const ics = ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Amplify//Amplify Day//PT-BR","BEGIN:VEVENT","UID:amplify-day-2026@amplify.ja.br","DTSTAMP:20260822T120000Z","DTSTART;VALUE=DATE:20260923","DTEND;VALUE=DATE:20260924","SUMMARY:Amplify Day 2026","LOCATION:Brasília","DESCRIPTION:Evento presencial Amplify Day.","END:VEVENT","END:VCALENDAR"].join("\r\n");
+      const link = document.createElement("a"); link.href = URL.createObjectURL(new Blob([ics], { type: "text/calendar" })); link.download = "amplify-day-2026.ics"; link.click(); URL.revokeObjectURL(link.href);
+    });
+    whatsapp?.addEventListener("click", () => {
+      void sendLeadEvent("amplify_day_whatsapp_clicked", {}, true).catch(() => null);
+      track("amplify_day_whatsapp_clicked");
+    });
+    document.querySelector<HTMLAnchorElement>("[data-map]")?.addEventListener("click", () => track("amplify_day_map_clicked"));
+    const saved = readProgress();
+    if (form) {
+      const name = form.elements.namedItem("name") as HTMLInputElement;
+      const email = form.elements.namedItem("email") as HTMLInputElement;
+      if (typeof saved.name === "string") name.value = saved.name;
+      if (typeof saved.email === "string") email.value = saved.email;
+    }
+    if (qualificationForm) {
+      ["organization", "role", "linkedin"].forEach((key) => {
+        const input = qualificationForm.elements.namedItem(key) as HTMLInputElement | null;
+        if (input && typeof saved[key] === "string") input.value = saved[key] as string;
+      });
+      const consent = qualificationForm.elements.namedItem("marketingConsent") as HTMLInputElement | null;
+      if (consent) consent.checked = saved.marketingConsent === true;
+    }
+    if (new URLSearchParams(location.search).get("qualificar") === "1") {
+      setView(saved.email ? "qualification" : "form");
+    }
+  </script>
+</PageShell>
+
+<style>
+  :global(html),:global(body){margin:0;width:100%;height:100%;overflow:hidden;background:#f0eee6}
+  :global(*),:global(*::before),:global(*::after){box-sizing:border-box}
+  :global(button),:global(input){font:inherit}
+  .page{--paper:#f0eee6;--ink:#0b0e0c;--line:rgba(11,14,12,.72);--soft:rgba(11,14,12,.25);--cyan:#08b7c7;--pink:#f20a68;--pink-carmine:#c8184a;--pink-dark:#8b003c;--pink-pale:#ffd5e5;position:relative;width:100%;height:100svh;min-height:560px;overflow:hidden;padding:clamp(14px,2.6vh,24px) clamp(18px,3vw,48px) clamp(16px,2.6vh,24px);color:var(--ink);background-color:var(--paper);background-image:var(--paper-texture);background-size:520px}
+  .top{display:grid;grid-template-columns:repeat(3,1fr);align-items:center;height:clamp(34px,5.6vh,52px);border-bottom:1px solid var(--line);padding-bottom:clamp(9px,1.6vh,14px)}
+  .top p,.purpose,.action-bottom p,.invite-foot p,.primary,.response-head,.response-copy>p:first-child,.form label>span,.submit,.note,.response-foot{font-family:Inter,sans-serif}
+  .top p{margin:0;font-size:clamp(9px,.78vw,11px);font-weight:700;letter-spacing:.18em;text-transform:uppercase}.top p:nth-child(2){text-align:center}.top p:last-child{text-align:right}
+  .invite{display:grid;grid-template-columns:minmax(0,2.1fr) minmax(285px,.9fr);grid-template-rows:auto minmax(0,1fr) auto;height:calc(100% - clamp(34px,5.6vh,52px))}
+  .event-head{grid-column:1;display:flex;align-items:flex-end;justify-content:space-between;min-width:0;border-right:1px solid var(--soft);border-bottom:1px solid var(--line);padding:clamp(15px,2.7vh,25px) clamp(20px,2.6vw,40px) clamp(13px,2.4vh,21px) 0;gap:18px}
+  .event-name{margin:0;font:700 min(7.3vw,13.4vh,108px)/.82 "Bricolage Grotesque",sans-serif;letter-spacing:-.075em;text-transform:uppercase;white-space:nowrap}
+  .purpose{align-self:center;width:min(390px,40%);margin:0;font-size:clamp(11px,.92vw,14px);font-weight:600;line-height:1.17;letter-spacing:-.022em;transform:translateY(-3px)}.purpose span,.purpose em{display:block;white-space:nowrap}.purpose em{margin-top:.16em;color:var(--cyan);font-family:"Bricolage Grotesque",sans-serif;font-size:1.04em;font-weight:600;line-height:1.06}
+  .date-stage{position:relative;grid-column:1;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;min-width:0;overflow:hidden;border-right:1px solid var(--soft);padding:0 clamp(26px,3.6vw,56px) 0 clamp(18px,4vw,62px)}
+  .field{position:relative;display:flex;align-items:center;justify-content:center;width:min(100%,760px);height:min(100%,480px);isolation:isolate}
+  .core,.echo{position:absolute;top:50%;left:52%;font:700 min(35vw,58vh,470px)/.72 "Bricolage Grotesque",sans-serif;letter-spacing:-.11em;transform:translate(-50%,-50%);white-space:nowrap}
+  .core{z-index:3;color:var(--ink)}.echo{z-index:1;color:transparent;opacity:var(--alpha);-webkit-text-stroke:2px var(--ink);mask-image:repeating-linear-gradient(90deg,#000 0 7px,transparent 7px 14px);animation:enter 1.85s cubic-bezier(.2,.72,.2,1) calc(120ms + var(--delay)) both,breathe 11s cubic-bezier(.45,0,.2,1) calc(2.7s + var(--delay)) infinite}
+  .echo:nth-child(3),.echo:nth-child(6){-webkit-text-stroke-color:var(--pink-carmine);-webkit-mask-image:repeating-linear-gradient(90deg,#000 0 7px,transparent 7px 14px),linear-gradient(90deg,transparent 0 14%,#000 22% 38%,transparent 48% 65%,#000 73% 84%,transparent 93%);-webkit-mask-composite:source-in;mask-image:repeating-linear-gradient(90deg,#000 0 7px,transparent 7px 14px),linear-gradient(90deg,transparent 0 14%,#000 22% 38%,transparent 48% 65%,#000 73% 84%,transparent 93%);mask-composite:intersect}
+  .echo:nth-child(6){-webkit-mask-image:repeating-linear-gradient(90deg,#000 0 7px,transparent 7px 14px),linear-gradient(90deg,transparent 0 25%,#000 32% 48%,transparent 57% 76%,#000 82% 90%,transparent 97%);mask-image:repeating-linear-gradient(90deg,#000 0 7px,transparent 7px 14px),linear-gradient(90deg,transparent 0 25%,#000 32% 48%,transparent 57% 76%,#000 82% 90%,transparent 97%)}
+  .signal{position:absolute;z-index:4;top:9%;bottom:9%;left:4%;width:2px;background:var(--cyan);animation:sweep 2s cubic-bezier(.25,.75,.25,1) 120ms both}
+  .date-caption{z-index:5;display:flex;flex-direction:column;border-left:1px solid var(--line);padding-left:clamp(15px,1.8vw,28px);font:600 clamp(26px,3.3vw,52px)/.88 "Bricolage Grotesque",sans-serif;letter-spacing:-.06em;text-transform:uppercase}.date-caption span:last-child{color:var(--cyan)}
+  .action{grid-column:2;grid-row:1/3;display:flex;flex-direction:column;padding:clamp(20px,4vh,38px) 0 clamp(22px,3.8vh,34px) clamp(26px,3.2vw,48px)}
+  .save{display:grid;grid-template-columns:28px 1fr;align-items:start;gap:clamp(8px,1vw,16px)}.save>span{margin-top:8px;color:var(--cyan);font:700 10px/1 Inter,sans-serif;letter-spacing:.14em}
+  .save h1{margin:0;font:500 min(5.5vw,10vh,80px)/.89 "Bricolage Grotesque",sans-serif;letter-spacing:-.07em;text-transform:uppercase}.save h1::after{display:block;width:46%;height:4px;margin-top:clamp(14px,2.4vh,22px);content:"";background:var(--cyan);transform-origin:left;animation:underline .95s cubic-bezier(.22,.72,.24,1) 1.7s both}
+  .action-bottom{margin-top:auto}.action-bottom p{margin:0 0 clamp(14px,2.5vh,22px);font-size:clamp(9px,.77vw,11px);font-weight:700;letter-spacing:.15em;text-transform:uppercase}
+  .primary,.submit{position:relative;width:100%;height:clamp(54px,8vh,68px);overflow:hidden;border:1px solid var(--ink);border-radius:0;color:var(--ink);background:var(--cyan);font-size:clamp(10px,.83vw,12px);font-weight:700;letter-spacing:.2em;text-transform:uppercase;cursor:pointer}.primary{overflow:visible;transition:transform .22s ease,box-shadow .22s ease}.primary::before{display:none}.primary span{position:relative;z-index:1}.primary:hover,.primary:focus-visible{color:var(--ink);background:var(--cyan);box-shadow:4px 4px 0 var(--pink-carmine);transform:translate(-2px,-2px)}.primary:active{box-shadow:2px 2px 0 var(--pink-carmine);transform:translate(0,0)}.submit{transition:color .25s,background .25s,box-shadow .25s}.submit:hover{color:#fff;border-color:var(--cyan);background:var(--pink);box-shadow:inset 0 -4px 0 var(--cyan)}
+  .primary:focus-visible,.submit:focus-visible,.response-head button:focus-visible{outline:3px solid var(--cyan);outline-offset:4px}
+  .invite-foot{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;min-height:clamp(68px,10.5vh,96px);border-top:1px solid var(--line);gap:24px}.brands{display:flex;align-items:center;gap:clamp(8px,.85vw,13px)}.amplify{width:clamp(100px,8.6vw,132px);height:auto}.invite-foot .amplify{filter:grayscale(1) brightness(0)}.brands>span{font:500 17px/1 Inter,sans-serif}.shock{width:clamp(66px,5.25vw,80px);height:auto;filter:brightness(0)}.xvia{width:clamp(86px,7.2vw,110px);height:auto;filter:brightness(0)}.invite-foot p{margin:0;font-size:clamp(9px,.78vw,11px);font-weight:700;letter-spacing:.13em;text-transform:uppercase}.invite-foot i{color:var(--cyan);padding:0 .45em;font-style:normal}
+  .response{position:absolute;z-index:20;inset:0;display:grid;grid-template-rows:auto 1fr auto;padding:clamp(18px,3vh,28px) clamp(22px,4vw,64px);color:var(--paper);background:var(--ink);transform:translateX(102%);visibility:hidden;transition:transform .62s cubic-bezier(.76,0,.18,1),visibility 0s linear .62s}.response::before{position:absolute;inset:0;pointer-events:none;content:"";background-image:repeating-linear-gradient(90deg,transparent 0 5.7vw,rgba(8,183,199,.14) 5.7vw calc(5.7vw + 1px)),linear-gradient(113deg,transparent 0 68%,rgba(242,10,104,.04) 68% 70%,rgba(242,10,104,.25) 70% 76%,rgba(242,10,104,.1) 76% 79%,transparent 79% 100%)}.page[data-view="form"] .response{transform:translateX(0);visibility:visible;transition-delay:0s}
+  .response-head,.response-foot{z-index:1;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(240,238,230,.6);padding-bottom:clamp(11px,1.8vh,16px);font-size:clamp(9px,.78vw,11px);font-weight:700;letter-spacing:.17em;text-transform:uppercase}.response-head p,.response-foot p{margin:0}.response-head button{border:0;padding:8px 0;color:var(--paper);background:transparent;font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer}
+  .response-grid{z-index:1;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(340px,.8fr);align-items:center;width:min(1180px,92%);margin:auto;gap:clamp(50px,9vw,150px)}.response-copy>p:first-child{margin:0 0 clamp(16px,2.7vh,24px);color:var(--cyan);font-size:clamp(9px,.78vw,11px);font-weight:700;letter-spacing:.16em;text-transform:uppercase}.response-copy h2{margin:0;font:500 min(8vw,14vh,112px)/.84 "Bricolage Grotesque",sans-serif;letter-spacing:-.07em;text-transform:uppercase}.response-copy>p:last-child{width:min(500px,90%);margin:clamp(22px,3.5vh,32px) 0 0;font:400 clamp(17px,1.6vw,23px)/1.25 "Bricolage Grotesque",sans-serif;letter-spacing:-.025em}
+  .form{display:grid;gap:clamp(16px,3vh,28px)}.form label>span{display:block;font-size:clamp(9px,.78vw,11px);font-weight:700;letter-spacing:.14em;text-transform:uppercase}.form input{width:100%;height:clamp(58px,9vh,78px);border:0;border-bottom:1px solid rgba(240,238,230,.72);border-radius:0;padding:10px 0 2px;color:var(--paper);background:transparent;font:400 clamp(20px,1.8vw,26px)/1.2 "Bricolage Grotesque",sans-serif;outline:0}.form input:focus-visible{border-bottom:3px solid var(--cyan)}.form input[aria-invalid="true"]{border-color:#ff6b67}.form small{display:block;margin-top:5px;color:#ff8a87;font:600 10px/1.3 Inter,sans-serif}.form small[hidden]{display:none}.website-field{position:absolute!important;left:-10000px!important;width:1px!important;height:1px!important;overflow:hidden!important}.note{min-height:18px;margin:0;color:rgba(240,238,230,.58);font-size:9px;line-height:1.45}.note a{color:inherit;text-underline-offset:2px}.note.active{color:var(--cyan)}.submit:disabled,.qualification-submit:disabled{cursor:wait;opacity:.72}
+  .response-foot{border-top:1px solid rgba(240,238,230,.6);border-bottom:0;padding:clamp(13px,2vh,18px) 0 0}.response-foot .amplify,.response-foot .shock,.response-foot .xvia{filter:grayscale(1) brightness(0) invert(1)}
+  .qualification{position:absolute;z-index:40;inset:0;display:grid;place-items:center;padding:clamp(18px,4vw,58px);visibility:hidden;opacity:0;transition:opacity .38s ease,visibility 0s linear .38s}.page[data-view="qualification"] .qualification{visibility:visible;opacity:1;transition-delay:0s}.qualification-backdrop{position:absolute;inset:0;border:0;background:rgba(11,14,12,.84);backdrop-filter:blur(7px);cursor:pointer}.qualification-panel{position:relative;display:grid;grid-template-rows:auto 1fr;width:min(1120px,91vw);height:min(690px,86vh);overflow:hidden;border:1px solid var(--pink-pale);padding:clamp(18px,3vw,42px);color:#fff7fa;background-color:var(--pink);background-image:var(--paper-texture);background-size:520px;box-shadow:20px 20px 0 rgba(242,10,104,.22);transform:translateY(24px) scale(.985);transition:transform .58s cubic-bezier(.2,.82,.24,1)}.page[data-view="qualification"] .qualification-panel{transform:none}.qualification-panel::after{position:absolute;inset:0;pointer-events:none;content:"";background:linear-gradient(90deg,transparent 0 61%,rgba(139,0,60,.18) 61% 100%)}
+  .pink-echoes{position:absolute;right:-3%;bottom:6%;z-index:0;display:grid;opacity:.22;transform:rotate(-90deg);transform-origin:bottom right}.pink-echoes span{grid-area:1/1;color:transparent;font:700 clamp(62px,8vw,122px)/.75 "Bricolage Grotesque",sans-serif;letter-spacing:-.07em;text-transform:uppercase;-webkit-text-stroke:1px #fff}.pink-echoes span:nth-child(2){transform:translateY(12px)}.pink-echoes span:nth-child(3){transform:translateY(24px)}.pink-echoes span:nth-child(4){transform:translateY(36px)}
+  .qualification-head{position:relative;z-index:2;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,247,250,.68);padding-bottom:15px;font:700 clamp(8px,.72vw,10px)/1 Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase}.qualification-head p{margin:0}.qualification-head button{border:0;padding:8px;color:inherit;background:transparent;font:inherit;letter-spacing:inherit;text-transform:inherit;cursor:pointer}.qualification-head button:focus-visible,.qualification-submit:focus-visible,.thanks-actions button:focus-visible{outline:3px solid var(--ink);outline-offset:4px}
+  .qualification-grid{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(330px,.75fr);align-items:center;gap:clamp(50px,7vw,110px)}.qualification-index{margin:0 0 clamp(15px,2.5vh,24px);color:var(--cyan);font:700 clamp(9px,.75vw,11px)/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase}.qualification-copy h2{margin:0;font:600 clamp(54px,6vw,91px)/.84 "Bricolage Grotesque",sans-serif;letter-spacing:-.065em;text-transform:uppercase}.qualification-copy>p:last-child{width:min(570px,94%);margin:clamp(22px,3.5vh,32px) 0 0;font:500 clamp(17px,1.55vw,23px)/1.24 "Bricolage Grotesque",sans-serif;letter-spacing:-.025em}.qualification-form{display:grid;gap:clamp(10px,1.65vh,16px)}.qualification-form label>span{display:block;font:700 clamp(8px,.72vw,10px)/1 Inter,sans-serif;letter-spacing:.15em;text-transform:uppercase}.qualification-form label i{opacity:.72;font-style:normal;font-weight:500}.qualification-form input:not([type="checkbox"]){width:100%;height:clamp(44px,6.4vh,56px);border:0;border-bottom:1px solid rgba(255,247,250,.8);border-radius:0;padding:9px 0 1px;color:#fff;background:transparent;font:500 clamp(18px,1.6vw,23px)/1.1 "Bricolage Grotesque",sans-serif;outline:0}.qualification-form input:not([type="checkbox"])::placeholder{color:rgba(255,255,255,.48)}.qualification-form input:not([type="checkbox"]):focus{border-bottom:3px solid var(--cyan)}.qualification-form input:not([type="checkbox"])[aria-invalid="true"]{border-color:#43001d}.qualification-form small{display:block;margin-top:4px;color:#43001d;font:700 9px/1.2 Inter,sans-serif}.qualification-form small[hidden]{display:none}.content-consent{display:grid;grid-template-columns:18px 1fr;align-items:start;gap:10px;padding:3px 0}.content-consent input{width:17px;height:17px;margin:0;border:1px solid #fff;border-radius:0;accent-color:var(--cyan)}.content-consent span{font-size:8px!important;line-height:1.4!important;letter-spacing:.08em!important;text-transform:none!important}.qualification-submit{display:flex;align-items:center;justify-content:space-between;height:clamp(52px,7.5vh,66px);border:1px solid #fff;border-bottom:4px solid var(--cyan);padding:0 clamp(18px,2vw,28px);color:#fff;background:transparent;font:700 clamp(9px,.76vw,11px)/1 Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;transition:color .25s,background .25s}.qualification-submit:hover{color:var(--pink);background:#fff}.qualification-submit b{color:var(--cyan);font:400 26px/1 sans-serif}.qualification-note{min-height:12px;margin:0;color:rgba(255,255,255,.67);font:500 9px/1.3 Inter,sans-serif}
+  .thanks{--confirmation-pink:#ff00ff;--confirmation-dark:#ff00ff;--confirmation-paper:#fff8f2;position:absolute;z-index:60;inset:-1px;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;padding:clamp(18px,3vh,30px) clamp(22px,3.85vw,60px);color:var(--confirmation-paper);background-color:var(--confirmation-pink);background-image:var(--paper-texture);background-size:640px;visibility:hidden;opacity:0;transform:scale(1.025);transition:opacity .5s ease,transform .8s cubic-bezier(.2,.8,.2,1),visibility 0s linear .8s;background-blend-mode:multiply}.page[data-view="thanks"] .thanks{visibility:visible;opacity:1;transform:none;transition-delay:0s}.thanks::before{position:absolute;z-index:0;inset:0;pointer-events:none;content:"";opacity:.8;background-color:var(--pink);background-image:var(--paper-texture);background-size:320px;background-blend-mode:multiply;mix-blend-mode:multiply}.thanks::after{position:absolute;z-index:1;inset:0;pointer-events:none;content:"";opacity:.58;background-image:linear-gradient(180deg,rgba(255,0,255,.12),transparent 70%),repeating-linear-gradient(90deg,transparent 0 7.72vw,rgba(255,248,242,.12) 7.72vw calc(7.72vw + 1px))}.thanks-head,.thanks-foot{position:relative;z-index:5;display:grid;grid-template-columns:repeat(3,1fr);align-items:center;border-bottom:1px solid rgba(255,248,242,.68);padding-bottom:clamp(11px,1.6vh,16px);font:700 clamp(8px,.72vw,11px)/1 Inter,sans-serif;letter-spacing:.17em;text-transform:uppercase}.thanks-head p,.thanks-foot p{margin:0}.thanks-head p:nth-child(2){text-align:center}.thanks-head p:last-child{text-align:right}.thanks-main{position:absolute;z-index:4;top:38.1%;left:10.75%;width:min(850px,66vw);margin:0;padding:0}.thanks-main h2{position:relative;z-index:4;margin:0;color:var(--confirmation-paper);font:650 clamp(64px,6.88vw,107px)/.835 Inter,sans-serif;letter-spacing:-.114em;text-transform:uppercase}.thanks-main h2 span{display:block;white-space:nowrap}.thanks-main h2 em{color:inherit;font-style:normal}.thanks-main h2 em::before,.thanks-main h2 em::after{display:none}.thanks-index{position:relative;z-index:4;margin:clamp(25px,3vh,30px) 0 0;color:var(--cyan);font:700 clamp(9px,.76vw,11px)/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase}.thanks-main>p:nth-of-type(2){position:relative;z-index:4;width:min(590px,78%);margin:clamp(25px,3.2vh,33px) 0 0;font:500 clamp(16px,1.25vw,20px)/1.28 "Bricolage Grotesque",sans-serif;letter-spacing:-.02em}.thanks-main>p:nth-of-type(2) strong{display:block;margin-top:.65em;color:var(--confirmation-paper);font-weight:700}.thanks-actions{position:relative;z-index:4;display:flex;margin-top:clamp(25px,3.1vh,32px);gap:14px}.thanks-actions button{min-width:242px;height:68px;border:1px solid var(--confirmation-paper);padding:0 24px;color:var(--confirmation-paper);background:transparent;font:700 9px/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;transition:color .22s ease,background .22s ease}.thanks-actions button:first-child{color:var(--confirmation-pink);background:var(--confirmation-paper)}.thanks-actions button:hover{color:var(--ink);background:var(--confirmation-paper)}.thanks-foot{grid-template-columns:1fr 1fr;align-self:end;min-height:clamp(78px,10vh,102px);border-top:1px solid rgba(255,248,242,.68);border-bottom:0;padding:clamp(16px,2.2vh,22px) 0 0}.thanks-foot .amplify,.thanks-foot .shock{filter:grayscale(1) brightness(0) invert(1)}.thanks-foot>p{text-align:right}.thanks-wave{position:absolute;z-index:2;top:14.5%;left:38.3%;width:63%;height:61%;overflow:visible;pointer-events:none}.thanks-wave svg{display:block;width:100%;height:100%;overflow:visible}.wave-line{fill:none;stroke:rgba(255,248,242,var(--line-opacity,.42));stroke-width:1.15;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke;animation:none}.wave-line.accent{stroke:var(--cyan);stroke-width:3}
+  .thanks{position:fixed;inset:0;width:100%;height:100dvh;min-height:100svh}
+  .qualification-panel{border-color:rgba(255,247,250,.72);background-color:#d12a61;background-image:var(--paper-texture),linear-gradient(90deg,#d12a61 0 61%,#b62250 61% 100%);background-size:520px,100% 100%;background-blend-mode:multiply,normal;box-shadow:20px 20px 0 rgba(111,17,51,.38)}
+  .qualification-panel::after{background:linear-gradient(90deg,transparent 0 61%,rgba(80,8,35,.1) 61% 100%)}
+  .qualification-form input:not([type="checkbox"])::placeholder{color:rgba(255,255,255,.58)}
+  .qualification-submit:hover{color:var(--pink);background:#fff}
+  .qualification-note{color:rgba(255,255,255,.72)}
+  @keyframes enter{0%{opacity:0;transform:translate(-50%,-50%)}25%{opacity:var(--alpha)}100%{opacity:var(--alpha);transform:translate(calc(-50% + var(--offset)),-50%)}}@keyframes breathe{0%,4%,100%{transform:translate(calc(-50% + var(--offset)),-50%)}1.7%{transform:translate(calc(-50% + var(--peak)),-50%)}}@keyframes echoChroma{0%,72%,100%{-webkit-text-stroke-color:var(--ink)}78%,88%{-webkit-text-stroke-color:var(--pink)}}@keyframes sweep{0%{opacity:0;transform:translateX(0) scaleY(.25)}15%{opacity:1;transform:translateX(0) scaleY(1)}78%{opacity:1;transform:translateX(min(38vw,590px)) scaleY(1)}100%{opacity:0;transform:translateX(min(41vw,640px)) scaleY(.4)}}@keyframes underline{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  @media(max-width:980px){.invite{grid-template-columns:minmax(0,1.55fr) minmax(250px,.75fr)}.event-head{display:block}.purpose{display:grid;grid-template-columns:1fr 1fr;width:100%;margin-top:13px;font-size:9px;gap:2px 14px;transform:none}.purpose em{margin-top:0}.event-name{font-size:min(9.5vw,11vh,92px)}.date-stage{padding:0 22px 0 8px}.core,.echo{left:55%;font-size:min(41vw,49vh,390px)}.save{grid-template-columns:20px 1fr}.save h1{font-size:min(6.4vw,8.5vh,62px)}.action{padding-left:24px}.response-grid{grid-template-columns:1fr 1fr;width:94%;gap:50px}.qualification-grid{grid-template-columns:1fr 1fr;gap:34px}.qualification-copy h2{font-size:clamp(45px,6.4vw,65px)}.thanks-main{width:88%}.thanks-main h2{font-size:clamp(66px,10vw,100px)}}
+  @media(max-width:680px){.page{min-height:520px;padding:10px 14px 12px}.top{height:38px;padding-bottom:8px;grid-template-columns:1fr 1fr}.top p{font-size:8px;letter-spacing:.12em}.top p:nth-child(2){display:none}.invite{grid-template-columns:1fr;grid-template-rows:auto minmax(0,1fr) auto auto;height:calc(100% - 38px)}.event-head{grid-column:1;grid-row:1;border-right:0;padding:14px 0 12px}.event-name{font-size:min(15.5vw,9.5vh,70px)}.date-stage{grid-column:1;grid-row:2;border-right:0;padding:0 5px}.date-stage::after{top:12%;left:2%;width:52px;height:28px}.field{width:78%;justify-self:start}.core,.echo{left:55%;font-size:min(64vw,33vh,270px)}.echo{-webkit-text-stroke-width:1px;mask-image:repeating-linear-gradient(90deg,#000 0 4px,transparent 4px 9px)}.echo:nth-child(6){-webkit-text-stroke-color:var(--ink);-webkit-mask-image:repeating-linear-gradient(90deg,#000 0 4px,transparent 4px 9px);mask-image:repeating-linear-gradient(90deg,#000 0 4px,transparent 4px 9px)}.date-caption{margin-right:3%;padding-left:11px;font-size:min(8.2vw,4.8vh,34px)}.action{grid-column:1;grid-row:3;display:grid;grid-template-columns:1fr 1fr;align-items:end;border-top:1px solid var(--line);padding:13px 0 14px;gap:18px}.save{grid-template-columns:16px 1fr;gap:4px}.save>span{margin-top:3px;font-size:7px}.save h1{font-size:min(9vw,5.2vh,40px)}.save h1::after{height:3px;margin-top:7px}.action-bottom p{margin-bottom:8px;font-size:7px;letter-spacing:.1em}.primary{height:47px;font-size:8px;letter-spacing:.14em}.invite-foot{grid-column:1;grid-row:4;min-height:58px;gap:10px}.amplify{width:82px}.shock{width:59px}.brands{gap:7px}.brands>span{font-size:12px}.invite-foot p{font-size:7px;letter-spacing:.08em;text-align:right}.invite-foot i{padding:0 .15em}.signal{top:13%;bottom:13%}.response{padding:12px 15px 14px}.response::after{top:11%;right:2%;width:32vw}.response-head{padding-bottom:10px;font-size:8px}.response-grid{display:block;width:100%;margin:auto 0}.response-copy>p:first-child{margin-bottom:10px;font-size:8px}.response-copy h2{font-size:min(15vw,9vh,68px)}.response-copy>p:last-child{width:100%;margin-top:13px;font-size:15px}.form{margin-top:clamp(22px,4vh,32px);gap:13px}.form input{height:47px;font-size:18px}.submit{height:50px;font-size:8px;letter-spacing:.14em}.response-foot{font-size:7px;letter-spacing:.08em}.response-foot>.brands{display:none}.qualification{padding:0}.qualification-backdrop{display:none}.qualification-panel{width:100%;height:100%;border:0;padding:15px 16px;box-shadow:none}.qualification-grid{display:block;overflow:auto;padding:clamp(18px,3.5vh,28px) 0 8px}.qualification-copy h2{font-size:min(12vw,7.2vh,53px)}.qualification-copy>p:last-child{margin-top:14px;font-size:14px;line-height:1.2}.qualification-form{margin-top:clamp(20px,3vh,28px);gap:12px}.qualification-form input:not([type="checkbox"]){height:42px;font-size:17px}.content-consent input{width:17px;height:17px}.qualification-submit{height:49px}.qualification-note{font-size:8px}.pink-echoes{display:none}.thanks{position:fixed;inset:0;width:100%;height:100svh;padding:13px 15px 14px}.thanks-head{grid-template-columns:1fr 1fr;font-size:7px}.thanks-head p:nth-child(2){display:none}.thanks-main{width:100%;margin:auto 0}.thanks-index{margin-bottom:14px;font-size:8px}.thanks-main h2{font-size:min(13.4vw,8.2vh,61px)}.thanks-main>p:nth-of-type(2){width:94%;margin-top:22px;font-size:15px}.thanks-actions{display:grid;margin-top:22px}.thanks-actions button{width:100%;height:47px}.thanks-echoes{top:25%;left:55%}.thanks-echoes span{font-size:min(18vw,85px)}.thanks-foot>p{font-size:7px}}
+  @media(max-width:380px),(max-height:640px){.event-head{padding:9px 0}.event-name{font-size:min(13.5vw,8.4vh,58px)}.action{padding:9px 0 10px}.invite-foot{min-height:48px}.core,.echo{font-size:min(55vw,31vh,235px)}.response-copy>p:last-child{display:none}.form{margin-top:18px;gap:9px}.form input{height:41px}}
+  @media(max-width:980px){.thanks-main{top:31%;left:6%;width:88%;padding:0}.thanks-main h2{width:100%;font-size:min(9.8vw,8.4vh,78px)}.thanks-main>p:nth-of-type(2){width:min(570px,76%)}.thanks-wave{top:16%;left:34%;width:76%;height:52%}.thanks-actions button{min-width:220px;height:60px}}
+  @media(max-width:680px){.thanks{position:fixed;inset:0;width:100%;height:100dvh;min-height:100svh;padding:13px 15px max(14px,env(safe-area-inset-bottom))}.thanks-head{grid-template-columns:auto 1fr auto;font-size:6px;column-gap:8px}.thanks-head p:nth-child(2){display:block;text-align:center}.thanks-main{top:31.5%;left:15px;width:calc(100% - 30px);margin:0;padding:0}.thanks-main h2{width:100%;font-size:min(12vw,7.2vh,48px);line-height:.91;letter-spacing:-.068em}.thanks-main h2 span{white-space:nowrap}.thanks-index{margin-top:16px;font-size:8px}.thanks-main>p:nth-of-type(2){width:100%;margin-top:21px;font-size:14px;line-height:1.24}.thanks-main>p:nth-of-type(2) strong{margin-top:.5em}.thanks-actions{display:grid;margin-top:21px;gap:11px}.thanks-actions button{width:100%;min-width:0;height:48px}.thanks-wave{top:17%;left:32%;width:95%;height:39%;opacity:.72}.wave-line:nth-child(2),.wave-line:nth-child(4),.wave-line:nth-child(5),.wave-line:nth-child(7),.wave-line:nth-child(8),.wave-line:nth-child(10),.wave-line:nth-child(12){display:none}.thanks-foot{min-height:57px;padding-top:12px}.thanks-foot .amplify{width:76px}.thanks-foot .shock{width:55px}.thanks-foot>p{max-width:150px;font-size:6px;line-height:1.25}}
+  @media(max-width:680px){.qualification-panel{background-image:var(--paper-texture),linear-gradient(180deg,#d12a61 0 34%,#c32658 54%,#aa204b 100%)}.qualification-panel::after{background:linear-gradient(180deg,transparent 0 40%,rgba(80,8,35,.08) 100%)}}
+  @media(max-height:820px) and (min-width:681px){.thanks-main{top:29%;left:8%;width:70vw}.thanks-main h2{font-size:min(6.2vw,10.8vh,84px)}.thanks-index{margin-top:15px}.thanks-main>p:nth-of-type(2){margin-top:18px;font-size:15px}.thanks-actions{margin-top:18px}.thanks-actions button{height:52px}.thanks-wave{top:9%;height:67%}.thanks-foot{min-height:74px}}
+  @media(max-width:380px),(max-height:640px){.thanks-main{top:27%}.thanks-main h2{font-size:min(11.5vw,7vh,44px)}.thanks-index{margin-top:12px}.thanks-main>p:nth-of-type(2){margin-top:14px;font-size:13px}.thanks-actions{margin-top:14px;gap:8px}.thanks-actions button{height:44px}.thanks-wave{top:13%;height:39%}.thanks-foot{min-height:48px}}
+  /* Confirmation: a quiet, static typographic conclusion. */
+  .thanks{
+    --confirmation-pink:#c8184a;
+    --confirmation-dark:#8f1136;
+    --confirmation-paper:#fff8f2;
+    position:fixed;
+    inset:0;
+    display:grid;
+    grid-template-rows:auto minmax(0,1fr) auto;
+    width:100%;
+    height:100dvh;
+    min-height:100svh;
+    overflow:hidden;
+    padding:clamp(18px,3vh,30px) clamp(22px,3.85vw,60px);
+    color:var(--confirmation-paper);
+    background-color:var(--confirmation-pink);
+    background-image:var(--paper-texture);
+    background-size:720px;
+    background-blend-mode:multiply;
+    visibility:hidden;
+    opacity:0;
+    transform:none;
+    transition:none;
+  }
+  .page[data-view="thanks"] .thanks{visibility:visible;opacity:1;transform:none;transition:none}
+  .thanks::before,.thanks::after{display:none}
+  .thanks-head,.thanks-foot{z-index:2}
+  .thanks-main{
+    position:relative;
+    z-index:2;
+    top:auto;
+    left:auto;
+    align-self:center;
+    width:min(920px,76vw);
+    margin:0 0 0 clamp(32px,6.8vw,106px);
+    padding:0;
+    transform:none;
+  }
+  .thanks-main h2{
+    max-width:920px;
+    font-size:clamp(66px,7.1vw,110px);
+    line-height:.86;
+    letter-spacing:-.085em;
+  }
+  .thanks-index{margin-top:clamp(22px,2.8vh,28px)}
+  .thanks-main>p:nth-of-type(2){width:min(590px,72%);margin-top:clamp(20px,2.6vh,27px)}
+  .thanks-actions{margin-top:clamp(22px,2.8vh,29px)}
+  .thanks-actions button{height:62px;transition:none}
+  @media(max-width:980px){
+    .thanks-main{top:auto;left:auto;width:88%;margin-left:4vw}
+    .thanks-main h2{font-size:min(9.8vw,9.4vh,88px)}
+    .thanks-main>p:nth-of-type(2){width:min(570px,78%)}
+  }
+  @media(max-width:680px){
+    .thanks{padding:13px 15px max(14px,env(safe-area-inset-bottom))}
+    .thanks-head{grid-template-columns:auto 1fr auto;font-size:6px;column-gap:8px}
+    .thanks-head p:nth-child(2){display:block;text-align:center}
+    .thanks-main{top:auto;left:auto;width:100%;margin:0;padding:0}
+    .thanks-main h2{width:100%;font-size:min(11.7vw,7.3vh,48px);line-height:.91;letter-spacing:-.068em}
+    .thanks-main h2 span{white-space:nowrap}
+    .thanks-index{margin-top:16px}
+    .thanks-main>p:nth-of-type(2){width:100%;margin-top:19px;font-size:14px;line-height:1.24}
+    .thanks-actions{display:grid;margin-top:20px;gap:10px}
+    .thanks-actions button{width:100%;min-width:0;height:46px}
+    .thanks-foot{display:flex;align-items:center;justify-content:space-between;min-height:57px;padding-top:12px;gap:8px}
+    .thanks-foot .amplify{width:76px}
+    .thanks-foot .shock{width:55px}
+    .thanks-foot>p{flex:0 1 108px;max-width:108px;font-size:5px;line-height:1.25}
+  }
+  @media(max-height:720px) and (min-width:681px){
+    .thanks-main{margin-left:4vw}
+    .thanks-main h2{font-size:min(6.5vw,10.5vh,82px)}
+    .thanks-index{margin-top:14px}
+    .thanks-main>p:nth-of-type(2){margin-top:16px;font-size:15px}
+    .thanks-actions{margin-top:16px}
+    .thanks-actions button{height:50px}
+    .thanks-foot{min-height:68px}
+  }
+  @media(max-width:380px),(max-height:640px){
+    .thanks-main{top:auto;margin-left:0}
+    .thanks-main h2{font-size:min(11vw,6.8vh,42px)}
+    .thanks-index{margin-top:11px}
+    .thanks-main>p:nth-of-type(2){margin-top:13px;font-size:13px}
+    .thanks-actions{margin-top:13px;gap:7px}
+    .thanks-actions button{height:42px}
+    .thanks-foot{min-height:46px}
+  }
+  .thanks-foot .xvia{filter:grayscale(1) brightness(0) invert(1)}
+  @media(max-width:680px){
+    .invite-foot .brands{gap:5px}
+    .invite-foot .amplify{width:65px}
+    .invite-foot .shock{width:41px}
+    .invite-foot .xvia{width:62px}
+    .invite-foot .brands>span{font-size:10px}
+    .thanks-foot .brands{gap:5px}
+    .thanks-foot .amplify{width:62px}
+    .thanks-foot .shock{width:38px}
+    .thanks-foot .xvia{width:56px}
+    .thanks-foot .brands>span{font-size:10px}
+    .thanks-foot>p{max-width:108px}
+  }
+  /* Expanded editorial landing — the approved save-the-date becomes the first fold. */
+  :global(html){height:auto;scroll-behavior:smooth;scroll-padding-top:72px}
+  :global(body){height:auto;overflow-x:hidden;overflow-y:auto;background:#f0eee6}
+  .page{width:100%;height:auto;min-height:100svh;overflow:visible;padding:0;background-color:var(--paper)}
+  .invite{display:block;height:auto;visibility:visible;opacity:1;transform:none}
+  .page[data-view]:not([data-view="invite"]){height:100dvh;overflow:hidden}
+  .page[data-view]:not([data-view="invite"]) .invite{visibility:hidden;opacity:0}
+  .editorial-nav{position:sticky;z-index:18;top:0;display:grid;grid-template-columns:auto minmax(220px,.7fr) 1fr auto;align-items:center;min-height:64px;border-bottom:1px solid var(--line);padding:0 clamp(18px,3vw,48px);background:rgba(240,238,230,.94);backdrop-filter:blur(10px);font:700 9px/1 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase}
+  .editorial-nav a{color:inherit;text-decoration:none}.nav-brand{font-size:11px;letter-spacing:.18em}.nav-meta{display:flex;margin-left:clamp(24px,4vw,64px);gap:18px}.nav-meta span+span{color:rgba(11,14,12,.58)}.nav-links{display:flex;justify-content:flex-end;gap:clamp(14px,2vw,30px)}.nav-links a{padding:8px 0;border-bottom:1px solid transparent}.nav-links a:hover,.nav-links a:focus-visible{border-color:var(--cyan)}
+  .nav-cta{min-height:40px;margin-left:clamp(18px,2.5vw,36px);border:1px solid var(--ink);padding:0 18px;color:var(--ink);background:var(--cyan);font:700 8px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}.nav-cta:hover,.nav-cta:focus-visible{box-shadow:3px 3px 0 var(--pink-carmine);transform:translate(-1px,-1px)}
+  .hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(170px,.48fr) minmax(300px,.78fr);grid-template-rows:auto minmax(470px,1fr) auto;min-height:clamp(680px,calc(100svh - 64px),940px);padding:0 clamp(18px,3vw,48px)}
+  .hero-head{grid-column:1/3;display:flex;align-items:flex-end;justify-content:space-between;min-width:0;border-right:1px solid var(--soft);border-bottom:1px solid var(--line);padding:clamp(18px,3vh,28px) clamp(20px,2.6vw,40px) clamp(16px,2.5vh,24px) 0;gap:22px}.event-name{font-size:clamp(68px,7.2vw,116px)}.purpose{width:min(410px,43%);font-size:clamp(11px,.92vw,14px)}
+  .hero-date{position:relative;grid-column:1;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;min-width:0;overflow:hidden;border-right:1px solid var(--soft);padding:0 clamp(20px,2.4vw,38px) 0 clamp(18px,3.4vw,54px)}.hero-date .field{width:min(100%,720px);height:min(100%,520px)}.hero-date .core,.hero-date .echo{left:52%;font-size:min(32vw,55vh,455px)}
+  .hero-image{position:relative;grid-column:2;grid-row:2;min-width:0;overflow:hidden;border-right:1px solid var(--soft)}.hero-image>:first-child{position:absolute;inset:0;aspect-ratio:auto}.hero-image-label{position:absolute;right:14px;bottom:14px;padding:6px 8px;color:var(--paper);background:var(--ink);font:700 7px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+  .hero-action{grid-column:3;grid-row:1/3;display:flex;flex-direction:column;padding:clamp(24px,4vh,42px) 0 clamp(24px,3.8vh,38px) clamp(26px,3.1vw,48px)}.hero-action .save h1{font-size:min(5.25vw,9.3vh,78px)}.hero-audience{max-width:440px;margin:auto 0 24px;font:500 clamp(18px,1.42vw,22px)/1.17 "Bricolage Grotesque",sans-serif;letter-spacing:-.03em}.cta-note{margin:12px 0 0;color:rgba(11,14,12,.58);font:500 9px/1.42 Inter,sans-serif}
+  .hero-foot{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;min-height:clamp(72px,9vh,94px);border-top:1px solid var(--line);gap:24px}.hero-foot .amplify,.site-foot .amplify{filter:grayscale(1) brightness(0)}.hero-foot p,.site-foot>p{margin:0;font:700 clamp(8px,.7vw,10px)/1 Inter,sans-serif;letter-spacing:.14em;text-align:right;text-transform:uppercase}.hero-foot i{color:var(--cyan);padding:0 .45em;font-style:normal}
+  .brands{gap:clamp(7px,.72vw,11px)}.brands .shock{width:clamp(55px,4.25vw,68px)}.brands .xvia{width:clamp(78px,6.2vw,100px)}
+  .data-strip{height:52px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);color:var(--paper);background:var(--ink)}
+  .section-shell{position:relative;padding:clamp(82px,10vw,154px) clamp(24px,7.6vw,118px)}.section-heading span,.audience-heading>span,.location-copy>span,.coalition-heading>span,.proof header>span,.faq header>span{display:block;margin-bottom:22px;color:var(--cyan);font:700 10px/1 Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase}.section-heading h2,.audience-heading h2,.location-copy h2,.coalition-heading h2,.proof h2,.faq h2,.final-cta h2{margin:0;font:600 clamp(52px,6.7vw,104px)/.88 "Bricolage Grotesque",sans-serif;letter-spacing:-.072em;text-transform:uppercase}
+  .experience{background:#f0eee6}.section-heading{max-width:1170px}.stage-grid{display:grid;grid-template-columns:1fr 1fr;margin-top:clamp(72px,8vw,122px);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}.stage{position:relative;min-height:480px;padding:clamp(32px,4vw,62px)}.stage+.stage{border-left:1px solid var(--ink)}.stage-art{position:absolute;top:28px;right:28px;width:min(42%,320px);color:rgba(11,14,12,.34)}.stage-main .stage-art{color:var(--pink-carmine)}.stage-index{margin:0 0 auto;color:var(--cyan);font:700 10px/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase}.stage h3{position:absolute;right:clamp(32px,4vw,62px);bottom:150px;left:clamp(32px,4vw,62px);margin:0;font:600 clamp(38px,4vw,64px)/.9 "Bricolage Grotesque",sans-serif;letter-spacing:-.06em;text-transform:uppercase}.stage>p:last-child{position:absolute;right:clamp(32px,4vw,62px);bottom:44px;left:clamp(32px,4vw,62px);max-width:480px;margin:0;font:500 clamp(17px,1.45vw,22px)/1.25 "Bricolage Grotesque",sans-serif;letter-spacing:-.025em}.program-note{max-width:610px;margin:30px 0 0 auto;font:600 12px/1.45 Inter,sans-serif}
+  .city-transition{position:relative;height:min(64vw,760px);min-height:520px;overflow:hidden;background:var(--ink)}.city-transition>:first-child{position:absolute;inset:0;aspect-ratio:auto}.city-transition p{position:absolute;right:7.6vw;bottom:8vw;display:grid;margin:0;color:var(--paper);font:500 clamp(34px,4.5vw,72px)/.93 "Bricolage Grotesque",sans-serif;letter-spacing:-.06em;text-align:right;text-transform:uppercase}.city-transition p strong{color:var(--cyan);font-weight:600}
+  .audience{display:grid;grid-template-columns:1.08fr .42fr .9fr;grid-template-rows:auto auto;gap:clamp(42px,6vw,92px);color:var(--paper);background:var(--ink)}.audience-heading{grid-column:1/3}.audience-heading h2{max-width:920px}.audience-graphic{grid-column:3;grid-row:1;width:100%;align-self:end;color:rgba(240,238,230,.55)}.responsibility-list{grid-column:1/3;display:grid;margin:0;padding:0;list-style:none;border-top:1px solid rgba(240,238,230,.55)}.responsibility-list li{display:grid;grid-template-columns:70px 1fr;align-items:center;min-height:110px;border-bottom:1px solid rgba(240,238,230,.35)}.responsibility-list span{color:var(--cyan);font:700 10px/1 Inter,sans-serif;letter-spacing:.16em}.responsibility-list p{max-width:660px;margin:0;font:500 clamp(20px,2vw,30px)/1.15 "Bricolage Grotesque",sans-serif;letter-spacing:-.035em}.curation{grid-column:3;border-top:4px solid var(--pink-carmine);padding-top:24px}.curation-label{margin:0 0 24px;font:700 10px/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase}.curation ol{margin:0;padding-left:20px;font:500 18px/1.35 "Bricolage Grotesque",sans-serif}.curation li+li{margin-top:16px}.secondary-cta{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:58px;margin-top:38px;border:1px solid var(--paper);padding:0 20px;color:var(--paper);background:transparent;font:700 9px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer}.secondary-cta:hover,.secondary-cta:focus-visible{color:var(--ink);background:var(--cyan)}.secondary-cta span{font-size:22px}
+  .location{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(380px,.75fr);min-height:720px;background:var(--paper)}.location-media{position:relative;min-height:620px;overflow:hidden}.location-media picture,.location-media img{display:block;width:100%;height:100%;object-fit:cover}.location-media>p{position:absolute;right:12px;bottom:12px;max-width:360px;margin:0;padding:7px 9px;color:var(--paper);background:rgba(11,14,12,.85);font:600 7px/1.35 Inter,sans-serif;letter-spacing:.07em}.location-copy{position:relative;padding:clamp(64px,7vw,108px) clamp(30px,5vw,76px);border-left:1px solid var(--line)}.location-copy h2{font-size:clamp(50px,5.5vw,84px)}.location-mark{width:160px;margin:34px 0;color:var(--pink-carmine)}.venue{margin:0 0 12px;font:600 clamp(24px,2.5vw,38px)/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.04em}.location-copy address{font:600 12px/1.5 Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase}.location-copy>p:not(.venue){max-width:500px;margin:28px 0 0;font:500 18px/1.35 "Bricolage Grotesque",sans-serif}.map-link{display:flex;align-items:center;justify-content:space-between;min-height:58px;margin-top:38px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);color:inherit;font:700 10px/1 Inter,sans-serif;letter-spacing:.16em;text-decoration:none;text-transform:uppercase}.map-link span{color:var(--cyan);font-size:24px}
+  .coalition{display:grid;grid-template-columns:minmax(260px,.58fr) 1.42fr;gap:0;color:var(--paper);background:#171a18}.coalition-image{grid-column:1;grid-row:1/4;min-height:820px;margin:-1px 0}.coalition-image>:first-child{height:100%;aspect-ratio:auto}.coalition-heading{grid-column:2;padding:0 0 clamp(58px,6vw,92px) clamp(48px,6vw,96px)}.coalition-heading h2{font-size:clamp(52px,6vw,92px)}.coalition-grid{grid-column:2;display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(240,238,230,.45);border-bottom:1px solid rgba(240,238,230,.45);margin-left:clamp(48px,6vw,96px)}.coalition-grid article{min-height:390px;padding:34px 28px}.coalition-grid article+article{border-left:1px solid rgba(240,238,230,.35)}.org-name{margin:0 0 54px;color:var(--cyan);font:700 10px/1 Inter,sans-serif;letter-spacing:.17em;text-transform:uppercase}.coalition-grid h3{margin:0;font:600 clamp(25px,2.25vw,35px)/.98 "Bricolage Grotesque",sans-serif;letter-spacing:-.045em;text-transform:uppercase}.coalition-grid article>p:not(.org-name){margin:28px 0 0;color:rgba(240,238,230,.72);font:500 15px/1.38 "Bricolage Grotesque",sans-serif}.coalition-grid dl{display:flex;margin:34px 0 0;gap:24px}.coalition-grid dl div{display:grid}.coalition-grid dt{font:600 26px/1 "Bricolage Grotesque",sans-serif}.coalition-grid dd{margin:6px 0 0;color:rgba(240,238,230,.6);font:700 7px/1.2 Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase}.amplify-fronts{grid-column:2;display:flex;flex-wrap:wrap;margin-left:clamp(48px,6vw,96px);padding-top:30px;gap:14px}.amplify-fronts span{border:1px solid rgba(240,238,230,.45);padding:11px 14px;font:700 8px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+  .proof{min-height:640px;overflow:hidden;background:var(--paper)}.proof-art{position:absolute;top:0;right:-8%;width:64%;color:rgba(11,14,12,.12)}.proof header{position:relative;z-index:1;max-width:850px}.proof h2{font-size:clamp(46px,5.6vw,86px)}.proof header p{max-width:630px;margin:24px 0 0;font:500 16px/1.4 "Bricolage Grotesque",sans-serif}.logo-wall{position:relative;z-index:1;display:grid;grid-template-columns:repeat(8,1fr);align-items:center;margin-top:80px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}.logo-wall img{display:block;width:100%;max-height:86px;object-fit:contain;padding:28px 20px;filter:grayscale(1) brightness(0)}.logo-wall img+img{border-left:1px solid rgba(11,14,12,.25)}
+  .faq{display:grid;grid-template-columns:.8fr 1.2fr;gap:clamp(60px,9vw,150px);color:var(--paper);background:var(--ink)}.faq h2{font-size:clamp(48px,5vw,78px)}.faq-list{border-top:1px solid rgba(240,238,230,.55)}.faq details{border-bottom:1px solid rgba(240,238,230,.35)}.faq summary{display:flex;align-items:center;justify-content:space-between;min-height:82px;cursor:pointer;font:600 clamp(19px,1.7vw,25px)/1.1 "Bricolage Grotesque",sans-serif;list-style:none}.faq summary::-webkit-details-marker{display:none}.faq summary::after{color:var(--cyan);content:"+";font:400 30px/1 Inter,sans-serif}.faq details[open] summary::after{content:"−"}.faq details p{max-width:640px;margin:0;padding:0 50px 28px 0;color:rgba(240,238,230,.74);font:500 17px/1.45 "Bricolage Grotesque",sans-serif}
+  .final-cta{min-height:690px;overflow:hidden;color:var(--ink);background:var(--cyan)}.final-axis{position:absolute;right:-6%;bottom:-12%;width:64%;color:rgba(11,14,12,.3)}.final-cta>p:first-of-type{position:relative;margin:0 0 38px;font:700 10px/1 Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase}.final-cta h2{position:relative;max-width:1050px}.final-copy{position:relative;max-width:590px;margin:32px 0 0;font:500 20px/1.35 "Bricolage Grotesque",sans-serif}.final-button{position:relative;width:min(430px,100%);margin-top:42px;background:var(--paper)}
+  .site-foot{display:flex;align-items:center;justify-content:space-between;padding-top:34px;padding-bottom:34px;border-top:1px solid var(--ink);background:var(--paper)}
+  .thanks-actions a{display:flex;align-items:center;justify-content:center;min-width:242px;height:62px;border:1px solid var(--confirmation-paper);padding:0 24px;color:var(--confirmation-paper);background:transparent;font:700 9px/1 Inter,sans-serif;letter-spacing:.16em;text-decoration:none;text-transform:uppercase}.thanks-actions a[hidden]{display:none}.thanks-actions a:hover,.thanks-actions a:focus-visible{color:var(--ink);background:var(--cyan)}
+  .response,.qualification{position:fixed}.response{inset:0}.qualification{inset:0}
+  .page[data-view="qualification"] .response,.page[data-view="thanks"] .response{visibility:hidden;transform:translateX(102%);transition:none}
+  :where(.nav-cta,.secondary-cta,.map-link,.final-button,summary):focus-visible{outline:3px solid var(--cyan);outline-offset:4px}
+  @media(max-width:1100px){.editorial-nav{grid-template-columns:auto 1fr auto}.nav-meta{display:none}.hero{grid-template-columns:minmax(0,1.5fr) minmax(260px,.75fr);grid-template-rows:auto minmax(430px,1fr) auto}.hero-head{grid-column:1}.hero-image{display:none}.hero-action{grid-column:2}.hero-date{grid-column:1}.stage{min-height:440px}.audience{grid-template-columns:1fr .65fr}.audience-heading{grid-column:1}.audience-graphic{grid-column:2}.responsibility-list{grid-column:1}.curation{grid-column:2}.coalition{grid-template-columns:1fr}.coalition-image{grid-column:1;grid-row:auto;height:460px;min-height:0}.coalition-heading,.coalition-grid,.amplify-fronts{grid-column:1;margin-left:0}.coalition-heading{padding:70px 0}.logo-wall{grid-template-columns:repeat(4,1fr)}}
+  @media(max-width:760px){:global(html){scroll-padding-top:58px}.editorial-nav{grid-template-columns:auto 1fr auto;min-height:58px;padding:0 15px;gap:8px}.nav-brand{font-size:8px}.nav-meta{display:block;margin:0;text-align:center}.nav-meta span{font-size:7px}.nav-meta span+span{display:none}.nav-links{display:none}.nav-cta{min-height:38px;margin-left:0;padding:0 10px;font-size:6px}.hero{display:grid;grid-template-columns:1fr;grid-template-rows:auto minmax(330px,43vh) auto auto;min-height:0;padding:0 15px}.hero-head{grid-column:1;display:block;border-right:0;padding:24px 0 20px}.event-name{font-size:clamp(46px,13.4vw,62px);letter-spacing:-.07em}.purpose{display:grid;grid-template-columns:1fr;width:100%;margin-top:19px;font-size:12px;gap:2px;transform:none}.purpose span,.purpose em{white-space:normal}.hero-date{grid-column:1;grid-row:2;border-right:0;border-bottom:1px solid var(--line);padding:0 8px}.hero-date .field{justify-self:start;width:78%}.hero-date .core,.hero-date .echo{left:55%;font-size:min(66vw,34vh,270px)}.hero-image{display:none}.hero-action{grid-column:1;grid-row:3;padding:25px 0}.hero-action .save{display:none}.hero-audience{margin:0 0 20px;font-size:20px}.primary{min-height:52px}.cta-note{font-size:8px}.hero-foot{grid-column:1;grid-row:4;min-height:70px;gap:12px}.hero-foot .brands{gap:5px}.hero-foot .amplify{width:64px}.hero-foot .shock{width:40px}.hero-foot .xvia{width:58px}.hero-foot .brands>span{font-size:10px}.hero-foot p{max-width:125px;font-size:6px;line-height:1.3}.data-strip{height:44px}.section-shell{padding:76px 20px}.section-heading span,.audience-heading>span,.location-copy>span,.coalition-heading>span,.proof header>span,.faq header>span{margin-bottom:16px;font-size:8px}.section-heading h2,.audience-heading h2,.location-copy h2,.coalition-heading h2,.proof h2,.faq h2,.final-cta h2{font-size:clamp(43px,13vw,62px);line-height:.9}.stage-grid{display:block;margin-top:52px}.stage{min-height:400px;padding:28px 22px}.stage+.stage{border-top:1px solid var(--ink);border-left:0}.stage-art{width:48%;top:22px;right:18px}.stage h3{right:22px;bottom:142px;left:22px;font-size:42px}.stage>p:last-child{right:22px;bottom:36px;left:22px;font-size:18px}.program-note{font-size:10px}.city-transition{height:72vh;min-height:500px}.city-transition p{right:20px;bottom:42px;font-size:11vw}.audience{display:block}.audience-graphic{width:72%;margin:46px 0 28px auto}.responsibility-list li{grid-template-columns:48px 1fr;min-height:100px}.responsibility-list p{font-size:21px}.curation{margin-top:54px}.location{display:block}.location-media{min-height:0;height:56vw;max-height:360px}.location-copy{padding:70px 20px;border-top:1px solid var(--ink);border-left:0}.location-mark{width:130px}.coalition-image{height:60vw;min-height:320px}.coalition-heading{padding:62px 0 48px}.coalition-grid{display:block}.coalition-grid article{min-height:0;padding:34px 0 40px}.coalition-grid article+article{border-top:1px solid rgba(240,238,230,.35);border-left:0}.org-name{margin-bottom:32px}.coalition-grid h3{font-size:34px}.amplify-fronts{padding-top:28px}.proof{min-height:0}.proof-art{top:5%;right:-40%;width:130%}.proof header p{font-size:14px}.logo-wall{grid-template-columns:repeat(2,1fr);margin-top:54px}.logo-wall img{max-height:76px;padding:22px 18px}.logo-wall img:nth-child(odd){border-left:0}.faq{display:block}.faq-list{margin-top:54px}.faq summary{min-height:72px;font-size:19px}.faq details p{font-size:15px}.final-cta{min-height:620px}.final-axis{right:-48%;bottom:-2%;width:140%}.site-foot{padding-top:26px;padding-bottom:26px;gap:12px}.site-foot .amplify{width:62px}.site-foot .shock{width:38px}.site-foot .xvia{width:56px}.site-foot .brands{gap:5px}.site-foot .brands>span{font-size:10px}.site-foot>p{max-width:118px;font-size:6px;line-height:1.25}.response,.qualification,.thanks{height:100dvh;min-height:100svh}.qualification{overflow-y:auto}.qualification-panel{min-height:100dvh;height:auto}.response{overflow-y:auto}.thanks-actions a{width:100%;min-width:0;height:46px}}
+  @media(max-width:380px){.editorial-nav .nav-cta{padding:0 9px}.event-name{font-size:15.8vw}.hero-date{min-height:300px}.hero-audience{font-size:18px}.section-shell{padding-inline:16px}.section-heading h2,.audience-heading h2,.location-copy h2,.coalition-heading h2,.proof h2,.faq h2,.final-cta h2{font-size:12.2vw}.stage h3{font-size:38px}.logo-wall img{padding:20px 14px}}
+  @media(max-width:980px){.purpose span,.purpose em{white-space:normal}}
+  @media(prefers-reduced-motion:reduce){.echo,.signal,.save h1::after{animation:none!important}.echo{transform:translate(calc(-50% + var(--offset)),-50%)}.signal{display:none}.response,.qualification,.qualification-panel,.thanks,.primary::before{transition:none}}
+</style>

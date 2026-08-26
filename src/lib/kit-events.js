@@ -48,6 +48,13 @@ const FIELD_LABELS = [
   "ana_resposta_3",
   "ana_resposta_4",
   "ana_last_event",
+  "amplify_day_status",
+  "amplify_day_role",
+  "amplify_day_linkedin",
+  "amplify_day_last_event",
+  "amplify_day_profile_completed_at",
+  "amplify_day_marketing_consent",
+  "amplify_day_environment",
 ];
 
 const EVENT_TAG_MAP = {
@@ -71,6 +78,12 @@ const EVENT_TAG_MAP = {
   bootcamp_missed: ["bootcamp:nao_compareceu"],
   ebook_executivo_x0_lead_captured: ["ebook:executivo_x0", "ebook:download", "lead:ebook"],
   ana_lead_captured: ["ana:amplify", "lead:qualificacao_ia"],
+  amplify_day_interest_captured: ["amplify-day:2026:origem", "amplify-day:2026:perfil_incompleto"],
+  amplify_day_qualification_updated: ["amplify-day:2026:origem"],
+  amplify_day_profile_completed: ["amplify-day:2026:origem", "amplify-day:2026:perfil_completo"],
+  amplify_day_calendar_added: ["amplify-day:2026:origem", "amplify-day:2026:agenda_adicionada"],
+  amplify_day_content_opted_in: ["amplify-day:2026:origem", "amplify-day:2026:conteudos_optin"],
+  amplify_day_whatsapp_clicked: ["amplify-day:2026:origem", "amplify-day:2026:whatsapp_clicked"],
 };
 
 const TAG_MAP = {
@@ -102,6 +115,10 @@ const TAG_MAP = {
   ebook_executivo_x0: "ebook:executivo_x0",
   ebook_download: "ebook:download",
   lead_ebook: "lead:ebook",
+  amplify_day_interest_production: "amplify-day:2026:interesse:producao",
+  amplify_day_interest_test: "amplify-day:2026:interesse:teste",
+  amplify_day_content_optin: "amplify-day:2026:conteudos_optin",
+  amplify_day_whatsapp_clicked: "amplify-day:2026:whatsapp_clicked",
 };
 
 const NATIVE_FOLLOWUP_SEQUENCES = {
@@ -342,6 +359,10 @@ function mapSequences(payload = {}, lead = {}) {
   const formStatus = clean(payload.formStatus);
   const sequences = [];
 
+  // Amplify Day is orchestrated by Kit Visual Automations triggered by tags.
+  // Never route these leads into the generic Nexialista discovery workflows.
+  if (eventName.startsWith("amplify_day_")) return sequences;
+
   if (formStatus === "in_progress" || eventName === "nexialista_form_progress") {
     sequences.push("diagnosis_abandoned");
     return sequences;
@@ -428,6 +449,8 @@ function getConflictingWorkflowKeys(payload = {}, lead = {}) {
   const tags = getAllTags(payload, lead);
   const leadStage = clean(lead.lead_stage || lead.leadStage || payload.leadStage);
   const conflicts = [];
+
+  if (eventName.startsWith("amplify_day_")) return conflicts;
 
   if (
     eventName === "nexialista_checkout_started" ||
@@ -619,6 +642,7 @@ function buildCustomFields(payload = {}, lead = {}) {
   const isBootcampEvent = eventName.startsWith("bootcamp_") || Boolean(payload.bootcampSlug || payload.bootcamp_slug);
   const isEbookEvent = Boolean(payload.ebookSlug || payload.ebook_slug);
   const isAnaEvent = eventName.startsWith("ana_") || clean(payload.source) === "ana";
+  const isAmplifyDayEvent = eventName.startsWith("amplify_day_") || clean(payload.source) === "amplify_day";
 
   return compactObject({
     lead_score: lead.total_score ?? payload.totalScore ?? payload.score,
@@ -664,6 +688,14 @@ function buildCustomFields(payload = {}, lead = {}) {
     ana_resposta_3: payload.resposta_3,
     ana_resposta_4: payload.resposta_4,
     ana_last_event: isAnaEvent ? eventName : undefined,
+    amplify_day_status: payload.amplifyDayStatus,
+    amplify_day_role: payload.role,
+    amplify_day_linkedin: payload.linkedin,
+    amplify_day_last_event: isAmplifyDayEvent ? eventName : undefined,
+    amplify_day_profile_completed_at: payload.profileCompletedAt,
+    amplify_day_marketing_consent:
+      payload.marketingConsent === true ? "sim" : payload.marketingConsent === false ? "nao" : undefined,
+    amplify_day_environment: payload.environment,
   });
 }
 
@@ -696,6 +728,7 @@ export async function syncKitSubscriberEvent(payload = {}, lead = {}) {
   }
 
   const tagLabels = mapTags(payload, lead);
+  const removeTagLabels = unique(Array.isArray(payload.removeTags) ? payload.removeTags : []);
   const tagResults = [];
   const workflowKeys = mapSequences(payload, lead);
   const workflowResults = [];
@@ -713,6 +746,15 @@ export async function syncKitSubscriberEvent(payload = {}, lead = {}) {
     tagResults.push({ tag: tagLabel, ensure: tagResult, subscriber: subscriberTagResult });
   }
 
+  const removedTags = [];
+  for (const tagLabel of removeTagLabels) {
+    const tagResult = await ensureTag(tagLabel);
+    const removeResult = tagResult.id
+      ? await untagSubscriberById(tagResult.id, subscriberId)
+      : { ok: false, skipped: true, reason: "tag_id ausente" };
+    removedTags.push({ tag: tagLabel, ok: removeResult.ok, status: removeResult.status });
+  }
+
   for (const workflowKey of workflowKeys) {
     const workflowResult = await scheduleWorkflowBroadcasts({
       workflowKey,
@@ -727,6 +769,7 @@ export async function syncKitSubscriberEvent(payload = {}, lead = {}) {
     ok: true,
     subscriber: { ok: subscriberResult.ok, status: subscriberResult.status, id: subscriberId },
     tags: tagResults.map((result) => ({ tag: result.tag, ok: result.subscriber.ok, status: result.subscriber.status })),
+    removedTags,
     workflows: workflowResults.map((result) => ({
       workflow: result.workflowKey,
       ok: result.ok,
