@@ -1,6 +1,5 @@
 ---
 import PageShell from "@/layouts/PageShell.astro";
-import { Picture } from "astro:assets";
 import logoAmplify from "@/assets/logo-amplify-color.png";
 import logoShockwave from "@/assets/amplify-day/shockwave.webp";
 import logoXvia from "@/assets/amplify-day/xvia-white.png";
@@ -8,7 +7,6 @@ import paperTexture from "@/assets/amplify-day/editorial-paper.webp";
 import brasiliaVertical from "@/assets/amplify-day/visual-kit/catedral-tres-poderes.webp";
 import tesourinhaAerea from "@/assets/amplify-day/visual-kit/tesourinha-aerea.webp";
 import candangosPhoto from "@/assets/amplify-day/visual-kit/candangos.webp";
-import ulyssesPhoto from "@/assets/amplify-day/ulysses-preview.jpeg";
 import logoTecfil from "@/assets/logos/logo-tecfil.png";
 import logoToccato from "@/assets/logos/logo-toccato.png";
 import logoCrea from "@/assets/logos/logo-crea-pr.png";
@@ -77,7 +75,6 @@ const eventJsonLd = {
         <div class="nav-links">
           <a href="#experiencia">Experiência</a><a href="#para-quem">Para quem</a><a href="#local">Local</a><a href="#coalizadoras">Coalizadoras</a>
         </div>
-        <button class="nav-cta" type="button" data-open data-cta-position="nav">Entrar na lista prioritária</button>
       </nav>
 
       <section class="hero" id="inicio">
@@ -130,28 +127,43 @@ const eventJsonLd = {
       <section class="experience section-shell" id="experiencia">
         <header class="section-heading">
           <span>02 · Experiência</span>
-          <h2>Duas plenárias.<br />Conversas em escalas diferentes.</h2>
+          <h2>Dois palcos.<br />Ideias grandes e conversas de perto.</h2>
         </header>
         <div class="stage-grid">
           <article class="stage stage-main">
             <div class="stage-art"><GrafismoCupulas animated={true} speed={0.18} title="Duas cúpulas representam conversa e decisão" /></div>
             <p class="stage-index">Plenária 01</p>
             <h3>Plenária principal</h3>
-            <p>Palestras de impacto, visões e decisões que precisam chegar à liderança.</p>
+            <p>Palestras para abrir a pauta que a liderança vai discutir no dia seguinte.</p>
           </article>
           <article class="stage stage-panels">
             <div class="stage-art"><GrafismoNave animated={false} title="Linhas da Catedral se expandem em várias direções" /></div>
             <p class="stage-index">Plenária 02</p>
             <h3>Palco de painéis</h3>
-            <p>Conversas com mais contexto, confronto de experiências e espaço para perguntas.</p>
+            <p>Gente que faz, sentada à mesa, contando o que funcionou e o que deu trabalho.</p>
           </article>
         </div>
-        <p class="program-note">Temas e participantes serão anunciados durante a curadoria da programação.</p>
+        <p class="program-note">Temas e primeiros nomes serão anunciados em breve.</p>
       </section>
 
       <section class="city-transition" aria-label="Brasília vista de cima">
         <ImagemDuotone src={tesourinhaAerea.src} alt="Vista aérea das tesourinhas de Brasília" tint={0.24} scrim={0.1} />
-        <p><span>Não é sobre assistir.</span><strong>É sobre sair com critério.</strong></p>
+        <svg class="city-wordmark" viewBox="0 0 920 260" aria-hidden="true">
+          <defs>
+            <pattern id="city-grid" width="18" height="18" patternUnits="userSpaceOnUse">
+              <rect width="12" height="12" x="3" y="3" />
+            </pattern>
+            <mask id="city-word-mask">
+              <rect width="100%" height="100%" fill="black" />
+              <text x="460" y="150" text-anchor="middle" fill="white">AMPLIFY DAY</text>
+            </mask>
+          </defs>
+          <g class="city-cells">
+            <rect class="city-field" x="0" y="0" width="920" height="260" fill="url(#city-grid)" />
+            <rect class="city-mark" x="0" y="0" width="920" height="260" fill="url(#city-grid)" mask="url(#city-word-mask)" />
+          </g>
+        </svg>
+        <p>Um dia para voltar com uma decisão na bagagem.</p>
       </section>
 
       <section class="audience section-shell" id="para-quem">
@@ -161,20 +173,24 @@ const eventJsonLd = {
         </div>
         <div class="audience-graphic"><GrafismoCandangos animated={true} speed={0.22} title="Os Candangos representam quem constrói e implementa" /></div>
         <ol class="responsibility-list">
-          <li><span>01</span><p>Decide prioridades, investimentos ou políticas.</p></li>
-          <li><span>02</span><p>Lidera equipes, produtos, operações ou transformação.</p></li>
-          <li><span>03</span><p>Implementa IA e precisa conectar execução a impacto.</p></li>
+          <li><span>01</span><p>Decide onde investir, o que priorizar e até onde ir.</p></li>
+          <li><span>02</span><p>Lidera times, produtos, operações ou mudanças que não podem esperar.</p></li>
+          <li><span>03</span><p>Faz a IA sair da apresentação e entrar no trabalho.</p></li>
         </ol>
         <div class="curation">
-          <p class="curation-label">Como funciona a curadoria</p>
-          <ol><li>Você entra na lista prioritária.</li><li>Nosso time conhece o seu contexto.</li><li>Os convites são enviados conforme a composição da sala.</li></ol>
+          <p class="curation-label">Como entrar nessa sala</p>
+          <ol><li>Você deixa seu nome.</li><li>A gente entende o seu momento.</li><li>Se houver encaixe, o convite chega.</li></ol>
           <button class="secondary-cta" type="button" data-open data-cta-position="audience">Entrar na lista prioritária <span>→</span></button>
         </div>
       </section>
 
       <section class="location" id="local">
         <div class="location-media">
-          <Picture src={ulyssesPhoto} formats={["avif", "webp"]} widths={[640, 960, 1280]} sizes="(max-width: 760px) 100vw, 58vw" alt="Centro de Convenções Ulysses Guimarães visto do alto" loading="lazy" />
+          <picture>
+            <source srcset="/amplify-day/venue/ulysses-640.avif 640w, /amplify-day/venue/ulysses-1080.avif 1080w" type="image/avif" sizes="(max-width: 760px) 100vw, 58vw" />
+            <source srcset="/amplify-day/venue/ulysses-640.webp 640w, /amplify-day/venue/ulysses-1080.webp 1080w" type="image/webp" sizes="(max-width: 760px) 100vw, 58vw" />
+            <img src="/amplify-day/venue/ulysses-1080.webp" width="1080" height="608" alt="Centro de Convenções Ulysses Guimarães visto do alto" loading="lazy" decoding="async" />
+          </picture>
           <p>Ulysses Centro de Convenções · Brasília</p>
         </div>
         <div class="location-copy">
@@ -183,7 +199,7 @@ const eventJsonLd = {
           <div class="location-mark"><GrafismoTesourinha animated={false} /></div>
           <p class="venue">Ulysses Centro de Convenções</p>
           <address>SDC, Eixo Monumental, Lote 05<br />Brasília · DF · 70655-775</address>
-          <p>Desembarque fácil por táxi ou aplicativo, próximo aos setores hoteleiros e com estacionamento terceirizado no complexo.</p>
+          <p>Chegue de táxi, aplicativo ou carro. O Ulysses fica perto dos principais hotéis e tem estacionamento terceirizado.</p>
           <a class="map-link" href="https://www.google.com/maps/search/?api=1&query=Ulysses+Centro+de+Conven%C3%A7%C3%B5es+Bras%C3%ADlia" target="_blank" rel="noopener" data-map>Ver no mapa <span>↗</span></a>
         </div>
       </section>
@@ -192,71 +208,75 @@ const eventJsonLd = {
         <div class="coalition-image"><ImagemReticula src={candangosPhoto.src} alt="Monumento Os Candangos e Congresso Nacional ao pôr do sol" step="8px" animated={false} /></div>
         <header class="coalition-heading">
           <span>05 · Coalizadoras</span>
-          <h2>Três trajetórias.<br />Uma sala em comum.</h2>
+          <h2>Quem coloca o<br />Amplify Day de pé.</h2>
         </header>
         <div class="coalition-grid">
-          <article><p class="org-name">Amplify</p><h3>IA aplicada à transformação real.</h3><p>Educação corporativa, consultoria e comunidades para transformar conhecimento em capacidade de execução.</p><dl><div><dt>130 mil+</dt><dd>alunos capacitados</dd></div><div><dt>1 mil+</dt><dd>treinamentos</dd></div></dl></article>
-          <article><p class="org-name">Shock Wave</p><h3>Criatividade e fluência para mover negócios.</h3><p>Aprendizado prático, repertório e aplicação de inteligência artificial no trabalho e nas decisões.</p></article>
-          <article><p class="org-name">X‑VIA</p><h3>Pioneirismo em governo digital no Brasil.</h3><p>Desde 2014, aproxima governo e cidadão por meio de tecnologia, serviços e novas experiências públicas.</p></article>
+          <article><p class="org-name">Amplify</p><h3>Conhecimento que chega ao trabalho.</h3><p>A Amplify forma times, assessora empresas e reúne quem usa IA no trabalho.</p><dl><div><dt>130 mil+</dt><dd>alunos capacitados</dd></div><div><dt>1 mil+</dt><dd>treinamentos</dd></div></dl></article>
+          <article><p class="org-name">Shock Wave</p><h3>Criatividade com consequência.</h3><p>A Shock Wave junta repertório, prática e negócio para tirar a IA do lugar-comum.</p></article>
+          <article><p class="org-name">X‑VIA</p><h3>Tecnologia a serviço do cidadão.</h3><p>Desde 2014, a X‑VIA cria serviços digitais que aproximam governo e cidadão.</p></article>
         </div>
         <div class="amplify-fronts" aria-label="Frentes de atuação da Amplify"><span>Capacitação</span><span>Consultoria e Serviços</span><span>Comunidades</span></div>
       </section>
 
       <section class="proof section-shell" aria-labelledby="proof-title">
         <div class="proof-art"><GrafismoSuperquadra columns={12} rows={4} lit={[3, 9, 14, 20, 27, 34, 41]} animated={false} /></div>
-        <header><span>06 · Histórico</span><h2 id="proof-title">Organizações já impactadas pelas coalizadoras.</h2><p>Relações de trabalho e transformação. Estas marcas não indicam patrocínio, participação ou apoio ao evento.</p></header>
+        <header><span>06 · Histórico</span><h2 id="proof-title">Algumas organizações que já trabalharam com a gente.</h2><p>As marcas abaixo não patrocinam nem participam do Amplify Day.</p></header>
         <div class="logo-wall">{organizationLogos.map((logo) => <img src={logo.src} alt={logo.alt} loading="lazy" decoding="async" />)}</div>
       </section>
 
       <section class="faq section-shell" id="faq">
         <header><span>07 · Perguntas frequentes</span><h2>O que você precisa saber agora.</h2></header>
         <div class="faq-list">
-          <details><summary>Para quem é o Amplify Day?</summary><p>Para quem decide, influencia ou implementa inteligência artificial e já precisa conectar escolhas a impacto.</p></details>
-          <details><summary>O cadastro confirma a participação?</summary><p>Não. Ele registra seu interesse para a curadoria. Os convites serão enviados conforme a composição da sala.</p></details>
-          <details><summary>Quando programação e palestrantes serão anunciados?</summary><p>Durante a curadoria da programação. Quem estiver na lista prioritária receberá as novidades primeiro.</p></details>
-          <details><summary>Onde será realizado?</summary><p>No Ulysses Centro de Convenções, em Brasília, no dia 23 de setembro de 2026.</p></details>
-          <details><summary>Como receberei as próximas informações?</summary><p>Pelo e-mail informado no cadastro. Após concluir o perfil, você também poderá entrar no grupo de WhatsApp.</p></details>
+          <details><summary>Para quem é o Amplify Day?</summary><p>Para quem decide, lidera ou põe IA para funcionar.</p></details>
+          <details><summary>O cadastro confirma a participação?</summary><p>Não. O cadastro coloca seu nome na curadoria. Se houver encaixe, o convite chega por e-mail.</p></details>
+          <details><summary>Quando programação e palestrantes serão anunciados?</summary><p>Estamos fechando temas e convidados. Quem estiver na lista recebe os anúncios primeiro.</p></details>
+          <details><summary>Onde será realizado?</summary><p>No Ulysses Centro de Convenções, em Brasília, em 23 de setembro de 2026.</p></details>
+          <details><summary>Como receberei as próximas informações?</summary><p>Por e-mail. Depois de completar o perfil, você também pode entrar no grupo de WhatsApp.</p></details>
         </div>
       </section>
 
       <section class="final-cta section-shell">
         <div class="final-axis"><GrafismoEixo animated={false} /></div>
         <p>23 set 2026 · Brasília · Presencial</p>
-        <h2>Entre agora.<br />O convite vem depois.</h2>
-        <p class="final-copy">Cadastre seu interesse para acompanhar a construção do Amplify Day e participar da curadoria.</p>
+        <h2>Quer estar<br />nessa sala?</h2>
+        <p class="final-copy">Deixe seu contato. A gente conhece seu perfil e avisa quando a curadoria abrir.</p>
         <button class="primary final-button" type="button" data-open data-cta-position="final"><span>Entrar na lista prioritária</span></button>
       </section>
 
       <footer class="site-foot section-shell">
         <div class="brands" aria-label="Coalizadoras: Amplify, Shock Wave e X-VIA"><img class="amplify" src={logoAmplify.src} alt="Amplify" width="1301" height="204" /><span aria-hidden="true">+</span><img class="shock" src={logoShockwave.src} alt="Shock Wave" width="500" height="331" /><span aria-hidden="true">+</span><img class="xvia" src={logoXvia.src} alt="X-VIA" width="3426" height="774" /></div>
-        <p>Uma conversa à altura de quem decide.</p>
+        <p>Amplify Day · Edição 01</p>
       </footer>
     </section>
 
+    <button class="floating-capture-trigger" type="button" data-open data-floating-cta data-cta-position="floating_desktop" aria-hidden="true" tabindex="-1">
+      <span>Lista prioritária</span><i aria-hidden="true"></i>
+    </button>
+
     <section class="response" aria-labelledby="response-title" aria-hidden="true" inert>
-      <header class="response-head"><p>Amplify Day</p><button type="button" data-close>Voltar ao convite</button></header>
-      <div class="response-grid">
-        <div class="response-copy">
-          <p>Lista prioritária · 01</p>
-          <h2 id="response-title">Entre<br />na lista</h2>
-          <p>Deixe seu nome e e-mail para receber primeiro as próximas informações sobre o Amplify Day.</p>
+      <button class="response-backdrop" type="button" data-close aria-label="Fechar formulário"></button>
+      <div class="capture-card" role="dialog" aria-modal="true" aria-labelledby="response-title">
+        <header class="response-head"><p>Amplify Day · Lista prioritária</p><button type="button" data-close aria-label="Fechar formulário">Fechar</button></header>
+        <div class="capture-visual" aria-hidden="true">
+          <img src={brasiliaVertical.src} alt="" loading="lazy" decoding="async" />
+          <div class="capture-echoes"><span></span><span></span><span></span><span></span><span></span></div>
+          <b>23 · Brasília</b>
         </div>
-        <form class="form" data-form novalidate>
-          <label><span>Nome</span><input type="text" name="name" autocomplete="name" required /><small data-error="name" hidden>Informe seu nome.</small></label>
-          <label><span>E-mail</span><input type="email" name="email" autocomplete="email" inputmode="email" required /><small data-error="email" hidden>Informe um e-mail válido.</small></label>
-          <label class="website-field" aria-hidden="true"><span>Website</span><input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
-          <button class="submit" type="submit">Continuar</button>
-          <p class="note" data-note role="status" aria-live="polite">Ao continuar, você autoriza o contato sobre o Amplify Day. Consulte nossa <a href="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a>.</p>
-        </form>
+        <div class="response-grid">
+          <div class="response-copy">
+            <p>Lista prioritária</p>
+            <h2 id="response-title">Quer estar<br />nessa sala?</h2>
+            <p>Seu nome e seu e-mail bastam para começar. O resto a gente pergunta depois.</p>
+          </div>
+          <form class="form" data-form novalidate>
+            <label><span>Nome</span><input type="text" name="name" autocomplete="name" required /><small data-error="name" hidden>Informe seu nome.</small></label>
+            <label><span>E-mail</span><input type="email" name="email" autocomplete="email" inputmode="email" required /><small data-error="email" hidden>Informe um e-mail válido.</small></label>
+            <label class="website-field" aria-hidden="true"><span>Website</span><input type="text" name="website" tabindex="-1" autocomplete="off" /></label>
+            <button class="submit" type="submit"><span>Quero entrar</span></button>
+            <p class="note" data-note role="status" aria-live="polite">Ao continuar, você autoriza o contato sobre o Amplify Day. Consulte nossa <a href="/privacidade" target="_blank" rel="noopener">Política de Privacidade</a>.</p>
+          </form>
+        </div>
       </div>
-      <footer class="response-foot">
-        <p>23 set 2026 · Brasília · Presencial</p>
-        <div class="brands" aria-label="Coalizadoras: Amplify, Shockwave e X-VIA">
-          <img class="amplify" src={logoAmplify.src} alt="Amplify" width="1301" height="204" /><span aria-hidden="true">+</span>
-          <img class="shock" src={logoShockwave.src} alt="Shockwave" width="500" height="331" />
-          <span aria-hidden="true">+</span><img class="xvia" src={logoXvia.src} alt="X-VIA" width="3426" height="774" />
-        </div>
-      </footer>
     </section>
 
     <section class="qualification" aria-labelledby="qualification-title" aria-hidden="true" inert>
@@ -266,9 +286,9 @@ const eventJsonLd = {
         <header class="qualification-head"><p>Amplify Day · Contexto</p><button type="button" data-qualification-close>Voltar</button></header>
         <div class="qualification-grid">
           <div class="qualification-copy">
-            <p class="qualification-index">02 · Sua presença importa</p>
-            <h2 id="qualification-title">Onde a sua<br />liderança acontece?</h2>
-            <p>Esta sala está sendo formada por líderes que movem empresas, setores e causas relevantes. Conte-nos sobre o lugar que você ocupa nessa conversa.</p>
+            <p class="qualification-index">02 · Um pouco sobre você</p>
+            <h2 id="qualification-title">Onde você<br />faz acontecer?</h2>
+            <p>Conte onde você trabalha e o que decide por lá. Isso ajuda a montar uma sala que faça sentido.</p>
           </div>
           <form class="qualification-form" data-qualification-form novalidate>
             <label><span>Organização</span><input type="text" name="organization" autocomplete="organization" required /><small data-q-error="organization" hidden>Informe sua organização.</small></label>
@@ -287,12 +307,12 @@ const eventJsonLd = {
       <div class="thanks-main">
         <h2 id="thanks-title"><span>Sua presença</span><span>Amplifica <em>tudo.</em></span></h2>
         <p class="thanks-index">03 · Lista prioritária</p>
-        <p>Obrigado por contar um pouco sobre você. Você entrou na lista prioritária. Avisaremos por e-mail quando a curadoria de convites abrir.<strong> Reserve 23 de setembro.</strong></p>
+        <p>Recebemos seu perfil. Quando a curadoria abrir, você recebe notícias por e-mail.<strong> Até lá, reserve 23 de setembro.</strong></p>
         <div class="thanks-actions"><button type="button" data-calendar>Adicionar à agenda</button><a href="#" data-whatsapp hidden target="_blank" rel="noopener">Entrar no grupo de WhatsApp</a><button type="button" data-restart>Rever o convite</button></div>
       </div>
       <footer class="thanks-foot">
         <div class="brands" aria-label="Coalizadoras: Amplify, Shockwave e X-VIA"><img class="amplify" src={logoAmplify.src} alt="Amplify" width="1301" height="204" /><span aria-hidden="true">+</span><img class="shock" src={logoShockwave.src} alt="Shockwave" width="500" height="331" /><span aria-hidden="true">+</span><img class="xvia" src={logoXvia.src} alt="X-VIA" width="3426" height="774" /></div>
-        <p>Uma conversa à altura de quem decide.</p>
+        <p>Amplify Day · Edição 01</p>
       </footer>
     </section>
   </main>
@@ -304,8 +324,11 @@ const eventJsonLd = {
     const invite = document.querySelector<HTMLElement>(".invite");
     const form = document.querySelector<HTMLFormElement>("[data-form]");
     const openButtons = document.querySelectorAll<HTMLButtonElement>("[data-open]");
-    const open = openButtons[0] || null;
-    const close = document.querySelector<HTMLButtonElement>("[data-close]");
+    const closeButtons = document.querySelectorAll<HTMLButtonElement>("[data-close]");
+    const floatingCta = document.querySelector<HTMLButtonElement>("[data-floating-cta]");
+    const hero = document.querySelector<HTMLElement>(".hero");
+    const finalCta = document.querySelector<HTMLElement>(".final-cta");
+    const captureCard = document.querySelector<HTMLElement>(".capture-card");
     const qualification = document.querySelector<HTMLElement>(".qualification");
     const thanks = document.querySelector<HTMLElement>(".thanks");
     const qualificationForm = document.querySelector<HTMLFormElement>("[data-qualification-form]");
@@ -317,7 +340,19 @@ const eventJsonLd = {
       analytics?.("event", { name: eventName, data: properties });
       window.dispatchEvent(new CustomEvent("amplify:analytics", { detail: { eventName, ...properties } }));
     };
+    let lastOpenTrigger: HTMLButtonElement | null = null;
+    let heroHasLeft = false;
+    let finalCtaVisible = false;
     type View = "invite" | "form" | "qualification" | "thanks";
+    const syncFloatingCta = () => {
+      if (!floatingCta || !page) return;
+      const show = page.dataset.view === "invite" && heroHasLeft && !finalCtaVisible;
+      const mobile = window.matchMedia("(max-width: 760px)").matches;
+      floatingCta.dataset.ctaPosition = mobile ? "floating_mobile" : "floating_desktop";
+      floatingCta.classList.toggle("is-visible", show);
+      floatingCta.setAttribute("aria-hidden", String(!show));
+      floatingCta.tabIndex = show ? 0 : -1;
+    };
     const setView = (view: View) => {
       if (!page || !response) return;
       page.dataset.view = view;
@@ -330,18 +365,59 @@ const eventJsonLd = {
       qualification?.toggleAttribute("inert", view !== "qualification");
       thanks?.toggleAttribute("inert", view !== "thanks");
       document.documentElement.style.overflow = view === "invite" ? "" : "hidden";
+      syncFloatingCta();
       window.setTimeout(() => {
         if (view === "form") form?.querySelector<HTMLInputElement>("input")?.focus();
         else if (view === "qualification") qualificationForm?.querySelector<HTMLInputElement>("input")?.focus();
-        else if (view === "invite") open?.focus();
-      }, 540);
+        else if (view === "invite") lastOpenTrigger?.focus({ preventScroll: true });
+      }, view === "invite" ? 50 : 420);
     };
     openButtons.forEach((button) => button.addEventListener("click", () => {
+      lastOpenTrigger = button;
       track("amplify_day_cta_clicked", { position: button.dataset.ctaPosition || "unknown" });
       track("amplify_day_form_opened", { position: button.dataset.ctaPosition || "unknown" });
       setView("form");
     }));
-    close?.addEventListener("click", () => setView("invite"));
+    closeButtons.forEach((button) => button.addEventListener("click", () => {
+      track("amplify_day_capture_closed", { origin: lastOpenTrigger?.dataset.ctaPosition || "unknown", stage: "identity" });
+      setView("invite");
+    }));
+    if (hero && finalCta) {
+      const heroObserver = new IntersectionObserver(([entry]) => {
+        heroHasLeft = entry.boundingClientRect.bottom <= 65;
+        syncFloatingCta();
+      }, { threshold: [0, 0.01], rootMargin: "-64px 0px 0px" });
+      const finalObserver = new IntersectionObserver(([entry]) => {
+        finalCtaVisible = entry.isIntersecting;
+        syncFloatingCta();
+      }, { threshold: 0.28 });
+      heroObserver.observe(hero);
+      finalObserver.observe(finalCta);
+      window.matchMedia("(max-width: 760px)").addEventListener("change", syncFloatingCta);
+    }
+    const cityTransition = document.querySelector<HTMLElement>(".city-transition");
+    if (cityTransition) {
+      const cityObserver = new IntersectionObserver(([entry], observer) => {
+        if (!entry.isIntersecting) return;
+        cityTransition.classList.add("is-entered");
+        observer.disconnect();
+      }, { threshold: 0.45 });
+      cityObserver.observe(cityTransition);
+    }
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && page?.dataset.view === "form") {
+        track("amplify_day_capture_closed", { origin: lastOpenTrigger?.dataset.ctaPosition || "unknown", stage: "identity" });
+        setView("invite");
+        return;
+      }
+      if (event.key !== "Tab" || page?.dataset.view !== "form" || !captureCard) return;
+      const focusable = [...captureCard.querySelectorAll<HTMLElement>('button:not([disabled]),a[href],input:not([disabled]):not([tabindex="-1"])')];
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+    });
     const readProgress = (): Record<string, unknown> => {
       try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); } catch { return {}; }
     };
@@ -390,7 +466,7 @@ const eventJsonLd = {
       if (previous.email && previous.email !== values.email) localStorage.removeItem(STORAGE_KEY);
       saveProgress("identity", values);
       const submit = form.querySelector<HTMLButtonElement>(".submit");
-      setBusy(submit, true, "Continuar", "Salvando");
+      setBusy(submit, true, "Quero entrar", "Salvando");
       if (responseNote) { responseNote.textContent = "Salvando seus dados…"; responseNote.classList.add("active"); }
       try {
         await sendLeadEvent("amplify_day_interest_captured", values);
@@ -400,7 +476,7 @@ const eventJsonLd = {
       } catch {
         if (responseNote) responseNote.textContent = "Não conseguimos salvar agora. Seus dados continuam aqui; tente novamente.";
       } finally {
-        setBusy(submit, false, "Continuar", "Salvando");
+        setBusy(submit, false, "Quero entrar", "Salvando");
       }
     });
     document.querySelectorAll<HTMLButtonElement>("[data-qualification-close]").forEach((button) => button.addEventListener("click", () => setView("form")));
@@ -665,8 +741,8 @@ const eventJsonLd = {
   }
   /* Expanded editorial landing — the approved save-the-date becomes the first fold. */
   :global(html){height:auto;overflow-x:hidden;overflow-y:auto;scroll-behavior:smooth;scroll-padding-top:72px}
-  :global(body){height:auto;overflow-x:hidden;overflow-y:auto;background:#f0eee6}
-  .page{--cyan-ink:#006a73;width:100%;height:auto;min-height:100svh;overflow:visible;padding:0;background-color:var(--paper)}
+  :global(body){height:auto;overflow-x:clip;overflow-y:visible;background:#f0eee6}
+  .page{--cyan-ink:#006a73;width:100%;height:auto;min-height:100svh;overflow-x:clip;overflow-y:visible;padding:0;background-color:var(--paper)}
   .purpose em,.save>span,.experience .section-heading span,.experience .stage-index,.page .location-copy>span,.page .proof header>span{color:var(--cyan-ink)}
   .invite{display:block;height:auto;visibility:visible;opacity:1;transform:none}
   .page[data-view]:not([data-view="invite"]){height:100dvh;overflow:hidden}
@@ -681,7 +757,7 @@ const eventJsonLd = {
   .hero-action{grid-column:3;grid-row:1/3;display:flex;flex-direction:column;padding:clamp(24px,4vh,42px) clamp(22px,2.5vw,40px) clamp(24px,3.8vh,38px) clamp(22px,2vw,32px)}.hero-action .save h1{font-size:min(4.85vw,8.6vh,72px)}.hero-audience{max-width:440px;margin:auto 0 24px;font:500 clamp(18px,1.42vw,22px)/1.17 "Bricolage Grotesque",sans-serif;letter-spacing:-.03em}.cta-note{margin:12px 0 0;color:rgba(11,14,12,.58);font:500 9px/1.42 Inter,sans-serif}
   .hero-foot{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;min-height:clamp(72px,9vh,94px);border-top:1px solid var(--line);gap:24px}.hero-foot .amplify,.site-foot .amplify{filter:grayscale(1) brightness(0)}.hero-foot p,.site-foot>p{margin:0;font:700 clamp(8px,.7vw,10px)/1 Inter,sans-serif;letter-spacing:.14em;text-align:right;text-transform:uppercase}.hero-foot i{color:var(--cyan);padding:0 .45em;font-style:normal}
   .brands{gap:clamp(7px,.72vw,11px)}.brands .shock{width:clamp(55px,4.25vw,68px)}.brands .xvia{width:clamp(78px,6.2vw,100px)}
-  .data-strip{height:52px;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);color:var(--paper);background:var(--ink)}
+  .data-strip{height:52px;overflow:hidden;border-top:1px solid var(--ink);border-bottom:1px solid var(--ink);color:var(--paper);background:var(--ink)}
   .section-shell{position:relative;padding:clamp(82px,10vw,154px) clamp(24px,7.6vw,118px)}.section-heading span,.audience-heading>span,.location-copy>span,.coalition-heading>span,.proof header>span,.faq header>span{display:block;margin-bottom:22px;color:var(--cyan);font:700 10px/1 Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase}.section-heading h2,.audience-heading h2,.location-copy h2,.coalition-heading h2,.proof h2,.faq h2,.final-cta h2{margin:0;font:600 clamp(52px,6.7vw,104px)/.88 "Bricolage Grotesque",sans-serif;letter-spacing:-.072em;text-transform:uppercase}
   .experience{background:#f0eee6}.section-heading{max-width:1170px}.stage-grid{display:grid;grid-template-columns:1fr 1fr;margin-top:clamp(72px,8vw,122px);border-top:1px solid var(--ink);border-bottom:1px solid var(--ink)}.stage{position:relative;min-height:480px;padding:clamp(32px,4vw,62px)}.stage+.stage{border-left:1px solid var(--ink)}.stage-art{position:absolute;top:28px;right:28px;width:min(42%,320px);color:rgba(11,14,12,.34)}.stage-main .stage-art{color:var(--pink-carmine)}.stage-index{margin:0 0 auto;color:var(--cyan);font:700 10px/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase}.stage h3{position:absolute;right:clamp(32px,4vw,62px);bottom:150px;left:clamp(32px,4vw,62px);margin:0;font:600 clamp(38px,4vw,64px)/.9 "Bricolage Grotesque",sans-serif;letter-spacing:-.06em;text-transform:uppercase}.stage>p:last-child{position:absolute;right:clamp(32px,4vw,62px);bottom:44px;left:clamp(32px,4vw,62px);max-width:480px;margin:0;font:500 clamp(17px,1.45vw,22px)/1.25 "Bricolage Grotesque",sans-serif;letter-spacing:-.025em}.program-note{max-width:610px;margin:30px 0 0 auto;font:600 12px/1.45 Inter,sans-serif}
   .city-transition{position:relative;height:min(64vw,760px);min-height:520px;overflow:hidden;background:var(--ink)}.city-transition>:first-child{position:absolute;inset:0;aspect-ratio:auto}.city-transition p{position:absolute;right:7.6vw;bottom:8vw;display:grid;margin:0;color:var(--paper);font:500 clamp(34px,4.5vw,72px)/.93 "Bricolage Grotesque",sans-serif;letter-spacing:-.06em;text-align:right;text-transform:uppercase}.city-transition p strong{color:var(--cyan);font-weight:600}
@@ -696,9 +772,113 @@ const eventJsonLd = {
   .response,.qualification{position:fixed}.response{inset:0}.qualification{inset:0}
   .page[data-view="qualification"] .response,.page[data-view="thanks"] .response{visibility:hidden;transform:translateX(102%);transition:none}
   :where(.nav-cta,.secondary-cta,.map-link,.final-button,summary):focus-visible{outline:3px solid var(--cyan);outline-offset:4px}
-  @media(max-width:1100px){.editorial-nav{grid-template-columns:auto 1fr auto}.nav-meta{display:none}.hero{grid-template-columns:minmax(0,1.5fr) minmax(260px,.75fr);grid-template-rows:auto minmax(430px,1fr) auto}.hero-head{grid-column:1}.hero-image{display:none}.hero-action{grid-column:2}.hero-date{grid-column:1}.stage{min-height:440px}.audience{grid-template-columns:1fr .65fr}.audience-heading{grid-column:1}.audience-graphic{grid-column:2}.responsibility-list{grid-column:1}.curation{grid-column:2}.coalition{grid-template-columns:1fr}.coalition-image{grid-column:1;grid-row:auto;height:460px;min-height:0}.coalition-heading,.coalition-grid,.amplify-fronts{grid-column:1;margin-left:0}.coalition-heading{padding:70px 0}.logo-wall{grid-template-columns:repeat(4,1fr)}}
+  @media(max-width:1100px){.editorial-nav{grid-template-columns:auto 1fr auto}.nav-meta{display:none}.hero{grid-template-columns:minmax(0,1.5fr) minmax(260px,.75fr);grid-template-rows:auto minmax(430px,1fr) auto}.hero-head{grid-column:1}.hero-image{display:none}.hero-action{grid-column:2}.hero-date{grid-column:1}.stage{min-height:440px}.audience{grid-template-columns:1fr .65fr}.audience-heading{grid-column:1}.audience-graphic{grid-column:2}.responsibility-list{grid-column:1}.curation{grid-column:2}.coalition{grid-template-columns:minmax(0,1fr);overflow:hidden}.coalition-image{grid-column:1;grid-row:auto;height:460px;min-height:0;min-width:0}.coalition-heading,.coalition-grid,.amplify-fronts{grid-column:1;min-width:0;margin-left:0}.coalition-heading{padding:70px 0}.logo-wall{grid-template-columns:repeat(4,1fr)}}
   @media(max-width:760px){:global(html){scroll-padding-top:58px}.editorial-nav{grid-template-columns:auto 1fr auto;min-height:58px;padding:0 15px;gap:8px}.nav-brand{font-size:8px}.nav-meta{display:block;margin:0;text-align:center}.nav-meta span{font-size:7px}.nav-meta span+span{display:none}.nav-links{display:none}.nav-cta{min-height:38px;margin-left:0;padding:0 10px;font-size:6px}.hero{display:grid;grid-template-columns:1fr;grid-template-rows:auto minmax(300px,39vh) auto auto;min-height:0;padding:0 15px}.hero-head{grid-column:1;display:block;border-right:0;padding:24px 0 20px}.event-name{font-size:clamp(46px,13.4vw,62px);letter-spacing:-.07em}.purpose{display:grid;grid-template-columns:1fr;width:100%;margin-top:19px;font-size:12px;gap:2px;transform:none}.purpose span,.purpose em{white-space:normal}.hero-date{grid-column:1;grid-row:2;border-right:0;border-bottom:1px solid var(--line);padding:0 8px}.hero-date .field{justify-self:start;width:78%}.hero-date .core,.hero-date .echo{left:55%;font-size:min(66vw,34vh,270px)}.hero-image{display:none}.hero-action{grid-column:1;grid-row:3;padding:25px 0}.hero-action .save{display:none}.hero-audience{margin:0 0 20px;font-size:20px}.primary{min-height:52px}.cta-note{font-size:8px}.hero-foot{grid-column:1;grid-row:4;min-height:70px;gap:12px}.hero-foot .brands{gap:5px}.hero-foot .amplify{width:64px}.hero-foot .shock{width:40px}.hero-foot .xvia{width:58px}.hero-foot .brands>span{font-size:10px}.hero-foot p{max-width:125px;font-size:6px;line-height:1.3}.data-strip{height:44px}.section-shell{padding:76px 20px}.section-heading span,.audience-heading>span,.location-copy>span,.coalition-heading>span,.proof header>span,.faq header>span{margin-bottom:16px;font-size:8px}.section-heading h2,.audience-heading h2,.location-copy h2,.coalition-heading h2,.proof h2,.faq h2,.final-cta h2{font-size:clamp(43px,13vw,62px);line-height:.9}.stage-grid{display:block;margin-top:52px}.stage{min-height:400px;padding:28px 22px}.stage+.stage{border-top:1px solid var(--ink);border-left:0}.stage-art{width:48%;top:22px;right:18px}.stage h3{right:22px;bottom:142px;left:22px;font-size:42px}.stage>p:last-child{right:22px;bottom:36px;left:22px;font-size:18px}.program-note{font-size:10px}.city-transition{height:72vh;min-height:500px}.city-transition p{right:20px;bottom:42px;font-size:11vw}.audience{display:block}.audience-graphic{width:72%;margin:46px 0 28px auto}.responsibility-list li{grid-template-columns:48px 1fr;min-height:100px}.responsibility-list p{font-size:21px}.curation{margin-top:54px}.location{display:block}.location-media{min-height:0;height:56vw;max-height:360px}.location-copy{padding:70px 20px;border-top:1px solid var(--ink);border-left:0}.location-mark{width:130px}.coalition-image{height:60vw;min-height:320px}.coalition-heading{padding:62px 0 48px}.coalition-grid{display:block}.coalition-grid article{min-height:0;padding:34px 0 40px}.coalition-grid article+article{border-top:1px solid rgba(240,238,230,.35);border-left:0}.org-name{margin-bottom:32px}.coalition-grid h3{font-size:34px}.amplify-fronts{padding-top:28px}.proof{min-height:0}.proof-art{top:5%;right:-40%;width:130%}.proof header p{font-size:14px}.logo-wall{grid-template-columns:repeat(2,1fr);margin-top:54px}.logo-wall img{max-height:76px;padding:22px 18px}.logo-wall img:nth-child(odd){border-left:0}.faq{display:block}.faq-list{margin-top:54px}.faq summary{min-height:72px;font-size:19px}.faq details p{font-size:15px}.final-cta{min-height:620px}.final-axis{right:-48%;bottom:-2%;width:140%}.site-foot{padding-top:26px;padding-bottom:26px;gap:12px}.site-foot .amplify{width:62px}.site-foot .shock{width:38px}.site-foot .xvia{width:56px}.site-foot .brands{gap:5px}.site-foot .brands>span{font-size:10px}.site-foot>p{max-width:118px;font-size:6px;line-height:1.25}.response,.qualification,.thanks{height:100dvh;min-height:100svh}.qualification{overflow-y:auto}.qualification-panel{min-height:100dvh;height:auto}.response{overflow-y:auto}.thanks-actions a{width:100%;min-width:0;height:46px}}
   @media(max-width:380px){.editorial-nav .nav-cta{padding:0 9px}.event-name{font-size:15.8vw}.hero-date{min-height:300px}.hero-action{padding:15px 0}.hero-audience{margin-bottom:16px;font-size:18px}.section-shell{padding-inline:16px}.section-heading h2,.audience-heading h2,.location-copy h2,.coalition-heading h2,.proof h2,.faq h2,.final-cta h2{font-size:12.2vw}.stage h3{font-size:38px}.logo-wall img{padding:20px 14px}}
   @media(max-width:980px){.purpose span,.purpose em{white-space:normal}}
   @media(prefers-reduced-motion:reduce){.echo,.signal,.save h1::after{animation:none!important}.echo{transform:translate(calc(-50% + var(--offset)),-50%)}.signal{display:none}.response,.qualification,.qualification-panel,.thanks,.primary::before{transition:none}}
+
+  /* 2026 editorial fit: every fold has a deliberate beginning and end. */
+  .editorial-nav{grid-template-columns:auto minmax(220px,.72fr) 1fr}
+  .hero{height:calc(100dvh - 64px);min-height:0;max-height:none;grid-template-rows:auto minmax(0,1fr) auto}
+  .hero-date .field{height:100%}
+  .hero-action{min-height:0}
+
+  .floating-capture-trigger{position:fixed;z-index:32;right:18px;top:50%;display:flex;align-items:center;justify-content:center;width:56px;height:240px;border:1px solid var(--ink);padding:14px 0;color:var(--ink);background:var(--cyan);box-shadow:5px 5px 0 var(--pink-carmine);font:700 8px/1 Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;cursor:pointer;opacity:0;pointer-events:none;transform:translate(22px,-50%);transition:opacity .25s ease,transform .35s cubic-bezier(.2,.8,.2,1)}
+  .floating-capture-trigger span{writing-mode:vertical-rl;transform:rotate(180deg)}
+  .floating-capture-trigger i{position:absolute;right:0;bottom:0;left:0;height:7px;background:var(--pink-carmine)}
+  .floating-capture-trigger.is-visible{opacity:1;pointer-events:auto;transform:translate(0,-50%)}
+  .floating-capture-trigger:hover,.floating-capture-trigger:focus-visible{color:var(--paper);background:var(--ink);outline:3px solid var(--cyan);outline-offset:3px}
+
+  .page[data-view="form"] .invite{visibility:visible!important;opacity:1!important;filter:none!important}
+  .page[data-view]:not([data-view="invite"]){height:auto;min-height:100dvh;overflow-x:clip;overflow-y:visible}
+  .response{z-index:50;display:flex;align-items:center;justify-content:flex-end;padding:24px;visibility:hidden;opacity:0;transform:none;background:transparent;transition:opacity .28s ease,visibility 0s linear .28s}
+  .page[data-view="form"] .response{visibility:visible;opacity:1;transform:none;transition-delay:0s}
+  .response::after{display:none}
+  .response-backdrop{position:absolute;inset:0;border:0;background:rgba(11,14,12,.54);backdrop-filter:blur(3px);cursor:pointer}
+  .capture-card{position:relative;display:grid;grid-template-rows:auto 190px minmax(0,1fr);width:min(520px,calc(100vw - 48px));height:min(650px,calc(100dvh - 48px));overflow:hidden;border:1px solid var(--ink);padding:0;color:var(--ink);background-color:var(--paper);background-image:var(--paper-texture);background-size:520px;box-shadow:12px 12px 0 rgba(242,10,104,.46);transform:translateX(36px);transition:transform .48s cubic-bezier(.2,.82,.24,1)}
+  .page[data-view="form"] .capture-card{transform:none}
+  .capture-card .response-head{height:52px;border-bottom:1px solid var(--ink);padding:0 20px;color:var(--ink)}
+  .capture-card .response-head button{color:var(--ink)}
+  .capture-visual{position:relative;overflow:hidden;border-bottom:1px solid var(--ink);background:#9ec1c5}
+  .capture-visual img{display:block;width:100%;height:100%;object-fit:cover;object-position:center 63%;filter:grayscale(1) contrast(1.04)}
+  .capture-visual::after{position:absolute;inset:0;content:"";background:rgba(8,183,199,.22);mix-blend-mode:multiply}
+  .capture-visual b{position:absolute;z-index:3;right:14px;bottom:12px;padding:6px 8px;color:var(--paper);background:var(--ink);font:700 7px/1 Inter,sans-serif;letter-spacing:.14em;text-transform:uppercase}
+  .capture-echoes{position:absolute;z-index:2;inset:0;pointer-events:none}
+  .capture-echoes span{position:absolute;top:0;bottom:0;left:41%;width:1px;background:var(--cyan);transform-origin:center}
+  .capture-echoes span:nth-child(1){transform:translateX(-42px) scaleX(1)}
+  .capture-echoes span:nth-child(2){transform:translateX(-28px) scaleX(1)}
+  .capture-echoes span:nth-child(3){transform:translateX(-16px) scaleX(1)}
+  .capture-echoes span:nth-child(4){transform:translateX(-7px) scaleX(1)}
+  .capture-echoes span:nth-child(5){transform:translateX(0)}
+  .page[data-view="form"] .capture-echoes span{animation:captureEcho 1.35s cubic-bezier(.2,.78,.22,1) both}
+  .page[data-view="form"] .capture-echoes span:nth-child(2){animation-delay:.05s}.page[data-view="form"] .capture-echoes span:nth-child(3){animation-delay:.1s}.page[data-view="form"] .capture-echoes span:nth-child(4){animation-delay:.15s}.page[data-view="form"] .capture-echoes span:nth-child(5){animation-delay:.2s}
+  @keyframes captureEcho{from{opacity:0;transform:translateX(0)}to{opacity:.68}}
+  .capture-card .response-grid{display:grid;grid-template-columns:1fr;width:100%;margin:0;padding:24px 26px 26px;gap:18px;overflow:auto}
+  .capture-card .response-copy>p:first-child{margin-bottom:9px;color:var(--cyan-ink);font-size:8px}
+  .capture-card .response-copy h2{font-size:clamp(44px,4.4vw,58px);line-height:.88;color:var(--ink)}
+  .capture-card .response-copy>p:last-child{width:100%;margin-top:14px;color:var(--ink);font-size:16px;line-height:1.24}
+  .capture-card .form{gap:12px}
+  .capture-card .form label>span{color:var(--ink);font-size:8px}
+  .capture-card .form input{height:42px;border-bottom-color:rgba(11,14,12,.7);color:var(--ink);font-size:17px}
+  .capture-card .submit{height:50px;border:1px solid var(--ink);color:var(--ink);background:var(--cyan);font-size:8px}
+  .capture-card .note{color:rgba(11,14,12,.62);font-size:8px}
+
+  .city-wordmark{position:absolute;z-index:2;top:17%;left:7%;width:min(58vw,920px);height:auto;overflow:visible;opacity:.26;color:var(--paper)}
+  .city-wordmark rect{fill:currentColor}.city-mark{opacity:0}.city-transition.is-entered .city-field{animation:cityField 2.4s ease both}.city-transition.is-entered .city-mark{animation:cityMark 2.4s ease both}
+  .city-transition p{z-index:4;max-width:760px;padding:.14em .2em;background:linear-gradient(90deg,transparent,rgba(11,14,12,.8) 14%,rgba(11,14,12,.8));text-shadow:0 2px 18px rgba(11,14,12,.8)}
+  .city-wordmark text{font:700 108px/1 Inter,sans-serif;letter-spacing:-.065em}
+  @keyframes cityField{0%,100%{opacity:.36;transform:translateX(0)}38%,64%{opacity:.12;transform:translateX(8px)}}
+  @keyframes cityMark{0%,24%,100%{opacity:0;transform:translateX(-8px)}42%,64%{opacity:.9;transform:translateX(0)}}
+
+  @media(min-width:1101px){
+    .experience,.audience,.location,.proof{height:calc(100dvh - 64px);min-height:620px;overflow:hidden}
+    .experience{display:grid;grid-template-rows:auto minmax(0,1fr) auto;padding:clamp(32px,5vh,58px) clamp(48px,7.6vw,118px)}
+    .experience .section-heading h2{font-size:clamp(54px,5.45vw,84px)}
+    .stage-grid{min-height:0;margin-top:clamp(22px,3.6vh,38px)}
+    .stage{min-height:0;padding:clamp(22px,3vh,34px)}
+    .stage h3{right:34px;bottom:105px;left:34px;font-size:clamp(34px,3vw,48px)}
+    .stage>p:last-child{right:34px;bottom:26px;left:34px;font-size:clamp(15px,1.25vw,19px)}
+    .stage-art{top:18px;right:22px;width:min(34%,220px)}
+    .program-note{margin-top:14px;font-size:10px}
+    .city-transition{height:calc(100dvh - 64px);min-height:600px}
+    .audience{grid-template-rows:auto minmax(0,1fr);padding:clamp(36px,5.6vh,66px) clamp(48px,7.6vw,118px);gap:clamp(26px,3.4vw,52px)}
+    .audience-heading h2{font-size:clamp(53px,5.1vw,78px)}
+    .responsibility-list li{min-height:0;padding:14px 0}.responsibility-list p{font-size:clamp(18px,1.6vw,25px)}
+    .audience-graphic{max-height:210px;overflow:hidden}.curation{padding-top:18px}.curation-label{margin-bottom:17px}.curation ol{font-size:16px}.curation li+li{margin-top:11px}.secondary-cta{margin-top:24px}
+    .location{grid-template-columns:minmax(0,58fr) minmax(440px,42fr)}
+    .location-media{height:100%;min-height:0}.location-copy{display:flex;flex-direction:column;justify-content:center;padding:clamp(32px,5vh,58px) clamp(28px,4vw,62px)}
+    .location-copy h2{font-size:clamp(46px,4.4vw,68px)}.location-mark{width:120px;margin:22px 0}.venue{font-size:clamp(22px,2vw,31px)}.location-copy>p:not(.venue){margin-top:18px;font-size:15px}.map-link{min-height:48px;margin-top:24px}
+    .proof{padding-top:clamp(46px,7vh,76px);padding-bottom:clamp(40px,6vh,68px)}.proof h2{font-size:clamp(45px,4.7vw,72px)}.logo-wall{margin-top:clamp(40px,6vh,66px)}
+  }
+
+  @media(max-height:760px) and (min-width:761px){
+    .hero-head{padding-top:12px;padding-bottom:10px}.event-name{font-size:min(6.25vw,74px)}.purpose{font-size:10px}.hero-action{padding-top:18px;padding-bottom:18px}.hero-action .save h1{font-size:min(4.2vw,48px)}.hero-audience{margin-bottom:14px;font-size:17px}.hero-foot{min-height:62px}.hero-date .core,.hero-date .echo{font-size:min(29vw,49vh,340px)}
+    .experience,.audience,.location,.proof{min-height:calc(100dvh - 64px)}
+    .capture-card{grid-template-rows:auto 110px minmax(0,1fr);height:calc(100dvh - 28px)}
+    .capture-card .response-grid{padding:18px 22px;gap:12px}.capture-card .response-copy h2{font-size:42px}.capture-card .response-copy>p:last-child{font-size:14px}.capture-card .form{gap:8px}
+  }
+
+  @media(max-width:760px){
+    .editorial-nav{grid-template-columns:auto 1fr}.hero{height:calc(100dvh - 58px);min-height:0;grid-template-rows:auto minmax(0,1fr) auto auto}
+    .hero-head{padding:clamp(13px,2.1vh,19px) 0}.event-name{font-size:min(13vw,58px)}.purpose{margin-top:10px;font-size:clamp(9px,2.7vw,11px);line-height:1.12}.hero-date{min-height:0}.hero-date .core,.hero-date .echo{font-size:min(78vw,38vh,310px)}.hero-action{padding:clamp(12px,1.8vh,18px) 0}.hero-audience{margin-bottom:12px;font-size:clamp(15px,4.4vw,18px)}.hero-action .primary{min-height:46px}.cta-note{margin-top:7px}.hero-foot{min-height:52px}
+    .floating-capture-trigger{right:12px;top:auto;bottom:max(12px,env(safe-area-inset-bottom));left:12px;width:auto;height:56px;padding:0 18px;color:var(--ink);background:var(--cyan);box-shadow:4px 4px 0 var(--pink-carmine);transform:translateY(18px)}.floating-capture-trigger span{writing-mode:horizontal-tb;transform:none}.floating-capture-trigger i{top:0;right:0;bottom:0;left:auto;width:7px;height:auto}.floating-capture-trigger.is-visible{transform:none}.floating-capture-trigger:hover,.floating-capture-trigger:focus-visible{color:var(--ink);background:var(--cyan)}
+    .response{align-items:flex-end;padding:0}.capture-card{grid-template-rows:auto 110px minmax(0,1fr);width:100%;height:auto;max-height:92dvh;border-right:0;border-bottom:0;border-left:0;box-shadow:none;transform:translateY(30px)}.page[data-view="form"] .capture-card{transform:none}.capture-card .response-grid{padding:20px;gap:15px}.capture-card .response-copy h2{font-size:42px}.capture-card .response-copy>p:last-child{font-size:15px}.capture-card .form{gap:10px}
+    .experience{padding-top:58px;padding-bottom:58px}.experience .stage-grid{border-bottom:0}.experience .stage{display:flex;flex-direction:column;min-height:min(74dvh,620px)}.experience .stage h3,.experience .stage>p:last-child{position:static}.experience .stage h3{margin-top:auto}.experience .stage>p:last-child{margin-top:20px}.experience .stage+.stage{margin-top:28px}.program-note{margin-top:20px}
+    .city-transition{height:75dvh;min-height:480px}.city-wordmark{top:16%;left:5%;width:90vw}.city-transition p{right:18px;bottom:34px;max-width:86%;font-size:10.8vw}
+    .audience{padding-top:64px;padding-bottom:64px}.audience-heading h2{font-size:12vw}.responsibility-list{margin-top:46px}.curation{padding-top:22px;margin-top:48px}
+    .location-media{height:68dvh;max-height:none}.location-copy{min-height:86dvh;padding-top:62px;padding-bottom:62px}.location-copy h2{font-size:12vw}
+    .coalition{padding-top:0;padding-bottom:0}.coalition-image{height:72dvh}.coalition-heading{padding:58px 0}.coalition-grid article{display:flex;flex-direction:column;justify-content:center;min-height:72dvh}.amplify-fronts{padding-bottom:54px}
+    .proof{padding-top:64px;padding-bottom:64px}.final-cta{min-height:75dvh;height:auto;padding-top:58px;padding-bottom:58px}
+  }
+
+  @media(max-width:390px),(max-height:700px) and (max-width:760px){
+    .hero-head{padding:9px 0}.event-name{font-size:min(11.8vw,48px)}.purpose{margin-top:6px;font-size:8.5px}.hero-date .core,.hero-date .echo{font-size:min(78vw,38vh,310px)}.hero-action{padding:9px 0}.hero-audience{margin-bottom:8px;font-size:14px}.hero-action .primary{min-height:42px}.cta-note{font-size:6.5px}.hero-foot{min-height:46px}
+    .capture-card{grid-template-rows:auto 96px minmax(0,1fr)}.capture-card .response-head{height:44px}.capture-card .response-grid{padding:14px 17px;gap:9px}.capture-card .response-copy h2{font-size:36px}.capture-card .response-copy>p:last-child{margin-top:8px;font-size:13px}.capture-card .form input{height:36px}.capture-card .submit{height:44px}
+  }
+
+  @media(prefers-reduced-motion:reduce){
+    .floating-capture-trigger,.capture-card,.capture-echoes span,.city-field,.city-mark{animation:none!important;transition:none!important}
+    .city-mark{opacity:.18}.city-field{opacity:.22}
+  }
 </style>
