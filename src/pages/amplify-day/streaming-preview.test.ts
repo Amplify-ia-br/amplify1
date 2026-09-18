@@ -25,13 +25,13 @@ describe("Ampl_IA Day streaming preview", () => {
     expect(source).toContain("Online e gratuito");
   });
 
-  it("keeps the main event lockup and adds a dated live signal without altering the brand", () => {
+  it("keeps the main event lockup without duplicating the live signal below the title", () => {
     expect(source).toContain('class="event-lockup-meta"');
     expect(source).toContain('class="event-by"');
-    expect(source).toContain('class="live-signal"');
     expect(source).toContain("Transmissão ao vivo");
-    expect(source).toContain("23 set</b>");
-    expect(source).toContain(".event-lockup-meta{display:flex;align-items:center;justify-content:space-between");
+    expect(source).not.toContain('class="live-signal"');
+    expect(source).not.toContain("23 set</b>");
+    expect(source).toContain(".event-lockup-meta{display:flex;align-items:center;justify-content:flex-end");
   });
 
   it("does not reintroduce the rejected narrative", () => {
