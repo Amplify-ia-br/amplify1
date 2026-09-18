@@ -2,13 +2,18 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const source = readFileSync(resolve(process.cwd(), "src/pages/amplify-day/streaming-preview.astro"), "utf8");
+const source = readFileSync(resolve(process.cwd(), "src/pages/amplify-day/streaming.astro"), "utf8");
+const legacyRoute = readFileSync(resolve(process.cwd(), "src/pages/amplify-day/streaming-preview.astro"), "utf8");
 const visibleCopy = source
   .replace(/<style[\s\S]*?<\/style>/gi, "")
   .replace(/<script[\s\S]*?<\/script>/gi, "")
   .toLocaleLowerCase("pt-BR");
 
 describe("Ampl_IA Day streaming preview", () => {
+  it("publishes at the definitive streaming route and redirects the former preview", () => {
+    expect(legacyRoute).toContain('Astro.redirect("/amplify-day/streaming", 308)');
+  });
+
   it("keeps the Palco AMPL_IA education positioning", () => {
     expect(source).toContain("Palco AMPL_IA");
     expect(source).toContain("O MEC e os próximos passos da IA na educação.");
