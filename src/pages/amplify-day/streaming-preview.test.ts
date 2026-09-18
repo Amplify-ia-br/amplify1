@@ -16,9 +16,8 @@ describe("Ampl_IA Day streaming preview", () => {
 
   it("keeps the Palco AMPL_IA education positioning", () => {
     expect(source).toContain("Palco AMPL_IA");
-    expect(source).toContain("O MEC e os próximos passos da IA na educação.");
-    expect(source).toContain("integrante da equipe responsável pelo Referencial do MEC sobre IA na Educação.");
     expect(source).toContain("Assista<br />ao vivo");
+    expect(source).toContain("Transmissão gratuita do Palco AMPL_IA para todo o Brasil.");
     expect(visibleCopy).not.toContain("ouça do mec a direção da ia na educação");
     expect(visibleCopy).not.toContain("uma conversa para quem precisa entender");
     expect(source).toContain("Iara Christina Silva Barroca");
@@ -32,7 +31,6 @@ describe("Ampl_IA Day streaming preview", () => {
     expect(source).toContain('class="live-signal"');
     expect(source).toContain("Transmissão ao vivo");
     expect(source).toContain("23 set</b>");
-    expect(source).toContain("Palco AMPL_IA · Educação");
     expect(source).toContain(".event-lockup-meta{display:flex;align-items:center;justify-content:space-between");
   });
 
@@ -53,7 +51,7 @@ describe("Ampl_IA Day streaming preview", () => {
     expect(visibleCopy).not.toContain("teia");
   });
 
-  it("leads with the confirmed lineup and moves Brasília below the hero", () => {
+  it("uses the event-level hero and keeps Iara exclusively in the lineup", () => {
     expect(source).toContain('id="lineup"');
     expect(source).toContain("Gustavo Wigman");
     expect(source).toContain("Rafael Lacerda");
@@ -62,8 +60,11 @@ describe("Ampl_IA Day streaming preview", () => {
 
     const hero = source.match(/<section class="hero"[\s\S]*?<\/section>/)?.[0] ?? "";
     expect(source).toContain("iara-barroca-transparent.webp");
-    expect(hero).toContain("Iara Christina Silva Barroca");
-    expect(hero).not.toContain("catedral-tres-poderes");
+    expect(hero).not.toContain("Iara Christina Silva Barroca");
+    expect(hero).not.toContain("iara-barroca-transparent.webp");
+    expect(hero).toContain('class="hero-date"');
+    expect(hero).toContain('class="date-number"');
+    expect(hero).toContain("catedral-tres-poderes");
   });
 
   it("uses one real Kit-backed modal form from every CTA", () => {
