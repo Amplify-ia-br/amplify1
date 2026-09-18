@@ -43,7 +43,7 @@ describe("Ampl_IA Day streaming preview", () => {
 
   it("stays non-indexable and submits registrations to the streaming API", () => {
     expect(source).toContain('name="robots" content="noindex, nofollow, noarchive"');
-    expect(source).toContain('fetch("/api/amplify-day/streaming"');
+    expect(source).toContain('fetch("/api/amplify-day-streaming"');
     expect(source).toContain("utm_campaign:params.get");
   });
 
