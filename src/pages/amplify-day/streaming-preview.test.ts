@@ -26,6 +26,16 @@ describe("Ampl_IA Day streaming preview", () => {
     expect(source).toContain("Online e gratuito");
   });
 
+  it("keeps the main event lockup and adds a dated live signal without altering the brand", () => {
+    expect(source).toContain('class="event-lockup-meta"');
+    expect(source).toContain('class="event-by"');
+    expect(source).toContain('class="live-signal"');
+    expect(source).toContain("Transmissão ao vivo");
+    expect(source).toContain("23 set</b>");
+    expect(source).toContain("Palco AMPL_IA · Educação");
+    expect(source).toContain(".event-lockup-meta{display:flex;align-items:center;justify-content:space-between");
+  });
+
   it("does not reintroduce the rejected narrative", () => {
     expect(visibleCopy).not.toContain("adoção institucional");
     expect(visibleCopy).not.toContain("capacidade institucional");
