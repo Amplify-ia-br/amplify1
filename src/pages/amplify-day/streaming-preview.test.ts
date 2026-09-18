@@ -65,6 +65,8 @@ describe("Ampl_IA Day streaming preview", () => {
     expect(hero).toContain('class="hero-date"');
     expect(hero).toContain('class="date-number"');
     expect(hero).toContain("catedral-tres-poderes");
+    expect(hero).toContain("Streaming ao vivo dos nossos estúdios em Brasília");
+    expect(hero).not.toContain("<figcaption>Brasília · DF</figcaption>");
   });
 
   it("uses one real Kit-backed modal form from every CTA", () => {
