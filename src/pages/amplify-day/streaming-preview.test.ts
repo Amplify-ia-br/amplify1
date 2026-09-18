@@ -31,10 +31,10 @@ describe("Ampl_IA Day streaming preview", () => {
     expect(visibleCopy).not.toContain("capacidade institucional");
   });
 
-  it("stays non-indexable and disconnected from APIs", () => {
+  it("stays non-indexable and submits registrations to the streaming API", () => {
     expect(source).toContain('name="robots" content="noindex, nofollow, noarchive"');
-    expect(source).not.toMatch(/fetch\s*\(/);
-    expect(source).not.toContain("/api/");
+    expect(source).toContain('fetch("/api/amplify-day/streaming"');
+    expect(source).toContain("utm_campaign:params.get");
   });
 
   it("uses the official realization row with XC support and no TEIA", () => {
@@ -56,13 +56,14 @@ describe("Ampl_IA Day streaming preview", () => {
     expect(hero).not.toContain("catedral-tres-poderes");
   });
 
-  it("uses one modal form from every CTA and preserves the demo-only success state", () => {
-    expect(source.match(/<form data-preview-form/g)).toHaveLength(1);
+  it("uses one real Kit-backed modal form from every CTA", () => {
+    expect(source.match(/<form data-streaming-form/g)).toHaveLength(1);
     expect(source.match(/data-open-form/g)?.length).toBeGreaterThanOrEqual(4);
     expect(source).toContain("data-floating-cta");
     expect(source).toContain("data-closing-cta");
     expect(source).toContain('e.key==="Escape"');
-    expect(source).toContain("Nenhum dado foi enviado ou armazenado.");
+    expect(source).toContain("Cadastro confirmado.");
+    expect(source).not.toContain("Nenhum dado foi enviado ou armazenado.");
   });
 
   it("gives Iara a photo-left feature with transparent portraits and the other participants below", () => {
