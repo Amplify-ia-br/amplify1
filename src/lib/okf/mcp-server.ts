@@ -1,7 +1,7 @@
 import { McpServer } from "@modelcontextprotocol/server";
 import { z } from "zod-v4";
-import type { KnowledgeFilters, KnowledgeSearchOptions } from "@/lib/okf/core";
-import type { KnowledgeReader } from "@/lib/okf/http";
+import type { KnowledgeFilters, KnowledgeSearchOptions } from "./core.js";
+import type { KnowledgeReader } from "./http.js";
 
 const publishedStatus = z.enum(["approved", "active"]);
 
