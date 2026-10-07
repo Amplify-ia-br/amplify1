@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/Leia",
+      "destination": "/leia"
+    }
+  ]
+}
