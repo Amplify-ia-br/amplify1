@@ -3,7 +3,7 @@ import {
   type KnowledgeFilters,
   type KnowledgeSearchOptions,
   type createKnowledgeService,
-} from "@/lib/okf/core";
+} from "./core.js";
 
 export type KnowledgeReader = Pick<
   ReturnType<typeof createKnowledgeService>,

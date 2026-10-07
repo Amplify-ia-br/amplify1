@@ -1,4 +1,12 @@
 {
+  "functions": {
+    "api/knowledge/**/*.ts": {
+      "includeFiles": "okf/public/**"
+    },
+    "api/mcp.ts": {
+      "includeFiles": "okf/public/**"
+    }
+  },
   "rewrites": [
     {
       "source": "/Leia",

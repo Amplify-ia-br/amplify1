@@ -1,4 +1,4 @@
-import { okfSchema, type OkfDocument } from "@/lib/okf-schema";
+import { okfSchema, type OkfDocument } from "../okf-schema.js";
 
 export type PublishedKnowledgeStatus = Extract<OkfDocument["status"], "approved" | "active">;
 export type KnowledgeDocument = Omit<OkfDocument, "status"> & { status: PublishedKnowledgeStatus; content: string };
