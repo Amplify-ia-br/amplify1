@@ -12,11 +12,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-const Navbar = () => {
+type NavbarProps = {
+  initialPath?: string;
+};
+
+const Navbar = ({ initialPath }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const pathname = typeof window === "undefined" && initialPath ? initialPath : location.pathname;
 
-  const isActive = (path: string) => location.pathname === path;
+  const isActive = (path: string) => pathname === path;
 
   const navLinks = [
     { name: "Sobre", path: "/sobre" },
@@ -30,6 +35,7 @@ const Navbar = () => {
   const conteudoLinks = [
     { name: "Aprenda", path: "/aprenda" },
     { name: "Blog", path: "/blog" },
+    { name: "Base de conhecimento", path: "/knowledge" },
   ];
 
   const solucoesLinks = [
@@ -74,7 +80,7 @@ const Navbar = () => {
                 <button
                   className={cn(
                     "flex items-center text-sm font-medium transition-colors hover:text-primary",
-                    location.pathname.startsWith("/solucoes")
+                    pathname.startsWith("/solucoes")
                       ? "text-primary"
                       : "text-muted-foreground"
                   )}
@@ -113,7 +119,7 @@ const Navbar = () => {
                 <button
                   className={cn(
                     "flex items-center text-sm font-medium transition-colors hover:text-primary",
-                    location.pathname === "/blog" || location.pathname === "/aprenda"
+                    pathname === "/blog" || pathname === "/aprenda" || pathname.startsWith("/knowledge")
                       ? "text-primary"
                       : "text-muted-foreground"
                   )}

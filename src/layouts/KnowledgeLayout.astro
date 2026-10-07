@@ -1,0 +1,17 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
+
+const { title, description } = Astro.props;
+---
+
+<PageShell title={title} description={description} chatbot={false}>
+  <div class="min-h-screen bg-background text-foreground">
+    <Navbar client:load initialPath={Astro.url.pathname} />
+    <main class="min-h-[70vh] pt-16">
+      <slot />
+    </main>
+    <Footer client:visible />
+  </div>
+</PageShell>

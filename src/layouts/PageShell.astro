@@ -29,6 +29,7 @@ const canonical = new URL(Astro.url.pathname, baseUrl).toString();
     <meta name="twitter:title" content={pageTitle} />
     <meta name="twitter:description" content={pageDescription} />
     <link rel="stylesheet" href={globalStyles} />
+    <slot name="head" />
     {chatbot && (
       <Fragment>
       <link rel="preconnect" href="https://code.jquery.com" crossorigin />
