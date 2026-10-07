@@ -49,7 +49,7 @@ export default async function handler(request) {
     bootcampEventId: event.symplaEventId,
     bootcampCity: event.city,
     bootcampDate: event.date,
-    bootcampWhatsappUrl: event.whatsappGroupUrl,
+    bootcampWhatsappUrl: clean(body.bootcampWhatsappUrl || body.bootcamp_whatsapp_url || body.whatsappGroupUrl) || event.whatsappGroupUrl,
     tags: Array.isArray(body.tags) ? body.tags : [],
   };
 

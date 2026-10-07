@@ -14,6 +14,7 @@ import ResetPassword from "@/pages/_ResetPassword";
 const AdminDashboard = lazy(() => import("@/pages/admin/_AdminDashboard"));
 const PostEditor = lazy(() => import("@/pages/admin/_PostEditor"));
 const UserManagement = lazy(() => import("@/pages/admin/_UserManagement"));
+const AmplifyDayInvitations = lazy(() => import("@/pages/admin/_AmplifyDayInvitations"));
 
 const queryClient = new QueryClient();
 const AdminRouteFallback = () => <div className="p-6 text-sm text-muted-foreground">Carregando...</div>;
@@ -30,6 +31,7 @@ const AdminApp = () => (
               <Route index element={<Suspense fallback={<AdminRouteFallback />}><AdminDashboard /></Suspense>} />
               <Route path="posts/new" element={<Suspense fallback={<AdminRouteFallback />}><PostEditor /></Suspense>} />
               <Route path="posts/:id/edit" element={<Suspense fallback={<AdminRouteFallback />}><PostEditor /></Suspense>} />
+              <Route path="amplify-day/convites" element={<Suspense fallback={<AdminRouteFallback />}><AmplifyDayInvitations /></Suspense>} />
               <Route path="users" element={<ProtectedRoute requireAdmin><Suspense fallback={<AdminRouteFallback />}><UserManagement /></Suspense></ProtectedRoute>} />
             </Route>
             <Route path="/auth" element={<Auth />} />

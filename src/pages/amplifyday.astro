@@ -1,0 +1,881 @@
+---
+return Astro.redirect("/amplify-day", 308);
+
+import PageShell from "@/layouts/PageShell.astro";
+import logoAmplify from "@/assets/logo-amplify-branco.png";
+import heroImage from "@/assets/amplify-day/decision-maker.webp";
+import signalImage from "@/assets/amplify-day/amplification-field.webp";
+import logoShockwave from "@/assets/amplify-day/shockwave.webp";
+
+const { variant = "portrait" } = Astro.props;
+const isMotion = variant === "motion";
+const title = "Amplify Day 2026 | Inteligência Amplificada para quem decide";
+const description = "Um dia de imersão prática em IA aplicada a governo, empresas e carreira. Brasília, 23 de setembro de 2026. Evento gratuito, por convite. Inscrições abertas.";
+
+const signalSlices = [
+  { left: 5, width: 7, position: 12, delay: -1.1, duration: 7.4, drift: -10 },
+  { left: 15, width: 5, position: 24, delay: -4.8, duration: 8.6, drift: 8 },
+  { left: 24, width: 9, position: 38, delay: -2.7, duration: 9.3, drift: -13 },
+  { left: 37, width: 4, position: 46, delay: -6.1, duration: 7.8, drift: 11 },
+  { left: 46, width: 8, position: 57, delay: -3.4, duration: 10.2, drift: -8 },
+  { left: 59, width: 5, position: 68, delay: -7.2, duration: 8.9, drift: 14 },
+  { left: 70, width: 9, position: 79, delay: -2.1, duration: 9.8, drift: -11 },
+  { left: 84, width: 5, position: 91, delay: -5.5, duration: 7.7, drift: 9 },
+];
+---
+
+<PageShell title={title} description={description} chatbot={false}>
+  <main class:list={["day-page", { "is-motion-variant": isMotion }]} aria-labelledby="day-title">
+    <section class="day-copy" aria-label="Inscrição para o Amplify Day 2026">
+      <p class="day-issue">Edição 01</p>
+
+      <p class="day-masthead" aria-label="Amplify Day">Amplify<br class="desktop-break" /> Day</p>
+
+      <p class="day-date">Brasília <span>·</span> 23 de setembro de 2026 <span>·</span> Evento presencial</p>
+
+      <div class="day-rule" aria-hidden="true"></div>
+
+      <div class="day-message">
+        <p class="day-concept">Aqui, chamamos IA de Inteligência Amplificada.</p>
+        <h1 id="day-title">Inteligência Amplificada para quem decide.<br /> Na prática, num dia só.</h1>
+        <p class="day-lead">
+          Em Brasília, quem já colocou IA para trabalhar abre o jogo. Decisões, erros, ganhos e o que muda agora. Um dia para voltar à empresa sabendo onde agir primeiro.
+        </p>
+      </div>
+
+      <p class="day-availability">Evento gratuito, por convite <span>·</span> Vagas limitadas</p>
+
+      <form class="day-form" data-day-form novalidate>
+        <div class="day-fields" data-day-fields>
+          <label>
+            <span>Nome</span>
+            <input type="text" name="name" autocomplete="name" placeholder="Nome" required />
+          </label>
+          <label>
+            <span>E-mail</span>
+            <input type="email" name="email" autocomplete="email" inputmode="email" placeholder="E-mail" required />
+          </label>
+          <label class="day-secondary-field">
+            <span>Organização</span>
+            <input type="text" name="organization" autocomplete="organization" placeholder="Organização" />
+          </label>
+          <label class="day-secondary-field">
+            <span>Cargo</span>
+            <input type="text" name="role" autocomplete="organization-title" placeholder="Cargo" />
+          </label>
+        </div>
+
+        <p class="day-form-error" data-day-error role="alert" hidden>Preencha seu nome e um e-mail válido.</p>
+        <button type="submit">Solicitar convite</button>
+
+        <div class="day-success" data-day-success role="status" aria-live="polite" hidden>
+          <strong>Pedido recebido.</strong>
+          <span>Você receberá a confirmação por e-mail.</span>
+        </div>
+      </form>
+
+      <p class="day-fineprint">Sua inscrição inicia o processo de seleção. O convite é confirmado por e-mail.</p>
+
+      <footer class="day-signature" aria-label="Uma realização Amplify e Shockwave">
+        <div class="day-brands">
+          <img src={logoAmplify.src} alt="Amplify" width="198" height="32" />
+          <span aria-hidden="true">+</span>
+          <img src={logoShockwave.src} alt="Shockwave" width="500" height="331" />
+        </div>
+        <span class="day-signature-rule" aria-hidden="true"></span>
+        <p>Juntas. Uma só direção.</p>
+      </footer>
+    </section>
+
+    <figure class:list={["day-portrait", { "is-motion": isMotion }]} aria-label={isMotion ? "Instalação óptica abstrata representando amplificação" : "Executivo trabalhando com inteligência artificial"}>
+      {isMotion ? (
+        <div class="day-signal" data-signal-stage>
+          <div class="day-signal-motion" data-signal-motion>
+            <img
+              class="day-signal-base"
+              src={signalImage.src}
+              alt="Feixe de luz ciano atravessando uma sequência de placas de vidro escuro"
+              width="1024"
+              height="1536"
+              loading="eager"
+              fetchpriority="high"
+              decoding="async"
+            />
+            <div class="day-signal-echoes" aria-hidden="true">
+              {signalSlices.map((slice) => (
+                <span
+                  class="day-signal-slice"
+                  style={`--slice-left:${slice.left}%;--slice-width:${slice.width}%;--slice-position:${slice.position}%;--slice-delay:${slice.delay}s;--slice-duration:${slice.duration}s;--slice-rise:${slice.drift * -0.55}px;--slice-side:${slice.drift * 0.34}px;--slice-drift:${slice.drift}px;background-image:url(${signalImage.src});`}
+                ></span>
+              ))}
+            </div>
+          </div>
+          <div class="day-signal-scan" aria-hidden="true"></div>
+          <div class="day-signal-grain" aria-hidden="true"></div>
+        </div>
+      ) : (
+        <img
+          src={heroImage.src}
+          alt="Executivo trabalhando em um notebook diante de um fundo azul"
+          width="1448"
+          height="1086"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
+        />
+      )}
+    </figure>
+  </main>
+
+  <script>
+    const form = document.querySelector<HTMLFormElement>("[data-day-form]");
+    const fields = document.querySelector<HTMLElement>("[data-day-fields]");
+    const error = document.querySelector<HTMLElement>("[data-day-error]");
+    const success = document.querySelector<HTMLElement>("[data-day-success]");
+
+    form?.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const name = form.elements.namedItem("name") as HTMLInputElement | null;
+      const email = form.elements.namedItem("email") as HTMLInputElement | null;
+      const valid = Boolean(name?.value.trim()) && Boolean(email?.validity.valid);
+
+      if (!valid) {
+        if (error) error.hidden = false;
+        if (!name?.value.trim()) name?.focus();
+        else email?.focus();
+        return;
+      }
+
+      const button = form.querySelector("button");
+      if (error) error.hidden = true;
+      if (button) {
+        button.disabled = true;
+        button.textContent = "Enviando...";
+      }
+
+      try {
+        const payload = Object.fromEntries(new FormData(form).entries());
+        const response = await fetch("/api/amplify-day-lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const result = await response.json();
+        if (!response.ok || result.captured === false) throw new Error(result.error || "Não foi possível enviar.");
+        if (fields) fields.hidden = true;
+        if (button) button.hidden = true;
+        if (success) success.hidden = false;
+        form.classList.add("is-complete");
+      } catch (requestError) {
+        if (error) {
+          error.textContent = requestError instanceof Error ? requestError.message : "Não foi possível enviar agora.";
+          error.hidden = false;
+        }
+        if (button) {
+          button.disabled = false;
+          button.textContent = "Solicitar convite";
+        }
+      }
+    });
+
+    const signalStage = document.querySelector<HTMLElement>("[data-signal-stage]");
+    const signalMotion = document.querySelector<HTMLElement>("[data-signal-motion]");
+
+    if (signalStage && signalMotion && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      signalStage.addEventListener("pointermove", (event) => {
+        const bounds = signalStage.getBoundingClientRect();
+        const x = ((event.clientX - bounds.left) / bounds.width - 0.5) * 10;
+        const y = ((event.clientY - bounds.top) / bounds.height - 0.5) * 7;
+        signalMotion.style.setProperty("--pointer-x", `${x.toFixed(2)}px`);
+        signalMotion.style.setProperty("--pointer-y", `${y.toFixed(2)}px`);
+      });
+
+      signalStage.addEventListener("pointerleave", () => {
+        signalMotion.style.setProperty("--pointer-x", "0px");
+        signalMotion.style.setProperty("--pointer-y", "0px");
+      });
+    }
+  </script>
+</PageShell>
+
+<style>
+  :global(html) {
+    background: #080a0c;
+  }
+
+  :global(body) {
+    margin: 0;
+    background: #080a0c;
+  }
+
+  :global(*),
+  :global(*::before),
+  :global(*::after) {
+    box-sizing: border-box;
+  }
+
+  .day-page {
+    --paper: #f5f7f8;
+    --muted: #aeb5bb;
+    --quiet: #7f878e;
+    --line: #32383d;
+    --field: #111519;
+    --cyan: #27d8dc;
+    display: grid;
+    grid-template-columns: minmax(0, 57%) minmax(0, 43%);
+    width: 100%;
+    min-height: 720px;
+    height: 100svh;
+    overflow: hidden;
+    color: var(--paper);
+    background: #080a0c;
+  }
+
+  .day-copy {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: clamp(24px, 3.55vh, 32px) clamp(30px, 3.1vw, 46px) clamp(22px, 3.55vh, 32px);
+    border-right: 2px solid var(--cyan);
+    background: #080a0c;
+  }
+
+  .day-issue,
+  .day-date,
+  .day-availability,
+  .day-signature p {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .day-issue {
+    color: var(--cyan);
+    font-size: clamp(9px, 1.18vh, 11px);
+    line-height: 1.3;
+    letter-spacing: 0.14em;
+  }
+
+  .day-masthead {
+    margin: clamp(18px, 2.45vh, 22px) 0 0;
+    color: var(--paper);
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-size: clamp(76px, 12.4vh, 112px);
+    font-weight: 700;
+    line-height: 0.84;
+    letter-spacing: -0.065em;
+    text-transform: uppercase;
+  }
+
+  .day-date {
+    margin-top: clamp(18px, 2.65vh, 24px);
+    color: var(--muted);
+    font-size: clamp(9px, 1.3vh, 12px);
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+  }
+
+  .day-date span,
+  .day-availability span {
+    padding-inline: 0.42em;
+  }
+
+  .day-rule {
+    width: 100%;
+    height: 1px;
+    margin-top: clamp(11px, 1.55vh, 14px);
+    background: var(--line);
+  }
+
+  .day-message {
+    margin-top: clamp(20px, 2.75vh, 25px);
+  }
+
+  .day-concept {
+    margin: 0;
+    color: var(--cyan);
+    font-family: "Inter", sans-serif;
+    font-size: clamp(15px, 2vh, 18px);
+    font-weight: 500;
+    line-height: 1.35;
+  }
+
+  h1 {
+    max-width: 760px;
+    margin: clamp(14px, 1.8vh, 17px) 0 0;
+    color: var(--paper);
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-size: clamp(31px, 4.25vh, 38px);
+    font-weight: 600;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+  }
+
+  .day-lead {
+    max-width: 710px;
+    margin: clamp(13px, 1.8vh, 17px) 0 0;
+    color: var(--muted);
+    font-family: "Inter", sans-serif;
+    font-size: clamp(13px, 1.72vh, 15px);
+    font-weight: 400;
+    line-height: 1.42;
+  }
+
+  .day-availability {
+    margin-top: clamp(24px, 3.1vh, 28px);
+    color: var(--paper);
+    font-size: clamp(9px, 1.2vh, 11px);
+    line-height: 1.4;
+    letter-spacing: 0.055em;
+  }
+
+  .day-form {
+    margin-top: clamp(14px, 1.85vh, 17px);
+  }
+
+  .day-fields {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 11px 12px;
+  }
+
+  .day-fields label {
+    display: block;
+  }
+
+  .day-fields label > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .day-fields input {
+    width: 100%;
+    height: clamp(42px, 5.1vh, 46px);
+    border: 1px solid #343b40;
+    border-radius: 2px;
+    padding: 0 14px;
+    color: var(--paper);
+    background: var(--field);
+    font: 400 13px/1 "Inter", sans-serif;
+    outline: none;
+    transition: border-color 160ms ease, background-color 160ms ease;
+  }
+
+  .day-fields input::placeholder {
+    color: var(--quiet);
+    opacity: 1;
+  }
+
+  .day-fields input:hover {
+    border-color: #566169;
+  }
+
+  .day-fields input:focus-visible {
+    border-color: var(--cyan);
+    background: #141a1f;
+  }
+
+  .day-form button {
+    width: 100%;
+    height: clamp(48px, 5.8vh, 52px);
+    margin-top: 12px;
+    border: 0;
+    border-radius: 2px;
+    color: #061012;
+    background: var(--cyan);
+    font: 600 13px/1 "Inter", sans-serif;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 160ms ease, transform 160ms ease;
+  }
+
+  .day-form button:hover {
+    background: #52e3e6;
+  }
+
+  .day-form button:active {
+    transform: translateY(1px);
+  }
+
+  .day-form button:focus-visible {
+    outline: 2px solid var(--paper);
+    outline-offset: 3px;
+  }
+
+  .day-form-error {
+    margin: 9px 0 0;
+    color: #ff8d8d;
+    font: 500 12px/1.4 "Inter", sans-serif;
+  }
+
+  .day-success {
+    display: flex;
+    align-items: baseline;
+    min-height: 52px;
+    border: 1px solid var(--cyan);
+    border-radius: 2px;
+    padding: 15px 18px;
+    color: var(--paper);
+    background: #101718;
+    font-family: "Inter", sans-serif;
+    gap: 9px;
+  }
+
+  .day-success[hidden] {
+    display: none;
+  }
+
+  .day-success strong {
+    color: var(--cyan);
+    font-size: 13px;
+  }
+
+  .day-success span {
+    color: var(--muted);
+    font-size: 12px;
+  }
+
+  .day-fineprint {
+    margin: clamp(12px, 1.55vh, 14px) 0 0;
+    color: var(--quiet);
+    font: 400 clamp(9px, 1.18vh, 11px)/1.4 "Inter", sans-serif;
+  }
+
+  .day-signature {
+    display: flex;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 14px;
+    gap: 18px;
+  }
+
+  .day-brands {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+  }
+
+  .day-brands img:first-child {
+    width: 96px;
+    height: auto;
+  }
+
+  .day-brands img:last-child {
+    width: 76px;
+    height: auto;
+  }
+
+  .day-brands > span {
+    color: var(--muted);
+    font: 500 18px/1 "Inter", sans-serif;
+  }
+
+  .day-signature-rule {
+    width: 1px;
+    height: 30px;
+    background: var(--line);
+  }
+
+  .day-signature p {
+    color: var(--paper);
+    font-size: 11px;
+    line-height: 1.4;
+    letter-spacing: 0.08em;
+  }
+
+  .day-portrait {
+    position: relative;
+    min-width: 0;
+    height: 100%;
+    margin: 0;
+    overflow: hidden;
+    background: #00c7dc;
+  }
+
+  .day-portrait img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 68% center;
+  }
+
+  .day-portrait.is-motion {
+    isolation: isolate;
+    background: #030607;
+  }
+
+  .day-page.is-motion-variant .day-date,
+  .day-page.is-motion-variant .day-rule,
+  .day-page.is-motion-variant .day-message,
+  .day-page.is-motion-variant .day-availability,
+  .day-page.is-motion-variant .day-form,
+  .day-page.is-motion-variant .day-fineprint {
+    max-width: 800px;
+  }
+
+  .day-signal,
+  .day-signal-motion,
+  .day-signal-echoes {
+    position: absolute;
+    inset: 0;
+  }
+
+  .day-signal {
+    overflow: hidden;
+    background: #030607;
+  }
+
+  .day-signal-motion {
+    --pointer-x: 0px;
+    --pointer-y: 0px;
+    transform: translate3d(var(--pointer-x), var(--pointer-y), 0) scale(1.025);
+    transform-origin: center;
+    transition: transform 900ms cubic-bezier(0.2, 0.75, 0.25, 1);
+    will-change: transform;
+  }
+
+  .day-portrait .day-signal-base {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 50% center;
+    animation: signal-breathe 15s ease-in-out infinite alternate;
+    filter: contrast(1.04) saturate(0.92);
+    will-change: transform, filter;
+  }
+
+  .day-signal-echoes {
+    pointer-events: none;
+  }
+
+  .day-signal-slice {
+    position: absolute;
+    top: -2%;
+    bottom: -2%;
+    left: var(--slice-left);
+    width: var(--slice-width);
+    border-inline: 1px solid rgba(94, 239, 243, 0.08);
+    background-position: var(--slice-position) center;
+    background-repeat: no-repeat;
+    background-size: auto 106%;
+    mix-blend-mode: screen;
+    opacity: 0.32;
+    animation: signal-echo var(--slice-duration) cubic-bezier(0.45, 0, 0.25, 1) var(--slice-delay) infinite alternate;
+    will-change: transform, opacity;
+  }
+
+  .day-signal-scan {
+    position: absolute;
+    z-index: 2;
+    top: -20%;
+    right: 0;
+    left: 0;
+    height: 18%;
+    background: linear-gradient(180deg, transparent, rgba(39, 216, 220, 0.07), rgba(245, 247, 248, 0.11), transparent);
+    mix-blend-mode: screen;
+    opacity: 0.65;
+    animation: signal-scan 11s linear infinite;
+    pointer-events: none;
+  }
+
+  .day-signal-grain {
+    position: absolute;
+    z-index: 3;
+    inset: -10%;
+    background-image: repeating-radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.24) 0 0.45px, transparent 0.6px 3px);
+    background-size: 4px 4px;
+    mix-blend-mode: soft-light;
+    opacity: 0.055;
+    animation: signal-grain 600ms steps(2, end) infinite;
+    pointer-events: none;
+  }
+
+  @keyframes signal-breathe {
+    0% {
+      transform: scale(1.015) translate3d(-0.3%, 0, 0);
+      filter: contrast(1.02) saturate(0.88);
+    }
+
+    100% {
+      transform: scale(1.065) translate3d(0.5%, -0.4%, 0);
+      filter: contrast(1.08) saturate(1);
+    }
+  }
+
+  @keyframes signal-echo {
+    0% {
+      opacity: 0.16;
+      transform: translate3d(0, var(--slice-rise), 0) scaleX(0.82);
+    }
+
+    52% {
+      opacity: 0.42;
+    }
+
+    100% {
+      opacity: 0.24;
+      transform: translate3d(var(--slice-side), var(--slice-drift), 0) scaleX(1.16);
+    }
+  }
+
+  @keyframes signal-scan {
+    from {
+      transform: translate3d(0, -10%, 0);
+    }
+
+    to {
+      transform: translate3d(0, 720%, 0);
+    }
+  }
+
+  @keyframes signal-grain {
+    0% {
+      transform: translate3d(-1.2%, 0.6%, 0);
+    }
+
+    50% {
+      transform: translate3d(0.8%, -1%, 0);
+    }
+
+    100% {
+      transform: translate3d(0.2%, 1.1%, 0);
+    }
+  }
+
+  @media (min-width: 761px) and (max-width: 980px) {
+    .day-page.is-motion-variant {
+      display: flex;
+      min-height: 100svh;
+      height: auto;
+      overflow: visible;
+      flex-direction: column;
+    }
+
+    .day-page.is-motion-variant .day-portrait {
+      order: -1;
+      flex: 0 0 clamp(300px, 42vw, 360px);
+      width: 100%;
+      height: clamp(300px, 42vw, 360px);
+      border-bottom: 2px solid var(--cyan);
+    }
+
+    .day-page.is-motion-variant .day-copy {
+      min-height: 720px;
+      border-right: 0;
+      padding: 32px;
+    }
+
+    .day-page.is-motion-variant .day-signature {
+      margin-top: 40px;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .day-page {
+      display: flex;
+      flex-direction: column;
+      min-height: 760px;
+      height: 100svh;
+      overflow: hidden;
+    }
+
+    .day-portrait {
+      order: -1;
+      flex: 0 0 clamp(210px, 29svh, 245px);
+      width: 100%;
+      height: clamp(210px, 29svh, 245px);
+      border-bottom: 1px solid #101315;
+    }
+
+    .day-portrait img {
+      object-position: 70% 32%;
+    }
+
+    .day-copy {
+      flex: 1;
+      min-height: 0;
+      padding: 18px 20px 20px;
+      border-right: 0;
+    }
+
+    .day-issue {
+      position: absolute;
+      top: -228px;
+      left: 20px;
+      z-index: 2;
+      color: rgba(245, 247, 248, 0.68);
+      font-size: 8px;
+    }
+
+    .day-masthead {
+      position: absolute;
+      top: -66px;
+      left: 18px;
+      z-index: 2;
+      margin: 0;
+      font-size: clamp(42px, 12vw, 48px);
+      line-height: 1;
+      white-space: nowrap;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.38);
+    }
+
+    .desktop-break {
+      display: none;
+    }
+
+    .day-date {
+      margin: 0;
+      font-size: 9px;
+      letter-spacing: 0.055em;
+      white-space: nowrap;
+    }
+
+    .day-rule,
+    .day-lead {
+      display: none;
+    }
+
+    .day-message {
+      margin-top: 24px;
+    }
+
+    .day-concept {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    h1 {
+      margin-top: 19px;
+      font-size: clamp(26px, 7.5vw, 30px);
+      line-height: 1.05;
+    }
+
+    .day-availability {
+      margin-top: 20px;
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .day-form {
+      margin-top: 16px;
+    }
+
+    .day-fields {
+      grid-template-columns: 1fr;
+      gap: 11px;
+    }
+
+    .day-secondary-field {
+      display: none !important;
+    }
+
+    .day-fields input {
+      height: 48px;
+    }
+
+    .day-form button {
+      height: 52px;
+      margin-top: 12px;
+      font-size: 12px;
+    }
+
+    .day-fineprint {
+      margin-top: 14px;
+      font-size: 10px;
+      line-height: 1.4;
+      max-width: 330px;
+    }
+
+    .day-signature {
+      flex-direction: column;
+      align-items: flex-start;
+      margin-top: 28px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      gap: 14px;
+    }
+
+    .day-brands {
+      gap: 10px;
+    }
+
+    .day-brands img:first-child {
+      width: 79px;
+    }
+
+    .day-brands img:last-child {
+      width: 68px;
+      height: auto;
+    }
+
+    .day-brands > span {
+      font-size: 15px;
+    }
+
+    .day-signature-rule {
+      display: none;
+    }
+
+    .day-signature p {
+      max-width: none;
+      font-size: 9px;
+      line-height: 1.25;
+      text-align: left;
+    }
+
+    .day-success {
+      min-height: 52px;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 3px;
+    }
+  }
+
+  @media (max-height: 760px) and (min-width: 761px) {
+    .day-lead {
+      display: none;
+    }
+
+    .day-availability {
+      margin-top: 18px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .day-fields input,
+    .day-form button {
+      transition: none;
+    }
+
+    .day-signal-motion {
+      transform: scale(1.025);
+      transition: none;
+    }
+
+    .day-portrait .day-signal-base,
+    .day-signal-slice,
+    .day-signal-scan,
+    .day-signal-grain {
+      animation: none;
+    }
+
+    .day-signal-slice {
+      opacity: 0.2;
+      transform: none;
+    }
+  }
+</style>

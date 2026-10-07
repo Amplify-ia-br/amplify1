@@ -17,7 +17,11 @@
     "lhci:audit": "lhci autorun",
     "lighthouse:prod:mobile:median": "node scripts/lighthouse-prod-mobile-median.mjs https://aplify-site.vercel.app 5",
     "migrate:blog:sanity:dry": "node scripts/migrate-blog-posts-to-sanity.mjs",
-    "migrate:blog:sanity": "node scripts/migrate-blog-posts-to-sanity.mjs --apply"
+    "migrate:blog:sanity": "node scripts/migrate-blog-posts-to-sanity.mjs --apply",
+    "prepare:amplify-day:gilson": "node scripts/prepare-amplify-day-gilson-campaign.mjs",
+    "schedule:amplify-day:gilson": "node scripts/schedule-amplify-day-gilson-campaign.mjs",
+    "whatsapp:amplify-day:preview": "node --env-file=.env scripts/amplify-day-whatsapp-reminder.mjs",
+    "whatsapp:amplify-day:send": "node --env-file=.env scripts/amplify-day-whatsapp-reminder.mjs --send"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.10.0",
@@ -81,6 +85,7 @@
     "react-router-dom": "^6.30.1",
     "recharts": "^2.15.4",
     "sonner": "^1.7.4",
+    "svix": "2.1.0",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^0.9.9",

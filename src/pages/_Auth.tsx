@@ -27,7 +27,7 @@ const AuthContent = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const from = (location.state as any)?.from || "/admin";
+  const from = (location.state as any)?.from || "/admin/amplify-day/convites";
 
   useEffect(() => {
     if (!authLoading && user) {
