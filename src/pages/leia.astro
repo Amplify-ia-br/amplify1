@@ -1,0 +1,905 @@
+---
+import Analytics from "@vercel/analytics/astro";
+
+const title = "L.E.I.A. para Escolas";
+const description = "O L.E.I.A. é um programa anual de fluência em inteligência artificial para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio, no laboratório de informática da escola.";
+const canonical = new URL("/leia", Astro.site ?? Astro.url).toString();
+---
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>{title}</title>
+<meta name="description" content={description}>
+<link rel="canonical" href={canonical}>
+<meta property="og:type" content="website">
+<meta property="og:title" content={title}>
+<meta property="og:description" content={description}>
+<meta property="og:url" content={canonical}>
+<meta property="og:image" content={new URL("/leia/assets/personagem-04.jpg", canonical).toString()}>
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preload" href="/leia/fonts/montserrat-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/leia/fonts/montserrat-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+@font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-500-normal.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+@font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-600-normal.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+@font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+@font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-800-normal.woff2') format('woff2'); font-weight: 800; font-display: swap; }
+/* Layout: L.E.I.A Design System. Seções chapadas alternando roxo e creme (data-theme na seção),
+   hero com personagem em arco e onda pintada, programa em números, jornada em escada,
+   conversão em dois caminhos (masterclass e orçamento) para um único formulário. Tema único e deliberado. */
+:root {
+  /* marca */
+  --roxo-leia: #42128A; --roxo: #482080; --roxo-profundo: #301654; --roxo-noite: #200B52;
+  --creme: #FFF3E4; --creme-claro: #FEFBF2; --branco: #FFFFFF;
+  --coral: #EA664F; --coral-texto: #C4432C; --rosa: #FF94C2; --ciano: #67D4DE; --ciano-eletrico: #00E5F0; --laranja: #FFB147;
+  /* tipo */
+  --font-display: Montserrat, "Arial Black", Arial, sans-serif;
+  --font-sans: Montserrat, Arial, Helvetica, sans-serif;
+  /* espaço e forma */
+  --esp-2: 8px; --esp-3: 12px; --esp-4: 16px; --esp-5: 24px; --esp-6: 32px; --esp-7: 48px; --esp-8: 64px; --esp-9: 96px; --esp-10: 128px;
+  --raio-sm: 8px; --raio-md: 24px; --raio-pill: 999px;
+  --sombra-cartao: 0 16px 40px rgba(32, 11, 82, 0.22);
+  --container-max: 1200px; --coluna-texto: 38rem; --margem-pagina: 24px;
+  /* tema padrão (roxo) */
+  --fundo: var(--roxo); --superficie: var(--roxo-profundo); --linha: #6A48A3; --texto: var(--branco); --texto-suave: #D9CCEF;
+  --destaque: var(--rosa); --destaque-2: var(--ciano); --acao: var(--ciano); --acao-hover: #8FE2E9; --sobre-acao: var(--roxo-profundo);
+  --foco: var(--ciano); --selo: #5A3496;
+  color-scheme: light;
+}
+[data-theme="roxo"] { --fundo: var(--roxo); --superficie: var(--roxo-profundo); --linha: #6A48A3; --texto: var(--branco); --texto-suave: #D9CCEF;
+  --destaque: var(--rosa); --destaque-2: var(--ciano); --acao: var(--ciano); --acao-hover: #8FE2E9; --sobre-acao: var(--roxo-profundo); --foco: var(--ciano); --selo: #5A3496; }
+[data-theme="creme"] { --fundo: var(--creme); --superficie: var(--branco); --linha: #E6D3BC; --texto: var(--roxo-profundo); --texto-suave: #5E4A7E;
+  --destaque: var(--coral-texto); --destaque-2: var(--roxo); --acao: var(--roxo); --acao-hover: var(--roxo-profundo); --sobre-acao: var(--creme); --foco: var(--roxo); --selo: #F6E3CC; }
+.bg-leia { --fundo: var(--roxo-leia); } .bg-profundo { --fundo: var(--roxo-profundo); --superficie: var(--roxo); } .bg-creme-claro { --fundo: var(--creme-claro); }
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--roxo-leia); color: var(--branco); font-family: var(--font-sans); font-size: 17px; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+p, h1, h2, h3, ul, ol, dl, dd, figure { margin: 0; }
+
+/* estrutura */
+.secao { position: relative; isolation: isolate; overflow: hidden; background: var(--fundo); color: var(--texto); padding-block: var(--esp-9); padding-inline: var(--margem-pagina); scroll-margin-top: 72px; }
+.container { position: relative; z-index: 1; max-width: var(--container-max); margin-inline: auto; padding-inline: 0; }
+.cabeca { display: flex; flex-direction: column; gap: var(--esp-4); max-width: 48rem; margin-bottom: var(--esp-7); }
+.grade { display: grid; gap: var(--esp-7); align-items: center; }
+.g-7-5 { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+.g-5-7 { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+.g-6-6 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.topo-alinhado { align-items: start; }
+
+/* texto */
+.rotulo { display: inline-flex; align-items: center; gap: var(--esp-2); font: 700 12px/16px var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: var(--texto-suave); }
+.rotulo::before, .marcadores li::before { content: ""; width: 14px; height: 14px; flex: none; background: var(--destaque);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0C52.6 34 66 47.4 100 50C66 52.6 52.6 66 50 100C47.4 66 34 52.6 0 50C34 47.4 47.4 34 50 0Z'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0C52.6 34 66 47.4 100 50C66 52.6 52.6 66 50 100C47.4 66 34 52.6 0 50C34 47.4 47.4 34 50 0Z'/%3E%3C/svg%3E") center / contain no-repeat; }
+h1, h2, h3 { color: var(--texto); text-wrap: balance; }
+.titulo-xl { font: 800 72px/76px var(--font-display); letter-spacing: -0.02em; }
+.titulo { font: 700 40px/46px var(--font-display); letter-spacing: -0.01em; }
+.titulo-2 { font: 700 24px/30px var(--font-sans); }
+.destaque { color: var(--destaque); } .destaque-2 { color: var(--destaque-2); } .eletrico { color: var(--ciano-eletrico); }
+.texto { max-width: var(--coluna-texto); font: 400 20px/30px var(--font-sans); color: var(--texto-suave); text-wrap: pretty; }
+.corpo { font: 400 17px/26px var(--font-sans); color: var(--texto-suave); }
+.legenda { font: 500 13px/18px var(--font-sans); color: var(--texto-suave); }
+
+/* botões */
+.botoes { display: flex; flex-wrap: wrap; gap: var(--esp-4); align-items: center; }
+.botao { display: inline-flex; align-items: center; justify-content: center; gap: var(--esp-3); min-height: 52px; padding: 14px 28px; font: 700 16px/20px var(--font-sans); text-decoration: none; cursor: pointer; white-space: nowrap;
+  color: var(--sobre-acao); background: var(--acao); border: 2px solid var(--acao); border-radius: var(--raio-pill); transition: background-color .16s, border-color .16s, color .16s, transform .16s; }
+.botao:hover { background: var(--acao-hover); border-color: var(--acao-hover); transform: translateY(-1px); }
+.botao--contorno { color: var(--texto); background: transparent; border-color: var(--texto); }
+.botao--contorno:hover { color: var(--fundo); background: var(--texto); border-color: var(--texto); }
+.botao--grande { min-height: 60px; padding: 18px 34px; font-size: 18px; }
+.botao--bloco { width: 100%; white-space: normal; }
+.seta { transition: transform .16s; } .botao:hover .seta { transform: translateX(3px); }
+:focus-visible { outline: 3px solid var(--foco); outline-offset: 3px; }
+.selo { display: inline-flex; width: fit-content; align-items: center; gap: var(--esp-2); padding: 6px 14px; border-radius: var(--raio-pill); background: var(--selo); color: var(--texto); font: 600 13px/18px var(--font-sans); }
+.chips { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; }
+.chips li { padding: 7px 16px; border-radius: var(--raio-pill); background: var(--selo); color: var(--texto); font: 600 14px/20px var(--font-sans); }
+
+/* navegação */
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 50; background: rgba(66, 18, 138, .94); backdrop-filter: blur(8px); padding-inline: var(--margem-pagina); --texto: var(--branco); }
+.nav .container { display: flex; align-items: center; justify-content: space-between; gap: var(--esp-5); min-height: 72px; }
+.nav__logo { height: 30px; width: auto; }
+.nav ul { display: flex; gap: 26px; list-style: none; padding: 0; }
+.nav ul a { text-decoration: none; font: 600 15px/20px var(--font-sans); color: var(--branco); }
+.nav ul a:hover { color: var(--rosa); }
+.nav .botao { min-height: 44px; padding: 10px 22px; font-size: 15px; }
+
+/* hero */
+.hero { padding-block: 72px 200px; }
+.hero .pilha { display: flex; flex-direction: column; gap: var(--esp-5); }
+.arco { position: relative; max-width: 460px; width: 100%; justify-self: center; }
+.arco__foto { aspect-ratio: 4 / 5; border-radius: 999px 999px var(--raio-md) var(--raio-md); overflow: hidden; background: var(--roxo-profundo); }
+.arco__foto img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 30%; }
+.arco .orbe { position: absolute; top: -26px; left: -30px; width: 108px; }
+.arco .brilho { position: absolute; right: -12px; top: 22%; width: 40px; }
+.onda { position: absolute; left: 0; right: 0; bottom: -1px; z-index: 0; pointer-events: none; line-height: 0; }
+.onda img { width: 100%; height: 180px; object-fit: cover; object-position: 50% 100%; }
+.deco { position: absolute; z-index: 0; pointer-events: none; }
+.constelacao { position: absolute; inset: 0; z-index: 0; background: url("/leia/assets/padrao-constelacao.svg") repeat; background-size: 800px 400px; opacity: .32; pointer-events: none; }
+
+/* desafio */
+.com-faixa { padding-right: 15%; }
+.faixa { position: absolute; top: 0; bottom: 0; right: 0; width: 13%; z-index: 0; }
+.faixa img { width: 100%; height: 100%; object-fit: cover; }
+.lemas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--esp-5); margin-top: var(--esp-8); padding-top: var(--esp-6); border-top: 1px solid var(--linha); list-style: none; padding-left: 0; }
+.lemas li { font: 700 20px/28px var(--font-sans); color: var(--texto); }
+.lemas li span { display: block; color: var(--destaque); }
+
+/* vídeo */
+.video { position: relative; aspect-ratio: 16 / 9; max-width: 100%; border-radius: var(--raio-md); overflow: hidden; background: var(--roxo-noite); box-shadow: var(--sombra-cartao); }
+.video img, .video :global(.video__media) { display: block; width: 100%; height: 100%; object-fit: cover; }
+.video__play { position: absolute; inset: 0; display: grid; place-items: center; background: linear-gradient(0deg, rgba(32, 11, 82, .55), rgba(32, 11, 82, .05)); border: 0; cursor: pointer; color: var(--roxo-profundo); }
+.video__play span { display: grid; place-items: center; width: 92px; height: 92px; border-radius: 50%; background: var(--ciano); transition: transform .16s, background-color .16s; }
+.video__play:hover span { transform: scale(1.06); background: #8FE2E9; }
+.video__play svg { width: 34px; height: 34px; margin-left: 6px; }
+.video__aviso { margin-top: var(--esp-4); }
+
+/* é / não é */
+.lados { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--esp-5); }
+.lado { padding: var(--esp-6); border-radius: var(--raio-md); background: var(--superficie); display: flex; flex-direction: column; gap: var(--esp-4); }
+.lado--nao { background: transparent; border: 2px solid var(--linha); }
+.lado ul { list-style: none; padding: 0; display: grid; gap: var(--esp-4); }
+.lado li { display: grid; gap: 4px; }
+.lado li b { font: 700 18px/24px var(--font-sans); color: var(--texto); }
+.lado li span { font: 400 16px/24px var(--font-sans); color: var(--texto-suave); }
+.ciclo-bloco { margin-top: var(--esp-8); }
+.ciclo { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--esp-5); counter-reset: c; }
+.ciclo li { counter-increment: c; padding-top: var(--esp-5); border-top: 3px solid var(--destaque); display: grid; gap: 6px; align-content: start; }
+.ciclo li:nth-child(2) { border-color: var(--destaque-2); } .ciclo li:nth-child(3) { border-color: var(--laranja); } .ciclo li:nth-child(4) { border-color: var(--coral); }
+.ciclo li::before { content: "0" counter(c); font: 700 13px/16px var(--font-sans); letter-spacing: .12em; color: var(--texto-suave); }
+.ciclo h3 { font: 700 22px/28px var(--font-sans); }
+.marcadores { list-style: none; padding: 0; display: grid; gap: var(--esp-3); }
+.marcadores li { display: flex; gap: var(--esp-3); align-items: baseline; font: 600 17px/25px var(--font-sans); color: var(--texto); }
+.marcadores li::before { transform: translateY(2px); }
+.competencias { margin-top: var(--esp-7); padding-top: var(--esp-6); border-top: 1px solid var(--linha); display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--esp-6); align-items: start; }
+.competencias .marcadores { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--esp-4) var(--esp-6); }
+
+/* para quem e formato */
+.publicos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--esp-5); margin-bottom: var(--esp-8); }
+.publico { padding: var(--esp-6); border-radius: var(--raio-md); background: var(--superficie); display: grid; gap: var(--esp-3); align-content: start; }
+.publico img { width: 28px; height: 28px; }
+.numeros { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--esp-5); padding-block: var(--esp-6); border-block: 1px solid var(--linha); margin-bottom: var(--esp-6); }
+.numero__valor { font: 800 clamp(52px, 6vw, 84px)/1 var(--font-display); letter-spacing: -0.03em; color: var(--destaque); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.numero:nth-child(2) .numero__valor { color: var(--destaque-2); } .numero:nth-child(3) .numero__valor { color: var(--laranja); }
+.numero__legenda { margin-top: var(--esp-2); font: 600 16px/22px var(--font-sans); color: var(--texto); }
+.numero__legenda span { display: block; font-weight: 400; color: var(--texto-suave); }
+
+/* jornada */
+.passos { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--esp-5); counter-reset: p; }
+.passo { counter-increment: p; position: relative; padding-top: var(--esp-6); border-top: 3px solid var(--destaque); display: grid; gap: var(--esp-2); align-content: start; }
+.passo:nth-child(2) { margin-top: var(--esp-7); border-color: var(--destaque-2); }
+.passo:nth-child(3) { margin-top: calc(var(--esp-7) * 2); border-color: var(--laranja); }
+.passo::before { content: "0" counter(p); font: 700 13px/16px var(--font-sans); letter-spacing: .12em; color: var(--texto-suave); }
+.passo__quando { font: 700 12px/16px var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: var(--destaque); }
+.passo:nth-child(2) .passo__quando { color: var(--destaque-2); } .passo:nth-child(3) .passo__quando { color: var(--coral-texto); }
+.passo h3 { font: 700 28px/34px var(--font-sans); }
+.banca { margin-top: var(--esp-8); display: flex; flex-wrap: wrap; align-items: center; gap: var(--esp-4); }
+.banca .chips li { background: var(--superficie); border: 1px solid var(--linha); }
+
+/* jornada ilustrada */
+.jornada-mapa { background: #401386; }
+.jornada-mapa .container { max-width: 1500px; }
+.jornada-mapa__titulo { max-width: 1120px; margin-bottom: 26px; font: 700 clamp(36px, 4.5vw, 66px)/1.1 var(--font-display); letter-spacing: -0.02em; }
+.jornada-mapa__texto { max-width: 1200px; margin-bottom: 40px; font: 400 clamp(18px, 2vw, 27px)/1.5 var(--font-sans); color: var(--texto-suave); text-wrap: pretty; }
+.jornada-mapa__figura { margin: 0; }
+.jornada-mapa__imagem { width: 100%; height: auto; border-radius: var(--raio-md); background: var(--creme-claro); }
+.jornada-mapa__imagem--reduzida { display: none; }
+.jornada-mapa__nota { margin-top: var(--esp-5); font: 500 16px/24px var(--font-sans); color: var(--texto-suave); }
+
+/* currículo */
+.bncc { list-style: none; padding: 0; display: grid; gap: 0; border-top: 1px solid var(--linha); }
+.bncc li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: var(--esp-4); align-items: baseline; padding-block: var(--esp-4); border-bottom: 1px solid var(--linha); }
+.bncc b { font: 800 30px/1 var(--font-display); color: var(--destaque); font-variant-numeric: tabular-nums; }
+.bncc span { font: 600 18px/26px var(--font-sans); color: var(--texto); }
+.bncc small { display: block; font: 500 12px/16px var(--font-sans); letter-spacing: .1em; text-transform: uppercase; color: var(--texto-suave); margin-bottom: 2px; }
+.cartao-roxo { padding: var(--esp-6); border-radius: var(--raio-md); background: var(--roxo); display: grid; gap: var(--esp-4); position: relative; overflow: hidden;
+  --texto: var(--branco); --texto-suave: #D9CCEF; --destaque: var(--rosa); --destaque-2: var(--ciano); --acao: var(--ciano); --acao-hover: #8FE2E9; --sobre-acao: var(--roxo-profundo); --foco: var(--ciano); --selo: #5A3496; --linha: #6A48A3; color: var(--texto); }
+
+/* caminho */
+.etapas { list-style: none; padding: 0; counter-reset: e; }
+.etapas li { counter-increment: e; display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: var(--esp-5); padding-block: var(--esp-5); border-top: 1px solid var(--linha); }
+.etapas li:last-child { border-bottom: 1px solid var(--linha); }
+.etapas li::before { content: counter(e, decimal-leading-zero); width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; font: 800 18px/1 var(--font-sans); background: var(--ciano); color: var(--roxo-profundo); }
+.etapas li:nth-child(2)::before { background: var(--rosa); } .etapas li:nth-child(3)::before { background: var(--laranja); } .etapas li:nth-child(4)::before { background: var(--creme); }
+.etapas h3 { font: 700 21px/28px var(--font-sans); margin-bottom: 4px; }
+.cartao-creme { padding: var(--esp-6); border-radius: var(--raio-md); background: var(--creme); display: grid; gap: var(--esp-4); align-content: start;
+  --texto: var(--roxo-profundo); --texto-suave: #5E4A7E; --destaque: var(--coral-texto); --destaque-2: var(--roxo); --acao: var(--roxo); --acao-hover: var(--roxo-profundo); --sobre-acao: var(--creme); --foco: var(--roxo); --selo: #F6E3CC; --linha: #E6D3BC; color: var(--texto); }
+
+/* contratação */
+.contrato { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: var(--esp-7); align-items: start; }
+.reuniao { list-style: none; padding: 0; display: grid; gap: var(--esp-3); counter-reset: r; }
+.reuniao li { counter-increment: r; display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: var(--esp-3); align-items: baseline; padding: var(--esp-4) var(--esp-5); border-radius: var(--raio-sm); background: var(--superficie); font: 600 17px/25px var(--font-sans); color: var(--texto); }
+.reuniao li::before { content: counter(r); font: 800 20px/1 var(--font-display); color: var(--destaque); }
+
+/* FAQ */
+.faq-grade { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: var(--esp-7); align-items: start; }
+.faq { border-top: 1px solid var(--linha); }
+.faq details { border-bottom: 1px solid var(--linha); }
+.faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 20px; padding: 20px 0; font: 700 18px/26px var(--font-sans); color: var(--texto); }
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after { content: "+"; flex: none; font-size: 26px; line-height: 1; color: var(--destaque); transition: transform .2s; }
+.faq details[open] summary::after { transform: rotate(45deg); }
+.faq details p { padding: 0 0 22px; max-width: 44rem; }
+
+/* contato e formulário */
+.contato-dir { display: grid; gap: var(--esp-5); align-content: start; }
+.contato-mail { display: flex; flex-wrap: wrap; align-items: center; gap: var(--esp-3); padding-top: var(--esp-5); border-top: 1px solid var(--linha); }
+.contato-mail code { font: 600 16px/22px var(--font-sans); color: var(--texto); user-select: all; }
+.mini { min-height: 40px; padding: 8px 16px; font-size: 14px; }
+.form { background: var(--branco); color: var(--roxo-profundo); border-radius: var(--raio-md); padding: 36px; box-shadow: 0 16px 40px rgba(32, 11, 82, .35); position: relative;
+  --texto: var(--roxo-profundo); --texto-suave: #5E4A7E; --destaque: var(--coral-texto); --acao: var(--roxo); --acao-hover: var(--roxo-profundo); --sobre-acao: var(--creme); --foco: var(--roxo); --linha: #E6D3BC; }
+.form form, .form .campos { display: grid; gap: 18px; }
+.linha2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.campo { display: grid; gap: 7px; min-width: 0; }
+.campo label, .legend { font: 700 14px/18px var(--font-sans); color: var(--roxo-profundo); }
+.opc { font-weight: 500; color: #5E4A7E; }
+.campo input, .campo select { width: 100%; min-height: 52px; padding: 12px 16px; font: 400 16px/1.4 var(--font-sans); color: var(--roxo-profundo); background: var(--creme-claro); border: 2px solid #E6D3BC; border-radius: var(--raio-sm); appearance: none; }
+.campo select { background-image: linear-gradient(45deg, transparent 50%, var(--roxo-profundo) 50%), linear-gradient(135deg, var(--roxo-profundo) 50%, transparent 50%); background-position: calc(100% - 22px) 50%, calc(100% - 16px) 50%; background-size: 6px 6px; background-repeat: no-repeat; padding-right: 42px; }
+.campo input::placeholder { color: #8A7AA3; }
+.campo input:focus-visible, .campo select:focus-visible { outline: 3px solid var(--roxo); outline-offset: 1px; border-color: var(--roxo); }
+.campo [aria-invalid="true"] { border-color: var(--coral-texto); }
+.erro { font: 600 13px/18px var(--font-sans); color: var(--coral-texto); }
+fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.opcoes { display: grid; gap: 10px; margin-top: 8px; }
+.opcoes--inline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.opcao { position: relative; display: block; }
+.opcao input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.opcao span { display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 12px 16px; border-radius: var(--raio-sm); border: 2px solid #E6D3BC; background: var(--creme-claro); font: 600 15px/21px var(--font-sans); cursor: pointer; transition: all .15s; }
+.opcao span::before { content: ""; flex: none; width: 18px; height: 18px; border-radius: 50%; border: 2px solid #8A7AA3; background: var(--branco); }
+.opcao input:checked + span { border-color: var(--roxo); background: #F3ECFB; }
+.opcao input:checked + span::before { border: 6px solid var(--roxo); }
+.opcao input:focus-visible + span { outline: 3px solid var(--roxo); outline-offset: 2px; }
+.extra summary { cursor: pointer; font: 700 14px/20px var(--font-sans); color: var(--roxo); list-style: none; }
+.extra summary::-webkit-details-marker { display: none; }
+.extra summary::before { content: "+ "; }
+.extra[open] summary::before { content: "− "; }
+.extra .linha2 { margin-top: 14px; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.form__nota, .form__consent { font: 500 13px/19px var(--font-sans); color: #5E4A7E; }
+.form__consent a { color: var(--roxo); }
+.ok { display: grid; gap: 14px; }
+.ok__selo { width: 60px; height: 60px; border-radius: 50%; background: var(--creme); display: grid; place-items: center; }
+.ok__selo img { width: 30px; }
+.ok h3 { font: 700 24px/30px var(--font-sans); }
+.resumo { padding: 18px 20px; border-radius: var(--raio-sm); background: var(--creme-claro); border: 1px solid #E6D3BC; display: grid; gap: 6px; font-size: 15px; }
+.resumo div { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 10px; }
+.resumo dt { font-weight: 700; } .resumo dd { color: #5E4A7E; overflow-wrap: anywhere; }
+.status { font: 600 14px/20px var(--font-sans); color: var(--roxo); min-height: 20px; }
+
+/* rodapé */
+.rodape { background: var(--roxo-noite); color: var(--branco); padding: var(--esp-8) var(--margem-pagina) var(--esp-6); --texto: var(--branco); --acao: var(--ciano); --acao-hover: #8FE2E9; --sobre-acao: var(--roxo-profundo); --foco: var(--ciano); }
+.rodape__topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--esp-6); }
+.assinatura { display: flex; align-items: center; gap: var(--esp-6); flex-wrap: wrap; }
+.assinatura__leia { height: 56px; width: auto; }
+.assinatura__divisor { width: 1px; align-self: stretch; background: #3A2270; }
+.assinatura__endosso span { display: block; margin-bottom: 8px; font: 700 11px/14px var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: #D9CCEF; }
+.assinatura__endosso img { height: 44px; width: auto; }
+.rodape__base { margin-top: 40px; padding-top: 22px; border-top: 1px solid #3A2270; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; font: 500 13px/18px var(--font-sans); color: #CFC2EA; }
+.rodape__base a { color: inherit; }
+
+/* CTA fixo no celular */
+.cta-fixo { position: fixed; left: 0; right: 0; bottom: 0; z-index: 60; padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)); background: rgba(32, 11, 82, .96); backdrop-filter: blur(8px); display: none;
+  --acao: var(--ciano); --acao-hover: #8FE2E9; --sobre-acao: var(--roxo-profundo); --foco: var(--ciano); transform: translateY(110%); transition: transform .25s; }
+.cta-fixo.on { transform: none; }
+.cta-fixo .botao { width: 100%; }
+
+@media (max-width: 1040px) {
+  .nav ul { display: none; }
+}
+@media (max-width: 960px) {
+  .secao { padding-block: 72px; }
+  .g-7-5, .g-5-7, .g-6-6, .faq-grade, .contrato, .competencias { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .hero .arco { max-width: 360px; }
+  .lados, .publicos { grid-template-columns: minmax(0, 1fr); }
+  .ciclo { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .faixa { display: none; } .com-faixa { padding-right: 0; }
+  .nav .botao { display: none; }
+  .cta-fixo { display: block; }
+  .rodape { padding-bottom: 110px; }
+}
+@media (max-width: 640px) {
+  :root { --margem-pagina: 18px; }
+  .hero { padding-block: 40px 140px; }
+  .onda img { height: 110px; }
+  .titulo-xl { font-size: 40px; line-height: 44px; }
+  .titulo { font-size: 30px; line-height: 36px; }
+  .texto { font-size: 18px; line-height: 28px; }
+  .lemas, .passos, .numeros { grid-template-columns: minmax(0, 1fr); }
+  .passo:nth-child(n) { margin-top: 0; }
+  .ciclo { grid-template-columns: minmax(0, 1fr); }
+  .competencias .marcadores { grid-template-columns: minmax(0, 1fr); }
+  .linha2 { grid-template-columns: minmax(0, 1fr); }
+  .opcoes--inline { grid-template-columns: minmax(0, 1fr); }
+  .form { padding: 26px 20px; }
+  .resumo div { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  .nav .botao { padding: 9px 16px; font-size: 14px; }
+  .video__play span { width: 72px; height: 72px; }
+  .secao > .deco { display: none; }
+  .jornada-mapa__titulo { margin-bottom: 22px; }
+  .jornada-mapa__texto { margin-bottom: 28px; }
+  .jornada-mapa__imagem { border-radius: 16px; }
+}
+@media (max-width: 400px) { :root { --margem-pagina: 16px; } }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; }
+  .jornada-mapa__imagem--animada { display: none; }
+  .jornada-mapa__imagem--reduzida { display: block; }
+}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Principal">
+  <div class="container">
+    <a href="#topo"><img class="nav__logo" src="/leia/assets/leia-logo-simbolo-branco.png" alt="L.E.I.A." width="120" height="35"></a>
+    <ul>
+      <li><a href="#programa">O programa</a></li>
+      <li><a href="#formato">Formato</a></li>
+      <li><a href="#jornada">Jornada</a></li>
+      <li><a href="#contratacao">Contratação</a></li>
+      <li><a href="#perguntas">Perguntas</a></li>
+    </ul>
+    <a class="botao" href="#contato" data-intencao="masterclass">Solicitar masterclass</a>
+  </div>
+</nav>
+
+<main>
+<!-- 1. HERO -->
+<section class="secao hero bg-leia" data-theme="roxo" id="topo">
+  <div class="container grade g-7-5">
+    <div class="pilha">
+      <p class="rotulo">Laboratório Escolar de Inteligência Artificial</p>
+      <h1 class="titulo-xl">Seus alunos JÁ usam IA. <span class="destaque-2">Ensine a usar com critério.</span></h1>
+      <p class="texto">O L.E.I.A. é um programa anual de fluência em inteligência artificial para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio.</p>
+      <div class="botoes">
+        <a class="botao botao--grande" href="#contato" data-intencao="masterclass">Solicitar uma masterclass <span class="seta" aria-hidden="true">&rarr;</span></a>
+        <a class="botao botao--contorno botao--grande" href="#formato">Ver como funciona</a>
+      </div>
+      <span class="selo">Masterclass gratuita para escolas</span>
+    </div>
+    <div class="arco">
+      <div class="arco__foto"><img src="/leia/assets/personagem-04.jpg" alt="Estudante com o boné do L.E.I.A." width="600" height="750"></div>
+      <img class="orbe" src="/leia/assets/orbe-vibrante.svg" alt="">
+      <img class="brilho" src="/leia/assets/brilho-4-pontas-creme.svg" alt="">
+    </div>
+  </div>
+  <div class="onda"><img src="/leia/assets/onda-pintada.jpg" alt=""></div>
+</section>
+
+<!-- 2. DESAFIO -->
+<section class="secao" data-theme="creme" id="fluencia">
+  <div class="container com-faixa">
+    <div class="cabeca">
+      <p class="rotulo">O desafio já chegou à escola</p>
+      <h2 class="titulo">Saber pedir uma resposta <span class="destaque">não é saber pensar com IA.</span></h2>
+      <p class="texto">A fluência aparece quando o aluno aprende a formular boas perguntas, verificar o que recebe, reconhecer limites e transformar tecnologia em autoria.</p>
+    </div>
+    <ul class="lemas">
+      <li>Critério <span>antes da resposta.</span></li>
+      <li>Autoria <span>antes do atalho.</span></li>
+      <li>Consciência <span>antes da escala.</span></li>
+    </ul>
+  </div>
+  <div class="faixa" aria-hidden="true"><img src="/leia/assets/faixa-arte-vertical.jpg" alt=""></div>
+</section>
+
+<!-- 3. VÍDEO -->
+<section class="secao bg-profundo" data-theme="roxo" id="video">
+  <div class="constelacao" aria-hidden="true"></div>
+  <img class="deco" src="/leia/assets/orbe-frio.svg" alt="" style="right:-60px;top:48px;width:180px">
+  <div class="container grade g-5-7">
+    <div class="cabeca" style="margin-bottom:0">
+      <p class="rotulo">Veja o L.E.I.A.</p>
+      <h2 class="titulo">Uma nova linguagem <span class="destaque">para aprender.</span></h2>
+      <p class="texto">Dê o play e conheça o universo do programa.</p>
+    </div>
+    <div>
+      <div class="video" id="video-box">
+        <img src="/leia/assets/personagem-05.jpg" alt="Estudante com o boné do L.E.I.A. cobrindo o rosto" width="1672" height="941" loading="lazy" decoding="async">
+        <button class="video__play" type="button" id="video-play" aria-label="Assistir ao vídeo de apresentação do L.E.I.A.">
+          <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4l14 8-14 8z" fill="currentColor"/></svg></span>
+        </button>
+      </div>
+      <p class="legenda video__aviso" id="video-aviso" role="status" hidden>O vídeo aparece quando a página estiver publicada no site da Amplify.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4. O QUE É E O QUE NÃO É -->
+<section class="secao" data-theme="creme" id="programa">
+  <div class="container">
+    <div class="cabeca">
+      <p class="rotulo">O que é o L.E.I.A.</p>
+      <h2 class="titulo">Pensar com a IA, <span class="destaque">e não terceirizar o pensamento para ela.</span></h2>
+      <p class="texto">O L.E.I.A. é um programa escolar de fluência em inteligência artificial. O estudante aprende a usar, verificar e assumir responsabilidade pelo que cria com IA, em projetos reais e com mediação pedagógica em todos os encontros.</p>
+    </div>
+    <div class="lados">
+      <div class="lado">
+        <h3 class="titulo-2">O que o L.E.I.A. é</h3>
+        <ul>
+          <li><b>Um programa anual</b><span>Com início, percurso e culminância definidos.</span></li>
+          <li><b>Um laboratório de fluência</b><span>O foco é critério, julgamento e autoria, e não o domínio de uma ferramenta específica.</span></li>
+          <li><b>Aprendizagem visível</b><span>Gera evidência de aprendizagem para a escola e para as famílias.</span></li>
+        </ul>
+      </div>
+      <div class="lado lado--nao">
+        <h3 class="titulo-2">O que o L.E.I.A. não é</h3>
+        <ul>
+          <li><b>Não é curso de ferramenta</b><span>As ferramentas mudam a cada semestre. O critério permanece.</span></li>
+          <li><b>Não é curso de programação</b><span>O estudante não precisa saber programar para participar.</span></li>
+          <li><b>Não é uma plataforma de uso livre</b><span>Todo uso de IA acontece com objetivo declarado e mediação.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="ciclo-bloco">
+      <div class="cabeca" style="margin-bottom:var(--esp-6)">
+        <p class="rotulo">O ciclo de cada projeto</p>
+        <h3 class="titulo-2">Quatro passos que se repetem em todo projeto.</h3>
+      </div>
+      <ol class="ciclo">
+        <li><h3>Investigar</h3><p class="corpo">Começar por uma pergunta que vale a pena explorar.</p></li>
+        <li><h3>Verificar</h3><p class="corpo">Comparar fontes, identificar vieses e testar respostas.</p></li>
+        <li><h3>Criar</h3><p class="corpo">Usar a IA como apoio para construir algo próprio.</p></li>
+        <li><h3>Explicar</h3><p class="corpo">Dar clareza ao processo, aos critérios e às decisões.</p></li>
+      </ol>
+      <div class="competencias">
+        <div><p class="rotulo">Competências</p><p class="titulo-2" style="margin-top:10px">Para usar agora e levar para o futuro.</p></div>
+        <ul class="marcadores">
+          <li>Fazer perguntas melhores e estruturar problemas.</li>
+          <li>Avaliar confiabilidade, contexto e intenção.</li>
+          <li>Criar com repertório, autoria e responsabilidade.</li>
+          <li>Comunicar escolhas e aprender com o processo.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. PARA QUEM E FORMATO -->
+<section class="secao" data-theme="roxo" id="formato">
+  <img class="deco" src="/leia/assets/orbe-quente.svg" alt="" style="right:-70px;bottom:120px;width:170px">
+  <div class="container">
+    <div class="cabeca">
+      <p class="rotulo">Para quem é e como funciona</p>
+      <h2 class="titulo">Um ano letivo <span class="destaque-2">dentro da rotina da escola.</span></h2>
+    </div>
+    <div class="publicos">
+      <div class="publico"><img src="/leia/assets/brilho-4-pontas-coral.svg" alt=""><h3 class="titulo-2">Estudantes</h3><p class="corpo">Do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio.</p></div>
+      <div class="publico"><img src="/leia/assets/brilho-4-pontas-ciano.svg" alt=""><h3 class="titulo-2">Escolas</h3><p class="corpo">Particulares de Educação Básica, com Ensino Fundamental II e Ensino Médio.</p></div>
+      <div class="publico"><img src="/leia/assets/estrela-8-raios-laranja.svg" alt=""><h3 class="titulo-2">Professores e coordenação</h3><p class="corpo">A formação docente faz parte da implantação, conduzida por professores e coordenadores pedagógicos especialistas da Amplify.</p></div>
+    </div>
+    <div class="numeros">
+      <div class="numero"><p class="numero__valor">1h40</p><p class="numero__legenda">Dois encontros por semana<span>Com mediação pedagógica em todos</span></p></div>
+      <div class="numero"><p class="numero__valor">48</p><p class="numero__legenda">Horas de mão na massa<span>Dividos em dois módulos semestrais</span></p></div>
+      <div class="numero"><p class="numero__valor">10 a 25</p><p class="numero__legenda">Estudantes por turma<span>A escola pode abrir mais de uma turma</span></p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 6. JORNADA -->
+<section class="secao bg-creme-claro" data-theme="creme" id="jornada">
+  <div class="container">
+    <div class="cabeca">
+      <p class="rotulo">Jornada do estudante</p>
+      <h2 class="titulo">Um ano letivo, dois módulos <span class="destaque">e um festival.</span></h2>
+      <p class="texto">Começo, meio e fim definidos. Ao final do ano, a escola e as famílias veem o que os estudantes construíram.</p>
+    </div>
+    <ol class="passos">
+      <li class="passo"><p class="passo__quando">1º semestre</p><h3>Alquimistas</h3><p class="corpo">Descoberta e experimentação. O estudante entende como a IA funciona e aprende a testar, comparar e verificar o que ela produz.</p></li>
+      <li class="passo"><p class="passo__quando">2º semestre</p><h3>Transmutação</h3><p class="corpo">Autoria. Em equipe, os estudantes escolhem um problema real da escola ou da comunidade e criam uma solução com IA.</p></li>
+      <li class="passo"><p class="passo__quando">Fim do ano letivo</p><h3>Festival dos Inventores</h3><p class="corpo">Apresentação pública dos projetos às famílias e à comunidade, com avaliação por banca.</p></li>
+    </ol>
+    <div class="banca">
+      <p class="rotulo">Critérios da banca</p>
+      <ul class="chips"><li>Criatividade</li><li>Estética</li><li>Técnica</li><li>Impacto</li><li>Execução</li></ul>
+    </div>
+  </div>
+</section>
+
+<!-- 7. JORNADA ILUSTRADA -->
+<section class="secao jornada-mapa" data-theme="roxo" id="criacoes">
+  <div class="container">
+    <h2 class="jornada-mapa__titulo">O ano começa com perguntas.<br><span class="destaque">Termina com inventores.</span></h2>
+    <p class="jornada-mapa__texto">No LEIA, os estudantes começam explorando a IA: fazem perguntas, testam respostas e aprendem a verificar. Depois, transformam problemas reais em projetos de artes, tecnologia e empreendedorismo. No Festival dos Inventores, apresentam suas criações, explicam suas escolhas e compartilham o que aprenderam. A IA é ferramenta. A autoria é deles.</p>
+    <figure class="jornada-mapa__figura">
+      <img class="jornada-mapa__imagem jornada-mapa__imagem--animada" src="/leia/assets/leia-jornada-animada-v2.gif" alt="Jornada LEIA: chegada ao Início, Alquimistas, Transmutação e Festival dos Inventores. Os alunos visitam Artes, Tecnologia e Empreendedorismo, retornam à Transmutação e seguem para o Festival." width="1280" height="907" loading="lazy" decoding="async">
+      <img class="jornada-mapa__imagem jornada-mapa__imagem--reduzida" src="/leia/assets/leia-jornada-base-v2.png" alt="Versão sem movimento da jornada LEIA." width="1536" height="1024" loading="lazy" decoding="async">
+    </figure>
+    <p class="jornada-mapa__nota">A lista completa de atividades é apresentada na masterclass.</p>
+  </div>
+</section>
+
+<!-- 8. CURRÍCULO E PROTEÇÃO -->
+<section class="secao" data-theme="creme" id="curriculo">
+  <div class="container grade g-7-5 topo-alinhado">
+    <div>
+      <div class="cabeca" style="margin-bottom:var(--esp-6)">
+        <p class="rotulo">Currículo e proteção</p>
+        <h2 class="titulo">Conectado à BNCC. <span class="destaque">Desenhado para adolescentes.</span></h2>
+        <p class="texto">O L.E.I.A. dialoga com as competências gerais da Base Nacional Comum Curricular.</p>
+      </div>
+      <ol class="bncc">
+        <li><b>2</b><span><small>Competência geral</small>Pensamento científico, crítico e criativo</span></li>
+        <li><b>4</b><span><small>Competência geral</small>Comunicação</span></li>
+        <li><b>5</b><span><small>Competência geral</small>Cultura digital</span></li>
+        <li><b>7</b><span><small>Competência geral</small>Argumentação</span></li>
+        <li><b>10</b><span><small>Competência geral</small>Responsabilidade e cidadania</span></li>
+      </ol>
+    </div>
+    <aside class="cartao-roxo">
+      <img class="deco" src="/leia/assets/estrela-8-raios-coral.svg" alt="" style="right:-14px;top:-14px;width:72px">
+      <p class="rotulo">Proteção como critério</p>
+      <h3 class="titulo-2">Um programa feito para adolescentes.</h3>
+      <p class="corpo">A proteção de crianças e adolescentes é critério de desenho do L.E.I.A.</p>
+      <ul class="marcadores">
+        <li>Mediação em todos os encontros.</li>
+        <li>Uso de IA com objetivo declarado.</li>
+        <li>Plataforma e proteção de dados apresentadas na masterclass.</li>
+      </ul>
+    </aside>
+  </div>
+</section>
+
+<!-- 9. DA MASTERCLASS À IMPLANTAÇÃO -->
+<section class="secao" data-theme="roxo" id="caminho">
+  <div class="container">
+    <div class="cabeca">
+      <p class="rotulo">Da masterclass à implantação</p>
+      <h2 class="titulo">Como uma escola <span class="destaque-2">chega ao L.E.I.A.</span></h2>
+    </div>
+    <div class="grade g-7-5 topo-alinhado">
+      <ol class="etapas">
+        <li><div><h3>Masterclass exclusiva para escola - presencial ou online</h3><p class="corpo">Gratuita, com 1 hora de conteúdo e 30 minutos para dúvidas. A equipe vive a experiência do método na prática.</p></div></li>
+        <li><div><h3>Diagnóstico gratuito</h3><p class="corpo">Conversa com a direção sobre perfil, estrutura e metas da escola.</p></div></li>
+        <li><div><h3>Proposta</h3><p class="corpo">Desenhada para a realidade de cada escola.</p></div></li>
+        <li><div><h3>Implantação e turmas em 2027</h3><p class="corpo">Formação docente, organização das turmas e início no 1º semestre.</p></div></li>
+      </ol>
+      <aside class="cartao-creme">
+        <span class="selo">Gratuita · 1h + 30 min de dúvidas</span>
+        <h3 class="titulo-2">O que a masterclass apresenta</h3>
+        <ul class="marcadores">
+          <li>A experiência do método na prática.</li>
+          <li>A lista completa de atividades dos estudantes.</li>
+          <li>A plataforma de IA adotada e como ela é usada com mediação.</li>
+          <li>O mapeamento com a BNCC e a política de privacidade e proteção de dados.</li>
+          <li>Como funcionam a condução e a organização das turmas em 2027.</li>
+        </ul>
+        <a class="botao botao--bloco" href="#contato" data-intencao="masterclass">Solicitar uma masterclass <span class="seta" aria-hidden="true">&rarr;</span></a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 10. INVESTIMENTO E CONTRATAÇÃO -->
+<section class="secao" data-theme="creme" id="contratacao">
+  <div class="container contrato">
+    <div class="cabeca" style="margin-bottom:0">
+      <p class="rotulo">Investimento e contratação</p>
+      <h2 class="titulo">Cada escola tem uma realidade. <span class="destaque">O investimento é desenhado com ela.</span></h2>
+      <p class="texto">O formato de contratação depende de quantas turmas e quantos estudantes a escola quer reunir e de como organiza a oferta para as famílias. Por isso não publicamos uma tabela de preços. Os valores são apresentados em uma reunião com um especialista da nossa equipe, a partir da realidade da sua escola.</p>
+      <div class="botoes" style="margin-top:var(--esp-3)">
+        <a class="botao botao--grande" href="#contato" data-intencao="orcamento">Solicitar orçamento <span class="seta" aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+    <div>
+      <p class="rotulo" style="margin-bottom:var(--esp-4)">Na reunião, o especialista</p>
+      <ol class="reuniao">
+        <li>Entende o perfil, a estrutura e as metas da escola.</li>
+        <li>Define com a direção quantas turmas e quantos estudantes fazem sentido.</li>
+        <li>Simula cenários de contratação, incluindo a oferta para as famílias.</li>
+        <li>Entrega uma proposta por escrito.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- 11. PERGUNTAS FREQUENTES -->
+<section class="secao bg-leia" data-theme="roxo" id="perguntas">
+  <div class="container faq-grade">
+    <div class="cabeca">
+      <p class="rotulo">Perguntas frequentes</p>
+      <h2 class="titulo">Antes de <span class="destaque">começar.</span></h2>
+    </div>
+    <div class="faq">
+      <details><summary>O L.E.I.A. é uma aula de ferramentas de IA?</summary><p class="corpo">Não. As ferramentas são o meio e mudam a cada semestre. O foco é desenvolver critério para investigar, verificar, criar e explicar com responsabilidade.</p></details>
+      <details><summary>Para quais estudantes é o programa?</summary><p class="corpo">Do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio.</p></details>
+      <details><summary>A escola precisa ter um laboratório específico?</summary><p class="corpo">Precisa de um laboratório de informática com acesso à internet. O programa usa a infraestrutura que a escola já tem e não depende do celular do estudante.</p></details>
+      <details><summary>Precisamos criar uma nova disciplina?</summary><p class="corpo">Não. O programa entra no contraturno, como eletiva ou como itinerário formativo.</p></details>
+      <details><summary>Como professores e coordenação participam?</summary><p class="corpo">A formação docente faz parte da implantação, conduzida por especialistas da Amplify. Na condução padrão, um educador do programa dá os encontros, sem trabalho extra para o corpo docente. A escola também pode formar e certificar professores próprios para conduzir.</p></details>
+      <details><summary>Como o programa aborda segurança e uso responsável?</summary><p class="corpo">Todo uso de IA acontece com objetivo declarado e com mediação em todos os encontros. Segurança, verificação e responsabilidade fazem parte do método. Os detalhes da plataforma de IA e da proteção de dados são apresentados na masterclass.</p></details>
+      <details><summary>Como a escola e as famílias enxergam o resultado?</summary><p class="corpo">Pelos projetos dos estudantes e pelo Festival dos Inventores, no fim do ano, com apresentação pública e avaliação por banca em cinco critérios: criatividade, estética, técnica, impacto e execução.</p></details>
+      <details><summary>Quando o programa começa?</summary><p class="corpo">As turmas começam a partir do 1º semestre de 2027.</p></details>
+      <details><summary>A masterclass é gratuita?</summary><p class="corpo">Sim. São 1 hora de conteúdo e 30 minutos para dúvidas, para sua escola, presencial ou online.</p></details>
+      <details><summary>Quanto custa?</summary><p class="corpo">Os valores são apresentados em uma reunião com um especialista, depois de entendermos a realidade da escola. Use o botão "Solicitar orçamento".</p></details>
+      <details><summary>A solicitação já confirma uma data?</summary><p class="corpo">Não. O envio do formulário registra o interesse. Nossa equipe entra em contato para entender o contexto e combinar os próximos passos.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- 12. CONTATO -->
+<section class="secao bg-profundo" data-theme="roxo" id="contato">
+  <div class="constelacao" aria-hidden="true"></div>
+  <img class="deco" src="/leia/assets/orbe-quente.svg" alt="" style="left:-50px;bottom:60px;width:170px">
+  <div class="container grade g-5-7 topo-alinhado">
+    <div class="contato-dir">
+      <p class="rotulo">O primeiro passo</p>
+      <h2 class="titulo">Leve essa conversa <span class="eletrico">para a sua escola.</span></h2>
+      <p class="texto">Conte um pouco sobre o seu contexto. Nossa equipe entra em contato para organizar uma masterclass ou conversar sobre implantação e orçamento.</p>
+      <ul class="marcadores">
+        <li>Masterclass gratuita para sua escola - presencial ou online.</li>
+        <li>1 hora de conteúdo e 30 minutos para dúvidas.</li>
+        <li>Conversa com especialista para montar o orçamento.</li>
+      </ul>
+      <div class="contato-mail">
+        <span class="legenda">Prefere escrever?</span>
+        <code id="email-comercial">comercial@amplify.ia.br</code>
+        <button class="botao botao--contorno mini" type="button" id="copiar-email">Copiar e-mail</button>
+        <span class="status" id="copiar-email-status" role="status" style="color:var(--texto-suave)"></span>
+      </div>
+    </div>
+
+    <div class="form" aria-live="polite">
+      <form id="form-contato" novalidate>
+        <fieldset>
+          <legend class="legend">Como você quer começar?</legend>
+          <div class="opcoes">
+            <label class="opcao"><input type="radio" name="intencao" id="intencao-masterclass" value="masterclass" checked><span>Quero solicitar uma masterclass</span></label>
+            <label class="opcao"><input type="radio" name="intencao" id="intencao-orcamento" value="orcamento"><span>Quero conversar com um especialista sobre implantação e orçamento</span></label>
+          </div>
+        </fieldset>
+        <fieldset id="formato-masterclass">
+          <legend class="legend">Como prefere participar? <span class="opc">(opcional)</span></legend>
+          <div class="opcoes opcoes--inline">
+            <label class="opcao"><input type="radio" name="formatoMasterclass" value="presencial"><span>Presencial</span></label>
+            <label class="opcao"><input type="radio" name="formatoMasterclass" value="online"><span>Online</span></label>
+          </div>
+        </fieldset>
+        <div class="linha2">
+          <div class="campo"><label for="nome">Nome</label><input id="nome" name="nome" autocomplete="name" placeholder="Nome e sobrenome" required><span class="erro" id="nome-erro" hidden>Informe seu nome.</span></div>
+          <div class="campo"><label for="email">E-mail profissional</label><input id="email" name="email" type="email" autocomplete="email" placeholder="voce@escola.com.br" required><span class="erro" id="email-erro" hidden>Informe um e-mail válido.</span></div>
+        </div>
+        <div class="linha2">
+          <div class="campo"><label for="escola">Escola ou rede</label><input id="escola" name="escola" autocomplete="organization" placeholder="Nome da escola ou rede" required><span class="erro" id="escola-erro" hidden>Informe a escola ou rede.</span></div>
+          <div class="campo"><label for="papel">Seu papel</label>
+            <select id="papel" name="papel" required><option value="">Selecione</option><option>Direção</option><option>Coordenação pedagógica</option><option>Professor(a)</option><option>Mantenedor(a)</option><option>Outro</option></select>
+            <span class="erro" id="papel-erro" hidden>Selecione seu papel na escola.</span></div>
+        </div>
+        <div class="campo"><label for="estudantes">Quantos estudantes a escola tem do 9º ano à 3ª série? <span class="opc">(opcional)</span></label>
+          <select id="estudantes" name="estudantes"><option value="">Selecione</option><option>Até 100</option><option>101 a 300</option><option>301 a 600</option><option>Mais de 600</option><option>Ainda não sei</option></select></div>
+        <details class="extra">
+          <summary>Adicionar cidade e telefone (opcional)</summary>
+          <div class="linha2">
+            <div class="campo"><label for="cidade">Cidade e estado</label><input id="cidade" name="cidade" autocomplete="address-level2" placeholder="Brasília, DF"></div>
+            <div class="campo"><label for="telefone">Telefone</label><input id="telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(61) 90000-0000"></div>
+          </div>
+        </details>
+        <div class="hp" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+        <p class="form__nota">A solicitação não confirma uma data. Nossa equipe entra em contato para alinhar contexto e formato.</p>
+        <button class="botao botao--grande botao--bloco" type="submit" id="enviar">Enviar solicitação <span class="seta" aria-hidden="true">&rarr;</span></button>
+        <p class="form__consent">Ao enviar, você concorda com o uso dos dados para responder a esta solicitação, conforme a nossa <a href="https://amplify.ia.br/privacidade" target="_blank" rel="noopener">política de privacidade</a>.</p>
+      </form>
+
+      <div class="ok" id="ok" hidden tabindex="-1">
+        <div class="ok__selo"><img src="/leia/assets/brilho-4-pontas-coral.svg" alt=""></div>
+        <h3 id="ok-titulo">Solicitação enviada.</h3>
+        <p class="corpo" id="ok-texto">Nossa equipe entra em contato para alinhar contexto e formato.</p>
+        <dl class="resumo" id="resumo"></dl>
+        <div class="botoes">
+          <button class="botao" type="button" id="copiar-resumo">Copiar resumo</button>
+          <button class="botao botao--contorno" type="button" id="editar">Editar dados</button>
+        </div>
+        <p class="status" id="resumo-status" role="status"></p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="rodape">
+  <div class="container">
+    <div class="rodape__topo">
+      <div class="assinatura">
+        <img class="assinatura__leia" src="/leia/assets/leia-logo-assinatura-branco.png" alt="L.E.I.A. Laboratório Escolar de Inteligência Artificial">
+        <span class="assinatura__divisor" aria-hidden="true"></span>
+        <div class="assinatura__endosso"><span>Um programa</span><img src="/leia/assets/amplify-assinatura-referencia.png" alt="Amplify, Escola de Inteligência Artificial"></div>
+      </div>
+      <a class="botao" href="#contato" data-intencao="masterclass">Solicitar masterclass</a>
+    </div>
+    <div class="rodape__base">
+      <span>L.E.I.A. · Laboratório Escolar de Inteligência Artificial</span>
+      <span>comercial@amplify.ia.br</span>
+      <a href="https://amplify.ia.br/privacidade" target="_blank" rel="noopener">Privacidade</a>
+      <span>© 2026 Amplify</span>
+    </div>
+  </div>
+</footer>
+
+<div class="cta-fixo" id="cta-fixo"><a class="botao" href="#contato" data-intencao="masterclass">Solicitar masterclass <span class="seta" aria-hidden="true">&rarr;</span></a></div>
+
+<script>
+/* ====== CONFIGURAÇÃO ======
+   ENDPOINT: endereço que recebe a solicitação em JSON (o mesmo do formulário atual do site).
+   Vazio = modo prévia: a página mostra o resumo, mas não envia nada.
+   VIDEO_SRC_HD e VIDEO_SRC_MOBILE: variantes escolhidas no clique, sem bloquear a carga da LP. */
+const CONFIG = {
+  ENDPOINT: "/api/leia-lead",
+  VIDEO_SRC_HD: "/leia/video/leia-apresentacao.mp4",
+  VIDEO_SRC_MOBILE: "/leia/video/leia-apresentacao-720p.mp4"
+};
+
+(function () {
+  const $ = (id) => document.getElementById(id);
+
+  function sincronizarFormatoMasterclass() {
+    const grupo = $("formato-masterclass");
+    const mostrar = $("intencao-masterclass").checked;
+    grupo.hidden = !mostrar;
+    grupo.querySelectorAll("input").forEach((input) => { input.disabled = !mostrar; });
+  }
+
+  // Botões de entrada marcam a opção certa no formulário
+  document.querySelectorAll("[data-intencao]").forEach((a) => {
+    a.addEventListener("click", () => {
+      const alvo = $("intencao-" + a.dataset.intencao);
+      if (alvo) {
+        alvo.checked = true;
+        sincronizarFormatoMasterclass();
+      }
+    });
+  });
+  document.querySelectorAll('input[name="intencao"]').forEach((input) => input.addEventListener("change", sincronizarFormatoMasterclass));
+  sincronizarFormatoMasterclass();
+
+  // Vídeo carregado só quando a pessoa escolhe assistir
+  $("video-play").addEventListener("click", () => {
+    const box = $("video-box");
+    const v = document.createElement("video");
+    const conexao = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+    const conexaoLenta = Boolean(conexao?.saveData || /(^|-)2g$/.test(conexao?.effectiveType || "") || (conexao?.downlink && conexao.downlink < 2));
+    const telaCompacta = window.matchMedia("(max-width: 767px)").matches;
+    const usar720p = telaCompacta || conexaoLenta;
+    v.className = "video__media";
+    v.controls = true; v.playsInline = true; v.preload = "auto";
+    v.width = usar720p ? 1280 : 1920;
+    v.height = usar720p ? 720 : 1080;
+    v.dataset.quality = usar720p ? "720p" : "1080p";
+    v.setAttribute("aria-label", "Vídeo de apresentação do L.E.I.A.");
+    v.poster = "/leia/assets/personagem-05.jpg";
+    const falhou = () => { $("video-aviso").hidden = false; };
+    v.addEventListener("error", falhou);
+    const src = document.createElement("source");
+    src.src = usar720p ? CONFIG.VIDEO_SRC_MOBILE : CONFIG.VIDEO_SRC_HD;
+    src.type = "video/mp4";
+    src.addEventListener("error", falhou);
+    v.appendChild(src);
+    box.replaceChildren(v);
+    v.play().catch(() => {});
+  });
+
+  // Copiar com fallback para seleção
+  function copiar(texto, noSelecionar, statusEl, okMsg) {
+    const selecionar = () => { const r = document.createRange(); r.selectNodeContents(noSelecionar); const s = getSelection(); s.removeAllRanges(); s.addRange(r); statusEl.textContent = "Texto selecionado. Use Ctrl+C para copiar."; };
+    try { navigator.clipboard.writeText(texto).then(() => { statusEl.textContent = okMsg; }).catch(selecionar); } catch (e) { selecionar(); }
+  }
+  $("copiar-email").addEventListener("click", () => copiar($("email-comercial").textContent, $("email-comercial"), $("copiar-email-status"), "E-mail copiado."));
+
+  // Máscara de telefone
+  $("telefone").addEventListener("input", (ev) => {
+    const d = ev.target.value.replace(/\D/g, "").slice(0, 11);
+    let v = d;
+    if (d.length > 2) v = `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length > 7) v = `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+    ev.target.value = v;
+  });
+
+  // Validação e envio
+  const form = $("form-contato"), ok = $("ok");
+  let lead = null;
+  function marcar(id, valido) {
+    $(id).setAttribute("aria-invalid", valido ? "false" : "true");
+    $(id + "-erro").hidden = valido;
+    return valido;
+  }
+  function validar() {
+    const campos = ["nome", "email", "escola", "papel"];
+    const r = [
+      marcar("nome", $("nome").value.trim().length >= 3),
+      marcar("email", /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test($("email").value.trim())),
+      marcar("escola", $("escola").value.trim().length >= 2),
+      marcar("papel", !!$("papel").value)
+    ];
+    const i = r.indexOf(false);
+    if (i >= 0) $(campos[i]).focus();
+    return i < 0;
+  }
+  ["nome", "email", "escola", "papel"].forEach((id) => $(id).addEventListener("change", () => { if ($(id).getAttribute("aria-invalid") === "true") validar(); }));
+
+  function utm() {
+    const out = {};
+    try { new URLSearchParams(location.search).forEach((v, k) => { if (k.startsWith("utm_")) out[k] = v; }); } catch (e) {}
+    return out;
+  }
+
+  form.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    if ($("website").value) return; // campo anti-spam preenchido: ignora
+    if (!validar()) return;
+    const f = new FormData(form);
+    const solicitouMasterclass = f.get("intencao") !== "orcamento";
+    const intencao = solicitouMasterclass ? "Solicitar masterclass" : "Conversar com especialista sobre implantação e orçamento";
+    const formatoMasterclass = solicitouMasterclass ? String(f.get("formatoMasterclass") || "") : "";
+    lead = {
+      intencao, nome: f.get("nome").trim(), email: f.get("email").trim(), escola: f.get("escola").trim(), papel: f.get("papel"),
+      formatoMasterclass, estudantes: f.get("estudantes") || "", cidade: (f.get("cidade") || "").trim(), telefone: f.get("telefone") || "",
+      origem: "Site L.E.I.A.", criadoEm: new Date().toISOString(), ...utm()
+    };
+    const linhas = [["Como quer começar", lead.intencao], ["Nome", lead.nome], ["E-mail", lead.email], ["Escola ou rede", lead.escola], ["Papel", lead.papel]];
+    if (lead.formatoMasterclass) linhas.splice(1, 0, ["Formato da masterclass", lead.formatoMasterclass === "presencial" ? "Presencial" : "Online"]);
+    if (lead.estudantes) linhas.push(["Estudantes (9º ao 3º EM)", lead.estudantes]);
+    if (lead.cidade) linhas.push(["Cidade", lead.cidade]);
+    if (lead.telefone) linhas.push(["Telefone", lead.telefone]);
+    const dl = $("resumo"); dl.textContent = "";
+    linhas.forEach(([k, v]) => { const d = document.createElement("div"), dt = document.createElement("dt"), dd = document.createElement("dd"); dt.textContent = k; dd.textContent = v; d.append(dt, dd); dl.append(d); });
+    lead.texto = "Solicitação pelo site do L.E.I.A.\n\n" + linhas.map(([k, v]) => `${k}: ${v}`).join("\n");
+
+    let enviado = false;
+    if (CONFIG.ENDPOINT) {
+      $("enviar").disabled = true;
+      try {
+        const payload = {
+          name: lead.nome,
+          email: lead.email,
+          school: lead.escola,
+          role: lead.papel,
+          interest: f.get("intencao") === "orcamento" ? "implantacao" : "masterclass",
+          masterclassFormat: lead.formatoMasterclass,
+          students: lead.estudantes,
+          cityState: lead.cidade,
+          phone: lead.telefone,
+          path: location.pathname,
+          ...utm()
+        };
+        const r = await fetch(CONFIG.ENDPOINT, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        enviado = r.ok;
+      } catch (e) { enviado = false; }
+      $("enviar").disabled = false;
+    }
+    if (enviado) {
+      $("ok-titulo").textContent = "Solicitação enviada.";
+      $("ok-texto").textContent = "Nossa equipe entra em contato para alinhar contexto e formato.";
+    } else if (CONFIG.ENDPOINT) {
+      $("ok-titulo").textContent = "Não conseguimos enviar agora.";
+      $("ok-texto").textContent = "Copie o resumo abaixo e envie para comercial@amplify.ia.br, ou tente de novo em alguns minutos.";
+    } else {
+      $("ok-titulo").textContent = "Prévia: formulário ainda não conectado.";
+      $("ok-texto").textContent = "Na versão publicada, esta solicitação vai direto para a equipe comercial. Nada foi enviado.";
+    }
+    form.hidden = true; ok.hidden = false; ok.focus();
+  });
+
+  $("copiar-resumo").addEventListener("click", () => copiar(lead ? lead.texto : "", $("resumo"), $("resumo-status"), "Resumo copiado."));
+  $("editar").addEventListener("click", () => { ok.hidden = true; form.hidden = false; $("resumo-status").textContent = ""; $("nome").focus(); });
+
+  // CTA fixo no celular: aparece depois do hero e some no contato
+  const fixo = $("cta-fixo");
+  let heroVis = true, contatoVis = false;
+  const upd = () => fixo.classList.toggle("on", !heroVis && !contatoVis);
+  if ("IntersectionObserver" in window) {
+    new IntersectionObserver(([en]) => { heroVis = en.isIntersecting; upd(); }).observe($("topo"));
+    new IntersectionObserver(([en]) => { contatoVis = en.isIntersecting; upd(); }, { threshold: 0.05 }).observe($("contato"));
+  }
+})();
+</script>
+
+<Analytics />
+</body></html>

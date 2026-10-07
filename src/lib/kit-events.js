@@ -48,6 +48,11 @@ const FIELD_LABELS = [
   "ana_resposta_3",
   "ana_resposta_4",
   "ana_last_event",
+  "amplify_day_registration_code",
+  "amplify_day_registration_status",
+  "amplify_day_registration_origin",
+  "amplify_day_stage",
+  "amplify_day_last_event",
 ];
 
 const EVENT_TAG_MAP = {
@@ -200,6 +205,11 @@ function getApiKey() {
     .trim();
 }
 
+async function validateKitCredentials() {
+  const result = await kitRequest("/account");
+  return result.ok ? { ok: true } : result;
+}
+
 async function kitRequest(path, { method = "GET", body } = {}) {
   const apiKey = getApiKey();
 
@@ -255,13 +265,51 @@ function extractSubscriberId(result) {
   return result?.body?.subscriber?.id || result?.body?.id || result?.body?.data?.id || null;
 }
 
+async function findExistingTag(label) {
+  const result = await kitRequest("/tags?per_page=1000");
+  if (!result.ok) return { ...result, label };
+
+  const normalizedLabel = clean(label).toLowerCase();
+  const tag = (Array.isArray(result.body?.tags) ? result.body.tags : [])
+    .find((candidate) => clean(candidate?.name).toLowerCase() === normalizedLabel);
+
+  if (!tag?.id) return { ok: false, notFound: true, label, result };
+  return { ok: true, label, id: tag.id, existing: true, result };
+}
+
+async function resolveTag(label) {
+  const existingTag = await findExistingTag(label);
+  if (existingTag.ok || !existingTag.notFound) return existingTag;
+
+  const createdTag = await kitRequest("/tags", { method: "POST", body: { name: label } });
+  const createdTagId = extractTagId(createdTag);
+  if (createdTag.ok && createdTagId) {
+    return { ok: true, label, id: createdTagId, existing: false, result: createdTag };
+  }
+
+  // Another request can create the same tag between the lookup and this POST.
+  // Resolve the winning tag instead of treating the duplicate response as a failure.
+  if ([409, 422].includes(createdTag.status)) {
+    const concurrentTag = await findExistingTag(label);
+    if (concurrentTag.ok) return concurrentTag;
+  }
+
+  return { ...createdTag, ok: false, label };
+}
+
 async function ensureTag(label) {
   if (tagIdPromises.has(label)) return tagIdPromises.get(label);
 
-  const promise = kitRequest("/tags", { method: "POST", body: { name: label } }).then((result) => {
-    if (!result.ok) return { ...result, label };
-    return { ok: true, label, id: extractTagId(result), result };
-  });
+  const promise = resolveTag(label).then(
+    (result) => {
+      if (!result.ok) tagIdPromises.delete(label);
+      return result;
+    },
+    (error) => {
+      tagIdPromises.delete(label);
+      throw error;
+    },
+  );
 
   tagIdPromises.set(label, promise);
   return promise;
@@ -619,6 +667,7 @@ function buildCustomFields(payload = {}, lead = {}) {
   const isBootcampEvent = eventName.startsWith("bootcamp_") || Boolean(payload.bootcampSlug || payload.bootcamp_slug);
   const isEbookEvent = Boolean(payload.ebookSlug || payload.ebook_slug);
   const isAnaEvent = eventName.startsWith("ana_") || clean(payload.source) === "ana";
+  const isAmplifyDayEvent = eventName.startsWith("amplify_day_") || clean(payload.source) === "amplify-day";
 
   return compactObject({
     lead_score: lead.total_score ?? payload.totalScore ?? payload.score,
@@ -664,6 +713,11 @@ function buildCustomFields(payload = {}, lead = {}) {
     ana_resposta_3: payload.resposta_3,
     ana_resposta_4: payload.resposta_4,
     ana_last_event: isAnaEvent ? eventName : undefined,
+    amplify_day_registration_code: payload.registrationCode || payload.registration_code,
+    amplify_day_registration_status: payload.registrationStatus || payload.registration_status,
+    amplify_day_registration_origin: payload.registrationOrigin || payload.registration_origin,
+    amplify_day_stage: payload.amplifyDayStage || payload.amplify_day_stage || payload.targetStage || payload.target_stage,
+    amplify_day_last_event: isAmplifyDayEvent ? eventName : undefined,
   });
 }
 
@@ -687,6 +741,10 @@ export async function syncKitSubscriberEvent(payload = {}, lead = {}) {
 
   if (!email) return { ok: false, skipped: true, reason: "email ausente" };
   if (!getApiKey()) return { ok: false, skipped: true, reason: "KIT_API_KEY ausente" };
+
+  // Fail fast before attempting dozens of custom-field calls with an expired key.
+  const credentials = await validateKitCredentials();
+  if (!credentials.ok) return { ok: false, credentials };
 
   const fieldResults = await ensureCustomFields();
   const subscriberResult = await upsertSubscriber(payload, lead);
@@ -747,8 +805,42 @@ export async function tagKitSubscriber(email, tagLabel) {
   if (!getApiKey()) return { ok: false, skipped: true, reason: "KIT_API_KEY ausente" };
 
   const tagResult = await ensureTag(cleanTagLabel);
-  if (!tagResult.id) return { ok: false, tag: tagResult };
+  if (!tagResult.id) return { ok: false, error: tagResult, tag: cleanTagLabel, status: tagResult.status };
 
   const subscriberTagResult = await tagSubscriberByEmail(tagResult.id, cleanEmail);
-  return { ok: subscriberTagResult.ok, tag: cleanTagLabel, status: subscriberTagResult.status };
+  return {
+    ok: subscriberTagResult.ok,
+    tag: cleanTagLabel,
+    status: subscriberTagResult.status,
+    error: subscriberTagResult.ok ? undefined : subscriberTagResult,
+  };
+}
+
+export async function untagKitSubscriber(email, tagLabel) {
+  const cleanEmail = clean(email).toLowerCase();
+  const cleanTagLabel = clean(tagLabel);
+
+  if (!cleanEmail) return { ok: false, skipped: true, reason: "email ausente" };
+  if (!cleanTagLabel) return { ok: false, skipped: true, reason: "tag ausente" };
+  if (!getApiKey()) return { ok: false, skipped: true, reason: "KIT_API_KEY ausente" };
+
+  const [tagResult, subscriberResult] = await Promise.all([
+    findExistingTag(cleanTagLabel),
+    upsertSubscriber({ email: cleanEmail }),
+  ]);
+  if (tagResult.notFound) return { ok: true, skipped: true, reason: "tag inexistente", tag: cleanTagLabel };
+  if (!tagResult.id) return { ok: false, error: tagResult, tag: cleanTagLabel, status: tagResult.status };
+
+  const subscriberId = extractSubscriberId(subscriberResult);
+  if (!subscriberResult.ok || !subscriberId) {
+    return { ok: false, error: subscriberResult, tag: cleanTagLabel, status: subscriberResult.status };
+  }
+
+  const subscriberTagResult = await untagSubscriberById(tagResult.id, subscriberId);
+  return {
+    ok: subscriberTagResult.ok || subscriberTagResult.status === 404,
+    tag: cleanTagLabel,
+    status: subscriberTagResult.status,
+    error: subscriberTagResult.ok || subscriberTagResult.status === 404 ? undefined : subscriberTagResult,
+  };
 }

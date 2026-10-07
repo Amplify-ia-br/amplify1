@@ -3,7 +3,7 @@ import handler from "../../../api/nexialista-lead.js";
 export const prerender = false;
 
 function syncServerEnv() {
-  const keys = ["DATABASE_URL", "KIT_API_KEY", "RD_ENABLED"];
+  const keys = ["DATABASE_URL", "KIT_API_KEY"];
 
   keys.forEach((key) => {
     if (!process.env[key] && import.meta.env?.[key]) {

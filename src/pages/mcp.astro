@@ -1,0 +1,12 @@
+---
+import PageShell from "@/layouts/PageShell.astro";
+import Mcp from "@/pages/_Mcp.tsx";
+---
+
+<PageShell
+  title="O que é MCP | Amplify"
+  description="Entenda o que é Model Context Protocol, como ele conecta aplicações de IA a dados e ferramentas, e quando faz sentido usar MCP em uma empresa."
+  chatbot={false}
+>
+  <Mcp client:load />
+</PageShell>

@@ -1,0 +1,164 @@
+---
+import { render } from "astro:content";
+import { ArrowLeft } from "lucide-react";
+import KnowledgeLayout from "@/layouts/KnowledgeLayout.astro";
+import { getPublicKnowledge, type PublicKnowledgeEntry } from "@/lib/knowledge";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const entries = await getPublicKnowledge();
+  return entries.map((entry) => ({ params: { id: entry.data.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props as { entry: PublicKnowledgeEntry };
+const { Content } = await render(entry);
+const statusLabels = {
+  approved: "Aprovado",
+  active: "Ativo",
+  review: "Em revisão",
+  draft: "Rascunho",
+  deprecated: "Descontinuado",
+};
+const typeLabels = {
+  company: "Empresa",
+  education: "Educação",
+  glossary: "Glossário",
+  method: "Método",
+  offering: "Oferta",
+  portfolio: "Portfólio",
+};
+const [year, month, day] = entry.data.last_reviewed.split("-");
+const reviewedAt = year && month && day ? `${day}/${month}/${year}` : entry.data.last_reviewed;
+---
+
+<KnowledgeLayout title={`${entry.data.title} | Amplify`} description={entry.data.description}>
+  <article>
+    <header class="border-b border-border">
+      <div class="container mx-auto px-4 pb-12 pt-12 md:pb-16 md:pt-20">
+        <a href="/knowledge" class="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition hover:text-primary">
+          <ArrowLeft aria-hidden="true" className="h-4 w-4" />
+          Voltar para a base
+        </a>
+
+        <div class="mt-10 max-w-4xl">
+          <div class="mb-5 flex flex-wrap gap-x-4 gap-y-2 text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            <span class="text-primary">{typeLabels[entry.data.type] ?? entry.data.type}</span>
+            <span>{statusLabels[entry.data.status] ?? entry.data.status}</span>
+            <span>Revisado em {reviewedAt}</span>
+          </div>
+          <h1 class="text-balance text-4xl font-bold tracking-[-0.04em] md:text-6xl">{entry.data.title}</h1>
+          <p class="mt-6 max-w-3xl text-lg leading-8 text-muted-foreground">{entry.data.description}</p>
+          {entry.data.tags.length > 0 && (
+            <ul class="mt-6 flex flex-wrap gap-2" aria-label="Tags">
+              {entry.data.tags.map((tag) => <li class="rounded border border-border px-2.5 py-1 text-xs text-muted-foreground">{tag}</li>)}
+            </ul>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <div class="container mx-auto px-4 py-12 md:py-16">
+      <div class="knowledge-prose max-w-3xl">
+        <Content />
+      </div>
+    </div>
+  </article>
+</KnowledgeLayout>
+
+<style>
+  .knowledge-prose :global(h1) {
+    display: none;
+  }
+
+  .knowledge-prose :global(h2) {
+    margin-top: 3.5rem;
+    margin-bottom: 1rem;
+    font-size: clamp(1.75rem, 4vw, 2.35rem);
+    line-height: 1.12;
+    letter-spacing: -0.035em;
+  }
+
+  .knowledge-prose :global(h3) {
+    margin-top: 2.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.35rem;
+    line-height: 1.3;
+  }
+
+  .knowledge-prose :global(p),
+  .knowledge-prose :global(li) {
+    color: hsl(var(--muted-foreground));
+    font-size: 1.05rem;
+    line-height: 1.85;
+  }
+
+  .knowledge-prose :global(p) {
+    margin: 1rem 0;
+  }
+
+  .knowledge-prose :global(ul),
+  .knowledge-prose :global(ol) {
+    margin: 1rem 0;
+    padding-left: 1.4rem;
+  }
+
+  .knowledge-prose :global(ul) {
+    list-style: disc;
+  }
+
+  .knowledge-prose :global(ol) {
+    list-style: decimal;
+  }
+
+  .knowledge-prose :global(a) {
+    color: hsl(var(--primary));
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  .knowledge-prose :global(strong) {
+    color: hsl(var(--foreground));
+  }
+
+  .knowledge-prose :global(table) {
+    display: block;
+    width: 100%;
+    margin: 2rem 0;
+    overflow-x: auto;
+    border-collapse: collapse;
+  }
+
+  .knowledge-prose :global(th),
+  .knowledge-prose :global(td) {
+    min-width: 9rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid hsl(var(--border));
+    text-align: left;
+    vertical-align: top;
+    line-height: 1.55;
+  }
+
+  .knowledge-prose :global(th) {
+    color: hsl(var(--foreground));
+    background: hsl(var(--card));
+    font-size: 0.85rem;
+  }
+
+  .knowledge-prose :global(td) {
+    color: hsl(var(--muted-foreground));
+  }
+
+  .knowledge-prose :global(code) {
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.3rem;
+    background: hsl(var(--card));
+    padding: 0.15rem 0.35rem;
+    font-size: 0.9em;
+  }
+
+  .knowledge-prose :global(hr) {
+    margin: 3rem 0;
+    border-color: hsl(var(--border));
+  }
+</style>
