@@ -47,7 +47,7 @@ export function streamAnaAnswer(
     model: languageModel,
     system: `${ANA_INSTRUCTIONS}\n\nCONTEXTO CANÔNICO DESTA RESPOSTA:\n\n${knowledgeContext(retrieval)}`,
     messages,
-    temperature: 0.15,
+    temperature: isAnthropic ? undefined : 0.15,
     maxOutputTokens: 500,
     maxRetries: 1,
     providerOptions: isAnthropic
