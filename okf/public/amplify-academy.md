@@ -11,14 +11,18 @@ tags:
   - educação
   - formação
   - setor público
-sources: []
+sources:
+  - L.E.I.A. Ficha do Produto v2.6, setembro de 2026
+  - L.E.I.A. Proposta Pedagógica v2.1, outubro de 2026
 relationships:
   - type: part_of
     target: portfolio
   - type: related_to
     target: offers
-last_reviewed: 2026-10-07
-updated_at: 2026-10-07
+  - type: offers
+    target: leia
+last_reviewed: 2026-10-08
+updated_at: 2026-10-08
 ---
 
 # Amplify Academy
@@ -63,6 +67,12 @@ Novas trilhas, mentorias e certificações ajudam a aprofundar o domínio e a co
 As formações B2G consideram as responsabilidades próprias da Administração Pública. O programa pode incluir proteção de dados, governança, segurança da informação, rastreabilidade, supervisão humana e aplicação em processos administrativos.
 
 O conteúdo precisa respeitar a função do participante. Uma formação executiva não tem o mesmo objetivo de um laboratório para equipes técnicas.
+
+## Educação para escolas
+
+O [L.E.I.A.](/knowledge/leia) é o programa anual da Amplify Academy para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio. Ele trabalha fluência em Inteligência Artificial por meio de experiências, registros individuais e projetos acompanhados por professores.
+
+A Academy responde pelo currículo, pelos materiais e pela formação dos professores que conduzem o programa.
 
 ## Certificações
 

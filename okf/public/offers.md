@@ -12,7 +12,9 @@ tags:
   - educação
   - capacitação
   - consultoria
-sources: []
+sources:
+  - L.E.I.A. Ficha do Produto v2.6, setembro de 2026
+  - L.E.I.A. Brochura comercial v5 premium
 relationships:
   - type: part_of
     target: portfolio
@@ -20,8 +22,10 @@ relationships:
     target: amplify-academy
   - type: uses
     target: method
-last_reviewed: 2026-10-07
-updated_at: 2026-10-07
+  - type: includes
+    target: leia
+last_reviewed: 2026-10-08
+updated_at: 2026-10-08
 ---
 
 # Catálogo de ofertas
@@ -65,6 +69,18 @@ Os nomes e cargas horárias abaixo vieram do catálogo educacional anterior à u
 | IA para Jurídico, Controle e Auditoria | jurídico, controle interno, corregedoria e auditoria | 16 horas | presencial | analisar documentos e rotinas com critérios de segurança e supervisão humana |
 | IA para Comunicação Pública | equipes de comunicação e atendimento | 12 horas | workshop | melhorar produção, revisão e adaptação de conteúdo público |
 | IA para Dados, Indicadores e Decisão | planejamento, inteligência e análise de dados | 20 horas | presencial, com prática | apoiar análises e decisões com dados, mantendo revisão humana |
+
+## Educação para escolas
+
+### L.E.I.A.
+
+O Laboratório Escolar de Inteligência Artificial é um programa anual para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio. São 48 aulas, equivalentes a 40 horas, organizadas em dois módulos e encerradas pelo Festival dos Inventores.
+
+O programa pode funcionar no contraturno ou entrar no planejamento curricular da escola. A modalidade padrão forma professores da própria instituição. A escola também pode contratar um educador da Amplify.
+
+O resultado esperado é um estudante capaz de usar IA com critério, verificar respostas, preservar a própria autoria e explicar suas decisões. Diagnósticos, Diário de Bordo, portfólio e Relatório de Fluência registram o desenvolvimento individual.
+
+Os planos Standard, Silver e Gold usam o mesmo percurso pedagógico e variam conforme infraestrutura, administração do acesso à IA e disponibilização de equipamentos. Preços e condições vigentes estão na ficha pública do [L.E.I.A.](/knowledge/leia).
 
 ## Capacitação B2B
 
