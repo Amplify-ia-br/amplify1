@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ANA_MODELS, DEFAULT_ANA_MODEL, type AnaKnowledgeMode, type AnaModelId } from "@/lib/ana/config";
+import type { AnaRetrievalTrace } from "@/lib/ana/retrieval";
 import type { AnaMessage } from "@/lib/ana/types";
 import "./AnaLab.css";
 
@@ -42,45 +43,9 @@ type ToolTrace = {
 
 type Source = { id: string; title: string };
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
-}
-
-function unwrapStructuredOutput(output: unknown): unknown {
-  if (!isRecord(output)) return output;
-  if (isRecord(output.structuredContent)) return output.structuredContent;
-  if (Array.isArray(output.content)) {
-    const text = output.content.find((item) => isRecord(item) && item.type === "text" && typeof item.text === "string");
-    if (isRecord(text) && typeof text.text === "string") {
-      try { return JSON.parse(text.text); } catch { return output; }
-    }
-  }
-  return output;
-}
-
-function extractSources(output: unknown): Source[] {
-  const value = unwrapStructuredOutput(output);
-  if (!isRecord(value)) return [];
-  const candidates = [value.document];
-  return candidates.flatMap((candidate) => {
-    if (!isRecord(candidate) || typeof candidate.id !== "string") return [];
-    return [{ id: candidate.id, title: typeof candidate.title === "string" ? candidate.title : candidate.id }];
-  });
-}
-
-function collectToolTraces(messages: AnaMessage[]): ToolTrace[] {
-  return messages.flatMap((message) => message.parts.flatMap((part, index) => {
-    const candidate = part as unknown as Record<string, unknown>;
-    const type = typeof candidate.type === "string" ? candidate.type : "";
-    if (type !== "dynamic-tool" && !type.startsWith("tool-")) return [];
-    return [{
-      id: typeof candidate.toolCallId === "string" ? candidate.toolCallId : `${message.id}-${index}`,
-      name: typeof candidate.toolName === "string" ? candidate.toolName : type.replace(/^tool-/, ""),
-      state: typeof candidate.state === "string" ? candidate.state : "unknown",
-      input: candidate.input,
-      output: candidate.output,
-    }];
-  }));
+function retrievalFromMessage(message?: AnaMessage): AnaRetrievalTrace | undefined {
+  const part = message?.parts.find((candidate) => candidate.type === "data-retrieval");
+  return part?.type === "data-retrieval" ? part.data : undefined;
 }
 
 function formatDuration(value?: number) {
@@ -97,6 +62,13 @@ function textFromMessage(message: AnaMessage) {
   return message.parts.filter((part) => part.type === "text").map((part) => part.text).join("");
 }
 
+function cleanAssistantText(text: string) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, "$1")
+    .replace(/([.!?])(?=[A-ZÀ-Ý])/g, "$1 ")
+    .trim();
+}
+
 export default function AnaLab() {
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<AnaKnowledgeMode>("mcp");
@@ -108,6 +80,7 @@ export default function AnaLab() {
   const modeRef = useRef(mode);
   const modelRef = useRef(model);
   const activeRequest = useRef(false);
+  const assistantCountAtStart = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { modeRef.current = mode; }, [mode]);
@@ -120,35 +93,46 @@ export default function AnaLab() {
     }),
   }), []);
 
-  const { messages, sendMessage, setMessages, status, stop, error } = useChat<AnaMessage>({ transport });
+  const { messages, sendMessage, setMessages, status, stop, error, clearError } = useChat<AnaMessage>({ transport });
   const busy = status === "submitted" || status === "streaming";
 
   useEffect(() => {
-    if (status === "streaming" && activeRequest.current && firstTokenAt == null) setFirstTokenAt(Date.now());
+    const assistantMessages = messages.filter((message) => message.role === "assistant");
+    const latestText = assistantMessages.length > assistantCountAtStart.current
+      ? textFromMessage(assistantMessages[assistantMessages.length - 1])
+      : "";
+    if (latestText && activeRequest.current && firstTokenAt == null) setFirstTokenAt(Date.now());
     if ((status === "ready" || status === "error") && activeRequest.current) {
       activeRequest.current = false;
       setFinishedAt(Date.now());
     }
-  }, [status, firstTokenAt]);
+  }, [messages, status, firstTokenAt]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [messages, status]);
 
-  const traces = useMemo(() => collectToolTraces(messages), [messages]);
-  const sources = useMemo(() => {
-    const unique = new Map<string, Source>();
-    traces.flatMap((trace) => extractSources(trace.output)).forEach((source) => unique.set(source.id, source));
-    return [...unique.values()];
-  }, [traces]);
   const lastAssistant = [...messages].reverse().find((message) => message.role === "assistant");
+  const retrieval = retrievalFromMessage(lastAssistant);
+  const traces: ToolTrace[] = retrieval ? [{
+    id: `retrieval-${lastAssistant?.id}`,
+    name: "retrieve_knowledge",
+    state: "output-available",
+    input: { query: retrieval.query, intent: retrieval.intent, mode: retrieval.mode },
+    output: { ranked: retrieval.ranked, documents: retrieval.documents.map(({ id, title }) => ({ id, title })) },
+  }] : [];
+  const sources: Source[] = retrieval?.documents.map(({ id, title }) => ({ id, title })) ?? [];
   const metadata = lastAssistant?.metadata;
+  const assistantText = lastAssistant ? textFromMessage(lastAssistant) : "";
+  const degraded = Boolean(error && retrieval?.fallbackText && !assistantText);
 
   const submit = (text: string) => {
     const clean = text.trim();
     if (!clean || busy) return;
+    clearError();
     const now = Date.now();
     activeRequest.current = true;
+    assistantCountAtStart.current = messages.filter((message) => message.role === "assistant").length;
     setStartedAt(now);
     setFirstTokenAt(undefined);
     setFinishedAt(undefined);
@@ -163,6 +147,7 @@ export default function AnaLab() {
 
   const reset = () => {
     if (busy) stop();
+    clearError();
     setMessages([]);
     setInput("");
     setStartedAt(undefined);
@@ -221,7 +206,9 @@ export default function AnaLab() {
             ) : (
               <div className="ana-messages">
                 {messages.map((message) => {
-                  const text = textFromMessage(message);
+                  const text = message.role === "assistant"
+                    ? cleanAssistantText(textFromMessage(message))
+                    : textFromMessage(message);
                   if (!text && message.role === "assistant") return null;
                   return (
                     <article className={`ana-message ana-message-${message.role}`} key={message.id}>
@@ -231,11 +218,16 @@ export default function AnaLab() {
                   );
                 })}
                 {status === "submitted" && <div className="ana-thinking"><span /><span /><span /> Consultando a documentação</div>}
-                {error && (
-                  <div className="ana-error">
-                    Os modelos gratuitos estão temporariamente indisponíveis. Aguarde alguns segundos e tente novamente.
-                  </div>
+                {degraded && (
+                  <article className="ana-message ana-message-assistant ana-message-degraded">
+                    <div className="ana-message-label">Ana</div>
+                    <div className="ana-message-text">
+                      {retrieval?.fallbackText}
+                      <small>Resposta básica da documentação · modelo temporariamente indisponível</small>
+                    </div>
+                  </article>
                 )}
+                {error && !degraded && <div className="ana-error">Não foi possível consultar a documentação agora.</div>}
                 <div ref={messagesEndRef} />
               </div>
             )}
@@ -275,9 +267,9 @@ export default function AnaLab() {
           <section className="ana-status-card">
             <div className="ana-section-title"><CircleDot aria-hidden="true" /> Status</div>
             <div className="ana-status-row">
-              <span className={`ana-status-light ${error ? "has-error" : busy ? "is-busy" : ""}`} />
+              <span className={`ana-status-light ${degraded ? "is-degraded" : error ? "has-error" : busy ? "is-busy" : ""}`} />
               <div>
-                <strong>{error ? "Erro na execução" : busy ? "Executando" : messages.length ? "Resposta concluída" : "Pronto para testar"}</strong>
+                <strong>{degraded ? "Modo degradado" : error ? "Erro na execução" : busy ? "Executando" : messages.length ? "Resposta concluída" : "Pronto para testar"}</strong>
                 <small>{mode === "mcp" ? "MCP remoto · amplify.ia.br" : "Serviço OKF direto · preview"}</small>
               </div>
             </div>
@@ -293,7 +285,7 @@ export default function AnaLab() {
                     <div><strong>{trace.name}</strong><small>{trace.state.split("-").join(" ")}</small></div>
                     <ChevronDown />
                   </summary>
-                  <pre>{JSON.stringify({ input: trace.input, output: unwrapStructuredOutput(trace.output) }, null, 2)}</pre>
+                  <pre>{JSON.stringify({ input: trace.input, output: trace.output }, null, 2)}</pre>
                 </details>
               ))}
             </div>
@@ -313,12 +305,13 @@ export default function AnaLab() {
           <section className="ana-metrics">
             <div className="ana-section-title"><Gauge aria-hidden="true" /> Performance</div>
             <dl>
+              <div><dt><Database /> Recuperação</dt><dd>{formatDuration(retrieval?.totalMs)}</dd></div>
               <div><dt><Clock3 /> Primeiro token</dt><dd>{formatDuration(startedAt && firstTokenAt ? firstTokenAt - startedAt : undefined)}</dd></div>
               <div><dt><Activity /> Tempo total</dt><dd>{formatDuration(startedAt && finishedAt ? finishedAt - startedAt : undefined)}</dd></div>
               <div><dt><Zap /> Tokens</dt><dd>{metadata?.totalTokens?.toLocaleString("pt-BR") ?? "—"}</dd></div>
               <div><dt><Coins /> Custo estimado</dt><dd>{formatCost(metadata?.estimatedCostUsd)}</dd></div>
             </dl>
-            <p>{metadata?.model ? ANA_MODELS[metadata.model]?.label : ANA_MODELS[model].label} · {metadata?.mode?.toUpperCase() ?? mode.toUpperCase()}</p>
+            <p>{metadata?.resolvedModel ?? (metadata?.model ? ANA_MODELS[metadata.model]?.label : ANA_MODELS[model].label)} · {metadata?.mode?.toUpperCase() ?? mode.toUpperCase()}</p>
             {metadata?.generationId && <code title="Generation ID do Vercel AI Gateway">{metadata.generationId}</code>}
           </section>
         </aside>

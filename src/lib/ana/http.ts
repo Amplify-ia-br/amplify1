@@ -1,13 +1,26 @@
-import { createAgentUIStreamResponse } from "ai";
-import { createAnaAgent } from "./agent.js";
+import {
+  convertToModelMessages,
+  createUIMessageStream,
+  createUIMessageStreamResponse,
+} from "ai";
+import { streamAnaAnswer } from "./agent.js";
 import { anaChatRequestSchema, estimateAnaCost } from "./config.js";
-import type { AnaMessage } from "./types.js";
+import { retrieveAnaKnowledge } from "./retrieval.js";
+import type { AnaMessage, AnaMessageMetadata } from "./types.js";
 import type { KnowledgeReader } from "../okf/http.js";
 
 const PRIVATE_HEADERS = {
   "cache-control": "no-store",
   "x-robots-tag": "noindex, nofollow, noarchive, nosnippet",
 };
+
+function textFromMessage(message: AnaMessage) {
+  return message.parts
+    .filter((part): part is Extract<typeof part, { type: "text" }> => part.type === "text")
+    .map((part) => part.text)
+    .join("")
+    .trim();
+}
 
 export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
   if (request.method !== "POST") {
@@ -30,63 +43,72 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
   }
 
   const { messages, mode, model } = parsed.data;
-  let session: Awaited<ReturnType<typeof createAnaAgent>>;
+  const uiMessages = messages as AnaMessage[];
+  const latestQuestion = [...uiMessages].reverse()
+    .filter((message) => message.role === "user")
+    .map(textFromMessage)
+    .find(Boolean);
 
+  if (!latestQuestion) {
+    return Response.json({ error: "missing_user_message" }, { status: 400, headers: PRIVATE_HEADERS });
+  }
+
+  const startedAt = Date.now();
+  let retrieval;
   try {
-    session = await createAnaAgent(mode, model, reader);
+    retrieval = await retrieveAnaKnowledge(mode, latestQuestion, reader);
   } catch (error) {
-    console.error("[Ana Lab] Falha ao iniciar o agente", error);
+    console.error("[Ana Lab] Falha durante recuperação", error);
     return Response.json(
-      { error: "agent_unavailable", message: "Não foi possível iniciar o agente agora." },
+      { error: "knowledge_unavailable", message: "Não foi possível consultar a documentação agora." },
       { status: 503, headers: PRIVATE_HEADERS },
     );
   }
 
-  const startedAt = Date.now();
+  const modelMessages = await convertToModelMessages(uiMessages);
+  const result = streamAnaAnswer(mode, model, modelMessages, retrieval);
   let generationId: string | undefined;
+  let resolvedModel: string | undefined;
 
-  try {
-    return await createAgentUIStreamResponse({
-      agent: session.agent,
-      uiMessages: messages as AnaMessage[],
-      abortSignal: request.signal,
-      timeout: { totalMs: 55_000 },
-      headers: PRIVATE_HEADERS,
-      messageMetadata: ({ part }) => {
-        if (part.type === "start") return { createdAt: startedAt, mode, model };
-        if (part.type === "finish-step") {
-          const gatewayMetadata = part.providerMetadata?.gateway as { generationId?: string } | undefined;
-          generationId = gatewayMetadata?.generationId ?? generationId;
-          return generationId ? { generationId } : undefined;
-        }
-        if (part.type !== "finish") return undefined;
+  const stream = createUIMessageStream<AnaMessage>({
+    originalMessages: uiMessages,
+    execute({ writer }) {
+      const initialMetadata: AnaMessageMetadata = { createdAt: startedAt, mode, model };
+      writer.write({ type: "start", messageMetadata: initialMetadata });
+      writer.write({ type: "data-retrieval", data: retrieval });
+      writer.merge(result.toUIMessageStream<AnaMessage>({
+        sendStart: false,
+        sendReasoning: false,
+        originalMessages: uiMessages,
+        messageMetadata: ({ part }) => {
+          if (part.type === "finish-step") {
+            const gatewayMetadata = part.providerMetadata?.gateway as { generationId?: string } | undefined;
+            generationId = gatewayMetadata?.generationId ?? generationId;
+            resolvedModel = part.response.modelId || resolvedModel;
+            return { generationId, resolvedModel };
+          }
+          if (part.type !== "finish") return undefined;
+          const usage = part.totalUsage;
+          return {
+            completedAt: Date.now(),
+            mode,
+            model,
+            inputTokens: usage.inputTokens,
+            outputTokens: usage.outputTokens,
+            totalTokens: usage.totalTokens,
+            estimatedCostUsd: estimateAnaCost(model, usage),
+            generationId,
+            resolvedModel,
+          } satisfies AnaMessageMetadata;
+        },
+        onError: () => "Os modelos gratuitos estão temporariamente indisponíveis.",
+      }));
+    },
+    onError: (error) => {
+      console.error("[Ana Lab] Falha no stream", error);
+      return "Os modelos gratuitos estão temporariamente indisponíveis.";
+    },
+  });
 
-        const usage = part.totalUsage;
-        return {
-          completedAt: Date.now(),
-          mode,
-          model,
-          inputTokens: usage.inputTokens,
-          outputTokens: usage.outputTokens,
-          totalTokens: usage.totalTokens,
-          estimatedCostUsd: estimateAnaCost(model, usage),
-          generationId,
-        };
-      },
-      onEnd: async () => {
-        await session.close().catch((error) => console.warn("[Ana Lab] Falha ao encerrar MCP", error));
-      },
-      onError: (error) => {
-        console.error("[Ana Lab] Erro durante resposta", error);
-        return "A Ana encontrou um erro ao consultar a base. Tente novamente.";
-      },
-    });
-  } catch (error) {
-    await session.close().catch(() => undefined);
-    console.error("[Ana Lab] Falha ao criar stream", error);
-    return Response.json(
-      { error: "generation_failed", message: "Não foi possível gerar a resposta agora." },
-      { status: 500, headers: PRIVATE_HEADERS },
-    );
-  }
+  return createUIMessageStreamResponse({ stream, headers: PRIVATE_HEADERS, keepAliveMs: 10_000 });
 }
