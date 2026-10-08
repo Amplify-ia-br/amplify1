@@ -2,7 +2,7 @@ import { createMCPClient } from "@ai-sdk/mcp";
 import { gateway, isStepCount, tool, ToolLoopAgent } from "ai";
 import type { ToolSet } from "ai";
 import { z } from "zod-v4";
-import type { AnaKnowledgeMode, AnaModelId } from "./config.js";
+import { getAnaFallbackModels, type AnaKnowledgeMode, type AnaModelId } from "./config.js";
 import { createDirectKnowledgeTools } from "./tools.js";
 import type { KnowledgeReader } from "../okf/http.js";
 
@@ -154,6 +154,7 @@ export async function createAnaAgent(
       providerOptions: {
         gateway: {
           tags: ["ana-lab", `knowledge-${mode}`],
+          models: getAnaFallbackModels(model),
         },
       },
     }),

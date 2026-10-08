@@ -231,7 +231,11 @@ export default function AnaLab() {
                   );
                 })}
                 {status === "submitted" && <div className="ana-thinking"><span /><span /><span /> Consultando a documentação</div>}
-                {error && <div className="ana-error">Não foi possível concluir a resposta. Verifique os diagnósticos e tente novamente.</div>}
+                {error && (
+                  <div className="ana-error">
+                    Os modelos gratuitos estão temporariamente indisponíveis. Aguarde alguns segundos e tente novamente.
+                  </div>
+                )}
                 <div ref={messagesEndRef} />
               </div>
             )}

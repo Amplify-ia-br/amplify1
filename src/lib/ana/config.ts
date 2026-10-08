@@ -20,6 +20,16 @@ export type AnaKnowledgeMode = "mcp" | "direct";
 
 export const DEFAULT_ANA_MODEL: AnaModelId = "inclusionai/ling-3.1-flash-free";
 
+const ANA_GATEWAY_FALLBACKS = [
+  "inclusionai/ling-3.1-flash-free",
+  "poolside/laguna-s-2.1-free",
+  "stealth/glyph-cluster",
+] as const;
+
+export function getAnaFallbackModels(model: AnaModelId) {
+  return ANA_GATEWAY_FALLBACKS.filter((candidate) => candidate !== model);
+}
+
 export const anaChatRequestSchema = z.object({
   messages: z.array(z.unknown()).min(1),
   model: z.enum(Object.keys(ANA_MODELS) as [AnaModelId, ...AnaModelId[]]).default(DEFAULT_ANA_MODEL),
