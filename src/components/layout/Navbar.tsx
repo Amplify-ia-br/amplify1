@@ -35,7 +35,6 @@ const Navbar = ({ initialPath }: NavbarProps) => {
   const conteudoLinks = [
     { name: "Aprenda", path: "/aprenda" },
     { name: "Blog", path: "/blog" },
-    { name: "Base de conhecimento", path: "/knowledge" },
   ];
 
   const solucoesLinks = [

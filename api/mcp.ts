@@ -15,5 +15,7 @@ export default async function handler(request: VercelRequest, response: VercelRe
     ? await fileKnowledgeMcpHandler.fetch(await toWebRequest(request))
     : methodNotAllowed();
 
+  result.headers.set("x-robots-tag", "noindex, nofollow, noarchive, nosnippet");
+
   return sendWebResponse(response, result);
 }

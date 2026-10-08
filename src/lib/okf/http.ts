@@ -13,6 +13,7 @@ export type KnowledgeReader = Pick<
 const JSON_HEADERS = {
   "cache-control": "public, max-age=0, s-maxage=300, stale-while-revalidate=3600",
   "content-type": "application/json; charset=utf-8",
+  "x-robots-tag": "noindex, nofollow, noarchive, nosnippet",
 };
 
 function json(data: unknown, status = 200) {

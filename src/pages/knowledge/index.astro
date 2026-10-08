@@ -21,15 +21,13 @@ const items = entries.map((entry) => ({
 <KnowledgeLayout
   title="Base de conhecimento | Amplify"
   description="Documentação pública sobre a Amplify, suas ofertas, seu método e sua frente de educação."
+  items={items}
+  isIndex={true}
 >
-  <header class="container mx-auto px-4 pb-12 pt-16 md:pb-16 md:pt-24">
-    <div class="max-w-4xl">
-      <h1 class="text-balance text-5xl font-bold tracking-[-0.045em] md:text-7xl">Base de conhecimento</h1>
-      <p class="mt-6 max-w-2xl text-lg leading-8 text-muted-foreground md:text-xl">
-        Documentos públicos sobre a Amplify, seu trabalho e suas ofertas.
-      </p>
-    </div>
-  </header>
-
-  <KnowledgeDirectory client:load items={items} />
+  <div class="kb-page">
+    <p class="kb-eyebrow">Amplify Knowledge</p>
+    <h1>Base de conhecimento</h1>
+    <p class="kb-lead">Documentação sobre a Amplify, seu trabalho, método, portfólio e frente de educação.</p>
+    <KnowledgeDirectory client:load items={items} />
+  </div>
 </KnowledgeLayout>
