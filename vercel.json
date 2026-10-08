@@ -7,6 +7,28 @@
       "includeFiles": "okf/public/**"
     }
   },
+  "headers": [
+    {
+      "source": "/knowledge",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/knowledge/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/knowledge",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/knowledge/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/mcp",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    }
+  ],
   "rewrites": [
     {
       "source": "/Leia",
