@@ -1,0 +1,25 @@
+---
+import globalStyles from "@/index.css?url";
+
+const title = "Ana Lab | Amplify";
+const description = "Laboratório não listado para avaliação do agente Ana com a base OKF da Amplify.";
+
+Astro.response.headers.set("x-robots-tag", "noindex, nofollow, noarchive, nosnippet");
+Astro.response.headers.set("cache-control", "no-store");
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet" />
+    <link rel="stylesheet" href={globalStyles} />
+  </head>
+  <body class="ana-lab-body">
+    <slot />
+  </body>
+</html>
+
