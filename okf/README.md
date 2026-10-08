@@ -14,7 +14,7 @@ tags:
 sources: []
 relationships: []
 last_reviewed: 2026-10-07
-updated_at: 2026-10-07
+updated_at: 2026-10-08
 ---
 
 # Base de conhecimento da Amplify
@@ -207,6 +207,7 @@ Não existem nesta versão autenticação da KB, embeddings, busca semântica, e
 - [Catálogo de ofertas](public/offers.md)
 - [Método](public/method.md)
 - [Amplify Academy](public/amplify-academy.md)
+- [L.E.I.A.](public/leia.md)
 - [Glossário](public/glossary.md)
 - [Estratégia do portfólio](internal/portfolio-strategy.md)
 - [Política comercial](internal/commercial-policy.md)
@@ -216,3 +217,5 @@ Não existem nesta versão autenticação da KB, embeddings, busca semântica, e
 - [Desenvolvimento de produtos](internal/product-development.md)
 - [Propriedade e direitos de uso](internal/intellectual-property.md)
 - [Padrão editorial](internal/editorial-standard.md)
+- [Desenho pedagógico do L.E.I.A.](internal/leia-pedagogy.md)
+- [Condições comerciais do L.E.I.A.](restricted/leia-commercial.md)

@@ -12,14 +12,17 @@ tags:
   - educação
   - consultoria
   - produtos
-sources: []
+sources:
+  - L.E.I.A. Ficha do Produto v2.6, setembro de 2026
 relationships:
   - type: related_to
     target: company
   - type: details
     target: offers
-last_reviewed: 2026-10-07
-updated_at: 2026-10-07
+  - type: includes
+    target: leia
+last_reviewed: 2026-10-08
+updated_at: 2026-10-08
 ---
 
 # Portfólio da Amplify
@@ -59,6 +62,12 @@ Os programas podem atender:
 - tecnologia, arquitetura e segurança.
 
 Os temas podem incluir governança, proteção de dados, uso responsável, segurança da informação, Shadow AI, decisão pública e aplicação em documentos e processos reais.
+
+### Educação para escolas
+
+O L.E.I.A. é o programa anual de fluência em Inteligência Artificial para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio. A oferta combina currículo, formação docente, atividades práticas e acompanhamento da aprendizagem.
+
+As escolas podem usar sua própria infraestrutura ou contratar planos em que a Amplify organiza o acesso à IA e disponibiliza equipamentos durante as aulas.
 
 ## Consultoria
 

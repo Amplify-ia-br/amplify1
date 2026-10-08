@@ -11,10 +11,13 @@ tags:
   - comercial
   - preços
   - propostas
-sources: []
-relationships: []
-last_reviewed: 2026-10-07
-updated_at: 2026-10-07
+sources:
+  - L.E.I.A. Brochura comercial v5 premium
+relationships:
+  - type: governs
+    target: leia-commercial
+last_reviewed: 2026-10-08
+updated_at: 2026-10-08
 ---
 
 # Política comercial
@@ -42,6 +45,14 @@ Não há tabela pública aprovada. O preço não deve ser informado antes de ent
 - exigências administrativas da contratação.
 
 A resposta correta é que o programa precisa de escopo e proposta. Faixas de preço só podem ser usadas quando a liderança aprovar uma tabela específica.
+
+## L.E.I.A.
+
+O L.E.I.A. é uma exceção à regra geral de Educação porque a brochura comercial vigente já apresenta os valores dos planos, da implantação, da renovação e da matrícula.
+
+A equipe pode informar somente os valores publicados no documento `leia`, sempre com a ressalva de que a proposta confirma disponibilidade e condições. Simulações de retorno, margens, descontos, campanhas e condições especiais permanecem restritas e dependem de aprovação.
+
+Se houver diferença entre o OKF público e um anexo comercial, a equipe interrompe a cotação até que o responsável atualize a fonte canônica. Tabelas antigas não podem ser recuperadas para completar a resposta.
 
 ## Capacitação B2B
 
