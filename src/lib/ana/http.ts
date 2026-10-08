@@ -42,7 +42,7 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
     );
   }
 
-  const { messages, mode, model } = parsed.data;
+  const { messages, mode, model, apiKey } = parsed.data;
   const uiMessages = messages as AnaMessage[];
   const latestQuestion = [...uiMessages].reverse()
     .filter((message) => message.role === "user")
@@ -66,7 +66,7 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
   }
 
   const modelMessages = await convertToModelMessages(uiMessages);
-  const result = streamAnaAnswer(mode, model, modelMessages, retrieval);
+  const result = streamAnaAnswer(mode, model, modelMessages, retrieval, apiKey);
   let generationId: string | undefined;
   let resolvedModel: string | undefined;
 
@@ -101,12 +101,12 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
             resolvedModel,
           } satisfies AnaMessageMetadata;
         },
-        onError: () => "Os modelos gratuitos estão temporariamente indisponíveis.",
+        onError: () => "O modelo selecionado está temporariamente indisponível.",
       }));
     },
-    onError: (error) => {
-      console.error("[Ana Lab] Falha no stream", error);
-      return "Os modelos gratuitos estão temporariamente indisponíveis.";
+    onError: () => {
+      console.error("[Ana Lab] Falha no stream");
+      return "O modelo selecionado está temporariamente indisponível.";
     },
   });
 

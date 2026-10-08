@@ -7,6 +7,15 @@ describe("Ana Lab configuration", () => {
     expect(valid.model).toBe(DEFAULT_ANA_MODEL);
     expect(anaChatRequestSchema.safeParse({ messages: [{}], model: "unknown/model" }).success).toBe(false);
     expect(anaChatRequestSchema.safeParse({ messages: [{}], mode: "internal" }).success).toBe(false);
+    expect(anaChatRequestSchema.safeParse({
+      messages: [{}],
+      model: "anthropic/claude-haiku-5-5",
+    }).success).toBe(false);
+    expect(anaChatRequestSchema.safeParse({
+      messages: [{}],
+      model: "anthropic/claude-haiku-5-5",
+      apiKey: "test-key",
+    }).success).toBe(true);
   });
 
   it("estimates model cost from token usage", () => {
@@ -20,5 +29,9 @@ describe("Ana Lab configuration", () => {
       "poolside/laguna-s-2.1-free",
       "stealth/glyph-cluster",
     ]);
+  });
+
+  it("does not send direct Anthropic models through Gateway fallbacks", () => {
+    expect(getAnaFallbackModels("anthropic/claude-haiku-5-5")).toEqual([]);
   });
 });

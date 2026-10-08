@@ -1,5 +1,6 @@
 import { gateway, streamText, type ModelMessage } from "ai";
-import { getAnaFallbackModels, type AnaKnowledgeMode, type AnaModelId } from "./config.js";
+import { createAnthropic } from "@ai-sdk/anthropic";
+import { ANA_MODELS, getAnaFallbackModels, type AnaKnowledgeMode, type AnaModelId } from "./config.js";
 import type { AnaRetrievalTrace } from "./retrieval.js";
 
 const ANA_INSTRUCTIONS = `Você é Ana, assistente comercial da Amplify.
@@ -35,20 +36,28 @@ export function streamAnaAnswer(
   model: AnaModelId,
   messages: ModelMessage[],
   retrieval: AnaRetrievalTrace,
+  apiKey?: string,
 ) {
+  const isAnthropic = ANA_MODELS[model].provider === "anthropic";
+  const languageModel = isAnthropic
+    ? createAnthropic({ apiKey })(model.replace("anthropic/", ""))
+    : gateway(model);
+
   return streamText({
-    model: gateway(model),
+    model: languageModel,
     system: `${ANA_INSTRUCTIONS}\n\nCONTEXTO CANÔNICO DESTA RESPOSTA:\n\n${knowledgeContext(retrieval)}`,
     messages,
     temperature: 0.15,
     maxOutputTokens: 500,
     maxRetries: 1,
-    providerOptions: {
-      gateway: {
-        tags: ["ana-lab", `knowledge-${mode}`, `intent-${retrieval.intent}`],
-        models: getAnaFallbackModels(model),
-      },
-    },
-    onError: ({ error }) => console.error("[Ana Lab] Erro durante geração", error),
+    providerOptions: isAnthropic
+      ? { anthropic: { thinking: { type: "disabled" } } }
+      : {
+          gateway: {
+            tags: ["ana-lab", `knowledge-${mode}`, `intent-${retrieval.intent}`],
+            models: getAnaFallbackModels(model),
+          },
+        },
+    onError: () => console.error("[Ana Lab] Erro durante geração"),
   });
 }

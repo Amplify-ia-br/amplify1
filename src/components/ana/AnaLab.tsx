@@ -11,6 +11,9 @@ import {
   Database,
   FileText,
   Gauge,
+  Eye,
+  EyeOff,
+  KeyRound,
   PanelRightClose,
   PanelRightOpen,
   Plus,
@@ -74,23 +77,35 @@ export default function AnaLab() {
   const [input, setInput] = useState("");
   const [mode, setMode] = useState<AnaKnowledgeMode>("mcp");
   const [model, setModel] = useState<AnaModelId>(DEFAULT_ANA_MODEL);
+  const [apiKey, setApiKey] = useState("");
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [keyError, setKeyError] = useState(false);
   const [diagnosticsOpen, setDiagnosticsOpen] = useState(false);
   const [startedAt, setStartedAt] = useState<number>();
   const [firstTokenAt, setFirstTokenAt] = useState<number>();
   const [finishedAt, setFinishedAt] = useState<number>();
   const modeRef = useRef(mode);
   const modelRef = useRef(model);
+  const apiKeyRef = useRef(apiKey);
   const activeRequest = useRef(false);
   const assistantCountAtStart = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => { modeRef.current = mode; }, [mode]);
   useEffect(() => { modelRef.current = model; }, [model]);
+  useEffect(() => { apiKeyRef.current = apiKey; }, [apiKey]);
 
   const transport = useMemo(() => new DefaultChatTransport({
     api: "/api/ana-chat",
     prepareSendMessagesRequest: ({ messages }) => ({
-      body: { messages, mode: modeRef.current, model: modelRef.current },
+      body: {
+        messages,
+        mode: modeRef.current,
+        model: modelRef.current,
+        ...(ANA_MODELS[modelRef.current].provider === "anthropic"
+          ? { apiKey: apiKeyRef.current }
+          : {}),
+      },
     }),
   }), []);
 
@@ -125,11 +140,21 @@ export default function AnaLab() {
   const sources: Source[] = retrieval?.documents.map(({ id, title }) => ({ id, title })) ?? [];
   const metadata = lastAssistant?.metadata;
   const assistantText = lastAssistant ? textFromMessage(lastAssistant) : "";
-  const degraded = Boolean(error && retrieval?.fallbackText && !assistantText);
+  const completedWithoutText = Boolean(
+    lastAssistant && retrieval && status === "ready" && finishedAt && !assistantText,
+  );
+  const degraded = Boolean((error || completedWithoutText) && retrieval?.fallbackText && !assistantText);
+  const selectedModel = ANA_MODELS[model];
+  const requiresApiKey = selectedModel.provider === "anthropic";
 
   const submit = (text: string) => {
     const clean = text.trim();
     if (!clean || busy) return;
+    if (requiresApiKey && !apiKey.trim()) {
+      setKeyError(true);
+      return;
+    }
+    setKeyError(false);
     clearError();
     const now = Date.now();
     activeRequest.current = true;
@@ -175,7 +200,10 @@ export default function AnaLab() {
           <label className="ana-model">
             <span className="sr-only">Modelo</span>
             <Sparkles aria-hidden="true" />
-            <select value={model} onChange={(event) => setModel(event.target.value as AnaModelId)}>
+            <select value={model} onChange={(event) => {
+              setModel(event.target.value as AnaModelId);
+              setKeyError(false);
+            }}>
               {Object.entries(ANA_MODELS).map(([id, option]) => (
                 <option key={id} value={id}>{option.label} · {option.hint}</option>
               ))}
@@ -190,7 +218,38 @@ export default function AnaLab() {
       </header>
 
       <div className="ana-workspace">
-        <main className="ana-chat">
+        <main className={`ana-chat ${requiresApiKey ? "has-byok" : ""}`}>
+          {requiresApiKey && (
+            <section className="ana-byok" aria-label="Chave Anthropic da sessão">
+              <div className="ana-byok-copy">
+                <KeyRound aria-hidden="true" />
+                <span><strong>Chave Anthropic</strong><small>Usada só nesta aba; o backend encaminha à Anthropic sem armazenar.</small></span>
+              </div>
+              <label className={keyError ? "has-error" : ""}>
+                <span className="sr-only">Chave de API da Anthropic</span>
+                <input
+                  type={showApiKey ? "text" : "password"}
+                  value={apiKey}
+                  onChange={(event) => {
+                    setApiKey(event.target.value);
+                    setKeyError(false);
+                  }}
+                  placeholder="sk-ant-…"
+                  autoComplete="off"
+                  spellCheck={false}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowApiKey((value) => !value)}
+                  aria-label={showApiKey ? "Ocultar chave" : "Mostrar chave"}
+                >
+                  {showApiKey ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
+                </button>
+              </label>
+              {apiKey && <button className="ana-byok-clear" type="button" onClick={() => setApiKey("")}>Limpar</button>}
+              {keyError && <p role="alert">Informe sua chave Anthropic para testar este modelo.</p>}
+            </section>
+          )}
           <div className="ana-thread" aria-live="polite">
             {messages.length === 0 ? (
               <section className="ana-welcome">
@@ -218,7 +277,7 @@ export default function AnaLab() {
                     </article>
                   );
                 })}
-                {status === "submitted" && <div className="ana-thinking"><span /><span /><span /> Consultando a documentação</div>}
+                {busy && !assistantText && <div className="ana-thinking"><span /><span /><span /> Consultando a documentação</div>}
                 {degraded && (
                   <article className="ana-message ana-message-assistant ana-message-degraded">
                     <div className="ana-message-label">Ana</div>
@@ -252,7 +311,7 @@ export default function AnaLab() {
               {busy ? (
                 <button type="button" onClick={stop} aria-label="Interromper resposta"><Square aria-hidden="true" /></button>
               ) : (
-                <button type="submit" disabled={!input.trim()} aria-label="Enviar mensagem"><Send aria-hidden="true" /></button>
+                <button type="submit" disabled={!input.trim() || (requiresApiKey && !apiKey.trim())} aria-label="Enviar mensagem"><Send aria-hidden="true" /></button>
               )}
             </div>
             <p>Respostas limitadas ao conteúdo público aprovado no OKF.</p>
@@ -270,8 +329,8 @@ export default function AnaLab() {
             <div className="ana-status-row">
               <span className={`ana-status-light ${degraded ? "is-degraded" : error ? "has-error" : busy ? "is-busy" : ""}`} />
               <div>
-                <strong>{degraded ? "Modo degradado" : error ? "Erro na execução" : busy ? "Executando" : messages.length ? "Resposta concluída" : "Pronto para testar"}</strong>
-                <small>{mode === "mcp" ? "MCP remoto · amplify.ia.br" : "Serviço OKF direto · preview"}</small>
+                <strong>{degraded ? "Modo degradado" : error ? "Erro na execução" : busy ? "Executando" : assistantText ? "Resposta concluída" : "Pronto para testar"}</strong>
+                <small>{requiresApiKey ? "Anthropic direto · BYOK da sessão" : mode === "mcp" ? "MCP remoto · amplify.ia.br" : "Serviço OKF direto · preview"}</small>
               </div>
             </div>
           </section>
