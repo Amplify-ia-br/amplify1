@@ -17,6 +17,19 @@ type SaveAnaMessageInput = {
 
 let serverClient: SupabaseClient | undefined;
 
+function describePersistenceError(error: unknown) {
+  if (error instanceof Error) return error.message;
+  if (!error || typeof error !== "object") return "unknown_error";
+
+  const candidate = error as Record<string, unknown>;
+  return JSON.stringify({
+    code: typeof candidate.code === "string" ? candidate.code : undefined,
+    message: typeof candidate.message === "string" ? candidate.message : "unknown_error",
+    details: typeof candidate.details === "string" ? candidate.details : undefined,
+    hint: typeof candidate.hint === "string" ? candidate.hint : undefined,
+  });
+}
+
 function cleanSecret(value?: string) {
   return value?.trim().replace(/^['"]|['"]$/g, "");
 }
@@ -70,7 +83,7 @@ export async function saveAnaMessage(input: SaveAnaMessageInput) {
     if (messageError) throw messageError;
     return { persisted: true as const, conversationId: conversation.id as string };
   } catch (error) {
-    console.error("[Ana Lab] Falha ao persistir conversa", error instanceof Error ? error.message : "unknown_error");
+    console.error("[Ana Lab] Falha ao persistir conversa", describePersistenceError(error));
     return { persisted: false as const, reason: "write_failed" as const };
   }
 }
