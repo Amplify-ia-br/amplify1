@@ -48,7 +48,13 @@ function getServerClient() {
 
 export async function saveAnaMessage(input: SaveAnaMessageInput) {
   const supabase = getServerClient();
-  if (!supabase) return { persisted: false as const, reason: "not_configured" as const };
+  if (!supabase) {
+    console.error("[Ana Lab] Persistência não configurada", {
+      hasSupabaseUrl: Boolean(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL),
+      hasServerKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY),
+    });
+    return { persisted: false as const, reason: "not_configured" as const };
+  }
 
   try {
     const now = new Date().toISOString();
