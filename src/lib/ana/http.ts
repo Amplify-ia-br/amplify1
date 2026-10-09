@@ -5,7 +5,8 @@ import {
 } from "ai";
 import { streamAnaAnswer } from "./agent.js";
 import { anaChatRequestSchema, estimateAnaCost } from "./config.js";
-import { retrieveAnaKnowledge } from "./retrieval.js";
+import { analyzeAnaConversation, immediateAnaReply } from "./conversation.js";
+import { emptyAnaRetrieval, retrieveAnaKnowledge } from "./retrieval.js";
 import type { AnaMessage, AnaMessageMetadata } from "./types.js";
 import { saveAnaMessage } from "./store.js";
 import type { KnowledgeReader } from "../okf/http.js";
@@ -54,10 +55,13 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
     return Response.json({ error: "missing_user_message" }, { status: 400, headers: PRIVATE_HEADERS });
   }
 
+  const conversation = analyzeAnaConversation(uiMessages, pagePath);
   const startedAt = Date.now();
   let retrieval;
   try {
-    retrieval = await retrieveAnaKnowledge(mode, latestQuestion, reader);
+    retrieval = conversation.shouldRetrieveKnowledge
+      ? await retrieveAnaKnowledge(mode, latestQuestion, reader)
+      : emptyAnaRetrieval(mode, latestQuestion, `conversa-${conversation.turnKind}`);
   } catch (error) {
     console.error("[Ana Lab] Falha durante recuperação", error);
     return Response.json(
@@ -75,10 +79,59 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
     knowledgeMode: mode,
     pagePath,
     sourceIds: retrieval.documents.map((document) => document.id),
+    metadata: { turnKind: conversation.turnKind, conversationStage: conversation.stage },
   });
 
+  const immediateReply = immediateAnaReply(conversation, uiMessages);
+  if (immediateReply) {
+    const completedAt = Date.now();
+    const stream = createUIMessageStream<AnaMessage>({
+      originalMessages: uiMessages,
+      async execute({ writer }) {
+        const textId = `ana-${crypto.randomUUID()}`;
+        writer.write({
+          type: "start",
+          messageMetadata: {
+            createdAt: startedAt,
+            mode,
+            model,
+            turnKind: conversation.turnKind,
+            conversationStage: conversation.stage,
+          },
+        });
+        writer.write({ type: "data-retrieval", data: retrieval });
+        writer.write({ type: "text-start", id: textId });
+        writer.write({ type: "text-delta", id: textId, delta: immediateReply });
+        writer.write({ type: "text-end", id: textId });
+        writer.write({
+          type: "finish",
+          finishReason: "stop",
+          messageMetadata: {
+            completedAt,
+            mode,
+            model,
+            resolvedModel: "ana-conversation-policy",
+            turnKind: conversation.turnKind,
+            conversationStage: conversation.stage,
+          },
+        });
+        await saveAnaMessage({
+          conversationKey: conversationId,
+          externalId: `assistant:${latestUserMessage?.id ?? crypto.randomUUID()}`,
+          role: "assistant",
+          content: immediateReply,
+          model: "ana-conversation-policy",
+          knowledgeMode: mode,
+          pagePath,
+          metadata: { turnKind: conversation.turnKind, conversationStage: conversation.stage },
+        });
+      },
+    });
+    return createUIMessageStreamResponse({ stream, headers: PRIVATE_HEADERS });
+  }
+
   const modelMessages = await convertToModelMessages(uiMessages);
-  const result = streamAnaAnswer(mode, model, modelMessages, retrieval, apiKey, async (finished) => {
+  const result = streamAnaAnswer(mode, model, modelMessages, retrieval, conversation, apiKey, async (finished) => {
     if (!finished.text.trim()) return;
     await saveAnaMessage({
       conversationKey: conversationId,
@@ -94,6 +147,8 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
         inputTokens: finished.totalUsage.inputTokens,
         outputTokens: finished.totalUsage.outputTokens,
         totalTokens: finished.totalUsage.totalTokens,
+        turnKind: conversation.turnKind,
+        conversationStage: conversation.stage,
       },
     });
   });
@@ -103,7 +158,13 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
   const stream = createUIMessageStream<AnaMessage>({
     originalMessages: uiMessages,
     execute({ writer }) {
-      const initialMetadata: AnaMessageMetadata = { createdAt: startedAt, mode, model };
+      const initialMetadata: AnaMessageMetadata = {
+        createdAt: startedAt,
+        mode,
+        model,
+        turnKind: conversation.turnKind,
+        conversationStage: conversation.stage,
+      };
       writer.write({ type: "start", messageMetadata: initialMetadata });
       writer.write({ type: "data-retrieval", data: retrieval });
       writer.merge(result.toUIMessageStream<AnaMessage>({
@@ -129,6 +190,8 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
             estimatedCostUsd: estimateAnaCost(model, usage),
             generationId,
             resolvedModel,
+            turnKind: conversation.turnKind,
+            conversationStage: conversation.stage,
           } satisfies AnaMessageMetadata;
         },
         onError: () => "O modelo selecionado está temporariamente indisponível.",

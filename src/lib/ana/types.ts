@@ -1,5 +1,6 @@
 import type { UIMessage } from "ai";
 import type { AnaKnowledgeMode, AnaModelId } from "./config.js";
+import type { AnaConversationStage, AnaTurnKind } from "./conversation.js";
 import type { AnaRetrievalTrace } from "./retrieval.js";
 
 export type AnaMessageMetadata = {
@@ -13,6 +14,8 @@ export type AnaMessageMetadata = {
   estimatedCostUsd?: number;
   generationId?: string;
   resolvedModel?: string;
+  turnKind?: AnaTurnKind;
+  conversationStage?: AnaConversationStage;
 };
 
 export type AnaDataParts = {

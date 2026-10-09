@@ -144,6 +144,21 @@ export default function AnaLab() {
   }] : [];
   const sources: Source[] = retrieval?.documents.map(({ id, title }) => ({ id, title })) ?? [];
   const metadata = lastAssistant?.metadata;
+  const conversationStageLabel = metadata?.conversationStage ? {
+    opening: "abertura",
+    discovery: "descoberta",
+    solution: "solução",
+    qualification: "qualificação",
+    closing: "encerramento",
+  }[metadata.conversationStage] : undefined;
+  const turnKindLabel = metadata?.turnKind ? {
+    greeting: "cumprimento",
+    acknowledgement: "confirmação",
+    gratitude: "agradecimento",
+    farewell: "despedida",
+    disclosure: "contexto",
+    request: "pergunta",
+  }[metadata.turnKind] : undefined;
   const assistantText = lastAssistant ? textFromMessage(lastAssistant) : "";
   const completedWithoutText = Boolean(
     lastAssistant && retrieval && status === "ready" && finishedAt && !assistantText,
@@ -339,6 +354,7 @@ export default function AnaLab() {
               <div>
                 <strong>{degraded ? "Modo degradado" : error ? "Erro na execução" : busy ? "Executando" : assistantText ? "Resposta concluída" : "Pronto para testar"}</strong>
                 <small>{requiresApiKey ? "Anthropic direto · BYOK da sessão" : mode === "mcp" ? "MCP remoto · amplify.ia.br" : "Serviço OKF direto · preview"}</small>
+                {conversationStageLabel && <small>Estado: {conversationStageLabel} · {turnKindLabel}</small>}
               </div>
             </div>
           </section>

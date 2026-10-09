@@ -92,7 +92,22 @@ function fallbackText(documents: AnaRetrievalDocument[]) {
     .map((paragraph) => paragraph.replace(/^#{1,6}\s+/, "").replace(/[*_`>#-]/g, "").trim())
     .find((paragraph) => paragraph && paragraph !== document.title);
   const detail = firstParagraph && firstParagraph !== document.description ? `\n\n${firstParagraph}` : "";
-  return `${document.description}${detail}\n\nFonte: ${document.title}`;
+  return `${document.description}${detail}`;
+}
+
+export function emptyAnaRetrieval(mode: AnaKnowledgeMode, query: string, intent = "conversa"): AnaRetrievalTrace {
+  return {
+    query,
+    normalizedTerms: extractKnowledgeTerms(query),
+    intent,
+    mode,
+    listMs: 0,
+    fetchMs: 0,
+    totalMs: 0,
+    ranked: [],
+    documents: [],
+    fallbackText: "",
+  };
 }
 
 async function retrieveDirect(reader: KnowledgeReader, query: string) {
