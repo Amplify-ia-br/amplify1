@@ -75,6 +75,7 @@ function cleanAssistantText(text: string) {
 
 export default function AnaLab() {
   const [input, setInput] = useState("");
+  const [conversationId, setConversationId] = useState(() => crypto.randomUUID());
   const [mode, setMode] = useState<AnaKnowledgeMode>("mcp");
   const [model, setModel] = useState<AnaModelId>(DEFAULT_ANA_MODEL);
   const [apiKey, setApiKey] = useState("");
@@ -87,6 +88,7 @@ export default function AnaLab() {
   const modeRef = useRef(mode);
   const modelRef = useRef(model);
   const apiKeyRef = useRef(apiKey);
+  const conversationIdRef = useRef(conversationId);
   const activeRequest = useRef(false);
   const assistantCountAtStart = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -94,6 +96,7 @@ export default function AnaLab() {
   useEffect(() => { modeRef.current = mode; }, [mode]);
   useEffect(() => { modelRef.current = model; }, [model]);
   useEffect(() => { apiKeyRef.current = apiKey; }, [apiKey]);
+  useEffect(() => { conversationIdRef.current = conversationId; }, [conversationId]);
 
   const transport = useMemo(() => new DefaultChatTransport({
     api: "/api/ana-chat",
@@ -102,6 +105,8 @@ export default function AnaLab() {
         messages,
         mode: modeRef.current,
         model: modelRef.current,
+        conversationId: conversationIdRef.current,
+        pagePath: "/lab/ana",
         ...(ANA_MODELS[modelRef.current].provider === "anthropic"
           ? { apiKey: apiKeyRef.current }
           : {}),
@@ -175,6 +180,9 @@ export default function AnaLab() {
     if (busy) stop();
     clearError();
     setMessages([]);
+    const nextConversationId = crypto.randomUUID();
+    conversationIdRef.current = nextConversationId;
+    setConversationId(nextConversationId);
     setInput("");
     setStartedAt(undefined);
     setFirstTokenAt(undefined);

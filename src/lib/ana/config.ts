@@ -57,6 +57,8 @@ export const anaChatRequestSchema = z.object({
   messages: z.array(z.unknown()).min(1),
   model: z.enum(Object.keys(ANA_MODELS) as [AnaModelId, ...AnaModelId[]]).default(DEFAULT_ANA_MODEL),
   mode: z.enum(["mcp", "direct"]).default("mcp"),
+  conversationId: z.string().uuid().optional(),
+  pagePath: z.string().trim().max(500).optional(),
   apiKey: z.string().trim().min(1).max(512).optional(),
 }).superRefine((value, context) => {
   if (ANA_MODELS[value.model].provider === "anthropic" && !value.apiKey) {

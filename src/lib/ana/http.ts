@@ -7,6 +7,7 @@ import { streamAnaAnswer } from "./agent.js";
 import { anaChatRequestSchema, estimateAnaCost } from "./config.js";
 import { retrieveAnaKnowledge } from "./retrieval.js";
 import type { AnaMessage, AnaMessageMetadata } from "./types.js";
+import { saveAnaMessage } from "./store.js";
 import type { KnowledgeReader } from "../okf/http.js";
 
 const PRIVATE_HEADERS = {
@@ -42,12 +43,12 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
     );
   }
 
-  const { messages, mode, model, apiKey } = parsed.data;
+  const { messages, mode, model, apiKey, pagePath } = parsed.data;
+  const conversationId = parsed.data.conversationId ?? crypto.randomUUID();
   const uiMessages = messages as AnaMessage[];
-  const latestQuestion = [...uiMessages].reverse()
-    .filter((message) => message.role === "user")
-    .map(textFromMessage)
-    .find(Boolean);
+  const latestUserMessage = [...uiMessages].reverse()
+    .find((message) => message.role === "user" && textFromMessage(message));
+  const latestQuestion = latestUserMessage ? textFromMessage(latestUserMessage) : undefined;
 
   if (!latestQuestion) {
     return Response.json({ error: "missing_user_message" }, { status: 400, headers: PRIVATE_HEADERS });
@@ -65,8 +66,37 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
     );
   }
 
+  await saveAnaMessage({
+    conversationKey: conversationId,
+    externalId: latestUserMessage?.id ?? `user:${crypto.randomUUID()}`,
+    role: "user",
+    content: latestQuestion,
+    model,
+    knowledgeMode: mode,
+    pagePath,
+    sourceIds: retrieval.documents.map((document) => document.id),
+  });
+
   const modelMessages = await convertToModelMessages(uiMessages);
-  const result = streamAnaAnswer(mode, model, modelMessages, retrieval, apiKey);
+  const result = streamAnaAnswer(mode, model, modelMessages, retrieval, apiKey, async (finished) => {
+    if (!finished.text.trim()) return;
+    await saveAnaMessage({
+      conversationKey: conversationId,
+      externalId: `assistant:${latestUserMessage?.id ?? crypto.randomUUID()}`,
+      role: "assistant",
+      content: finished.text.trim(),
+      model: finished.response.modelId || model,
+      knowledgeMode: mode,
+      pagePath,
+      sourceIds: retrieval.documents.map((document) => document.id),
+      metadata: {
+        finishReason: finished.finishReason,
+        inputTokens: finished.totalUsage.inputTokens,
+        outputTokens: finished.totalUsage.outputTokens,
+        totalTokens: finished.totalUsage.totalTokens,
+      },
+    });
+  });
   let generationId: string | undefined;
   let resolvedModel: string | undefined;
 

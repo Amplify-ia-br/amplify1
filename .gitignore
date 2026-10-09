@@ -12,6 +12,7 @@ dist
 dist-ssr
 .astro
 .vercel
+supabase/.temp/
 *.tsbuildinfo
 lighthouse*.report.*
 *.local

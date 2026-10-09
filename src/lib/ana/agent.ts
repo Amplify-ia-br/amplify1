@@ -3,6 +3,17 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { ANA_MODELS, getAnaFallbackModels, type AnaKnowledgeMode, type AnaModelId } from "./config.js";
 import type { AnaRetrievalTrace } from "./retrieval.js";
 
+type AnaGenerationFinished = {
+  text: string;
+  totalUsage: {
+    inputTokens?: number;
+    outputTokens?: number;
+    totalTokens?: number;
+  };
+  response: { modelId?: string };
+  finishReason: string;
+};
+
 const ANA_INSTRUCTIONS = `Você é Ana, assistente comercial da Amplify.
 
 Responda em português brasileiro, com naturalidade, clareza e concisão.
@@ -41,6 +52,7 @@ export function streamAnaAnswer(
   messages: ModelMessage[],
   retrieval: AnaRetrievalTrace,
   apiKey?: string,
+  onFinish?: (result: AnaGenerationFinished) => void | Promise<void>,
 ) {
   const isAnthropic = ANA_MODELS[model].provider === "anthropic";
   const languageModel = isAnthropic
@@ -53,6 +65,7 @@ export function streamAnaAnswer(
     messages,
     maxOutputTokens: 500,
     maxRetries: 1,
+    onFinish,
     providerOptions: isAnthropic
       ? { anthropic: { thinking: { type: "disabled" } } }
       : {
