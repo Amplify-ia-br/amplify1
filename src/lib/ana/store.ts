@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { AnaKnowledgeMode, AnaModelId } from "./config.js";
+import type { AnaConversationState } from "./conversation.js";
 
 type AnaMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -90,6 +91,66 @@ export async function saveAnaMessage(input: SaveAnaMessageInput) {
     return { persisted: true as const, conversationId: conversation.id as string };
   } catch (error) {
     console.error("[Ana Lab] Falha ao persistir conversa", describePersistenceError(error));
+    return { persisted: false as const, reason: "write_failed" as const };
+  }
+}
+
+function leadSummary(state: AnaConversationState) {
+  const qualification = state.qualification;
+  const details = [
+    qualification.role && `Papel: ${qualification.role}`,
+    qualification.schoolSector && `Rede: ${qualification.schoolSector === "private" ? "particular" : "pública"}`,
+    qualification.need && `Necessidade: ${qualification.need}`,
+    qualification.gradeFit !== undefined && `Faixa escolar aderente: ${qualification.gradeFit ? "sim" : "não"}`,
+    qualification.studentCount !== undefined && `Estudantes: ${qualification.studentCount}`,
+    qualification.internetReady !== undefined && `Internet adequada: ${qualification.internetReady ? "sim" : "não"}`,
+    qualification.timeline && `Prazo: ${qualification.timeline}`,
+  ].filter(Boolean);
+  return details.join("\n").slice(0, 5000) || undefined;
+}
+
+export async function saveAnaLeadSnapshot(conversationId: string, state: AnaConversationState) {
+  if (!state.shouldPersistLead) return { persisted: false as const, reason: "not_a_lead" as const };
+  const supabase = getServerClient();
+  if (!supabase) return { persisted: false as const, reason: "not_configured" as const };
+
+  try {
+    const now = new Date().toISOString();
+    const qualification = state.qualification;
+    const lead = {
+      conversation_id: conversationId,
+      ...(qualification.name ? { name: qualification.name } : {}),
+      ...(qualification.email ? { email: qualification.email } : {}),
+      ...(qualification.phone ? { phone: qualification.phone } : {}),
+      ...(qualification.organization ? { company: qualification.organization } : {}),
+      ...(qualification.role ? { role: qualification.role } : {}),
+      ...(qualification.offerInterest ? { offer_interest: qualification.offerInterest } : {}),
+      stage: state.leadStage,
+      qualification,
+      contact_consent: qualification.contactConsent,
+      contact_consent_at: qualification.contactConsent ? now : null,
+      ...(state.leadStage === "qualified" ? { qualified_at: now } : {}),
+      ...(state.leadStage === "handoff" ? { handoff_requested_at: now } : {}),
+      summary: leadSummary(state),
+    };
+
+    const { data, error } = await supabase
+      .from("ana_leads")
+      .upsert(lead, { onConflict: "conversation_id" })
+      .select("id, stage")
+      .single();
+    if (error || !data?.id) throw error || new Error("lead_not_returned");
+
+    const conversationStatus = state.leadStage === "engaged" ? "engaged" : state.leadStage;
+    const { error: conversationError } = await supabase
+      .from("ana_conversations")
+      .update({ status: conversationStatus })
+      .eq("id", conversationId);
+    if (conversationError) throw conversationError;
+
+    return { persisted: true as const, leadId: data.id as string, stage: data.stage as string };
+  } catch (error) {
+    console.error("[Ana Lab] Falha ao persistir lead", describePersistenceError(error));
     return { persisted: false as const, reason: "write_failed" as const };
   }
 }

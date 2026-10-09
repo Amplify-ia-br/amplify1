@@ -8,7 +8,7 @@ import { anaChatRequestSchema, estimateAnaCost } from "./config.js";
 import { analyzeAnaConversation, immediateAnaReply } from "./conversation.js";
 import { emptyAnaRetrieval, retrieveAnaKnowledge } from "./retrieval.js";
 import type { AnaMessage, AnaMessageMetadata } from "./types.js";
-import { saveAnaMessage } from "./store.js";
+import { saveAnaLeadSnapshot, saveAnaMessage } from "./store.js";
 import type { KnowledgeReader } from "../okf/http.js";
 
 const PRIVATE_HEADERS = {
@@ -70,7 +70,7 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
     );
   }
 
-  await saveAnaMessage({
+  const persistedUserMessage = await saveAnaMessage({
     conversationKey: conversationId,
     externalId: latestUserMessage?.id ?? `user:${crypto.randomUUID()}`,
     role: "user",
@@ -79,10 +79,19 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
     knowledgeMode: mode,
     pagePath,
     sourceIds: retrieval.documents.map((document) => document.id),
-    metadata: { turnKind: conversation.turnKind, conversationStage: conversation.stage },
+    metadata: {
+      turnKind: conversation.turnKind,
+      conversationStage: conversation.stage,
+      leadStage: conversation.leadStage,
+      qualificationScore: conversation.qualificationScore,
+      nextQuestionKey: conversation.nextQuestion?.key,
+    },
   });
+  const persistedLead = persistedUserMessage.persisted && conversation.shouldPersistLead
+    ? await saveAnaLeadSnapshot(persistedUserMessage.conversationId, conversation)
+    : undefined;
 
-  const immediateReply = immediateAnaReply(conversation, uiMessages);
+  const immediateReply = immediateAnaReply(conversation, uiMessages, Boolean(persistedLead?.persisted && conversation.leadStage === "handoff"));
   if (immediateReply) {
     const completedAt = Date.now();
     const stream = createUIMessageStream<AnaMessage>({
@@ -97,6 +106,9 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
             model,
             turnKind: conversation.turnKind,
             conversationStage: conversation.stage,
+            leadStage: conversation.leadStage,
+            qualificationScore: conversation.qualificationScore,
+            nextQuestionKey: conversation.nextQuestion?.key,
           },
         });
         writer.write({ type: "data-retrieval", data: retrieval });
@@ -113,6 +125,9 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
             resolvedModel: "ana-conversation-policy",
             turnKind: conversation.turnKind,
             conversationStage: conversation.stage,
+            leadStage: conversation.leadStage,
+            qualificationScore: conversation.qualificationScore,
+            nextQuestionKey: conversation.nextQuestion?.key,
           },
         });
         await saveAnaMessage({
@@ -123,7 +138,13 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
           model: "ana-conversation-policy",
           knowledgeMode: mode,
           pagePath,
-          metadata: { turnKind: conversation.turnKind, conversationStage: conversation.stage },
+          metadata: {
+            turnKind: conversation.turnKind,
+            conversationStage: conversation.stage,
+            leadStage: conversation.leadStage,
+            qualificationScore: conversation.qualificationScore,
+            nextQuestionKey: conversation.nextQuestion?.key,
+          },
         });
       },
     });
@@ -149,6 +170,9 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
         totalTokens: finished.totalUsage.totalTokens,
         turnKind: conversation.turnKind,
         conversationStage: conversation.stage,
+        leadStage: conversation.leadStage,
+        qualificationScore: conversation.qualificationScore,
+        nextQuestionKey: conversation.nextQuestion?.key,
       },
     });
   });
@@ -164,6 +188,9 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
         model,
         turnKind: conversation.turnKind,
         conversationStage: conversation.stage,
+        leadStage: conversation.leadStage,
+        qualificationScore: conversation.qualificationScore,
+        nextQuestionKey: conversation.nextQuestion?.key,
       };
       writer.write({ type: "start", messageMetadata: initialMetadata });
       writer.write({ type: "data-retrieval", data: retrieval });

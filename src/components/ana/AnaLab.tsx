@@ -152,6 +152,8 @@ export default function AnaLab() {
     discovery: "descoberta",
     solution: "solução",
     qualification: "qualificação",
+    contact: "contato",
+    handoff: "encaminhamento",
     closing: "encerramento",
   }[metadata.conversationStage] : undefined;
   const turnKindLabel = metadata?.turnKind ? {
@@ -162,6 +164,22 @@ export default function AnaLab() {
     disclosure: "contexto",
     request: "pergunta",
   }[metadata.turnKind] : undefined;
+  const leadStageLabel = metadata?.leadStage ? {
+    engaged: "engajado",
+    qualifying: "em qualificação",
+    qualified: "qualificado",
+    meeting_requested: "reunião solicitada",
+    handoff: "encaminhamento pronto",
+    nurture: "nutrição",
+  }[metadata.leadStage] : undefined;
+  const nextQuestionLabel = metadata?.nextQuestionKey ? {
+    need: "necessidade",
+    grades: "séries atendidas",
+    students: "número de estudantes",
+    internet: "infraestrutura",
+    timeline: "prazo",
+    contact: "contato consentido",
+  }[metadata.nextQuestionKey] : undefined;
   const assistantText = lastAssistant ? textFromMessage(lastAssistant) : "";
   const completedWithoutText = Boolean(
     lastAssistant && retrieval && status === "ready" && finishedAt && !assistantText,
@@ -358,6 +376,8 @@ export default function AnaLab() {
                 <strong>{degraded ? "Modo degradado" : error ? "Erro na execução" : busy ? "Executando" : assistantText ? "Resposta concluída" : "Pronto para testar"}</strong>
                 <small>{requiresApiKey ? "Anthropic direto · BYOK da sessão" : mode === "mcp" ? "MCP remoto · amplify.ia.br" : "Serviço OKF direto · preview"}</small>
                 {conversationStageLabel && <small>Estado: {conversationStageLabel} · {turnKindLabel}</small>}
+                {leadStageLabel && <small>Lead: {leadStageLabel} · qualificação {metadata?.qualificationScore ?? 0}%</small>}
+                {nextQuestionLabel && <small>Próximo dado: {nextQuestionLabel}</small>}
               </div>
             </div>
           </section>

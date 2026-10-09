@@ -16,6 +16,9 @@ export type AnaMessageMetadata = {
   resolvedModel?: string;
   turnKind?: AnaTurnKind;
   conversationStage?: AnaConversationStage;
+  leadStage?: import("./conversation.js").AnaLeadStage;
+  qualificationScore?: number;
+  nextQuestionKey?: import("./conversation.js").AnaNextQuestion["key"];
 };
 
 export type AnaDataParts = {

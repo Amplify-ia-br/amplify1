@@ -26,7 +26,7 @@ export const ANA_REFERENCE_SUITE: AnaReferenceScenario[] = [
       { role: "assistant", text: "Oi! Tudo bem? Como posso te ajudar?" },
       { role: "user", text: "Sou dono de uma escola." },
     ],
-    expected: { turnKind: "disclosure", stage: "discovery", shouldRetrieveKnowledge: false, shouldAskQuestion: true },
+    expected: { turnKind: "disclosure", stage: "qualification", shouldRetrieveKnowledge: false, shouldAskQuestion: true },
   },
   {
     name: "confirmação curta não repete pergunta de qualificação",
@@ -35,7 +35,7 @@ export const ANA_REFERENCE_SUITE: AnaReferenceScenario[] = [
       { role: "assistant", text: "Posso explicar. Quais séries sua escola atende?" },
       { role: "user", text: "Entendi." },
     ],
-    expected: { turnKind: "acknowledgement", stage: "discovery", shouldRetrieveKnowledge: false, shouldAskQuestion: false },
+    expected: { turnKind: "acknowledgement", stage: "qualification", shouldRetrieveKnowledge: false, shouldAskQuestion: false },
   },
   {
     name: "pergunta sobre escola consulta conhecimento",

@@ -1,9 +1,15 @@
 import { describe, expect, it, vi } from "vitest";
 import type { KnowledgeReader } from "../okf/http";
 
-const mocks = vi.hoisted(() => ({ saveAnaMessage: vi.fn().mockResolvedValue({ persisted: true }) }));
+const mocks = vi.hoisted(() => ({
+  saveAnaMessage: vi.fn().mockResolvedValue({ persisted: true, conversationId: "99999999-9999-4999-8999-999999999999" }),
+  saveAnaLeadSnapshot: vi.fn().mockResolvedValue({ persisted: false, reason: "not_a_lead" }),
+}));
 
-vi.mock("./store.js", () => ({ saveAnaMessage: mocks.saveAnaMessage }));
+vi.mock("./store.js", () => ({
+  saveAnaMessage: mocks.saveAnaMessage,
+  saveAnaLeadSnapshot: mocks.saveAnaLeadSnapshot,
+}));
 
 import { handleAnaChat } from "./http";
 
@@ -34,5 +40,6 @@ describe("Ana conversational HTTP flow", () => {
     expect(reader.listKnowledge).not.toHaveBeenCalled();
     expect(reader.getKnowledgeById).not.toHaveBeenCalled();
     expect(mocks.saveAnaMessage).toHaveBeenCalledTimes(2);
+    expect(mocks.saveAnaLeadSnapshot).not.toHaveBeenCalled();
   });
 });
