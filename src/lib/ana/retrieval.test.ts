@@ -48,6 +48,15 @@ describe("Ana deterministic retrieval", () => {
     expect(ranked[0]?.score).toBeGreaterThan(ranked[1]?.score ?? 0);
   });
 
+  it.each([
+    "O que é o L.E.I.A.?",
+    "Quanto custa o L.E.I.A.?",
+    "Funciona sem laboratório de informática?",
+  ])("prioritizes L.E.I.A. for product-specific query: %s", (query) => {
+    const ranked = rankKnowledgeSummaries(query, summaries);
+    expect(ranked[0]?.id).toBe("leia");
+  });
+
   it("uses whole words instead of matching short substrings", () => {
     const ranked = rankKnowledgeSummaries("tem", summaries);
     expect(ranked).toEqual([]);

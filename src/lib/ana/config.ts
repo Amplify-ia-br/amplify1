@@ -1,6 +1,20 @@
 import { z } from "zod-v4";
 
 export const ANA_MODELS = {
+  "openai/gpt-5.4-mini-fast": {
+    label: "GPT-5.4 Mini Fast",
+    hint: "Gateway",
+    provider: "gateway",
+    inputCostPerToken: 0.0000015,
+    outputCostPerToken: 0.000009,
+  },
+  "google/gemini-3.1-flash-lite": {
+    label: "Gemini 3.1 Flash Lite",
+    hint: "Gateway",
+    provider: "gateway",
+    inputCostPerToken: 0.00000025,
+    outputCostPerToken: 0.0000015,
+  },
   "inclusionai/ling-3.1-flash-free": {
     label: "Ling 3.1 Flash",
     hint: "grátis",
@@ -15,7 +29,7 @@ export const ANA_MODELS = {
     inputCostPerToken: 0,
     outputCostPerToken: 0,
   },
-  "anthropic/claude-haiku-5-5": {
+  "byok/anthropic/claude-haiku-5-5": {
     label: "Claude Haiku 5.5",
     hint: "BYOK",
     provider: "anthropic",
@@ -25,12 +39,13 @@ export const ANA_MODELS = {
 export type AnaModelId = keyof typeof ANA_MODELS;
 export type AnaKnowledgeMode = "mcp" | "direct";
 
-export const DEFAULT_ANA_MODEL: AnaModelId = "inclusionai/ling-3.1-flash-free";
+export const DEFAULT_ANA_MODEL: AnaModelId = "openai/gpt-5.4-mini-fast";
 
 const ANA_GATEWAY_FALLBACKS = [
+  "openai/gpt-5.4-mini-fast",
+  "google/gemini-3.1-flash-lite",
   "inclusionai/ling-3.1-flash-free",
   "poolside/laguna-s-2.1-free",
-  "stealth/glyph-cluster",
 ] as const;
 
 export function getAnaFallbackModels(model: AnaModelId) {

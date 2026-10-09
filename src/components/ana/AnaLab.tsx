@@ -68,7 +68,7 @@ function textFromMessage(message: AnaMessage) {
 function cleanAssistantText(text: string) {
   return text
     .replace(/\*\*(.*?)\*\*/g, "$1")
-    .replace(/L\.\s*E\.\s*I\.\s*A\./gi, "L.E.I.A.")
+    .replace(/L\s*\.\s*E\s*\.\s*I\s*\.\s*A\s*\.?/gi, "L.E.I.A.")
     .replace(/([.!?])(?=[A-ZÀ-Ý])/g, "$1 ")
     .trim();
 }

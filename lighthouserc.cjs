@@ -1,10 +1,13 @@
 module.exports = {
   ci: {
     collect: {
-      startServerCommand: 'npm run preview',
-      startServerReadyPattern: 'Local:.*:4173',
+      startServerCommand: 'HOST=127.0.0.1 PORT=4173 node dist/server/entry.mjs',
+      startServerReadyPattern: 'Listening.*4173',
       url: ['http://localhost:4173'],
       numberOfRuns: 3,
+      settings: {
+        preset: 'desktop',
+      },
     },
     assert: {
       assertions: {

@@ -9,11 +9,11 @@ describe("Ana Lab configuration", () => {
     expect(anaChatRequestSchema.safeParse({ messages: [{}], mode: "internal" }).success).toBe(false);
     expect(anaChatRequestSchema.safeParse({
       messages: [{}],
-      model: "anthropic/claude-haiku-5-5",
+      model: "byok/anthropic/claude-haiku-5-5",
     }).success).toBe(false);
     expect(anaChatRequestSchema.safeParse({
       messages: [{}],
-      model: "anthropic/claude-haiku-5-5",
+      model: "byok/anthropic/claude-haiku-5-5",
       apiKey: "test-key",
     }).success).toBe(true);
   });
@@ -21,17 +21,19 @@ describe("Ana Lab configuration", () => {
   it("estimates model cost from token usage", () => {
     expect(estimateAnaCost("inclusionai/ling-3.1-flash-free", { inputTokens: 1_000, outputTokens: 500 })).toBe(0);
     expect(estimateAnaCost("poolside/laguna-s-2.1-free", { inputTokens: 1_000, outputTokens: 500 })).toBe(0);
+    expect(estimateAnaCost("openai/gpt-5.4-mini-fast", { inputTokens: 1_000, outputTokens: 500 })).toBe(0.006);
   });
 
   it("falls back to other free tool-capable models without retrying the selected model", () => {
     const fallbacks = getAnaFallbackModels("inclusionai/ling-3.1-flash-free");
     expect(fallbacks).toEqual([
+      "openai/gpt-5.4-mini-fast",
+      "google/gemini-3.1-flash-lite",
       "poolside/laguna-s-2.1-free",
-      "stealth/glyph-cluster",
     ]);
   });
 
   it("does not send direct Anthropic models through Gateway fallbacks", () => {
-    expect(getAnaFallbackModels("anthropic/claude-haiku-5-5")).toEqual([]);
+    expect(getAnaFallbackModels("byok/anthropic/claude-haiku-5-5")).toEqual([]);
   });
 });

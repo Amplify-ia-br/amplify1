@@ -19,6 +19,8 @@ jobs:
         run: npm ci
       - name: Build
         run: npm run build
+        env:
+          LIGHTHOUSE_CI: 'true'
       - name: Run Lighthouse CI
         run: npx lhci autorun
         env:

@@ -12,7 +12,16 @@ const STOP_WORDS = new Set([
 ]);
 
 const INTENTS = [
-  { name: "educacao-escolas", ids: ["leia"], signals: ["escola", "escolas", "aluno", "alunos", "estudante", "estudantes", "ensino", "curriculo", "professor", "professores"] },
+  {
+    name: "educacao-escolas",
+    ids: ["leia"],
+    signals: [
+      "leia", "escola", "escolas", "aluno", "alunos", "estudante", "estudantes", "ensino",
+      "curriculo", "professor", "professores", "laboratorio", "equipamento", "equipamentos",
+      "tablet", "tablets", "preco", "precos", "custa", "valor", "valores", "investimento",
+      "plano", "planos", "standard", "silver", "gold",
+    ],
+  },
   { name: "academy", ids: ["amplify-academy"], signals: ["academy", "curso", "cursos", "formacao", "capacitação", "capacitacao", "aprender"] },
   { name: "metodo", ids: ["method"], signals: ["metodo", "metodologia", "processo", "trabalham", "abordagem"] },
   { name: "portfolio", ids: ["portfolio"], signals: ["oferta", "ofertas", "servico", "servicos", "consultoria", "treinamento", "workshop", "produto", "produtos"] },
@@ -37,7 +46,9 @@ export type AnaRetrievalTrace = {
 type RankedSummary = KnowledgeSummary & { score: number };
 
 function words(value: string): string[] {
-  return Array.from(normalizeKnowledgeText(value).matchAll(/[a-z0-9]+/g), (match) => match[0]);
+  const normalized = normalizeKnowledgeText(value)
+    .replace(/\bl\s*\.\s*e\s*\.\s*i\s*\.\s*a\s*\.?/g, " leia ");
+  return Array.from(normalized.matchAll(/[a-z0-9]+/g), (match) => match[0]);
 }
 
 export function extractKnowledgeTerms(query: string) {
