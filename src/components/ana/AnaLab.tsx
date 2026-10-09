@@ -135,7 +135,10 @@ export default function AnaLab() {
 
   const lastAssistant = [...messages].reverse().find((message) => message.role === "assistant");
   const retrieval = retrievalFromMessage(lastAssistant);
-  const traces: ToolTrace[] = retrieval ? [{
+  const usedKnowledgeTool = Boolean(
+    retrieval && (retrieval.documents.length || retrieval.ranked.length || retrieval.listMs || retrieval.fetchMs),
+  );
+  const traces: ToolTrace[] = retrieval && usedKnowledgeTool ? [{
     id: `retrieval-${lastAssistant?.id}`,
     name: "retrieve_knowledge",
     state: "output-available",
