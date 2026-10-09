@@ -24,6 +24,9 @@
     "whatsapp:amplify-day:send": "node --env-file=.env scripts/amplify-day-whatsapp-reminder.mjs --send"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.78",
+    "@ai-sdk/mcp": "^2.0.71",
+    "@ai-sdk/react": "^4.0.137",
     "@hookform/resolvers": "^3.10.0",
     "@modelcontextprotocol/server": "^2.3.1",
     "@neondatabase/serverless": "^1.1.0",
@@ -64,6 +67,7 @@
     "@tiptap/starter-kit": "^3.22.3",
     "@types/dompurify": "^3.2.0",
     "@vercel/analytics": "^2.0.1",
+    "ai": "^7.0.135",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
@@ -94,6 +98,7 @@
     "zod-v4": "npm:zod@^4.6.5"
   },
   "devDependencies": {
+    "@astrojs/node": "^9.5.5",
     "@astrojs/react": "^5.0.4",
     "@astrojs/tailwind": "^6.0.2",
     "@astrojs/vercel": "^9.0.0",

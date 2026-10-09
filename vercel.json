@@ -5,6 +5,9 @@
     },
     "api/mcp.ts": {
       "includeFiles": "okf/public/**"
+    },
+    "api/ana-chat.ts": {
+      "includeFiles": "okf/public/**"
     }
   },
   "headers": [
@@ -26,6 +29,14 @@
     },
     {
       "source": "/api/mcp",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/lab/ana",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/ana-chat",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
     }
   ],
