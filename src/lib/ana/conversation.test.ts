@@ -171,7 +171,8 @@ describe("Ana reference conversation suite", () => {
     expect(state.qualification.needs).toEqual(expect.arrayContaining(["students", "processes", "product"]));
     expect(state.qualification.offerInterests).toEqual(expect.arrayContaining(["leia", "consulting", "product-development"]));
     expect(state.qualification).toMatchObject({ gradeFit: true, studentCount: 90, internetReady: true });
-    expect(state.nextQuestion?.key).toBe("contactConsent");
+    expect(state.answerRequired).toBe(true);
+    expect(state.nextQuestion).toBeUndefined();
   });
 
   it("merges the persisted qualification instead of resetting confirmed facts", () => {
@@ -199,7 +200,8 @@ describe("Ana reference conversation suite", () => {
       internetReady: true,
       pricingIntent: true,
     });
-    expect(state.nextQuestion?.key).toBe("timeline");
+    expect(state.answerRequired).toBe(true);
+    expect(state.nextQuestion).toBeUndefined();
   });
 
   it("recognizes a bare name after asking for it and continues naturally", () => {
@@ -245,7 +247,7 @@ describe("Ana reference conversation suite", () => {
 
   it("separates contact consent from the contact channel", () => {
     const beforeConsent = messages([
-      { role: "user", text: "Meu nome é Leonardo. Sou dono de uma escola do 9º ano, com 90 alunos e internet estável. Quero ensinar IA aos estudantes este ano." },
+      { role: "user", text: "Meu nome é Leonardo. Sou dono de uma escola do 9º ano, com 90 alunos e internet estável. Quero contratar o programa para ensinar IA aos estudantes este ano." },
     ]);
     const qualified = analyzeAnaConversation(beforeConsent);
     expect(qualified.nextQuestion?.key).toBe("contactConsent");
@@ -270,5 +272,46 @@ describe("Ana reference conversation suite", () => {
       { role: "user", text: "Entendi" },
     ]));
     expect(later.shouldExpandLeia).toBe(false);
+  });
+
+  it("answers a multi-need school request before asking for contact or timing", () => {
+    const conversation = messages([
+      { role: "user", text: "Oi" },
+      { role: "assistant", text: "Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?" },
+      { role: "user", text: "Meu nome é Leo." },
+      { role: "assistant", text: "Prazer, Leo. Como posso te ajudar?" },
+      { role: "user", text: "Eu queria ver como vcs podem ajudar minha escola." },
+      { role: "assistant", text: "Sua escola atende do 9º ano ao Ensino Médio?" },
+      { role: "user", text: "Sim" },
+      { role: "assistant", text: "Quantos estudantes vocês imaginam atender?" },
+      { role: "user", text: "90" },
+      { role: "assistant", text: "A escola tem conexão estável à internet?" },
+      { role: "user", text: "Tem sim" },
+      { role: "assistant", text: "Qual é a principal necessidade da escola com IA hoje?" },
+      { role: "user", text: "São duas frentes: ensinar IA para meus alunos e melhorar meu negócio com soluções de IA implementadas." },
+    ]);
+
+    const state = analyzeAnaConversation(conversation);
+    expect(state.answerRequired).toBe(true);
+    expect(state.shouldRetrieveKnowledge).toBe(true);
+    expect(state.qualification.needs).toEqual(expect.arrayContaining(["students", "processes", "product"]));
+    expect(state.nextQuestion).toBeUndefined();
+    expect(immediateAnaReply(state, conversation)).toBeUndefined();
+  });
+
+  it("treats refusal plus a repeated information request as an answer-first correction", () => {
+    const conversation = messages([
+      { role: "user", text: "Quero ensinar IA aos alunos e melhorar a operação da escola." },
+      { role: "assistant", text: "Quer que eu peça para alguém do nosso time entrar em contato com você?" },
+      { role: "user", text: "Não. Quero saber como vocês podem me ajudar." },
+    ]);
+
+    const state = analyzeAnaConversation(conversation);
+    expect(state.turnKind).toBe("request");
+    expect(state.answerRequired).toBe(true);
+    expect(state.shouldRetrieveKnowledge).toBe(true);
+    expect(state.qualification.contactRevoked).toBe(true);
+    expect(state.nextQuestion).toBeUndefined();
+    expect(immediateAnaReply(state, conversation)).toBeUndefined();
   });
 });

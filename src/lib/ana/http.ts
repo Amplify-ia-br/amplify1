@@ -5,7 +5,7 @@ import {
 } from "ai";
 import { streamAnaAnswer } from "./agent.js";
 import { anaChatRequestSchema, estimateAnaCost } from "./config.js";
-import { analyzeAnaConversation, immediateAnaReply } from "./conversation.js";
+import { analyzeAnaConversation, immediateAnaReply, type AnaConversationState } from "./conversation.js";
 import { emptyAnaRetrieval, retrieveAnaKnowledge } from "./retrieval.js";
 import type { AnaMessage, AnaMessageMetadata } from "./types.js";
 import { loadAnaLeadQualification, saveAnaLeadSnapshot, saveAnaMessage } from "./store.js";
@@ -22,6 +22,21 @@ function textFromMessage(message: AnaMessage) {
     .map((part) => part.text)
     .join("")
     .trim();
+}
+
+export function buildAnaRetrievalQuery(latestMessage: string, conversation: AnaConversationState) {
+  const { qualification } = conversation;
+  const context = [
+    latestMessage,
+    ...(qualification.needs?.includes("students") ? ["educação para estudantes escola L.E.I.A."] : []),
+    ...(qualification.needs?.some((need) => need === "processes" || need === "management")
+      ? ["consultoria diagnóstico operação negócio processos implantação de IA"]
+      : []),
+    ...(qualification.needs?.includes("product") ? ["desenvolvimento e implantação de soluções e produtos de IA"] : []),
+    ...(qualification.offerInterests?.includes("academy") ? ["Amplify Academy educação capacitação"] : []),
+    ...(qualification.pricingIntent ? ["preço investimento política comercial"] : []),
+  ];
+  return [...new Set(context)].join(" ");
 }
 
 export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
@@ -57,9 +72,7 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
 
   const previousQualification = await loadAnaLeadQualification(conversationId);
   const conversation = analyzeAnaConversation(uiMessages, pagePath, previousQualification);
-  const retrievalQuery = conversation.qualification.pricingIntent
-    ? `${latestQuestion} ${conversation.qualification.offerInterest === "leia" ? "L.E.I.A." : "Amplify"} preço investimento política comercial`
-    : latestQuestion;
+  const retrievalQuery = buildAnaRetrievalQuery(latestQuestion, conversation);
   const startedAt = Date.now();
   let retrieval;
   try {

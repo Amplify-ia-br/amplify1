@@ -24,7 +24,7 @@ const INTENTS = [
   },
   { name: "academy", ids: ["amplify-academy"], signals: ["academy", "curso", "cursos", "formacao", "capacitação", "capacitacao", "aprender"] },
   { name: "metodo", ids: ["method"], signals: ["metodo", "metodologia", "processo", "trabalham", "abordagem"] },
-  { name: "portfolio", ids: ["portfolio"], signals: ["oferta", "ofertas", "servico", "servicos", "consultoria", "treinamento", "workshop", "produto", "produtos"] },
+  { name: "portfolio", ids: ["portfolio"], signals: ["oferta", "ofertas", "servico", "servicos", "consultoria", "diagnostico", "treinamento", "workshop", "produto", "produtos", "negocio", "operacao", "processos", "implantar", "implementar", "solucao", "solucoes"] },
   { name: "empresa", ids: ["company"], signals: ["amplify", "empresa", "diferencial", "diferenciais", "concorrente", "posicionamento"] },
 ] as const;
 
@@ -55,9 +55,19 @@ export function extractKnowledgeTerms(query: string) {
   return [...new Set(words(query).filter((word) => word.length > 2 && !STOP_WORDS.has(word)))];
 }
 
-function detectIntent(terms: string[]) {
+function detectIntents(terms: string[]) {
   const termSet = new Set(terms);
-  return INTENTS.find((intent) => intent.signals.some((signal) => termSet.has(normalizeKnowledgeText(signal))));
+  return INTENTS.filter((intent) => intent.signals.some((signal) => termSet.has(normalizeKnowledgeText(signal))));
+}
+
+function priorityDocumentIds(terms: string[]) {
+  const intents = detectIntents(terms);
+  const ids = intents.flatMap((intent) => [...intent.ids]);
+  const termSet = new Set(terms);
+  const hasSchoolIntent = intents.some(({ name }) => name === "educacao-escolas");
+  const hasExplicitLeia = termSet.has("leia");
+  if (hasSchoolIntent && !hasExplicitLeia) ids.push("portfolio");
+  return [...new Set(ids)];
 }
 
 function overlapScore(value: string, terms: string[], weight: number) {
@@ -67,12 +77,12 @@ function overlapScore(value: string, terms: string[], weight: number) {
 
 export function rankKnowledgeSummaries(query: string, summaries: KnowledgeSummary[]): RankedSummary[] {
   const terms = extractKnowledgeTerms(query);
-  const intent = detectIntent(terms);
+  const priorityIds = priorityDocumentIds(terms);
 
   return summaries
     .map((summary) => {
-      const intentIndex = (intent?.ids as readonly string[] | undefined)?.indexOf(summary.id) ?? -1;
-      const score = (intentIndex >= 0 ? 1_200 - intentIndex * 100 : 0) +
+      const priorityIndex = priorityIds.indexOf(summary.id);
+      const score = (priorityIndex >= 0 ? 1_200 - priorityIndex * 100 : 0) +
         overlapScore(summary.title, terms, 80) +
         overlapScore(summary.tags.join(" "), terms, 60) +
         overlapScore(summary.description, terms, 25);
@@ -115,9 +125,10 @@ async function retrieveDirect(reader: KnowledgeReader, query: string) {
   const summaries = await reader.listKnowledge();
   const listMs = Date.now() - listStartedAt;
   const ranked = rankKnowledgeSummaries(query, summaries);
-  const intent = detectIntent(extractKnowledgeTerms(query));
+  const terms = extractKnowledgeTerms(query);
+  const priorityIds = priorityDocumentIds(terms);
   const selected = (ranked.length ? ranked : summaries.filter(({ id }) => id === "company"))
-    .slice(0, intent?.name === "educacao-escolas" ? 1 : 2);
+    .slice(0, Math.min(3, Math.max(2, priorityIds.length)));
   const fetchStartedAt = Date.now();
   const documents = (await Promise.all(selected.map(({ id }) => reader.getKnowledgeById(id))))
     .filter((document): document is KnowledgeDocument => Boolean(document));
@@ -150,9 +161,10 @@ async function retrieveMcp(query: string) {
     const listMs = Date.now() - listStartedAt;
     const summaries = listResponse.structuredContent?.items ?? [];
     const ranked = rankKnowledgeSummaries(query, summaries);
-    const intent = detectIntent(extractKnowledgeTerms(query));
+    const terms = extractKnowledgeTerms(query);
+    const priorityIds = priorityDocumentIds(terms);
     const selected = (ranked.length ? ranked : summaries.filter(({ id }) => id === "company"))
-      .slice(0, intent?.name === "educacao-escolas" ? 1 : 2);
+      .slice(0, Math.min(3, Math.max(2, priorityIds.length)));
     const fetchStartedAt = Date.now();
     const responses = await Promise.all(selected.map(({ id }) => tools.get_knowledge.execute?.({ id }, options)));
     const documents = responses.flatMap((response) => {
@@ -173,7 +185,7 @@ export async function retrieveAnaKnowledge(
 ): Promise<AnaRetrievalTrace> {
   const startedAt = Date.now();
   const terms = extractKnowledgeTerms(query);
-  const intent = detectIntent(terms);
+  const intents = detectIntents(terms);
   const result = mode === "mcp" ? await retrieveMcp(query) : await retrieveDirect(reader, query);
   const documents = result.documents.map(({ id, title, description, type, tags, content }) => ({
     id, title, description, type, tags, content,
@@ -181,7 +193,7 @@ export async function retrieveAnaKnowledge(
   return {
     query,
     normalizedTerms: terms,
-    intent: intent?.name ?? "geral",
+    intent: intents.map(({ name }) => name).join("+") || "geral",
     mode,
     listMs: result.listMs,
     fetchMs: result.fetchMs,

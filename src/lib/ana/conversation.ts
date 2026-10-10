@@ -23,6 +23,7 @@ export type AnaLeadQualification = {
   commercialIntent: boolean;
   pricingIntent: boolean;
   meetingIntent: boolean;
+  advancementIntent: boolean;
   contactConsent: boolean;
   contactRevoked: boolean;
 };
@@ -48,6 +49,7 @@ export type AnaConversationState = {
   shouldExpandLeia: boolean;
   answeredNameThisTurn: boolean;
   incompleteUserThought: boolean;
+  answerRequired: boolean;
   nextQuestion?: AnaNextQuestion;
 };
 
@@ -88,9 +90,23 @@ export function classifyAnaTurn(value: string): AnaTurnKind {
   const pricingIntent = /\b(?:preco|valor|investimento|orcamento|quanto|qto|cust(?:a|ar)|cutar)\b/.test(normalized);
   const asksQuestion = value.includes("?")
     || pricingIntent
-    || /\b(?:queria|gostaria) (?:saber|entender)\b/.test(normalized)
+    || /\b(?:quero|queria|gostaria|preciso) (?:saber|entender|ver|conhecer)\b/.test(normalized)
     || /^(como|qual|quais|quanto|quando|onde|por que|porque|quem|o que|tem|posso|podem|voces|vcs)\b/.test(normalized);
   return asksQuestion ? "request" : "disclosure";
+}
+
+function requiresKnowledgeAnswer(value: string, turnKind: AnaTurnKind, incompleteUserThought: boolean) {
+  if (incompleteUserThought || turnKind === "greeting" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell") {
+    return false;
+  }
+  if (turnKind === "request") return true;
+
+  const normalized = normalizeKnowledgeText(value);
+  const describesNeed = /\b(?:ensinar|formar|capacitar|implantar|implementar|aplicar|melhorar|otimizar|automatizar|resolver|transformar)\b.{0,80}\b(?:ia|inteligencia artificial|alunos|estudantes|professores|escola|negocio|operacao|processos?|produto|solucao|solucoes)\b/.test(normalized)
+    || /\b(?:ia|inteligencia artificial|alunos|estudantes|professores|escola|negocio|operacao|processos?|produto|solucao|solucoes)\b.{0,80}\b(?:ensinar|formar|capacitar|implantar|implementar|aplicar|melhorar|otimizar|automatizar|resolver|transformar)\b/.test(normalized);
+  const asksForOptions = /\b(?:opcao|opcoes|alternativa|alternativas|solucao|solucoes|produto|produtos|servico|servicos|ajuda|ajudar)\b/.test(normalized)
+    && /\b(?:quero|queria|preciso|gostaria|busco|procurando|frente|frentes|como|quais)\b/.test(normalized);
+  return describesNeed || asksForOptions;
 }
 
 function inferKnownFacts(userMessages: string[]) {
@@ -172,6 +188,7 @@ export function mergeAnaLeadQualification(
     commercialIntent: Boolean(previous.commercialIntent || current.commercialIntent),
     pricingIntent: Boolean(previous.pricingIntent || current.pricingIntent),
     meetingIntent: Boolean(previous.meetingIntent || current.meetingIntent),
+    advancementIntent: Boolean(previous.advancementIntent || current.advancementIntent),
     contactConsent,
     contactRevoked,
   };
@@ -227,7 +244,7 @@ function extractLeadQualification(
     ...(/\b(aluno|alunos|estudante|estudantes|ensinar)\b/.test(joined) ? ["students" as const] : []),
     ...(/\b(professor|professores|docente|docentes)\b/.test(joined) ? ["teachers" as const] : []),
     ...(/\b(gestao|gestor|gestores|direcao|diretores)\b/.test(joined) ? ["management" as const] : []),
-    ...(/\b(processo|processos|operacao|operacoes|otimizar|otimizacao|otimizado|otimizada)\b/.test(joined) ? ["processes" as const] : []),
+    ...(/\b(processo|processos|operacao|operacoes|negocio|negocios|melhorar (?:meu |o )?negocio|otimizar|otimizacao|otimizado|otimizada)\b/.test(joined) ? ["processes" as const] : []),
     ...(/\b(produto|aplicativo|sistema|solucao|solucoes)\b/.test(joined) ? ["product" as const] : []),
   ]);
   const need = needs[0];
@@ -262,10 +279,12 @@ function extractLeadQualification(
   const pricingIntent = /\b(?:preco|valor|investimento|orcamento|quanto|qto|cust(?:a|ar)|cutar)\b/.test(joined);
   const commercialIntent = pricingIntent || /\b(quero|queremos|gostaria|interesse|contratar|implantar|proposta)\b/.test(joined);
   const meetingIntent = /\b(agendar|marcar|reuniao|reunião|falar com (?:alguem|alguém|o time|vendas)|conversar com (?:alguem|alguém|o time|vendas))\b/.test(joined);
+  const advancementIntent = meetingIntent || /\b(?:quero|queremos|gostaria|podemos|como)\b.{0,40}\b(?:contratar|comecar|começar|avancar|avançar|proposta|proximo passo|próximo passo)\b|\b(?:quero uma proposta|podem enviar uma proposta|qual e o proximo passo|qual é o próximo passo)\b/.test(joined);
   const explicitConsent = /\b(pode(?:m)? (?:me )?(?:ligar|chamar|contatar|contactar|mandar (?:um )?email)|autorizo (?:o )?contato|aceito (?:o )?contato)\b/.test(joined);
   const consentQuestion = /(?:quer|gostaria).*(?:time|alguem).*(?:entrar em contato|falar com voce)|posso.*(?:pedir|solicitar).*(?:contato|falar com voce)/.test(previousQuestion);
   const requestedContact = /qual.*(?:email|e-mail|whatsapp|telefone)|melhor.*(?:email|e-mail|whatsapp|telefone)/.test(previousQuestion);
-  const contactRevoked = /\b(nao autorizo|nao quero (?:receber )?contato|nao me (?:ligue|chame|contate)|prefiro nao (?:informar|receber contato))\b/.test(latest);
+  const contactRevoked = /\b(nao autorizo|nao quero (?:receber )?contato|nao me (?:ligue|chame|contate)|prefiro nao (?:informar|receber contato))\b/.test(latest)
+    || Boolean(consentQuestion && isNegative(latestRaw));
   const contactConsent = !contactRevoked && (
     explicitConsent
     || Boolean(consentQuestion && isAffirmative(latestRaw))
@@ -290,6 +309,7 @@ function extractLeadQualification(
     commercialIntent,
     pricingIntent,
     meetingIntent,
+    advancementIntent,
     contactConsent,
     contactRevoked,
   });
@@ -321,6 +341,13 @@ function chooseNextQuestion(
   ) {
     return { key: "name", text: "Qual é o seu nome?" };
   }
+  if (qualification.gradeFit === false) return undefined;
+  if (!qualification.need && !/necessidade|objetivo|desafio|melhorar|resolver|busca/.test(asked)) {
+    return qualification.offerInterest === "leia"
+      ? { key: "need", text: "Qual é a principal necessidade da escola com IA hoje?" }
+      : { key: "need", text: "O que você gostaria de melhorar ou resolver hoje?" };
+  }
+  if (!qualification.advancementIntent && !qualification.meetingIntent) return undefined;
   if (qualification.offerInterest === "leia") {
     if (qualification.gradeFit === undefined && !/9.*ano|ensino medio|series/.test(asked)) {
       return { key: "grades", text: "Sua escola atende turmas do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio?" };
@@ -332,19 +359,11 @@ function chooseNextQuestion(
     if (qualification.internetReady === undefined && !/internet/.test(asked)) {
       return { key: "internet", text: "A escola tem conexão estável à internet para as turmas?" };
     }
-    if (!qualification.need && !/necessidade|objetivo|ensinar|melhorar|resolver/.test(asked)) {
-      return { key: "need", text: "Qual é a principal necessidade da escola com IA hoje?" };
-    }
-  } else if (!qualification.need && !/desafio|melhorar|resolver|busca/.test(asked)) {
-    return { key: "need", text: "O que você gostaria de melhorar ou resolver hoje?" };
   }
-  if (qualification.commercialIntent && !qualification.timeline && !/quando|prazo|comecar|começar/.test(asked)) {
+  if (qualification.advancementIntent && !qualification.timeline && !/quando|prazo|comecar|começar/.test(asked)) {
     return { key: "timeline", text: "Quando vocês gostariam de começar?" };
   }
-  const qualified = qualification.offerInterest === "leia"
-    ? qualification.gradeFit === true && qualification.studentCount !== undefined && qualification.internetReady === true && Boolean(qualification.need)
-    : Boolean(qualification.need && qualification.role);
-  if ((qualification.meetingIntent || qualified) && !qualification.contactConsent && !qualification.contactRevoked && !/entrar em contato|falar com voce/.test(asked)) {
+  if ((qualification.meetingIntent || qualification.advancementIntent) && !qualification.contactConsent && !qualification.contactRevoked && !/entrar em contato|falar com voce/.test(asked)) {
     return { key: "contactConsent", text: "Quer que eu peça para alguém do nosso time entrar em contato com você?" };
   }
   if (qualification.contactConsent && !qualification.name) {
@@ -380,6 +399,7 @@ export function analyzeAnaConversation(
   const previousAssistantText = previousAssistant ? normalizeKnowledgeText(messageText(previousAssistant)) : "";
   const answeredNameThisTurn = Boolean(qualification.name && isNameQuestion(previousAssistantText));
   const incompleteUserThought = isIncompleteThought(latest);
+  const answerRequired = requiresKnowledgeAnswer(latest, turnKind, incompleteUserThought);
   const shouldExpandLeia = !messages.some((message) => (
     message.role === "assistant"
     && /laboratorio escolar de inteligencia artificial/.test(normalizeKnowledgeText(messageText(message)))
@@ -402,11 +422,17 @@ export function analyzeAnaConversation(
         : hasLeadContext && userTurnCount > 1
           ? "qualifying"
           : "engaged";
-  const nextQuestion = answeredNameThisTurn && !hasLeadContext
+  const suggestedQuestion = answeredNameThisTurn && !hasLeadContext
     ? undefined
     : turnKind === "greeting" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell"
     ? undefined
     : chooseNextQuestion(qualification, questions, incompleteUserThought, userTurnCount);
+  const nextQuestion = answerRequired
+    && suggestedQuestion?.key !== "name"
+    && !qualification.advancementIntent
+    && !qualification.meetingIntent
+    ? undefined
+    : suggestedQuestion;
 
   const stage: AnaConversationStage = turnKind === "farewell"
     ? "closing"
@@ -425,7 +451,7 @@ export function analyzeAnaConversation(
   return {
     turnKind,
     stage,
-    shouldRetrieveKnowledge: turnKind === "request",
+    shouldRetrieveKnowledge: answerRequired,
     shouldAskQuestion: Boolean(nextQuestion),
     pageHint,
     knownFacts: unique([
@@ -449,6 +475,7 @@ export function analyzeAnaConversation(
     shouldExpandLeia,
     answeredNameThisTurn,
     incompleteUserThought,
+    answerRequired,
     nextQuestion,
   };
 }
@@ -477,6 +504,7 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
       ? `Claro, ${firstName}. Pode me contar melhor o que você precisa?`
       : "Claro. Pode me contar melhor o que você precisa?";
   }
+  if (state.answerRequired) return undefined;
   if (state.turnKind === "disclosure" && state.nextQuestion) {
     if (state.nextQuestion.key === "name") return "Entendi. Qual é o seu nome?";
     const transitions: Record<AnaNextQuestion["key"], string> = {

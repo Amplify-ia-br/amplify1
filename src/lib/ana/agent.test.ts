@@ -12,6 +12,7 @@ const state: AnaConversationState = {
   knownFacts: ["A pessoa é proprietária de uma escola."],
   recentAssistantQuestions: ["Quais séries sua escola atende?"],
   userTurnCount: 2,
+  answerRequired: false,
 };
 
 describe("Ana conversation instructions", () => {
@@ -21,6 +22,12 @@ describe("Ana conversation instructions", () => {
     expect(instructions).toContain("usando o alfabeto latino");
     expect(instructions).toContain("Não apresente produtos ainda");
     expect(instructions).toContain("A pessoa é proprietária de uma escola.");
+  });
+
+  it("requires an answer before qualification when a need is unresolved", () => {
+    const instructions = buildAnaInstructions({ ...state, answerRequired: true });
+    expect(instructions).toContain("Responda-a primeiro");
+    expect(instructions).toContain("não peça dados de qualificação");
   });
 
   it("treats page context as a hint and prevents repeated questions", () => {
