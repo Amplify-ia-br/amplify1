@@ -399,7 +399,7 @@ export function analyzeAnaConversation(
       ? "meeting_requested"
       : qualified
         ? "qualified"
-        : isLead && userTurnCount > 1
+        : hasLeadContext && userTurnCount > 1
           ? "qualifying"
           : "engaged";
   const nextQuestion = answeredNameThisTurn && !hasLeadContext

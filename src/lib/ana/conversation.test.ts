@@ -211,6 +211,8 @@ describe("Ana reference conversation suite", () => {
     const state = analyzeAnaConversation(conversation);
     expect(state.qualification.name).toBe("Leonardo Camacho");
     expect(state.answeredNameThisTurn).toBe(true);
+    expect(state.leadStage).toBe("engaged");
+    expect(state.shouldPersistLead).toBe(true);
     expect(immediateAnaReply(state, conversation)).toBe("Prazer, Leonardo. Como posso te ajudar?");
   });
 

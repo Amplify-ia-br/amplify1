@@ -1,4 +1,4 @@
-import { gateway, streamText, type ModelMessage } from "ai";
+import { gateway, streamText, type ModelMessage, type TextStreamPart, type ToolSet } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { ANA_MODELS, getAnaFallbackModels, type AnaKnowledgeMode, type AnaModelId } from "./config.js";
 import type { AnaConversationState } from "./conversation.js";
@@ -118,6 +118,50 @@ function knowledgeContext(retrieval: AnaRetrievalTrace) {
   ].join("\n")).join("\n\n---\n\n");
 }
 
+export function normalizeAnaProductName(value: string) {
+  return value.replace(/\bL\s*\.\s*E\s*\.\s*I\s*\.\s*A\s*\.?/gi, "L.E.I.A.");
+}
+
+export function normalizeAnaTextStream<TOOLS extends ToolSet>() {
+  return () => {
+    let buffer = "";
+    let textId = "";
+    const retainedCharacters = 32;
+
+    return new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
+      transform(chunk, controller) {
+        if (chunk.type === "text-start") {
+          textId = chunk.id;
+          controller.enqueue(chunk);
+          return;
+        }
+        if (chunk.type === "text-delta") {
+          textId = chunk.id;
+          buffer = normalizeAnaProductName(buffer + chunk.text);
+          if (buffer.length > retainedCharacters) {
+            const emitted = buffer.slice(0, -retainedCharacters);
+            buffer = buffer.slice(-retainedCharacters);
+            controller.enqueue({ ...chunk, text: emitted });
+          }
+          return;
+        }
+        if (chunk.type === "text-end" || chunk.type === "finish" || chunk.type === "abort" || chunk.type === "error") {
+          if (buffer && textId) {
+            controller.enqueue({ type: "text-delta", id: textId, text: normalizeAnaProductName(buffer) });
+            buffer = "";
+          }
+        }
+        controller.enqueue(chunk);
+      },
+      flush(controller) {
+        if (buffer && textId) {
+          controller.enqueue({ type: "text-delta", id: textId, text: normalizeAnaProductName(buffer) });
+        }
+      },
+    });
+  };
+}
+
 export function streamAnaAnswer(
   mode: AnaKnowledgeMode,
   model: AnaModelId,
@@ -138,6 +182,7 @@ export function streamAnaAnswer(
     messages,
     maxOutputTokens: 500,
     maxRetries: 1,
+    experimental_transform: normalizeAnaTextStream(),
     onFinish,
     providerOptions: isAnthropic
       ? { anthropic: { thinking: { type: "disabled" } } }

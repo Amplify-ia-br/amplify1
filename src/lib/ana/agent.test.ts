@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildAnaInstructions } from "./agent";
+import { buildAnaInstructions, normalizeAnaProductName, normalizeAnaTextStream } from "./agent";
 import type { AnaConversationState } from "./conversation";
 
 const state: AnaConversationState = {
@@ -36,5 +36,26 @@ describe("Ana conversation instructions", () => {
     expect(buildAnaInstructions({ ...state, shouldExpandLeia: true })).toContain(
       "L.E.I.A. — Laboratório Escolar de Inteligência Artificial",
     );
+  });
+
+  it("normalizes spaced variations of the L.E.I.A. name", () => {
+    expect(normalizeAnaProductName("O L. E. I. A. ajuda escolas.")).toBe("O L.E.I.A. ajuda escolas.");
+  });
+
+  it("normalizes the product name even when it is split across stream chunks", async () => {
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue({ type: "text-start", id: "answer" } as const);
+        controller.enqueue({ type: "text-delta", id: "answer", text: "O L. E." } as const);
+        controller.enqueue({ type: "text-delta", id: "answer", text: " I. A. atende escolas." } as const);
+        controller.enqueue({ type: "text-end", id: "answer" } as const);
+        controller.close();
+      },
+    }).pipeThrough(normalizeAnaTextStream()());
+
+    const chunks = [];
+    for await (const chunk of stream) chunks.push(chunk);
+    const text = chunks.filter((chunk) => chunk.type === "text-delta").map((chunk) => chunk.text).join("");
+    expect(text).toBe("O L.E.I.A. atende escolas.");
   });
 });
