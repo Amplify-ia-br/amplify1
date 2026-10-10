@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildAnaInstructions, normalizeAnaTextStream } from "./agent";
 import type { AnaConversationState } from "./conversation";
-import { normalizeAnaProductName } from "./text";
+import { formatAnaAssistantText, normalizeAnaProductName } from "./text";
 
 const state: AnaConversationState = {
   turnKind: "disclosure",
@@ -42,6 +42,9 @@ describe("Ana conversation instructions", () => {
   it("normalizes spaced variations of the L.E.I.A. name", () => {
     expect(normalizeAnaProductName("O L. E. I. A. ajuda escolas.")).toBe("O L.E.I.A. ajuda escolas.");
     expect(normalizeAnaProductName("O L. E. I. A.. é um programa.")).toBe("O L.E.I.A. é um programa.");
+    expect(formatAnaAssistantText("O **L.E.I.A.** ajuda escolas.Ele é anual.")).toBe(
+      "O L.E.I.A. ajuda escolas. Ele é anual.",
+    );
   });
 
   it("normalizes the product name even when it is split across stream chunks", async () => {

@@ -28,7 +28,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ANA_MODELS, DEFAULT_ANA_MODEL, type AnaKnowledgeMode, type AnaModelId } from "@/lib/ana/config";
 import type { AnaRetrievalTrace } from "@/lib/ana/retrieval";
 import type { AnaMessage } from "@/lib/ana/types";
-import { normalizeAnaProductName } from "@/lib/ana/text";
+import { formatAnaAssistantText } from "@/lib/ana/text";
 import "./AnaLab.css";
 
 const SUGGESTIONS = [
@@ -67,9 +67,7 @@ function textFromMessage(message: AnaMessage) {
 }
 
 function cleanAssistantText(text: string) {
-  return normalizeAnaProductName(text.replace(/\*\*(.*?)\*\*/g, "$1"))
-    .replace(/([.!?])(?=[A-ZÀ-Ý])/g, "$1 ")
-    .trim();
+  return formatAnaAssistantText(text);
 }
 
 export default function AnaLab() {
