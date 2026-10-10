@@ -13,12 +13,15 @@ export type AnaLeadQualification = {
   role?: string;
   schoolSector?: "private" | "public";
   offerInterest?: "leia" | "academy" | "consulting" | "product-development";
+  offerInterests?: Array<"leia" | "academy" | "consulting" | "product-development">;
   need?: "students" | "teachers" | "management" | "processes" | "product";
+  needs?: Array<"students" | "teachers" | "management" | "processes" | "product">;
   gradeFit?: boolean;
   studentCount?: number;
   internetReady?: boolean;
   timeline?: string;
   commercialIntent: boolean;
+  pricingIntent: boolean;
   meetingIntent: boolean;
   contactConsent: boolean;
   contactRevoked: boolean;
@@ -74,9 +77,13 @@ export function classifyAnaTurn(value: string): AnaTurnKind {
   if (matchesOnly(value, /^(ok|okay|certo|entendi|compreendi|beleza|ta bom|tudo bem|perfeito|legal|faz sentido|ah sim)$/)) {
     return "acknowledgement";
   }
+  if (matchesOnly(value, /^(sim|uhum|aham|isso|isso mesmo|exato|correto|claro|com certeza|tem sim|temos sim|atende sim|atendemos sim)$/)) {
+    return "disclosure";
+  }
 
   const normalized = normalizeKnowledgeText(value);
-  const asksQuestion = value.includes("?") || /^(como|qual|quais|quanto|quando|onde|por que|porque|quem|o que|tem|posso|podem|voces|vcs)\b/.test(normalized);
+  const pricingIntent = /\b(?:preco|valor|investimento|orcamento|quanto|qto|cust(?:a|ar)|cutar)\b/.test(normalized);
+  const asksQuestion = value.includes("?") || pricingIntent || /^(como|qual|quais|quanto|quando|onde|por que|porque|quem|o que|tem|posso|podem|voces|vcs)\b/.test(normalized);
   return asksQuestion ? "request" : "disclosure";
 }
 
@@ -97,7 +104,62 @@ function findFirst(value: string, pattern: RegExp) {
   return value.match(pattern)?.[1]?.trim();
 }
 
-function extractLeadQualification(messages: AnaMessage[]): AnaLeadQualification {
+function previousAssistantText(messages: AnaMessage[], userIndex: number) {
+  for (let index = userIndex - 1; index >= 0; index -= 1) {
+    if (messages[index].role === "assistant") return normalizeKnowledgeText(messageText(messages[index]));
+  }
+  return "";
+}
+
+function isAffirmative(value: string) {
+  return /^(?:sim|s|uhum|aham|isso|isso mesmo|exato|correto|claro|com certeza|tem sim|temos sim|atende sim|atendemos sim)(?:\b|$)/.test(canonical(value));
+}
+
+function isNegative(value: string) {
+  return /^(?:nao|n|ainda nao|nao temos|nao possui|sem)(?:\b|$)/.test(canonical(value));
+}
+
+function contextualAnswers(messages: AnaMessage[]) {
+  return messages.flatMap((message, index) => {
+    if (message.role !== "user") return [];
+    return [{ answer: messageText(message), question: previousAssistantText(messages, index) }];
+  });
+}
+
+function unique<T>(values: T[]) {
+  return [...new Set(values)];
+}
+
+export function mergeAnaLeadQualification(
+  previous: Partial<AnaLeadQualification> | undefined,
+  current: AnaLeadQualification,
+): AnaLeadQualification {
+  if (!previous) return current;
+
+  const contactRevoked = current.contactConsent
+    ? false
+    : current.contactRevoked || Boolean(previous.contactRevoked);
+  const contactConsent = contactRevoked
+    ? false
+    : current.contactConsent || Boolean(previous.contactConsent);
+
+  return {
+    ...previous,
+    ...Object.fromEntries(Object.entries(current).filter(([, value]) => value !== undefined)),
+    offerInterests: unique([...(previous.offerInterests ?? []), ...(current.offerInterests ?? [])]),
+    needs: unique([...(previous.needs ?? []), ...(current.needs ?? [])]),
+    commercialIntent: Boolean(previous.commercialIntent || current.commercialIntent),
+    pricingIntent: Boolean(previous.pricingIntent || current.pricingIntent),
+    meetingIntent: Boolean(previous.meetingIntent || current.meetingIntent),
+    contactConsent,
+    contactRevoked,
+  };
+}
+
+function extractLeadQualification(
+  messages: AnaMessage[],
+  previous?: Partial<AnaLeadQualification>,
+): AnaLeadQualification {
   const userMessages = messages.filter((message) => message.role === "user").map(messageText).filter(Boolean);
   const joinedRaw = userMessages.join(" \n");
   const joined = normalizeKnowledgeText(joinedRaw);
@@ -105,6 +167,7 @@ function extractLeadQualification(messages: AnaMessage[]): AnaLeadQualification 
   const latest = normalizeKnowledgeText(latestRaw);
   const previousAssistant = [...messages].reverse().find((message) => message.role === "assistant");
   const previousQuestion = normalizeKnowledgeText(previousAssistant ? messageText(previousAssistant) : "");
+  const answers = contextualAnswers(messages);
 
   const email = joinedRaw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0]?.toLowerCase();
   const phone = joinedRaw.match(/(?:\+?55\s*)?(?:\(?\d{2}\)?\s*)?9?\d{4}[-.\s]?\d{4}/)?.[0]?.replace(/\s+/g, " ");
@@ -130,49 +193,58 @@ function extractLeadQualification(messages: AnaMessage[]): AnaLeadQualification 
       : undefined;
 
   const schoolContext = /\b(escola|colegio|ensino|aluno|estudante)\b/.test(joined);
-  const offerInterest = /\bl\s*\.?\s*e\s*\.?\s*i\s*\.?\s*a\b|\bleia\b/.test(joined) || schoolContext
-    ? "leia" as const
-    : /\b(curso|formacao|capacitacao|academy)\b/.test(joined)
-      ? "academy" as const
-      : /\b(consultoria|diagnostico|processo)\b/.test(joined)
-        ? "consulting" as const
-        : /\b(desenvolvimento|produto de ia|solucao de ia)\b/.test(joined)
-          ? "product-development" as const
-          : undefined;
-  const need = /\b(aluno|alunos|estudante|estudantes|ensinar)\b/.test(joined)
-    ? "students" as const
-    : /\b(professor|professores|docente|docentes)\b/.test(joined)
-      ? "teachers" as const
-      : /\b(gestao|gestor|gestores|direcao|diretores)\b/.test(joined)
-        ? "management" as const
-        : /\b(processo|processos|operacao|operacoes)\b/.test(joined)
-          ? "processes" as const
-          : /\b(produto|aplicativo|sistema|solucao)\b/.test(joined)
-            ? "product" as const
-            : undefined;
+  const offerInterests = unique([
+    ...(/\bl\s*\.?\s*e\s*\.?\s*i\s*\.?\s*a\b|\bleia\b/.test(joined) || schoolContext ? ["leia" as const] : []),
+    ...(/\b(curso|formacao|capacitacao|academy)\b/.test(joined) ? ["academy" as const] : []),
+    ...(/\b(consultoria|diagnostico|processo|otimizar|negocio)\b/.test(joined) ? ["consulting" as const] : []),
+    ...(/\b(desenvolvimento|produto de ia|solucao de ia|implantar solucoes)\b/.test(joined) ? ["product-development" as const] : []),
+  ]);
+  const offerInterest = offerInterests[0];
+  const needs = unique([
+    ...(/\b(aluno|alunos|estudante|estudantes|ensinar)\b/.test(joined) ? ["students" as const] : []),
+    ...(/\b(professor|professores|docente|docentes)\b/.test(joined) ? ["teachers" as const] : []),
+    ...(/\b(gestao|gestor|gestores|direcao|diretores)\b/.test(joined) ? ["management" as const] : []),
+    ...(/\b(processo|processos|operacao|operacoes|otimizar|otimizacao)\b/.test(joined) ? ["processes" as const] : []),
+    ...(/\b(produto|aplicativo|sistema|solucao|solucoes)\b/.test(joined) ? ["product" as const] : []),
+  ]);
+  const need = needs[0];
 
   let gradeFit: boolean | undefined;
   if (/(?:\b9\s*(?:º|o|ano)|\bnono ano|\bensino medio|\b1\s*(?:ª|a)\s*serie|\b2\s*(?:ª|a)\s*serie|\b3\s*(?:ª|a)\s*serie)(?=\s|[.,!?]|$)/.test(joined)) gradeFit = true;
   if (/(?:\beducacao infantil|\bfundamental i|\bate o 8\s*(?:º|o)|\bsomente.*8\s*(?:º|o))(?=\s|[.,!?]|$)/.test(joined)) gradeFit = false;
-  if (/^(sim|temos|atende|atendemos)\b/.test(canonical(latest)) && /9.*ano|ensino medio|series/.test(previousQuestion)) gradeFit = true;
+  for (const { answer, question } of answers) {
+    if (!/9.*ano|ensino medio|series|serie/.test(question)) continue;
+    if (isAffirmative(answer)) gradeFit = true;
+    else if (isNegative(answer)) gradeFit = false;
+  }
 
   const studentCountMatch = joined.match(/\b(\d{1,5})\s*(?:alunos|estudantes)\b/);
-  const studentCount = studentCountMatch ? Number(studentCountMatch[1]) : undefined;
+  let studentCount = studentCountMatch ? Number(studentCountMatch[1]) : undefined;
+  for (const { answer, question } of answers) {
+    if (!/quantos.*(?:alunos|estudantes)|numero.*(?:alunos|estudantes)/.test(question)) continue;
+    const contextualCount = canonical(answer).match(/\b(\d{1,5})\b/)?.[1];
+    if (contextualCount) studentCount = Number(contextualCount);
+  }
 
   let internetReady: boolean | undefined;
   if (/\b(nao temos|nao possui|sem|falta)\b.{0,24}\binternet\b|\binternet\b.{0,24}\b(instavel|ruim|fraca)\b/.test(joined)) internetReady = false;
   else if (/\b(temos|possui|com)\b.{0,24}\binternet\b|\binternet\b.{0,24}\b(estavel|boa|rapida|adequada)\b/.test(joined)) internetReady = true;
-  else if (/^(sim|temos|possui)\b/.test(canonical(latest)) && /internet/.test(previousQuestion)) internetReady = true;
+  for (const { answer, question } of answers) {
+    if (!/internet|conexao/.test(question)) continue;
+    if (isAffirmative(answer)) internetReady = true;
+    else if (isNegative(answer)) internetReady = false;
+  }
 
   const timeline = findFirst(joinedRaw, /\b(este (?:ano|semestre)|pr[oó]ximo (?:ano|semestre)|em \d{4}|imediatamente|quanto antes)\b/iu)?.toLowerCase();
-  const commercialIntent = /\b(quero|queremos|gostaria|interesse|contratar|implantar|proposta|orcamento|orçamento|preco|preço|custa|investimento)\b/.test(joined);
+  const pricingIntent = /\b(?:preco|valor|investimento|orcamento|quanto|qto|cust(?:a|ar)|cutar)\b/.test(joined);
+  const commercialIntent = pricingIntent || /\b(quero|queremos|gostaria|interesse|contratar|implantar|proposta)\b/.test(joined);
   const meetingIntent = /\b(agendar|marcar|reuniao|reunião|falar com (?:alguem|alguém|o time|vendas)|conversar com (?:alguem|alguém|o time|vendas))\b/.test(joined);
   const explicitConsent = /\b(pode(?:m)? (?:me )?(?:ligar|chamar|contatar|contactar|mandar (?:um )?email)|autorizo (?:o )?contato|aceito (?:o )?contato)\b/.test(joined);
   const requestedConsent = /autoriza.*contato|posso registrar.*(?:contato|dados|nome|e-mail|email|whatsapp)|qual.*(?:email|e-mail|whatsapp|telefone)/.test(previousQuestion);
   const contactRevoked = /\b(nao autorizo|nao quero (?:receber )?contato|nao me (?:ligue|chame|contate)|prefiro nao (?:informar|receber contato))\b/.test(latest);
   const contactConsent = !contactRevoked && (explicitConsent || Boolean(requestedConsent && (email || phone)));
 
-  return {
+  return mergeAnaLeadQualification(previous, {
     name,
     email,
     phone,
@@ -180,21 +252,24 @@ function extractLeadQualification(messages: AnaMessage[]): AnaLeadQualification 
     role,
     schoolSector,
     offerInterest,
+    offerInterests,
     need,
+    needs,
     gradeFit,
     studentCount,
     internetReady,
     timeline,
     commercialIntent,
+    pricingIntent,
     meetingIntent,
     contactConsent,
     contactRevoked,
-  };
+  });
 }
 
 function qualificationScore(qualification: AnaLeadQualification) {
   const relevant = qualification.offerInterest === "leia"
-    ? [qualification.role, qualification.gradeFit, qualification.studentCount, qualification.internetReady, qualification.timeline]
+    ? [qualification.role, qualification.gradeFit, qualification.studentCount, qualification.internetReady, qualification.need, qualification.timeline]
     : [qualification.role, qualification.need, qualification.timeline];
   return Math.round(relevant.filter((value) => value !== undefined).length / relevant.length * 100);
 }
@@ -211,6 +286,9 @@ function chooseNextQuestion(qualification: AnaLeadQualification, questions: stri
     }
     if (qualification.internetReady === undefined && !/internet/.test(asked)) {
       return { key: "internet", text: "A escola tem conexão estável à internet para as turmas?" };
+    }
+    if (!qualification.need && !/necessidade|objetivo|ensinar|melhorar|resolver/.test(asked)) {
+      return { key: "need", text: "Qual é a principal necessidade da escola com IA hoje?" };
     }
   } else if (!qualification.need && !/desafio|melhorar|resolver|busca/.test(asked)) {
     return { key: "need", text: "O que você gostaria de melhorar ou resolver hoje?" };
@@ -232,16 +310,20 @@ function recentQuestions(messages: AnaMessage[]) {
     .filter((message) => message.role === "assistant")
     .flatMap((message) => messageText(message).split(/(?<=[?])\s+/))
     .filter((sentence) => sentence.includes("?"))
-    .slice(-3);
+    .slice(-12);
 }
 
-export function analyzeAnaConversation(messages: AnaMessage[], pagePath?: string): AnaConversationState {
+export function analyzeAnaConversation(
+  messages: AnaMessage[],
+  pagePath?: string,
+  previousQualification?: Partial<AnaLeadQualification>,
+): AnaConversationState {
   const userMessages = messages.filter((message) => message.role === "user").map(messageText).filter(Boolean);
   const latest = userMessages.at(-1) ?? "";
   const turnKind = classifyAnaTurn(latest);
   const userTurnCount = userMessages.length;
   const pageHint = pagePath?.toLocaleLowerCase("pt-BR").startsWith("/leia") ? "leia" : undefined;
-  const qualification = extractLeadQualification(messages);
+  const qualification = extractLeadQualification(messages, previousQualification);
   const questions = recentQuestions(messages);
   const score = qualificationScore(qualification);
   const isLead = Boolean(qualification.offerInterest || qualification.role || qualification.email || qualification.phone);
@@ -284,7 +366,18 @@ export function analyzeAnaConversation(messages: AnaMessage[], pagePath?: string
     shouldRetrieveKnowledge: turnKind === "request",
     shouldAskQuestion: Boolean(nextQuestion),
     pageHint,
-    knownFacts: inferKnownFacts(userMessages),
+    knownFacts: unique([
+      ...inferKnownFacts(userMessages),
+      ...(qualification.gradeFit === true ? ["A escola atende à faixa de séries do L.E.I.A."] : []),
+      ...(qualification.gradeFit === false ? ["A escola não atende à faixa de séries do L.E.I.A."] : []),
+      ...(qualification.studentCount !== undefined ? [`A pessoa informou ${qualification.studentCount} estudantes.`] : []),
+      ...(qualification.internetReady === true ? ["A escola possui conexão estável à internet."] : []),
+      ...(qualification.internetReady === false ? ["A escola não possui conexão adequada à internet."] : []),
+      ...(qualification.needs?.includes("students") ? ["A necessidade inclui ensinar IA aos estudantes."] : []),
+      ...(qualification.needs?.includes("processes") || qualification.needs?.includes("product")
+        ? ["A necessidade também inclui aplicar IA na operação da escola."]
+        : []),
+    ]),
     recentAssistantQuestions: questions,
     userTurnCount,
     qualification,
@@ -296,12 +389,27 @@ export function analyzeAnaConversation(messages: AnaMessage[], pagePath?: string
 }
 
 export function immediateAnaReply(state: AnaConversationState, messages: AnaMessage[], handoffPersisted = false) {
-  if (state.leadStage === "handoff" && handoffPersisted) {
-    return "Perfeito, seu contato ficou registrado para o time da Amplify continuar essa conversa com você.";
+  if (state.leadStage === "handoff") {
+    return handoffPersisted
+      ? "Perfeito, seu contato ficou registrado para o time da Amplify continuar essa conversa com você."
+      : undefined;
   }
   if (state.turnKind === "greeting") return "Oi! Tudo bem? Como posso te ajudar?";
   if (state.turnKind === "gratitude") return "Eu que agradeço! Se precisar, estou por aqui.";
   if (state.turnKind === "farewell") return "Até mais! Foi um prazer conversar com você.";
+  if (state.turnKind === "disclosure" && state.nextQuestion) {
+    const transitions: Record<AnaNextQuestion["key"], string> = {
+      grades: "Claro — entendo que você está buscando apoio para a escola.",
+      students: "Perfeito.",
+      internet: state.qualification.studentCount
+        ? `Certo, ${state.qualification.studentCount} estudantes.`
+        : "Certo.",
+      need: "Perfeito, isso ajuda.",
+      timeline: "Entendi.",
+      contact: "Pelo que você contou, existe aderência.",
+    };
+    return `${transitions[state.nextQuestion.key]} ${state.nextQuestion.text}`;
+  }
   if (state.turnKind !== "acknowledgement") return undefined;
 
   const mentionsLeia = messages.some((message) => /l\s*\.\s*e\s*\.\s*i\s*\.\s*a\s*\.?/i.test(messageText(message)));

@@ -54,7 +54,7 @@ describe("Ana lead persistence", () => {
       offer_interest: "leia",
       stage: "qualified",
       contact_consent: false,
-    }), { onConflict: "conversation_id" });
+    }), { onConflict: "conversation_id", defaultToNull: false });
     expect(conversationUpdate).toHaveBeenCalledWith({ status: "qualified" });
   });
 
@@ -64,5 +64,27 @@ describe("Ana lead persistence", () => {
       shouldPersistLead: false,
     } as AnaConversationState)).resolves.toEqual({ persisted: false, reason: "not_a_lead" });
     expect(mocks.from).not.toHaveBeenCalled();
+  });
+
+  it("loads the persisted qualification using the conversation key", async () => {
+    const conversationMaybeSingle = vi.fn().mockResolvedValue({ data: { id: "conversation-1" }, error: null });
+    const conversationEq = vi.fn(() => ({ maybeSingle: conversationMaybeSingle }));
+    const conversationSelect = vi.fn(() => ({ eq: conversationEq }));
+    const leadMaybeSingle = vi.fn().mockResolvedValue({
+      data: { qualification: { offerInterest: "leia", studentCount: 90, internetReady: true } },
+      error: null,
+    });
+    const leadEq = vi.fn(() => ({ maybeSingle: leadMaybeSingle }));
+    const leadSelect = vi.fn(() => ({ eq: leadEq }));
+    mocks.from.mockImplementation((table: string) => table === "ana_conversations"
+      ? { select: conversationSelect }
+      : { select: leadSelect });
+
+    const { loadAnaLeadQualification } = await import("./store");
+    await expect(loadAnaLeadQualification("77777777-7777-4777-8777-777777777777")).resolves.toMatchObject({
+      offerInterest: "leia",
+      studentCount: 90,
+      internetReady: true,
+    });
   });
 });

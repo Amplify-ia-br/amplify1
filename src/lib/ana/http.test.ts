@@ -2,11 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import type { KnowledgeReader } from "../okf/http";
 
 const mocks = vi.hoisted(() => ({
+  loadAnaLeadQualification: vi.fn().mockResolvedValue(undefined),
   saveAnaMessage: vi.fn().mockResolvedValue({ persisted: true, conversationId: "99999999-9999-4999-8999-999999999999" }),
   saveAnaLeadSnapshot: vi.fn().mockResolvedValue({ persisted: false, reason: "not_a_lead" }),
 }));
 
 vi.mock("./store.js", () => ({
+  loadAnaLeadQualification: mocks.loadAnaLeadQualification,
   saveAnaMessage: mocks.saveAnaMessage,
   saveAnaLeadSnapshot: mocks.saveAnaLeadSnapshot,
 }));

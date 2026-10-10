@@ -8,7 +8,7 @@ import { anaChatRequestSchema, estimateAnaCost } from "./config.js";
 import { analyzeAnaConversation, immediateAnaReply } from "./conversation.js";
 import { emptyAnaRetrieval, retrieveAnaKnowledge } from "./retrieval.js";
 import type { AnaMessage, AnaMessageMetadata } from "./types.js";
-import { saveAnaLeadSnapshot, saveAnaMessage } from "./store.js";
+import { loadAnaLeadQualification, saveAnaLeadSnapshot, saveAnaMessage } from "./store.js";
 import type { KnowledgeReader } from "../okf/http.js";
 
 const PRIVATE_HEADERS = {
@@ -55,12 +55,16 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
     return Response.json({ error: "missing_user_message" }, { status: 400, headers: PRIVATE_HEADERS });
   }
 
-  const conversation = analyzeAnaConversation(uiMessages, pagePath);
+  const previousQualification = await loadAnaLeadQualification(conversationId);
+  const conversation = analyzeAnaConversation(uiMessages, pagePath, previousQualification);
+  const retrievalQuery = conversation.qualification.pricingIntent
+    ? `${latestQuestion} ${conversation.qualification.offerInterest === "leia" ? "L.E.I.A." : "Amplify"} preço investimento política comercial`
+    : latestQuestion;
   const startedAt = Date.now();
   let retrieval;
   try {
     retrieval = conversation.shouldRetrieveKnowledge
-      ? await retrieveAnaKnowledge(mode, latestQuestion, reader)
+      ? await retrieveAnaKnowledge(mode, retrievalQuery, reader)
       : emptyAnaRetrieval(mode, latestQuestion, `conversa-${conversation.turnKind}`);
   } catch (error) {
     console.error("[Ana Lab] Falha durante recuperação", error);

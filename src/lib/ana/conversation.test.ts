@@ -128,4 +128,79 @@ describe("Ana reference conversation suite", () => {
     expect(state.nextQuestion).toBeUndefined();
     expect(state.leadStage).toBe("qualified");
   });
+
+  it("understands natural short answers without losing the qualification state", () => {
+    const conversation = messages([
+      { role: "user", text: "Queria saber como vc pode me ajudar aqui na minha escola." },
+      { role: "assistant", text: "Sua escola atende turmas do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio?" },
+      { role: "user", text: "uhum" },
+      { role: "assistant", text: "Quantos estudantes vocês imaginam atender?" },
+      { role: "user", text: "uns 90" },
+      { role: "assistant", text: "A escola tem conexão estável à internet para as turmas?" },
+      { role: "user", text: "Tem sim." },
+    ]);
+
+    const state = analyzeAnaConversation(conversation);
+    expect(state.qualification).toMatchObject({
+      offerInterest: "leia",
+      gradeFit: true,
+      studentCount: 90,
+      internetReady: true,
+    });
+    expect(state.qualificationScore).toBeGreaterThan(0);
+    expect(state.nextQuestion?.key).toBe("need");
+    expect(immediateAnaReply(state, conversation)).toContain("principal necessidade");
+  });
+
+  it("preserves simultaneous interests and recognizes an informal price objection", () => {
+    const conversation = messages([
+      { role: "user", text: "Queria ajuda para minha escola." },
+      { role: "assistant", text: "Sua escola atende do 9º ano ao Ensino Médio?" },
+      { role: "user", text: "uhum" },
+      { role: "assistant", text: "Quantos estudantes vocês imaginam atender?" },
+      { role: "user", text: "uns 90" },
+      { role: "assistant", text: "A escola tem internet estável?" },
+      { role: "user", text: "Tem sim." },
+      { role: "assistant", text: "Qual é a principal necessidade da escola com IA hoje?" },
+      { role: "user", text: "Ensinar IA pros alunos e implantar soluções para otimizar o negócio." },
+      { role: "assistant", text: "Quando vocês gostariam de começar?" },
+      { role: "user", text: "Depende de qto vai cutar." },
+    ]);
+
+    const state = analyzeAnaConversation(conversation);
+    expect(state.turnKind).toBe("request");
+    expect(state.shouldRetrieveKnowledge).toBe(true);
+    expect(state.qualification.pricingIntent).toBe(true);
+    expect(state.qualification.needs).toEqual(expect.arrayContaining(["students", "processes", "product"]));
+    expect(state.qualification.offerInterests).toEqual(expect.arrayContaining(["leia", "consulting", "product-development"]));
+    expect(state.qualification).toMatchObject({ gradeFit: true, studentCount: 90, internetReady: true });
+    expect(state.nextQuestion?.key).toBe("contact");
+  });
+
+  it("merges the persisted qualification instead of resetting confirmed facts", () => {
+    const state = analyzeAnaConversation(messages([
+      { role: "user", text: "Quero entender o preço." },
+    ]), "/lab/ana", {
+      offerInterest: "leia",
+      offerInterests: ["leia"],
+      need: "students",
+      needs: ["students"],
+      gradeFit: true,
+      studentCount: 90,
+      internetReady: true,
+      commercialIntent: true,
+      pricingIntent: false,
+      meetingIntent: false,
+      contactConsent: false,
+      contactRevoked: false,
+    });
+
+    expect(state.qualification).toMatchObject({
+      gradeFit: true,
+      studentCount: 90,
+      internetReady: true,
+      pricingIntent: true,
+    });
+    expect(state.nextQuestion?.key).toBe("timeline");
+  });
 });

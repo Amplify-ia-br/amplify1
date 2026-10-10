@@ -1,6 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { AnaKnowledgeMode, AnaModelId } from "./config.js";
-import type { AnaConversationState } from "./conversation.js";
+import type { AnaConversationState, AnaLeadQualification } from "./conversation.js";
 
 type AnaMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -45,6 +45,37 @@ function getServerClient() {
     auth: { autoRefreshToken: false, persistSession: false },
   });
   return serverClient;
+}
+
+function qualificationFromLead(value: unknown): Partial<AnaLeadQualification> | undefined {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return undefined;
+  return value as Partial<AnaLeadQualification>;
+}
+
+export async function loadAnaLeadQualification(conversationKey: string) {
+  const supabase = getServerClient();
+  if (!supabase) return undefined;
+
+  try {
+    const { data: conversation, error: conversationError } = await supabase
+      .from("ana_conversations")
+      .select("id")
+      .eq("conversation_key", conversationKey)
+      .maybeSingle();
+    if (conversationError) throw conversationError;
+    if (!conversation?.id) return undefined;
+
+    const { data: lead, error: leadError } = await supabase
+      .from("ana_leads")
+      .select("qualification")
+      .eq("conversation_id", conversation.id)
+      .maybeSingle();
+    if (leadError) throw leadError;
+    return qualificationFromLead(lead?.qualification);
+  } catch (error) {
+    console.error("[Ana Lab] Falha ao carregar memória do lead", describePersistenceError(error));
+    return undefined;
+  }
 }
 
 export async function saveAnaMessage(input: SaveAnaMessageInput) {
@@ -136,7 +167,7 @@ export async function saveAnaLeadSnapshot(conversationId: string, state: AnaConv
 
     const { data, error } = await supabase
       .from("ana_leads")
-      .upsert(lead, { onConflict: "conversation_id" })
+      .upsert(lead, { onConflict: "conversation_id", defaultToNull: false })
       .select("id, stage")
       .single();
     if (error || !data?.id) throw error || new Error("lead_not_returned");
