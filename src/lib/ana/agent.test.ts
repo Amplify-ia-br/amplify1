@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { buildAnaInstructions, normalizeAnaProductName, normalizeAnaTextStream } from "./agent";
+import { buildAnaInstructions, normalizeAnaTextStream } from "./agent";
 import type { AnaConversationState } from "./conversation";
+import { normalizeAnaProductName } from "./text";
 
 const state: AnaConversationState = {
   turnKind: "disclosure",

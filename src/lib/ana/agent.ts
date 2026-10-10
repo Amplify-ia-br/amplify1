@@ -3,6 +3,7 @@ import { createAnthropic } from "@ai-sdk/anthropic";
 import { ANA_MODELS, getAnaFallbackModels, type AnaKnowledgeMode, type AnaModelId } from "./config.js";
 import type { AnaConversationState } from "./conversation.js";
 import type { AnaRetrievalTrace } from "./retrieval.js";
+import { normalizeAnaProductName } from "./text.js";
 
 type AnaGenerationFinished = {
   text: string;
@@ -116,10 +117,6 @@ function knowledgeContext(retrieval: AnaRetrievalTrace) {
     "CONTEÚDO:",
     document.content,
   ].join("\n")).join("\n\n---\n\n");
-}
-
-export function normalizeAnaProductName(value: string) {
-  return value.replace(/\bL\s*\.\s*E\s*\.\s*I\s*\.\s*A(?:\s*\.{1,2})?/gi, "L.E.I.A.");
 }
 
 function possibleLeiaPrefixStart(value: string) {
