@@ -40,14 +40,17 @@ describe("Ana conversation instructions", () => {
 
   it("normalizes spaced variations of the L.E.I.A. name", () => {
     expect(normalizeAnaProductName("O L. E. I. A. ajuda escolas.")).toBe("O L.E.I.A. ajuda escolas.");
+    expect(normalizeAnaProductName("O L. E. I. A.. é um programa.")).toBe("O L.E.I.A. é um programa.");
   });
 
   it("normalizes the product name even when it is split across stream chunks", async () => {
     const stream = new ReadableStream({
       start(controller) {
         controller.enqueue({ type: "text-start", id: "answer" } as const);
-        controller.enqueue({ type: "text-delta", id: "answer", text: "O L. E." } as const);
-        controller.enqueue({ type: "text-delta", id: "answer", text: " I. A. atende escolas." } as const);
+        controller.enqueue({ type: "text-delta", id: "answer", text: "O L." } as const);
+        controller.enqueue({ type: "text-delta", id: "answer", text: " E." } as const);
+        controller.enqueue({ type: "text-delta", id: "answer", text: " I." } as const);
+        controller.enqueue({ type: "text-delta", id: "answer", text: " A.. atende escolas." } as const);
         controller.enqueue({ type: "text-end", id: "answer" } as const);
         controller.close();
       },

@@ -119,14 +119,22 @@ function knowledgeContext(retrieval: AnaRetrievalTrace) {
 }
 
 export function normalizeAnaProductName(value: string) {
-  return value.replace(/\bL\s*\.\s*E\s*\.\s*I\s*\.\s*A\s*\.?/gi, "L.E.I.A.");
+  return value.replace(/\bL\s*\.\s*E\s*\.\s*I\s*\.\s*A(?:\s*\.{1,2})?/gi, "L.E.I.A.");
+}
+
+function possibleLeiaPrefixStart(value: string) {
+  for (let index = value.length - 1; index >= 0; index -= 1) {
+    if (value[index]?.toLocaleLowerCase("pt-BR") !== "l") continue;
+    const compact = value.slice(index).replace(/\s/g, "").toLocaleLowerCase("pt-BR");
+    if ("l.e.i.a.".startsWith(compact)) return index;
+  }
+  return -1;
 }
 
 export function normalizeAnaTextStream<TOOLS extends ToolSet>() {
   return () => {
     let buffer = "";
     let textId = "";
-    const retainedCharacters = 32;
 
     return new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
       transform(chunk, controller) {
@@ -138,9 +146,10 @@ export function normalizeAnaTextStream<TOOLS extends ToolSet>() {
         if (chunk.type === "text-delta") {
           textId = chunk.id;
           buffer = normalizeAnaProductName(buffer + chunk.text);
-          if (buffer.length > retainedCharacters) {
-            const emitted = buffer.slice(0, -retainedCharacters);
-            buffer = buffer.slice(-retainedCharacters);
+          const partialStart = possibleLeiaPrefixStart(buffer);
+          const emitted = partialStart >= 0 ? buffer.slice(0, partialStart) : buffer;
+          buffer = partialStart >= 0 ? buffer.slice(partialStart) : "";
+          if (emitted) {
             controller.enqueue({ ...chunk, text: emitted });
           }
           return;
