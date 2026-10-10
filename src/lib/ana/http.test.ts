@@ -37,7 +37,7 @@ describe("Ana conversational HTTP flow", () => {
 
     const body = await response.text();
     expect(response.status).toBe(200);
-    expect(body).toContain("Oi! Tudo bem? Como posso te ajudar?");
+    expect(body).toContain("Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?");
     expect(body).not.toContain("A Amplify ajuda pessoas");
     expect(reader.listKnowledge).not.toHaveBeenCalled();
     expect(reader.getKnowledgeById).not.toHaveBeenCalled();

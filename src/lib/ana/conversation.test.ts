@@ -20,7 +20,7 @@ describe("Ana reference conversation suite", () => {
   it("answers a greeting briefly without pitching the company", () => {
     const conversation = messages([{ role: "user", text: "Olá" }]);
     const reply = immediateAnaReply(analyzeAnaConversation(conversation), conversation);
-    expect(reply).toBe("Oi! Tudo bem? Como posso te ajudar?");
+    expect(reply).toBe("Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?");
     expect(reply).not.toContain("Amplify ajuda");
   });
 
@@ -65,10 +65,7 @@ describe("Ana reference conversation suite", () => {
       gradeFit: true,
       studentCount: 180,
     });
-    expect(state.nextQuestion).toEqual({
-      key: "internet",
-      text: "A escola tem conexão estável à internet para as turmas?",
-    });
+    expect(state.nextQuestion).toEqual({ key: "name", text: "Qual é o seu nome?" });
   });
 
   it("moves a qualified lead to consented handoff when contact is supplied", () => {
@@ -174,13 +171,14 @@ describe("Ana reference conversation suite", () => {
     expect(state.qualification.needs).toEqual(expect.arrayContaining(["students", "processes", "product"]));
     expect(state.qualification.offerInterests).toEqual(expect.arrayContaining(["leia", "consulting", "product-development"]));
     expect(state.qualification).toMatchObject({ gradeFit: true, studentCount: 90, internetReady: true });
-    expect(state.nextQuestion?.key).toBe("contact");
+    expect(state.nextQuestion?.key).toBe("contactConsent");
   });
 
   it("merges the persisted qualification instead of resetting confirmed facts", () => {
     const state = analyzeAnaConversation(messages([
       { role: "user", text: "Quero entender o preço." },
     ]), "/lab/ana", {
+      name: "Leonardo",
       offerInterest: "leia",
       offerInterests: ["leia"],
       need: "students",
@@ -202,5 +200,73 @@ describe("Ana reference conversation suite", () => {
       pricingIntent: true,
     });
     expect(state.nextQuestion?.key).toBe("timeline");
+  });
+
+  it("recognizes a bare name after asking for it and continues naturally", () => {
+    const conversation = messages([
+      { role: "user", text: "Oi" },
+      { role: "assistant", text: "Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?" },
+      { role: "user", text: "Leonardo Camacho" },
+    ]);
+    const state = analyzeAnaConversation(conversation);
+    expect(state.qualification.name).toBe("Leonardo Camacho");
+    expect(state.answeredNameThisTurn).toBe(true);
+    expect(immediateAnaReply(state, conversation)).toBe("Prazer, Leonardo. Como posso te ajudar?");
+  });
+
+  it("answers a concrete school question before asking only for the name", () => {
+    const state = analyzeAnaConversation(messages([
+      { role: "user", text: "Vocês têm uma solução para escolas?" },
+    ]));
+    expect(state.shouldRetrieveKnowledge).toBe(true);
+    expect(state.nextQuestion).toEqual({ key: "name", text: "Qual é o seu nome?" });
+    expect(state.shouldExpandLeia).toBe(true);
+  });
+
+  it("does not qualify an incomplete need or advance to contact", () => {
+    const conversation = messages([
+      { role: "user", text: "Meu nome é Leonardo. Sou dono de uma escola com turmas do 9º ano." },
+      { role: "assistant", text: "Quantos estudantes vocês imaginam atender?" },
+      { role: "user", text: "uns 90" },
+      { role: "assistant", text: "A escola tem internet estável?" },
+      { role: "user", text: "Temos sim" },
+      { role: "assistant", text: "Qual é a principal necessidade da escola com IA hoje?" },
+      { role: "user", text: "Eu preciso" },
+    ]);
+    const state = analyzeAnaConversation(conversation);
+    expect(state.incompleteUserThought).toBe(true);
+    expect(state.qualification.need).toBeUndefined();
+    expect(state.leadStage).not.toBe("qualified");
+    expect(state.nextQuestion).toEqual({ key: "need", text: "Pode me contar melhor o que você precisa?" });
+    expect(immediateAnaReply(state, conversation)).toBe("Claro, Leonardo. Pode me contar melhor o que você precisa?");
+  });
+
+  it("separates contact consent from the contact channel", () => {
+    const beforeConsent = messages([
+      { role: "user", text: "Meu nome é Leonardo. Sou dono de uma escola do 9º ano, com 90 alunos e internet estável. Quero ensinar IA aos estudantes este ano." },
+    ]);
+    const qualified = analyzeAnaConversation(beforeConsent);
+    expect(qualified.nextQuestion?.key).toBe("contactConsent");
+
+    const afterConsent = messages([
+      ...beforeConsent.map((message) => ({ role: message.role as "user" | "assistant", text: message.parts[0].type === "text" ? message.parts[0].text : "" })),
+      { role: "assistant", text: "Quer que eu peça para alguém do nosso time entrar em contato com você?" },
+      { role: "user", text: "Sim" },
+    ]);
+    const consented = analyzeAnaConversation(afterConsent);
+    expect(consented.qualification.contactConsent).toBe(true);
+    expect(consented.nextQuestion).toEqual({ key: "contact", text: "Qual é o melhor e-mail ou WhatsApp para falar com você?" });
+  });
+
+  it("expands L.E.I.A. only until Ana has explained the acronym", () => {
+    const first = analyzeAnaConversation(messages([{ role: "user", text: "O que é o L.E.I.A.?" }]));
+    expect(first.shouldExpandLeia).toBe(true);
+
+    const later = analyzeAnaConversation(messages([
+      { role: "user", text: "O que é o L.E.I.A.?" },
+      { role: "assistant", text: "O L.E.I.A. — Laboratório Escolar de Inteligência Artificial — é um programa anual." },
+      { role: "user", text: "Entendi" },
+    ]));
+    expect(later.shouldExpandLeia).toBe(false);
   });
 });

@@ -31,4 +31,10 @@ describe("Ana conversation instructions", () => {
   it("keeps citations out of the visible conversation", () => {
     expect(buildAnaInstructions(state)).toContain("Não inclua linhas de fonte ou citações no texto da conversa");
   });
+
+  it("requires the full L.E.I.A. name on Ana's first mention", () => {
+    expect(buildAnaInstructions({ ...state, shouldExpandLeia: true })).toContain(
+      "L.E.I.A. — Laboratório Escolar de Inteligência Artificial",
+    );
+  });
 });

@@ -40,13 +40,13 @@ export const ANA_REFERENCE_SUITE: AnaReferenceScenario[] = [
   {
     name: "pergunta sobre escola consulta conhecimento",
     turns: [{ role: "user", text: "Vocês têm algum produto para escolas?" }],
-    expected: { turnKind: "request", stage: "solution", shouldRetrieveKnowledge: true, shouldAskQuestion: false },
+    expected: { turnKind: "request", stage: "solution", shouldRetrieveKnowledge: true, shouldAskQuestion: true },
   },
   {
     name: "contexto da página é tratado como pista",
     pagePath: "/leia",
     turns: [{ role: "user", text: "Como funciona?" }],
-    expected: { turnKind: "request", stage: "solution", shouldRetrieveKnowledge: true, shouldAskQuestion: false, pageHint: "leia" },
+    expected: { turnKind: "request", stage: "solution", shouldRetrieveKnowledge: true, shouldAskQuestion: true, pageHint: "leia" },
   },
   {
     name: "agradecimento encerra sem nova qualificação",

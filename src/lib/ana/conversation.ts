@@ -28,7 +28,7 @@ export type AnaLeadQualification = {
 };
 
 export type AnaNextQuestion = {
-  key: "need" | "grades" | "students" | "internet" | "timeline" | "contact";
+  key: "name" | "need" | "grades" | "students" | "internet" | "timeline" | "contactConsent" | "contact";
   text: string;
 };
 
@@ -45,6 +45,9 @@ export type AnaConversationState = {
   qualificationScore: number;
   leadStage: AnaLeadStage;
   shouldPersistLead: boolean;
+  shouldExpandLeia: boolean;
+  answeredNameThisTurn: boolean;
+  incompleteUserThought: boolean;
   nextQuestion?: AnaNextQuestion;
 };
 
@@ -83,7 +86,10 @@ export function classifyAnaTurn(value: string): AnaTurnKind {
 
   const normalized = normalizeKnowledgeText(value);
   const pricingIntent = /\b(?:preco|valor|investimento|orcamento|quanto|qto|cust(?:a|ar)|cutar)\b/.test(normalized);
-  const asksQuestion = value.includes("?") || pricingIntent || /^(como|qual|quais|quanto|quando|onde|por que|porque|quem|o que|tem|posso|podem|voces|vcs)\b/.test(normalized);
+  const asksQuestion = value.includes("?")
+    || pricingIntent
+    || /\b(?:queria|gostaria) (?:saber|entender)\b/.test(normalized)
+    || /^(como|qual|quais|quanto|quando|onde|por que|porque|quem|o que|tem|posso|podem|voces|vcs)\b/.test(normalized);
   return asksQuestion ? "request" : "disclosure";
 }
 
@@ -130,6 +136,21 @@ function unique<T>(values: T[]) {
   return [...new Set(values)];
 }
 
+function isNameQuestion(value: string) {
+  return /qual (?:e )?(?:o )?seu nome|como voce se chama|como posso te chamar/.test(value);
+}
+
+function isIncompleteThought(value: string) {
+  return /^(?:eu\s+)?(?:preciso|quero|gostaria|estou buscando|busco|a ideia e)(?:\s+(?:de|que|um|uma|algum|alguma))?$/.test(canonical(value));
+}
+
+function contextualName(value: string) {
+  const candidate = value.trim().replace(/[.!?]+$/, "").trim();
+  if (!/^[\p{L}][\p{L}'-]+(?:\s+[\p{L}][\p{L}'-]+){0,4}$/u.test(candidate)) return undefined;
+  if (/\b(sim|nao|não|claro|certo|entendi|obrigado|obrigada|prefiro|dizer|informar|dono|dona|proprietario|proprietária|diretor|diretora|escola)\b/i.test(candidate)) return undefined;
+  return candidate;
+}
+
 export function mergeAnaLeadQualification(
   previous: Partial<AnaLeadQualification> | undefined,
   current: AnaLeadQualification,
@@ -171,10 +192,12 @@ function extractLeadQualification(
 
   const email = joinedRaw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0]?.toLowerCase();
   const phone = joinedRaw.match(/(?:\+?55\s*)?(?:\(?\d{2}\)?\s*)?9?\d{4}[-.\s]?\d{4}/)?.[0]?.replace(/\s+/g, " ");
-  const name = findFirst(
+  const explicitName = findFirst(
     joinedRaw,
-    /(?:me chamo|meu nome (?:e|é))\s+([\p{L}][\p{L}\s'-]{1,80}?)(?=\s+(?:e\s+)?meu\s+e-?mail|[,.!?\n]|$)/iu,
+    /(?:me chamo|meu nome (?:e|é)|pode me chamar de|sou (?:o|a)\s+)\s*([\p{L}][\p{L}\s'-]{1,80}?)(?=\s+(?:e\s+)?meu\s+e-?mail|[,.!?\n]|$)/iu,
   );
+  const name = (explicitName ? contextualName(explicitName) : undefined)
+    ?? (isNameQuestion(previousQuestion) ? contextualName(latestRaw) : undefined);
   const organization = findFirst(joinedRaw, /(?:minha escola (?:se chama|e|é)|escola chamada)\s+([^,.!?\n]{2,120})/iu);
 
   const role = /\b(dono|dona|proprietario|proprietaria)\b.*\bescola\b/.test(joined)
@@ -240,9 +263,14 @@ function extractLeadQualification(
   const commercialIntent = pricingIntent || /\b(quero|queremos|gostaria|interesse|contratar|implantar|proposta)\b/.test(joined);
   const meetingIntent = /\b(agendar|marcar|reuniao|reunião|falar com (?:alguem|alguém|o time|vendas)|conversar com (?:alguem|alguém|o time|vendas))\b/.test(joined);
   const explicitConsent = /\b(pode(?:m)? (?:me )?(?:ligar|chamar|contatar|contactar|mandar (?:um )?email)|autorizo (?:o )?contato|aceito (?:o )?contato)\b/.test(joined);
-  const requestedConsent = /autoriza.*contato|posso registrar.*(?:contato|dados|nome|e-mail|email|whatsapp)|qual.*(?:email|e-mail|whatsapp|telefone)/.test(previousQuestion);
+  const consentQuestion = /(?:quer|gostaria).*(?:time|alguem).*(?:entrar em contato|falar com voce)|posso.*(?:pedir|solicitar).*(?:contato|falar com voce)/.test(previousQuestion);
+  const requestedContact = /qual.*(?:email|e-mail|whatsapp|telefone)|melhor.*(?:email|e-mail|whatsapp|telefone)/.test(previousQuestion);
   const contactRevoked = /\b(nao autorizo|nao quero (?:receber )?contato|nao me (?:ligue|chame|contate)|prefiro nao (?:informar|receber contato))\b/.test(latest);
-  const contactConsent = !contactRevoked && (explicitConsent || Boolean(requestedConsent && (email || phone)));
+  const contactConsent = !contactRevoked && (
+    explicitConsent
+    || Boolean(consentQuestion && isAffirmative(latestRaw))
+    || Boolean(requestedContact && (email || phone))
+  );
 
   return mergeAnaLeadQualification(previous, {
     name,
@@ -274,8 +302,25 @@ function qualificationScore(qualification: AnaLeadQualification) {
   return Math.round(relevant.filter((value) => value !== undefined).length / relevant.length * 100);
 }
 
-function chooseNextQuestion(qualification: AnaLeadQualification, questions: string[]): AnaNextQuestion | undefined {
+function chooseNextQuestion(
+  qualification: AnaLeadQualification,
+  questions: string[],
+  incompleteUserThought: boolean,
+  userTurnCount: number,
+): AnaNextQuestion | undefined {
   const asked = normalizeKnowledgeText(questions.join(" "));
+  if (incompleteUserThought) {
+    return { key: "need", text: "Pode me contar melhor o que você precisa?" };
+  }
+  if (
+    userTurnCount <= 2
+    && !qualification.name
+    && qualification.gradeFit !== false
+    && !qualification.contactRevoked
+    && !/qual (?:e )?(?:o )?seu nome|como voce se chama|como posso te chamar/.test(asked)
+  ) {
+    return { key: "name", text: "Qual é o seu nome?" };
+  }
   if (qualification.offerInterest === "leia") {
     if (qualification.gradeFit === undefined && !/9.*ano|ensino medio|series/.test(asked)) {
       return { key: "grades", text: "Sua escola atende turmas do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio?" };
@@ -297,10 +342,16 @@ function chooseNextQuestion(qualification: AnaLeadQualification, questions: stri
     return { key: "timeline", text: "Quando vocês gostariam de começar?" };
   }
   const qualified = qualification.offerInterest === "leia"
-    ? qualification.gradeFit === true && qualification.studentCount !== undefined && qualification.internetReady === true
+    ? qualification.gradeFit === true && qualification.studentCount !== undefined && qualification.internetReady === true && Boolean(qualification.need)
     : Boolean(qualification.need && qualification.role);
-  if ((qualification.meetingIntent || qualified) && !qualification.contactConsent && !qualification.contactRevoked && !/autoriza.*contato|posso registrar.*dados/.test(asked)) {
-    return { key: "contact", text: "Posso registrar seu nome e seu melhor e-mail ou WhatsApp para o time continuar essa conversa?" };
+  if ((qualification.meetingIntent || qualified) && !qualification.contactConsent && !qualification.contactRevoked && !/entrar em contato|falar com voce/.test(asked)) {
+    return { key: "contactConsent", text: "Quer que eu peça para alguém do nosso time entrar em contato com você?" };
+  }
+  if (qualification.contactConsent && !qualification.name) {
+    return { key: "name", text: "Qual é o seu nome?" };
+  }
+  if (qualification.contactConsent && !qualification.email && !qualification.phone && !/qual.*(?:email|e-mail|whatsapp|telefone)|melhor.*(?:email|e-mail|whatsapp|telefone)/.test(asked)) {
+    return { key: "contact", text: "Qual é o melhor e-mail ou WhatsApp para falar com você?" };
   }
   return undefined;
 }
@@ -325,10 +376,19 @@ export function analyzeAnaConversation(
   const pageHint = pagePath?.toLocaleLowerCase("pt-BR").startsWith("/leia") ? "leia" : undefined;
   const qualification = extractLeadQualification(messages, previousQualification);
   const questions = recentQuestions(messages);
+  const previousAssistant = [...messages].reverse().find((message) => message.role === "assistant");
+  const previousAssistantText = previousAssistant ? normalizeKnowledgeText(messageText(previousAssistant)) : "";
+  const answeredNameThisTurn = Boolean(qualification.name && isNameQuestion(previousAssistantText));
+  const incompleteUserThought = isIncompleteThought(latest);
+  const shouldExpandLeia = !messages.some((message) => (
+    message.role === "assistant"
+    && /laboratorio escolar de inteligencia artificial/.test(normalizeKnowledgeText(messageText(message)))
+  ));
   const score = qualificationScore(qualification);
-  const isLead = Boolean(qualification.offerInterest || qualification.role || qualification.email || qualification.phone);
+  const hasLeadContext = Boolean(qualification.offerInterest || qualification.role || qualification.email || qualification.phone || qualification.need);
+  const isLead = Boolean(qualification.name || hasLeadContext);
   const qualified = qualification.offerInterest === "leia"
-    ? qualification.gradeFit === true && qualification.studentCount !== undefined && qualification.internetReady === true
+    ? qualification.gradeFit === true && qualification.studentCount !== undefined && qualification.internetReady === true && Boolean(qualification.need)
     : score >= 65;
   const hasContact = Boolean(qualification.email || qualification.phone);
   const leadStage: AnaLeadStage = qualification.gradeFit === false
@@ -342,15 +402,17 @@ export function analyzeAnaConversation(
         : isLead && userTurnCount > 1
           ? "qualifying"
           : "engaged";
-  const nextQuestion = turnKind === "greeting" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell" || (!isLead && turnKind === "request")
+  const nextQuestion = answeredNameThisTurn && !hasLeadContext
     ? undefined
-    : chooseNextQuestion(qualification, questions);
+    : turnKind === "greeting" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell"
+    ? undefined
+    : chooseNextQuestion(qualification, questions, incompleteUserThought, userTurnCount);
 
   const stage: AnaConversationStage = turnKind === "farewell"
     ? "closing"
     : leadStage === "handoff"
       ? "handoff"
-      : nextQuestion?.key === "contact" || qualification.meetingIntent
+      : nextQuestion?.key === "contactConsent" || nextQuestion?.key === "contact" || qualification.meetingIntent
         ? "contact"
     : userTurnCount === 1 && turnKind === "greeting"
       ? "opening"
@@ -384,6 +446,9 @@ export function analyzeAnaConversation(
     qualificationScore: score,
     leadStage,
     shouldPersistLead: isLead,
+    shouldExpandLeia,
+    answeredNameThisTurn,
+    incompleteUserThought,
     nextQuestion,
   };
 }
@@ -394,19 +459,37 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
       ? "Perfeito, seu contato ficou registrado para o time da Amplify continuar essa conversa com você."
       : undefined;
   }
-  if (state.turnKind === "greeting") return "Oi! Tudo bem? Como posso te ajudar?";
+  if (state.turnKind === "greeting") {
+    return state.qualification.name
+      ? `Oi, ${state.qualification.name.split(/\s+/)[0]}! Tudo bem? Como posso te ajudar?`
+      : "Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?";
+  }
   if (state.turnKind === "gratitude") return "Eu que agradeço! Se precisar, estou por aqui.";
   if (state.turnKind === "farewell") return "Até mais! Foi um prazer conversar com você.";
+  if (state.answeredNameThisTurn) {
+    const firstName = state.qualification.name?.split(/\s+/)[0];
+    if (!state.nextQuestion) return `Prazer, ${firstName}. Como posso te ajudar?`;
+    return `Prazer, ${firstName}. ${state.nextQuestion.text}`;
+  }
+  if (state.incompleteUserThought) {
+    const firstName = state.qualification.name?.split(/\s+/)[0];
+    return firstName
+      ? `Claro, ${firstName}. Pode me contar melhor o que você precisa?`
+      : "Claro. Pode me contar melhor o que você precisa?";
+  }
   if (state.turnKind === "disclosure" && state.nextQuestion) {
+    if (state.nextQuestion.key === "name") return "Entendi. Qual é o seu nome?";
     const transitions: Record<AnaNextQuestion["key"], string> = {
-      grades: "Claro — entendo que você está buscando apoio para a escola.",
-      students: "Perfeito.",
+      name: "Entendi.",
+      grades: "Entendi.",
+      students: "Certo.",
       internet: state.qualification.studentCount
         ? `Certo, ${state.qualification.studentCount} estudantes.`
         : "Certo.",
-      need: "Perfeito, isso ajuda.",
+      need: "Isso ajuda.",
       timeline: "Entendi.",
-      contact: "Pelo que você contou, existe aderência.",
+      contactConsent: "Pelo que você contou, vale a pena continuar essa conversa.",
+      contact: "Ótimo.",
     };
     return `${transitions[state.nextQuestion.key]} ${state.nextQuestion.text}`;
   }
@@ -414,7 +497,10 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
 
   const mentionsLeia = messages.some((message) => /l\s*\.\s*e\s*\.\s*i\s*\.\s*a\s*\.?/i.test(messageText(message)));
   if (mentionsLeia) {
-    return "Claro. Se quiser, posso explicar algum ponto do L.E.I.A. com mais calma.";
+    const productName = state.shouldExpandLeia
+      ? "L.E.I.A. — Laboratório Escolar de Inteligência Artificial"
+      : "L.E.I.A.";
+    return `Claro. Se quiser, posso explicar algum ponto do ${productName} com mais calma.`;
   }
   return "Claro. Se quiser continuar, estou por aqui.";
 }
