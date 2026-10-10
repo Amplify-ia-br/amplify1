@@ -162,7 +162,7 @@ describe("Ana reference conversation suite", () => {
       { role: "assistant", text: "A escola tem internet estável?" },
       { role: "user", text: "Tem sim." },
       { role: "assistant", text: "Qual é a principal necessidade da escola com IA hoje?" },
-      { role: "user", text: "Ensinar IA pros alunos e implantar soluções para otimizar o negócio." },
+      { role: "user", text: "Eu preciso ensinar IA pros meus alunos e tbm implantar soluções de IA para tornar o negócio mais otimizado." },
       { role: "assistant", text: "Quando vocês gostariam de começar?" },
       { role: "user", text: "Depende de qto vai cutar." },
     ]);

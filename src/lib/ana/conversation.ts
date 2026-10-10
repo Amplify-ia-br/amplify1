@@ -204,7 +204,7 @@ function extractLeadQualification(
     ...(/\b(aluno|alunos|estudante|estudantes|ensinar)\b/.test(joined) ? ["students" as const] : []),
     ...(/\b(professor|professores|docente|docentes)\b/.test(joined) ? ["teachers" as const] : []),
     ...(/\b(gestao|gestor|gestores|direcao|diretores)\b/.test(joined) ? ["management" as const] : []),
-    ...(/\b(processo|processos|operacao|operacoes|otimizar|otimizacao)\b/.test(joined) ? ["processes" as const] : []),
+    ...(/\b(processo|processos|operacao|operacoes|otimizar|otimizacao|otimizado|otimizada)\b/.test(joined) ? ["processes" as const] : []),
     ...(/\b(produto|aplicativo|sistema|solucao|solucoes)\b/.test(joined) ? ["product" as const] : []),
   ]);
   const need = needs[0];
