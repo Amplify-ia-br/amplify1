@@ -18,6 +18,7 @@ describe("Ana conversation instructions", () => {
   it("prioritizes conversation before a commercial pitch", () => {
     const instructions = buildAnaInstructions(state);
     expect(instructions).toContain("Você conversa antes de vender");
+    expect(instructions).toContain("usando o alfabeto latino");
     expect(instructions).toContain("Não apresente produtos ainda");
     expect(instructions).toContain("A pessoa é proprietária de uma escola.");
   });
