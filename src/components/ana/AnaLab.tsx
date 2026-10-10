@@ -172,12 +172,14 @@ export default function AnaLab() {
     nurture: "nutrição",
   }[metadata.leadStage] : undefined;
   const nextQuestionLabel = metadata?.nextQuestionKey ? {
+    name: "nome",
     need: "necessidade",
     grades: "séries atendidas",
     students: "número de estudantes",
     internet: "infraestrutura",
     timeline: "prazo",
-    contact: "contato consentido",
+    contactConsent: "consentimento para contato",
+    contact: "e-mail ou WhatsApp",
   }[metadata.nextQuestionKey] : undefined;
   const assistantText = lastAssistant ? textFromMessage(lastAssistant) : "";
   const completedWithoutText = Boolean(
