@@ -44,8 +44,6 @@ export const DEFAULT_ANA_MODEL: AnaModelId = "openai/gpt-5.4-mini-fast";
 const ANA_GATEWAY_FALLBACKS = [
   "openai/gpt-5.4-mini-fast",
   "google/gemini-3.1-flash-lite",
-  "inclusionai/ling-3.1-flash-free",
-  "poolside/laguna-s-2.1-free",
 ] as const;
 
 export function getAnaFallbackModels(model: AnaModelId) {
@@ -53,12 +51,28 @@ export function getAnaFallbackModels(model: AnaModelId) {
   return ANA_GATEWAY_FALLBACKS.filter((candidate) => candidate !== model);
 }
 
-export const anaChatRequestSchema = z.object({
-  messages: z.array(z.unknown()).min(1),
+export function getAnaQualityRetryModel(model: AnaModelId): AnaModelId {
+  if (ANA_MODELS[model].provider === "anthropic") return model;
+  return model === "openai/gpt-5.4-mini-fast"
+    ? "google/gemini-3.1-flash-lite"
+    : "openai/gpt-5.4-mini-fast";
+}
+
+const anaIncomingMessageSchema = z.strictObject({
+  id: z.string().trim().min(1).max(160),
+  role: z.literal("user"),
+  parts: z.array(z.strictObject({
+    type: z.literal("text"),
+    text: z.string().trim().min(1).max(4_000),
+  })).length(1),
+});
+
+export const anaChatRequestSchema = z.strictObject({
+  messages: z.array(anaIncomingMessageSchema).length(1),
   model: z.enum(Object.keys(ANA_MODELS) as [AnaModelId, ...AnaModelId[]]).default(DEFAULT_ANA_MODEL),
   mode: z.enum(["mcp", "direct"]).default("mcp"),
   conversationId: z.string().uuid().optional(),
-  pagePath: z.string().trim().max(500).optional(),
+  pagePath: z.string().trim().max(500).regex(/^\/[\p{L}\p{N}/._~%-]*$/u).optional(),
   apiKey: z.string().trim().min(1).max(512).optional(),
 }).superRefine((value, context) => {
   if (ANA_MODELS[value.model].provider === "anthropic" && !value.apiKey) {

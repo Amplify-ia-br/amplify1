@@ -50,6 +50,7 @@ export type AnaConversationState = {
   answeredNameThisTurn: boolean;
   incompleteUserThought: boolean;
   answerRequired: boolean;
+  acceptedAssistantOffer?: string;
   nextQuestion?: AnaNextQuestion;
 };
 
@@ -91,6 +92,8 @@ export function classifyAnaTurn(value: string): AnaTurnKind {
   const asksQuestion = value.includes("?")
     || pricingIntent
     || /\b(?:quero|queria|gostaria|preciso) (?:saber|entender|ver|conhecer)\b/.test(normalized)
+    || /\b(?:quero|queria|gostaria|preciso)(?: de)? (?:um|uma)?\s*(?:diagnostico|proposta|orcamento)\b/.test(normalized)
+    || /^(?:me )?(?:explique|mostre|revele|exiba|conte|fale)\b/.test(normalized)
     || /^(como|qual|quais|quanto|quando|onde|por que|porque|quem|o que|tem|posso|podem|voces|vcs)\b/.test(normalized);
   return asksQuestion ? "request" : "disclosure";
 }
@@ -107,6 +110,19 @@ function requiresKnowledgeAnswer(value: string, turnKind: AnaTurnKind, incomplet
   const asksForOptions = /\b(?:opcao|opcoes|alternativa|alternativas|solucao|solucoes|produto|produtos|servico|servicos|ajuda|ajudar)\b/.test(normalized)
     && /\b(?:quero|queria|preciso|gostaria|busco|procurando|frente|frentes|como|quais)\b/.test(normalized);
   return describesNeed || asksForOptions;
+}
+
+function acceptedAssistantOffer(latestUserMessage: string, previousAssistantMessage: string) {
+  if (!previousAssistantMessage) return undefined;
+
+  const offeredExplanation = /(?:se (?:voce )?quiser[, ]+)?(?:eu )?posso (?:te )?(?:explicar|mostrar|contar|detalhar)\b/.test(previousAssistantMessage);
+  if (!offeredExplanation) return undefined;
+
+  const acceptance = canonical(latestUserMessage);
+  const accepted = /^(?:(?:legal|otimo|perfeito|claro|sim|beleza)[, ]+)*(?:quero sim|quero|pode sim|pode|por favor|me explica|explique|manda ver|vamos la)(?:\b|$)/.test(acceptance)
+    || /^(?:sim|claro|com certeza)(?:\b|$)/.test(acceptance);
+
+  return accepted ? previousAssistantMessage : undefined;
 }
 
 function inferKnownFacts(userMessages: string[]) {
@@ -134,11 +150,43 @@ function previousAssistantText(messages: AnaMessage[], userIndex: number) {
 }
 
 function isAffirmative(value: string) {
-  return /^(?:sim|s|uhum|aham|isso|isso mesmo|exato|correto|claro|com certeza|tem sim|temos sim|atende sim|atendemos sim)(?:\b|$)/.test(canonical(value));
+  return /^(?:sim|s|uhum|aham|isso|isso mesmo|exato|correto|claro|com certeza|pode sim|podem sim|tem sim|temos sim|atende sim|atendemos sim)(?:\b|$)/.test(canonical(value));
 }
 
 function isNegative(value: string) {
   return /^(?:nao|n|ainda nao|nao temos|nao possui|sem)(?:\b|$)/.test(canonical(value));
+}
+
+function isContactConsentQuestion(value: string) {
+  return /(?:quer|gostaria).*(?:time|alguem).*(?:entr(?:ar|e) em contato|falar com voce)|posso.*(?:pedir|solicitar).*(?:contato|falar com voce)/.test(value);
+}
+
+function isContactDetailQuestion(value: string) {
+  return /qual.*(?:email|e-mail|whatsapp|telefone)|melhor.*(?:email|e-mail|whatsapp|telefone)/.test(value);
+}
+
+function hasExplicitContactConsent(value: string) {
+  const normalized = canonical(value);
+  return /\b(?:autorizo|aceito) (?:o )?contato\b/.test(normalized)
+    || /\bpode(?:m)? (?:me )?(?:ligar|contatar|contactar)\b/.test(normalized)
+    || /\bpode(?:m)? (?:entrar em contato|falar comigo)\b/.test(normalized)
+    || /\bpode(?:m)? (?:me )?(?:mandar|enviar) (?:um )?e-?mail\b/.test(normalized)
+    || /\bpode(?:m)? (?:me )?chamar (?:no|pelo) whatsapp\b/.test(normalized)
+    || /\b(?:me ligue|me contate|entre em contato comigo)\b/.test(normalized);
+}
+
+function hasExplicitContactRevocation(value: string) {
+  const normalized = canonical(value);
+  const conservativeRevocation = /\b(?:nao|prefiro|pare|parem|retiro|retiramos|revogo|revogamos|cancelo|cancelamos)\b.{0,80}\b(?:autorizacao|contato|contatar|contactar|ligar|chamar|mensagem|mensagens|e-?mail|whatsapp|telefone|falar comigo)\b/.test(normalized);
+  return conservativeRevocation
+    || /\bnao autorizo (?:o )?contato\b/.test(normalized)
+    || /\bnao quero (?:receber )?contato\b/.test(normalized)
+    || /\bnao (?:quero|gostaria) que (?:entrem em contato|falem) comigo\b/.test(normalized)
+    || /\bnao (?:entre|entrem) em contato comigo\b/.test(normalized)
+    || /\bnao me (?:ligue|liguem|chame|chamem|contate|contatem|contacte|contactem)\b/.test(normalized)
+    || /\bnao me (?:mande|mandem|envie|enviem) (?:e-?mail|mensagem|whatsapp)\b/.test(normalized)
+    || /\bparem? de me (?:ligar|chamar|contatar|contactar|mandar (?:e-?mail|mensagem))\b/.test(normalized)
+    || /\bprefiro nao (?:informar|receber contato|ser contatad[oa])\b/.test(normalized);
 }
 
 function contextualAnswers(messages: AnaMessage[]) {
@@ -202,7 +250,6 @@ function extractLeadQualification(
   const joinedRaw = userMessages.join(" \n");
   const joined = normalizeKnowledgeText(joinedRaw);
   const latestRaw = userMessages.at(-1) ?? "";
-  const latest = normalizeKnowledgeText(latestRaw);
   const previousAssistant = [...messages].reverse().find((message) => message.role === "assistant");
   const previousQuestion = normalizeKnowledgeText(previousAssistant ? messageText(previousAssistant) : "");
   const answers = contextualAnswers(messages);
@@ -280,16 +327,33 @@ function extractLeadQualification(
   const commercialIntent = pricingIntent || /\b(quero|queremos|gostaria|interesse|contratar|implantar|proposta)\b/.test(joined);
   const meetingIntent = /\b(agendar|marcar|reuniao|reunião|falar com (?:alguem|alguém|o time|vendas)|conversar com (?:alguem|alguém|o time|vendas))\b/.test(joined);
   const advancementIntent = meetingIntent || /\b(?:quero|queremos|gostaria|podemos|como)\b.{0,40}\b(?:contratar|comecar|começar|avancar|avançar|proposta|proximo passo|próximo passo)\b|\b(?:quero uma proposta|podem enviar uma proposta|qual e o proximo passo|qual é o próximo passo)\b/.test(joined);
-  const explicitConsent = /\b(pode(?:m)? (?:me )?(?:ligar|chamar|contatar|contactar|mandar (?:um )?email)|autorizo (?:o )?contato|aceito (?:o )?contato)\b/.test(joined);
-  const consentQuestion = /(?:quer|gostaria).*(?:time|alguem).*(?:entrar em contato|falar com voce)|posso.*(?:pedir|solicitar).*(?:contato|falar com voce)/.test(previousQuestion);
-  const requestedContact = /qual.*(?:email|e-mail|whatsapp|telefone)|melhor.*(?:email|e-mail|whatsapp|telefone)/.test(previousQuestion);
-  const contactRevoked = /\b(nao autorizo|nao quero (?:receber )?contato|nao me (?:ligue|chame|contate)|prefiro nao (?:informar|receber contato))\b/.test(latest)
-    || Boolean(consentQuestion && isNegative(latestRaw));
-  const contactConsent = !contactRevoked && (
-    explicitConsent
-    || Boolean(consentQuestion && isAffirmative(latestRaw))
-    || Boolean(requestedContact && (email || phone))
-  );
+  let contactConsent = false;
+  let contactRevoked = false;
+  for (const { answer, question } of answers) {
+    if (hasExplicitContactRevocation(answer)) {
+      contactConsent = false;
+      contactRevoked = true;
+      continue;
+    }
+    if (hasExplicitContactConsent(answer)) {
+      contactConsent = true;
+      contactRevoked = false;
+    }
+    if (isContactConsentQuestion(question)) {
+      if (isNegative(answer)) {
+        contactConsent = false;
+        contactRevoked = true;
+      } else if (isAffirmative(answer)) {
+        contactConsent = true;
+        contactRevoked = false;
+      }
+    }
+    const hasContactDetail = answer.includes("@") || answer.replace(/\D/g, "").length >= 8;
+    if (isContactDetailQuestion(question) && hasContactDetail) {
+      contactConsent = true;
+      contactRevoked = false;
+    }
+  }
 
   return mergeAnaLeadQualification(previous, {
     name,
@@ -342,6 +406,12 @@ function chooseNextQuestion(
     return { key: "name", text: "Qual é o seu nome?" };
   }
   if (qualification.gradeFit === false) return undefined;
+  if (qualification.contactConsent && !qualification.name) {
+    return { key: "name", text: "Qual é o seu nome?" };
+  }
+  if (qualification.contactConsent && !qualification.email && !qualification.phone && !/qual.*(?:email|e-mail|whatsapp|telefone)|melhor.*(?:email|e-mail|whatsapp|telefone)/.test(asked)) {
+    return { key: "contact", text: "Qual é o melhor e-mail ou WhatsApp para falar com você?" };
+  }
   if (!qualification.need && !/necessidade|objetivo|desafio|melhorar|resolver|busca/.test(asked)) {
     return qualification.offerInterest === "leia"
       ? { key: "need", text: "Qual é a principal necessidade da escola com IA hoje?" }
@@ -365,12 +435,6 @@ function chooseNextQuestion(
   }
   if ((qualification.meetingIntent || qualification.advancementIntent) && !qualification.contactConsent && !qualification.contactRevoked && !/entrar em contato|falar com voce/.test(asked)) {
     return { key: "contactConsent", text: "Quer que eu peça para alguém do nosso time entrar em contato com você?" };
-  }
-  if (qualification.contactConsent && !qualification.name) {
-    return { key: "name", text: "Qual é o seu nome?" };
-  }
-  if (qualification.contactConsent && !qualification.email && !qualification.phone && !/qual.*(?:email|e-mail|whatsapp|telefone)|melhor.*(?:email|e-mail|whatsapp|telefone)/.test(asked)) {
-    return { key: "contact", text: "Qual é o melhor e-mail ou WhatsApp para falar com você?" };
   }
   return undefined;
 }
@@ -399,7 +463,8 @@ export function analyzeAnaConversation(
   const previousAssistantText = previousAssistant ? normalizeKnowledgeText(messageText(previousAssistant)) : "";
   const answeredNameThisTurn = Boolean(qualification.name && isNameQuestion(previousAssistantText));
   const incompleteUserThought = isIncompleteThought(latest);
-  const answerRequired = requiresKnowledgeAnswer(latest, turnKind, incompleteUserThought);
+  const acceptedOffer = acceptedAssistantOffer(latest, previousAssistantText);
+  const answerRequired = Boolean(acceptedOffer) || requiresKnowledgeAnswer(latest, turnKind, incompleteUserThought);
   const shouldExpandLeia = !messages.some((message) => (
     message.role === "assistant"
     && /laboratorio escolar de inteligencia artificial/.test(normalizeKnowledgeText(messageText(message)))
@@ -422,12 +487,16 @@ export function analyzeAnaConversation(
         : hasLeadContext && userTurnCount > 1
           ? "qualifying"
           : "engaged";
-  const suggestedQuestion = answeredNameThisTurn && !hasLeadContext
+  const suggestedQuestion = leadStage === "handoff"
+    ? undefined
+    : answeredNameThisTurn && !hasLeadContext
     ? undefined
     : turnKind === "greeting" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell"
     ? undefined
     : chooseNextQuestion(qualification, questions, incompleteUserThought, userTurnCount);
-  const nextQuestion = answerRequired
+  const nextQuestion = acceptedOffer
+    ? undefined
+    : answerRequired
     && suggestedQuestion?.key !== "name"
     && !qualification.advancementIntent
     && !qualification.meetingIntent
@@ -476,6 +545,7 @@ export function analyzeAnaConversation(
     answeredNameThisTurn,
     incompleteUserThought,
     answerRequired,
+    acceptedAssistantOffer: acceptedOffer,
     nextQuestion,
   };
 }

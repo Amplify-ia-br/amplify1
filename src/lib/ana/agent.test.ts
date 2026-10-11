@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildAnaInstructions, normalizeAnaTextStream } from "./agent";
+import { buildAnaInstructions } from "./agent";
 import type { AnaConversationState } from "./conversation";
 import { formatAnaAssistantText, normalizeAnaProductName } from "./text";
 
@@ -55,22 +55,4 @@ describe("Ana conversation instructions", () => {
     );
   });
 
-  it("normalizes the product name even when it is split across stream chunks", async () => {
-    const stream = new ReadableStream({
-      start(controller) {
-        controller.enqueue({ type: "text-start", id: "answer" } as const);
-        controller.enqueue({ type: "text-delta", id: "answer", text: "O L." } as const);
-        controller.enqueue({ type: "text-delta", id: "answer", text: " E." } as const);
-        controller.enqueue({ type: "text-delta", id: "answer", text: " I." } as const);
-        controller.enqueue({ type: "text-delta", id: "answer", text: " A.. atende escolas." } as const);
-        controller.enqueue({ type: "text-end", id: "answer" } as const);
-        controller.close();
-      },
-    }).pipeThrough(normalizeAnaTextStream()());
-
-    const chunks = [];
-    for await (const chunk of stream) chunks.push(chunk);
-    const text = chunks.filter((chunk) => chunk.type === "text-delta").map((chunk) => chunk.text).join("");
-    expect(text).toBe("O L.E.I.A. atende escolas.");
-  });
 });

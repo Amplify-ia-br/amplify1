@@ -1,11 +1,13 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { AnaKnowledgeMode, AnaModelId } from "./config.js";
 import type { AnaConversationState, AnaLeadQualification } from "./conversation.js";
+import type { AnaMessage } from "./types.js";
 
 type AnaMessageRole = "user" | "assistant" | "system" | "tool";
 
 type SaveAnaMessageInput = {
   conversationKey: string;
+  sessionHash: string;
   externalId: string;
   role: AnaMessageRole;
   content: string;
@@ -52,7 +54,7 @@ function qualificationFromLead(value: unknown): Partial<AnaLeadQualification> | 
   return value as Partial<AnaLeadQualification>;
 }
 
-export async function loadAnaLeadQualification(conversationKey: string) {
+export async function loadAnaLeadQualification(conversationKey: string, sessionHash: string) {
   const supabase = getServerClient();
   if (!supabase) return undefined;
 
@@ -61,6 +63,7 @@ export async function loadAnaLeadQualification(conversationKey: string) {
       .from("ana_conversations")
       .select("id")
       .eq("conversation_key", conversationKey)
+      .eq("session_hash", sessionHash)
       .maybeSingle();
     if (conversationError) throw conversationError;
     if (!conversation?.id) return undefined;
@@ -78,6 +81,82 @@ export async function loadAnaLeadQualification(conversationKey: string) {
   }
 }
 
+export async function loadAnaConversationMessages(conversationKey: string, sessionHash: string, limit = 24): Promise<AnaMessage[]> {
+  const supabase = getServerClient();
+  if (!supabase) return [];
+
+  try {
+    const { data: conversation, error: conversationError } = await supabase
+      .from("ana_conversations")
+      .select("id")
+      .eq("conversation_key", conversationKey)
+      .eq("session_hash", sessionHash)
+      .maybeSingle();
+    if (conversationError) throw conversationError;
+    if (!conversation?.id) return [];
+
+    const { data: rows, error: messagesError } = await supabase
+      .from("ana_messages")
+      .select("id, external_id, role, content, created_at")
+      .eq("conversation_id", conversation.id)
+      .in("role", ["user", "assistant"])
+      .order("created_at", { ascending: false })
+      .limit(Math.min(Math.max(limit, 1), 40));
+    if (messagesError) throw messagesError;
+
+    let remainingCharacters = 16_000;
+    return (rows ?? []).flatMap((row) => {
+      if (row.role !== "user" && row.role !== "assistant") return [];
+      const content = String(row.content ?? "").trim();
+      if (!content || remainingCharacters <= 0) return [];
+      const bounded = content.slice(0, remainingCharacters);
+      remainingCharacters -= bounded.length;
+      return [{
+        id: String(row.external_id || `db:${row.id}`),
+        role: row.role,
+        parts: [{ type: "text" as const, text: bounded }],
+      } satisfies AnaMessage];
+    }).reverse();
+  } catch (error) {
+    console.error("[Ana Lab] Falha ao carregar histórico canônico", describePersistenceError(error));
+    return [];
+  }
+}
+
+export async function checkAnaRateLimit(
+  identityHash: string,
+  maxRequests = 30,
+  windowSeconds = 300,
+) {
+  const supabase = getServerClient();
+  if (!supabase) {
+    const deployed = process.env.NODE_ENV === "production" || Boolean(process.env.VERCEL_ENV);
+    return deployed
+      ? { configured: false as const, allowed: false as const, reason: "not_configured" as const }
+      : { configured: false as const, allowed: true as const };
+  }
+
+  try {
+    const { data, error } = await supabase.rpc("consume_ana_rate_limit", {
+      p_identity_hash: identityHash,
+      p_window_seconds: windowSeconds,
+      p_max_requests: maxRequests,
+    });
+    if (error) throw error;
+    const result = Array.isArray(data) ? data[0] : data;
+    if (!result || typeof result.allowed !== "boolean") throw new Error("rate_limit_result_invalid");
+    return {
+      configured: true as const,
+      allowed: result.allowed as boolean,
+      remaining: Number(result.remaining ?? 0),
+      resetAt: String(result.reset_at ?? ""),
+    };
+  } catch (error) {
+    console.error("[Ana Lab] Falha ao verificar limite de uso", describePersistenceError(error));
+    return { configured: true as const, allowed: false as const, reason: "check_failed" as const };
+  }
+}
+
 export async function saveAnaMessage(input: SaveAnaMessageInput) {
   const supabase = getServerClient();
   if (!supabase) {
@@ -89,26 +168,19 @@ export async function saveAnaMessage(input: SaveAnaMessageInput) {
   }
 
   try {
-    const now = new Date().toISOString();
-    const { data: conversation, error: conversationError } = await supabase
-      .from("ana_conversations")
-      .upsert({
-        conversation_key: input.conversationKey,
-        channel: "site",
-        page_path: input.pagePath,
-        last_message_at: now,
-      }, { onConflict: "conversation_key" })
-      .select("id")
-      .single();
-
-    if (conversationError || !conversation?.id) {
-      throw conversationError || new Error("conversation_not_returned");
-    }
+    const { data: claimed, error: conversationError } = await supabase.rpc("claim_ana_conversation", {
+      p_conversation_key: input.conversationKey,
+      p_session_hash: input.sessionHash,
+      p_page_path: input.pagePath ?? null,
+    });
+    if (conversationError) throw conversationError;
+    const conversationId = typeof claimed === "string" ? claimed : undefined;
+    if (!conversationId) return { persisted: false as const, reason: "forbidden" as const };
 
     const { error: messageError } = await supabase
       .from("ana_messages")
-      .upsert({
-        conversation_id: conversation.id,
+      .insert({
+        conversation_id: conversationId,
         external_id: input.externalId,
         role: input.role,
         content: input.content,
@@ -116,10 +188,10 @@ export async function saveAnaMessage(input: SaveAnaMessageInput) {
         knowledge_mode: input.knowledgeMode,
         source_ids: input.sourceIds ?? [],
         metadata: input.metadata ?? {},
-      }, { onConflict: "conversation_id,external_id", ignoreDuplicates: true });
+      });
 
     if (messageError) throw messageError;
-    return { persisted: true as const, conversationId: conversation.id as string };
+    return { persisted: true as const, conversationId };
   } catch (error) {
     console.error("[Ana Lab] Falha ao persistir conversa", describePersistenceError(error));
     return { persisted: false as const, reason: "write_failed" as const };

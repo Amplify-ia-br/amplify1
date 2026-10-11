@@ -1,19 +1,29 @@
-import { gateway, streamText, type ModelMessage, type TextStreamPart, type ToolSet } from "ai";
+import { gateway, generateText, type ModelMessage } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { ANA_MODELS, getAnaFallbackModels, type AnaKnowledgeMode, type AnaModelId } from "./config.js";
+import {
+  ANA_MODELS,
+  getAnaFallbackModels,
+  getAnaQualityRetryModel,
+  type AnaKnowledgeMode,
+  type AnaModelId,
+} from "./config.js";
 import type { AnaConversationState } from "./conversation.js";
+import { createAnaDocumentationFallback, validateAnaAnswer, type AnaAnswerIssue } from "./guardrails.js";
 import type { AnaRetrievalTrace } from "./retrieval.js";
-import { normalizeAnaProductName } from "./text.js";
 
-type AnaGenerationFinished = {
+export type AnaGeneratedAnswer = {
   text: string;
-  totalUsage: {
+  usage: {
     inputTokens?: number;
     outputTokens?: number;
     totalTokens?: number;
   };
-  response: { modelId?: string };
+  resolvedModel: string;
+  generationId?: string;
   finishReason: string;
+  qualityRetryCount: number;
+  qualityFallback: boolean;
+  validationIssues: AnaAnswerIssue[];
 };
 
 const ANA_INSTRUCTIONS = `Você é Ana, uma pessoa do time da Amplify que conversa com visitantes e potenciais clientes.
@@ -64,6 +74,9 @@ function turnDirective(state: AnaConversationState) {
   if (state.leadStage === "nurture") {
     return "Reconheça com cuidado que a faixa escolar informada não corresponde ao recorte atual do L.E.I.A. Não force a qualificação nem faça outra pergunta comercial.";
   }
+  if (state.acceptedAssistantOffer) {
+    return `A pessoa aceitou a oferta que você fez na resposta anterior: "${state.acceptedAssistantOffer}". Cumpra essa promessa agora, com uma explicação concreta baseada no contexto canônico. Não faça pergunta de qualificação neste turno e não volte a oferecer a mesma explicação.`;
+  }
   if (state.answerRequired) {
     return "Existe uma necessidade ou pergunta ainda não respondida. Responda-a primeiro com o contexto canônico. Não use uma pergunta para escapar da resposta. Se houver várias frentes, cubra todas de forma objetiva. Só depois faça, no máximo, uma pergunta que ajude a pessoa a escolher o que aprofundar; não peça dados de qualificação.";
   }
@@ -101,6 +114,7 @@ ESTADO DESTA CONVERSA:
 - Regra de apresentação do produto: ${leiaNaming}
 - Estágio do lead: ${state.leadStage}
 - Progresso de qualificação: ${state.qualificationScore}%
+- Oferta anterior aceita: ${state.acceptedAssistantOffer ?? "Nenhuma."}
 
 FATOS JÁ INFORMADOS PELA PESSOA:
 ${facts}
@@ -127,77 +141,42 @@ function knowledgeContext(retrieval: AnaRetrievalTrace) {
   ].join("\n")).join("\n\n---\n\n");
 }
 
-function possibleLeiaPrefixStart(value: string) {
-  for (let index = value.length - 1; index >= 0; index -= 1) {
-    if (value[index]?.toLocaleLowerCase("pt-BR") !== "l") continue;
-    const compact = value.slice(index).replace(/\s/g, "").toLocaleLowerCase("pt-BR");
-    if ("l.e.i.a.".startsWith(compact)) return index;
-  }
-  return -1;
-}
-
-export function normalizeAnaTextStream<TOOLS extends ToolSet>() {
-  return () => {
-    let buffer = "";
-    let textId = "";
-
-    return new TransformStream<TextStreamPart<TOOLS>, TextStreamPart<TOOLS>>({
-      transform(chunk, controller) {
-        if (chunk.type === "text-start") {
-          textId = chunk.id;
-          controller.enqueue(chunk);
-          return;
-        }
-        if (chunk.type === "text-delta") {
-          textId = chunk.id;
-          buffer = normalizeAnaProductName(buffer + chunk.text);
-          const partialStart = possibleLeiaPrefixStart(buffer);
-          const emitted = partialStart >= 0 ? buffer.slice(0, partialStart) : buffer;
-          buffer = partialStart >= 0 ? buffer.slice(partialStart) : "";
-          if (emitted) {
-            controller.enqueue({ ...chunk, text: emitted });
-          }
-          return;
-        }
-        if (chunk.type === "text-end" || chunk.type === "finish" || chunk.type === "abort" || chunk.type === "error") {
-          if (buffer && textId) {
-            controller.enqueue({ type: "text-delta", id: textId, text: normalizeAnaProductName(buffer) });
-            buffer = "";
-          }
-        }
-        controller.enqueue(chunk);
-      },
-      flush(controller) {
-        if (buffer && textId) {
-          controller.enqueue({ type: "text-delta", id: textId, text: normalizeAnaProductName(buffer) });
-        }
-      },
-    });
+function addUsage(
+  total: AnaGeneratedAnswer["usage"],
+  current: AnaGeneratedAnswer["usage"],
+) {
+  return {
+    inputTokens: (total.inputTokens ?? 0) + (current.inputTokens ?? 0),
+    outputTokens: (total.outputTokens ?? 0) + (current.outputTokens ?? 0),
+    totalTokens: (total.totalTokens ?? 0) + (current.totalTokens ?? 0),
   };
 }
 
-export function streamAnaAnswer(
+function languageModel(model: AnaModelId, apiKey?: string) {
+  return ANA_MODELS[model].provider === "anthropic"
+    ? createAnthropic({ apiKey })(model.replace("byok/anthropic/", ""))
+    : gateway(model);
+}
+
+async function generateAttempt(
   mode: AnaKnowledgeMode,
   model: AnaModelId,
   messages: ModelMessage[],
   retrieval: AnaRetrievalTrace,
   conversation: AnaConversationState,
   apiKey?: string,
-  onFinish?: (result: AnaGenerationFinished) => void | Promise<void>,
+  correction?: AnaAnswerIssue[],
 ) {
   const isAnthropic = ANA_MODELS[model].provider === "anthropic";
-  const languageModel = isAnthropic
-    ? createAnthropic({ apiKey })(model.replace("byok/anthropic/", ""))
-    : gateway(model);
-
-  return streamText({
-    model: languageModel,
-    system: `${buildAnaInstructions(conversation)}\n\nCONTEXTO CANÔNICO DESTA RESPOSTA:\n\n${knowledgeContext(retrieval)}`,
+  const correctionInstruction = correction?.length
+    ? `\n\nA resposta anterior foi rejeitada pela validação de qualidade (${correction.join(", ")}). Reescreva do zero e cumpra todas as regras obrigatórias.`
+    : "";
+  const result = await generateText({
+    model: languageModel(model, apiKey),
+    system: `${buildAnaInstructions(conversation)}${correctionInstruction}\n\nCONTEXTO CANÔNICO DESTA RESPOSTA:\n\n${knowledgeContext(retrieval)}`,
     messages,
     maxOutputTokens: 500,
     maxRetries: 1,
-    experimental_transform: normalizeAnaTextStream(),
-    onFinish,
     providerOptions: isAnthropic
       ? { anthropic: { thinking: { type: "disabled" } } }
       : {
@@ -206,6 +185,82 @@ export function streamAnaAnswer(
             models: getAnaFallbackModels(model),
           },
         },
-    onError: () => console.error("[Ana Lab] Erro durante geração"),
   });
+
+  const gatewayMetadata = result.finalStep.providerMetadata?.gateway as { generationId?: string } | undefined;
+  return {
+    text: result.text,
+    usage: result.usage,
+    resolvedModel: result.finalStep.response.modelId || model,
+    generationId: gatewayMetadata?.generationId,
+    finishReason: result.finishReason,
+  };
+}
+
+export async function generateAnaAnswer(
+  mode: AnaKnowledgeMode,
+  model: AnaModelId,
+  messages: ModelMessage[],
+  retrieval: AnaRetrievalTrace,
+  conversation: AnaConversationState,
+  apiKey?: string,
+): Promise<AnaGeneratedAnswer> {
+  let usage: AnaGeneratedAnswer["usage"] = {};
+  let firstIssues: AnaAnswerIssue[] = [];
+
+  try {
+    const first = await generateAttempt(mode, model, messages, retrieval, conversation, apiKey);
+    usage = addUsage(usage, first.usage);
+    const validation = validateAnaAnswer(first.text, conversation, retrieval);
+    if (validation.valid) {
+      return {
+        ...first,
+        text: validation.text,
+        usage,
+        qualityRetryCount: 0,
+        qualityFallback: false,
+        validationIssues: [],
+      };
+    }
+    firstIssues = validation.issues;
+  } catch {
+    firstIssues = ["empty"];
+    console.error("[Ana Lab] Falha na primeira tentativa de geração");
+  }
+
+  const retryModel = getAnaQualityRetryModel(model);
+  try {
+    const retry = await generateAttempt(mode, retryModel, messages, retrieval, conversation, apiKey, firstIssues);
+    usage = addUsage(usage, retry.usage);
+    const validation = validateAnaAnswer(retry.text, conversation, retrieval);
+    if (validation.valid) {
+      return {
+        ...retry,
+        text: validation.text,
+        usage,
+        qualityRetryCount: 1,
+        qualityFallback: false,
+        validationIssues: firstIssues,
+      };
+    }
+    firstIssues = [...new Set([...firstIssues, ...validation.issues])];
+  } catch {
+    console.error("[Ana Lab] Falha na tentativa de correção");
+  }
+
+  const documentationFallback = createAnaDocumentationFallback(retrieval, conversation);
+  const fallbackValidation = validateAnaAnswer(documentationFallback, conversation, retrieval);
+  const fallbackText = fallbackValidation.valid
+    ? fallbackValidation.text
+    : "Não consegui formular uma resposta segura com a documentação disponível agora.";
+
+  return {
+    text: fallbackText,
+    usage,
+    resolvedModel: "ana-documentation-fallback",
+    finishReason: "fallback",
+    qualityRetryCount: 1,
+    qualityFallback: true,
+    validationIssues: [...new Set([...firstIssues, ...fallbackValidation.issues])],
+  };
 }

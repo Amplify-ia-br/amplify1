@@ -14,6 +14,9 @@ export type AnaMessageMetadata = {
   estimatedCostUsd?: number;
   generationId?: string;
   resolvedModel?: string;
+  qualityRetryCount?: number;
+  qualityFallback?: boolean;
+  validationIssues?: import("./guardrails.js").AnaAnswerIssue[];
   turnKind?: AnaTurnKind;
   conversationStage?: AnaConversationStage;
   leadStage?: import("./conversation.js").AnaLeadStage;

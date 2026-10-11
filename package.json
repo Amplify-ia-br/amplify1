@@ -12,6 +12,8 @@
     "lint": "eslint .",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:ana": "vitest run src/lib/ana",
+    "ana:eval": "vite-node scripts/evaluate-ana.ts",
     "okf:validate": "node --experimental-strip-types scripts/validate-okf.ts",
     "lighthouse": "lighthouse http://localhost:4173 --output html --output-path ./lighthouse-report.html",
     "lhci:audit": "lhci autorun",

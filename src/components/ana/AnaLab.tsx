@@ -97,18 +97,21 @@ export default function AnaLab() {
 
   const transport = useMemo(() => new DefaultChatTransport({
     api: "/api/ana-chat",
-    prepareSendMessagesRequest: ({ messages }) => ({
-      body: {
-        messages,
-        mode: modeRef.current,
-        model: modelRef.current,
-        conversationId: conversationIdRef.current,
-        pagePath: "/lab/ana",
-        ...(ANA_MODELS[modelRef.current].provider === "anthropic"
-          ? { apiKey: apiKeyRef.current }
-          : {}),
-      },
-    }),
+    prepareSendMessagesRequest: ({ messages }) => {
+      const latestUserMessage = [...messages].reverse().find((message) => message.role === "user");
+      return {
+        body: {
+          messages: latestUserMessage ? [latestUserMessage] : [],
+          mode: modeRef.current,
+          model: modelRef.current,
+          conversationId: conversationIdRef.current,
+          pagePath: "/lab/ana",
+          ...(ANA_MODELS[modelRef.current].provider === "anthropic"
+            ? { apiKey: apiKeyRef.current }
+            : {}),
+        },
+      };
+    },
   }), []);
 
   const { messages, sendMessage, setMessages, status, stop, error, clearError } = useChat<AnaMessage>({ transport });
@@ -144,6 +147,8 @@ export default function AnaLab() {
   }] : [];
   const sources: Source[] = retrieval?.documents.map(({ id, title }) => ({ id, title })) ?? [];
   const metadata = lastAssistant?.metadata;
+  const qualityFallback = Boolean(metadata?.qualityFallback);
+  const qualityRetried = Boolean(metadata?.qualityRetryCount);
   const conversationStageLabel = metadata?.conversationStage ? {
     opening: "abertura",
     discovery: "descoberta",
@@ -370,10 +375,13 @@ export default function AnaLab() {
           <section className="ana-status-card">
             <div className="ana-section-title"><CircleDot aria-hidden="true" /> Status</div>
             <div className="ana-status-row">
-              <span className={`ana-status-light ${degraded ? "is-degraded" : error ? "has-error" : busy ? "is-busy" : ""}`} />
+              <span className={`ana-status-light ${degraded || qualityFallback ? "is-degraded" : error ? "has-error" : busy ? "is-busy" : ""}`} />
               <div>
-                <strong>{degraded ? "Modo degradado" : error ? "Erro na execução" : busy ? "Executando" : assistantText ? "Resposta concluída" : "Pronto para testar"}</strong>
+                <strong>{degraded || qualityFallback ? "Resposta de contingência" : error ? "Erro na execução" : busy ? "Executando" : assistantText ? "Resposta concluída" : "Pronto para testar"}</strong>
                 <small>{requiresApiKey ? "Anthropic direto · BYOK da sessão" : mode === "mcp" ? "MCP remoto · amplify.ia.br" : "Serviço OKF direto · preview"}</small>
+                {qualityRetried && <small>Qualidade: corrigida após {metadata?.qualityRetryCount} nova tentativa</small>}
+                {qualityFallback && <small>Qualidade: resposta segura gerada diretamente da documentação</small>}
+                {metadata?.validationIssues?.length ? <small>Validações acionadas: {metadata.validationIssues.join(", ")}</small> : null}
                 {conversationStageLabel && <small>Estado: {conversationStageLabel} · {turnKindLabel}</small>}
                 {leadStageLabel && <small>Lead: {leadStageLabel} · qualificação {metadata?.qualificationScore ?? 0}%</small>}
                 {nextQuestionLabel && <small>Próximo dado: {nextQuestionLabel}</small>}

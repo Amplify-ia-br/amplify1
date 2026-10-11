@@ -14,7 +14,9 @@ function messages(turns: Array<{ role: "user" | "assistant"; text: string }>) {
 describe("Ana reference conversation suite", () => {
   it.each(ANA_REFERENCE_SUITE)("$name", (scenario) => {
     const state = analyzeAnaConversation(messages(scenario.turns), scenario.pagePath);
-    expect(state).toMatchObject(scenario.expected);
+    const { nextQuestionKey, ...expectedState } = scenario.expected;
+    expect(state).toMatchObject(expectedState);
+    if (nextQuestionKey !== undefined) expect(state.nextQuestion?.key).toBe(nextQuestionKey);
   });
 
   it("answers a greeting briefly without pitching the company", () => {
@@ -22,6 +24,25 @@ describe("Ana reference conversation suite", () => {
     const reply = immediateAnaReply(analyzeAnaConversation(conversation), conversation);
     expect(reply).toBe("Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?");
     expect(reply).not.toContain("Amplify ajuda");
+  });
+
+  it("fulfills an accepted explanation offer before resuming qualification", () => {
+    const conversation = messages([
+      { role: "user", text: "Sou dono de uma escola e queria saber o que a Amplify tem pra mim." },
+      {
+        role: "assistant",
+        text: "Para uma escola, a Amplify tem o L.E.I.A. Se você quiser, eu posso te explicar como ele funciona na prática na escola.",
+      },
+      { role: "user", text: "Legal, quero sim" },
+    ]);
+
+    const state = analyzeAnaConversation(conversation);
+
+    expect(state.acceptedAssistantOffer).toContain("explicar como ele funciona na pratica");
+    expect(state.answerRequired).toBe(true);
+    expect(state.shouldRetrieveKnowledge).toBe(true);
+    expect(state.nextQuestion).toBeUndefined();
+    expect(immediateAnaReply(state, conversation)).toBeUndefined();
   });
 
   it("acknowledges L.E.I.A. without repeating the previous qualification question", () => {
@@ -124,6 +145,55 @@ describe("Ana reference conversation suite", () => {
     expect(state.qualification.contactConsent).toBe(false);
     expect(state.nextQuestion).toBeUndefined();
     expect(state.leadStage).toBe("qualified");
+  });
+
+  it("does not confuse a preferred name with permission for commercial contact", () => {
+    const state = analyzeAnaConversation(messages([
+      { role: "user", text: "Pode me chamar de Leonardo." },
+    ]));
+    expect(state.qualification.name).toBe("Leonardo");
+    expect(state.qualification.contactConsent).toBe(false);
+    expect(state.qualification.contactRevoked).toBe(false);
+  });
+
+  it("keeps a contact refusal active until a later explicit consent", () => {
+    const refused = analyzeAnaConversation(messages([
+      { role: "user", text: "Quero uma proposta para a escola." },
+      { role: "assistant", text: "Quer que alguém do time entre em contato com você?" },
+      { role: "user", text: "Não, prefiro não receber contato." },
+      { role: "assistant", text: "Tudo bem." },
+      { role: "user", text: "Obrigado." },
+    ]));
+    expect(refused.qualification.contactConsent).toBe(false);
+    expect(refused.qualification.contactRevoked).toBe(true);
+
+    const consented = analyzeAnaConversation(messages([
+      { role: "user", text: "Quero uma proposta para a escola." },
+      { role: "assistant", text: "Quer que alguém do time entre em contato com você?" },
+      { role: "user", text: "Não, prefiro não receber contato." },
+      { role: "assistant", text: "Tudo bem." },
+      { role: "user", text: "Pensando melhor, autorizo o contato." },
+    ]));
+    expect(consented.qualification.contactConsent).toBe(true);
+    expect(consented.qualification.contactRevoked).toBe(false);
+  });
+
+  it.each([
+    "Não quero que entrem em contato comigo.",
+    "Pare de me contatar.",
+    "Não me mandem e-mail.",
+    "Prefiro que não entrem em contato comigo.",
+    "Não quero mais contato.",
+    "Retiro minha autorização de contato.",
+    "Não mandem mais mensagens.",
+  ])("understands natural contact revocation: %s", (refusal) => {
+    const state = analyzeAnaConversation(messages([
+      { role: "user", text: "Autorizo o contato." },
+      { role: "assistant", text: "Tudo bem." },
+      { role: "user", text: refusal },
+    ]));
+    expect(state.qualification.contactConsent).toBe(false);
+    expect(state.qualification.contactRevoked).toBe(true);
   });
 
   it("understands natural short answers without losing the qualification state", () => {
