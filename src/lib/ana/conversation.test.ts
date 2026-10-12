@@ -26,6 +26,54 @@ describe("Ana reference conversation suite", () => {
     expect(reply).not.toContain("Amplify ajuda");
   });
 
+  it("reciprocates a combined greeting instead of treating it as lead context", () => {
+    const conversation = messages([{ role: "user", text: "Oi bom dia" }]);
+    const state = analyzeAnaConversation(conversation);
+    const reply = immediateAnaReply(state, conversation);
+
+    expect(state.turnKind).toBe("greeting");
+    expect(state.shouldRetrieveKnowledge).toBe(false);
+    expect(reply).toBe("Bom dia! Tudo bem? Eu sou a Ana. Qual é o seu nome?");
+    expect(reply).not.toContain("Entendi");
+  });
+
+  it("repairs a playful correction without defending itself or pitching the company", () => {
+    const conversation = messages([
+      { role: "user", text: "Oi bom dia" },
+      { role: "assistant", text: "Entendi. Qual é o seu nome?" },
+      { role: "user", text: "Entendeu o quê? kkkkk\nSou Leonardo" },
+    ]);
+    const state = analyzeAnaConversation(conversation);
+    const reply = immediateAnaReply(state, conversation);
+
+    expect(state.turnKind).toBe("repair");
+    expect(state.qualification.name).toBe("Leonardo");
+    expect(state.shouldRetrieveKnowledge).toBe(false);
+    expect(state.nextQuestion).toBeUndefined();
+    expect(reply).toBe("Hahaha, justo. Bom dia, Leonardo! Prazer. Como posso te ajudar?");
+    expect(reply).not.toContain("Amplify ajuda");
+    expect(reply).not.toContain("me apresentei");
+  });
+
+  it("recognizes a frustrated exit and closes without reopening discovery", () => {
+    const conversation = messages([
+      { role: "user", text: "Oi" },
+      { role: "assistant", text: "Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?" },
+      { role: "user", text: "Sou Leonardo" },
+      { role: "assistant", text: "Prazer, Leonardo. Como posso te ajudar?" },
+      { role: "user", text: "Bah desisto." },
+    ]);
+    const state = analyzeAnaConversation(conversation);
+    const reply = immediateAnaReply(state, conversation);
+
+    expect(state.turnKind).toBe("farewell");
+    expect(state.stage).toBe("closing");
+    expect(state.shouldRetrieveKnowledge).toBe(false);
+    expect(state.nextQuestion).toBeUndefined();
+    expect(reply).toContain("Desculpe");
+    expect(reply?.match(/\?/g) ?? []).toHaveLength(0);
+  });
+
   it("fulfills an accepted explanation offer before resuming qualification", () => {
     const conversation = messages([
       { role: "user", text: "Sou dono de uma escola e queria saber o que a Amplify tem pra mim." },

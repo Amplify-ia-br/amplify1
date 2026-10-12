@@ -160,6 +160,7 @@ export default function AnaLab() {
   }[metadata.conversationStage] : undefined;
   const turnKindLabel = metadata?.turnKind ? {
     greeting: "cumprimento",
+    repair: "reparo conversacional",
     acknowledgement: "confirmação",
     gratitude: "agradecimento",
     farewell: "despedida",

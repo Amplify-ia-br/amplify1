@@ -1,7 +1,7 @@
 import { normalizeKnowledgeText } from "../okf/core.js";
 import type { AnaMessage } from "./types.js";
 
-export type AnaTurnKind = "greeting" | "acknowledgement" | "gratitude" | "farewell" | "disclosure" | "request";
+export type AnaTurnKind = "greeting" | "repair" | "acknowledgement" | "gratitude" | "farewell" | "disclosure" | "request";
 export type AnaConversationStage = "opening" | "discovery" | "solution" | "qualification" | "contact" | "handoff" | "closing";
 export type AnaLeadStage = "engaged" | "qualifying" | "qualified" | "meeting_requested" | "handoff" | "nurture";
 export type AnaOfferInterest = "leia" | "academy" | "consulting" | "product-development";
@@ -75,14 +75,35 @@ function matchesOnly(value: string, alternatives: RegExp) {
   return alternatives.test(canonical(value));
 }
 
+function isGreeting(value: string) {
+  const normalized = canonical(value).replace(/\s+/g, " ");
+  return /^(?:(?:oi|ola|oie|opa|e ai)(?: ana)?(?: tudo bem| tudo bom| como vai)?)$/.test(normalized)
+    || /^(?:(?:oi|ola|oie|opa|e ai)(?: ana)? )?(?:bom dia|boa tarde|boa noite)(?: ana)?(?: tudo bem| tudo bom| como vai)?$/.test(normalized);
+}
+
+function isConversationalRepair(value: string) {
+  const normalized = canonical(value).replace(/\s+/g, " ");
+  return /^(?:mas )?entendeu o que\b/.test(normalized)
+    && /\b(?:k{2,}|(?:rs){2,}|(?:ha){2,}|sou|me chamo|meu nome)\b/.test(normalized);
+}
+
+function isFrustratedExit(value: string) {
+  const normalized = canonical(value).replace(/\s+/g, " ");
+  if (/\bnao desisto\b/.test(normalized)) return false;
+  return /^(?:(?:bah|ah|poxa|quer saber) )?(?:desisto|cansei|chega|deixa pra la|deixa quieto|esquece|nao quero mais)(?: mesmo)?$/.test(normalized);
+}
+
 export function classifyAnaTurn(value: string): AnaTurnKind {
-  if (matchesOnly(value, /^(oi|ola|oie|bom dia|boa tarde|boa noite)( tudo bem| tudo bom| como vai)?$/)) {
+  if (isGreeting(value)) {
     return "greeting";
+  }
+  if (isConversationalRepair(value)) {
+    return "repair";
   }
   if (matchesOnly(value, /^(obrigado|obrigada|valeu|agradeco|muito obrigado|muito obrigada)$/)) {
     return "gratitude";
   }
-  if (matchesOnly(value, /^(tchau|ate mais|ate logo|falou|encerramos|por enquanto e so)$/)) {
+  if (isFrustratedExit(value) || matchesOnly(value, /^(tchau|ate mais|ate logo|falou|encerramos|por enquanto e so)$/)) {
     return "farewell";
   }
   if (matchesOnly(value, /^(ok|okay|certo|entendi|compreendi|beleza|ta bom|tudo bem|perfeito|legal|faz sentido|ah sim)$/)) {
@@ -104,7 +125,7 @@ export function classifyAnaTurn(value: string): AnaTurnKind {
 }
 
 function requiresKnowledgeAnswer(value: string, turnKind: AnaTurnKind, incompleteUserThought: boolean) {
-  if (incompleteUserThought || turnKind === "greeting" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell") {
+  if (incompleteUserThought || turnKind === "greeting" || turnKind === "repair" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell") {
     return false;
   }
   if (turnKind === "request") return true;
@@ -280,11 +301,16 @@ function extractLeadQualification(
 
   const email = joinedRaw.match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i)?.[0]?.toLowerCase();
   const phone = joinedRaw.match(/(?:\+?55\s*)?(?:\(?\d{2}\)?\s*)?9?\d{4}[-.\s]?\d{4}/)?.[0]?.replace(/\s+/g, " ");
-  const explicitName = findFirst(
+  const explicitNamedName = findFirst(
     joinedRaw,
-    /(?:me chamo|meu nome (?:e|é)|pode me chamar de|sou (?:o|a)\s+)\s*([\p{L}][\p{L}\s'-]{1,80}?)(?=\s+(?:e\s+)?meu\s+e-?mail|[,.!?\n]|$)/iu,
+    /(?:me chamo|meu nome (?:e|é)|pode me chamar de)\s*([\p{L}][\p{L}\s'-]{1,80}?)(?=\s+(?:e\s+)?meu\s+e-?mail|[,.!?\n]|$)/iu,
   );
-  const name = (explicitName ? contextualName(explicitName) : undefined)
+  const introducedName = findFirst(
+    joinedRaw,
+    /(?:^|[.!?\n]\s*)sou\s+(?:(?:o|a)\s+)?([\p{L}][\p{L}\s'-]{1,80}?)(?=[,.!?\n]|$)/iu,
+  );
+  const name = (explicitNamedName ? contextualName(explicitNamedName) : undefined)
+    ?? (introducedName ? contextualName(introducedName) : undefined)
     ?? (isNameQuestion(previousQuestion) ? contextualName(latestRaw) : undefined);
   const organization = findFirst(joinedRaw, /(?:minha escola (?:se chama|e|é)|escola chamada)\s+([^,.!?\n]{2,120})/iu);
 
@@ -604,7 +630,7 @@ export function analyzeAnaConversation(
     ? undefined
     : answeredNameThisTurn && !hasLeadContext
     ? undefined
-    : turnKind === "greeting" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell"
+    : turnKind === "greeting" || turnKind === "repair" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell"
     ? undefined
     : chooseNextQuestion(qualification, questions, incompleteUserThought, userTurnCount);
   const nextQuestion = acceptedOffer
@@ -618,6 +644,8 @@ export function analyzeAnaConversation(
 
   const stage: AnaConversationStage = turnKind === "farewell"
     ? "closing"
+    : turnKind === "repair"
+      ? "opening"
     : leadStage === "handoff"
       ? "handoff"
       : nextQuestion?.key === "contactConsent" || nextQuestion?.key === "contact"
@@ -666,18 +694,48 @@ export function analyzeAnaConversation(
 }
 
 export function immediateAnaReply(state: AnaConversationState, messages: AnaMessage[], handoffPersisted = false) {
+  const latestUserMessage = [...messages].reverse().find((message) => message.role === "user");
+  const latestUserText = latestUserMessage ? messageText(latestUserMessage) : "";
   if (state.leadStage === "handoff") {
     return handoffPersisted
       ? "Perfeito, seu contato ficou registrado para o time da Amplify continuar essa conversa com você."
       : undefined;
   }
   if (state.turnKind === "greeting") {
+    const periodGreeting = /\bbom dia\b/i.test(latestUserText)
+      ? "Bom dia"
+      : /\bboa tarde\b/i.test(latestUserText)
+        ? "Boa tarde"
+        : /\bboa noite\b/i.test(latestUserText)
+          ? "Boa noite"
+          : "Oi";
     return state.qualification.name
-      ? `Oi, ${state.qualification.name.split(/\s+/)[0]}! Tudo bem? Como posso te ajudar?`
-      : "Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?";
+      ? `${periodGreeting}, ${state.qualification.name.split(/\s+/)[0]}! Tudo bem? Como posso te ajudar?`
+      : `${periodGreeting}! Tudo bem? Eu sou a Ana. Qual é o seu nome?`;
   }
   if (state.turnKind === "gratitude") return "Eu que agradeço! Se precisar, estou por aqui.";
-  if (state.turnKind === "farewell") return "Até mais! Foi um prazer conversar com você.";
+  if (state.turnKind === "farewell") {
+    return isFrustratedExit(latestUserText)
+      ? "Poxa, entendo. Desculpe por não ter conduzido bem a conversa. Se quiser tentar novamente em outro momento, estarei por aqui."
+      : "Até mais! Foi um prazer conversar com você.";
+  }
+  if (state.turnKind === "repair") {
+    const firstName = state.qualification.name?.split(/\s+/)[0];
+    const recentUserText = messages
+      .filter((message) => message.role === "user")
+      .map(messageText)
+      .join(" ");
+    const salutation = /\bbom dia\b/i.test(recentUserText)
+      ? "Bom dia"
+      : /\bboa tarde\b/i.test(recentUserText)
+        ? "Boa tarde"
+        : /\bboa noite\b/i.test(recentUserText)
+          ? "Boa noite"
+          : "Oi";
+    return firstName
+      ? `Hahaha, justo. ${salutation}, ${firstName}! Prazer. Como posso te ajudar?`
+      : `Você tem razão, eu me expressei mal. ${salutation}! Como posso te ajudar?`;
+  }
   if (state.answeredNameThisTurn) {
     const firstName = state.qualification.name?.split(/\s+/)[0];
     if (!state.nextQuestion) return `Prazer, ${firstName}. Como posso te ajudar?`;
