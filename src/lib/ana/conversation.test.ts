@@ -91,7 +91,7 @@ describe("Ana reference conversation suite", () => {
 
   it("moves a qualified lead to consented handoff when contact is supplied", () => {
     const conversation = messages([
-      { role: "user", text: "Sou diretor de uma escola. Atendemos do 9º ano ao Ensino Médio, com 200 alunos e internet estável." },
+      { role: "user", text: "Sou diretor de uma escola. Quero ensinar IA aos estudantes este ano. Atendemos do 9º ano ao Ensino Médio, com 200 alunos e internet estável." },
       { role: "assistant", text: "Posso registrar seu nome e seu melhor e-mail ou WhatsApp para o time continuar essa conversa?" },
       { role: "user", text: "Sim, meu nome é Rafael e meu e-mail é rafael@colegio.com.br." },
     ]);
@@ -126,9 +126,9 @@ describe("Ana reference conversation suite", () => {
 
   it("confirms handoff only after persistence succeeds", () => {
     const conversation = messages([
-      { role: "user", text: "Quero falar com vendas sobre o L.E.I.A." },
+      { role: "user", text: "Sou diretor e quero falar com vendas sobre o L.E.I.A. para ensinar IA a 90 alunos do Ensino Médio, com internet estável, ainda este ano." },
       { role: "assistant", text: "Posso registrar seu nome e seu melhor e-mail ou WhatsApp para o time continuar essa conversa?" },
-      { role: "user", text: "Pode sim, meu e-mail é contato@escola.com.br." },
+      { role: "user", text: "Pode sim, meu nome é Rafael e meu e-mail é contato@escola.com.br." },
     ]);
     const state = analyzeAnaConversation(conversation);
     expect(immediateAnaReply(state, conversation)).toBeUndefined();
@@ -144,7 +144,7 @@ describe("Ana reference conversation suite", () => {
     expect(state.qualification.contactRevoked).toBe(true);
     expect(state.qualification.contactConsent).toBe(false);
     expect(state.nextQuestion).toBeUndefined();
-    expect(state.leadStage).toBe("qualified");
+    expect(state.leadStage).toBe("qualifying");
   });
 
   it("does not confuse a preferred name with permission for commercial contact", () => {
@@ -383,5 +383,94 @@ describe("Ana reference conversation suite", () => {
     expect(state.qualification.contactRevoked).toBe(true);
     expect(state.nextQuestion).toBeUndefined();
     expect(immediateAnaReply(state, conversation)).toBeUndefined();
+  });
+
+  it("asks which business front is the priority before offering contact", () => {
+    const conversation = messages([
+      { role: "user", text: "oi" },
+      { role: "assistant", text: "Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?" },
+      { role: "user", text: "Sou o Leo. Sou dono de uma escola." },
+      { role: "assistant", text: "Prazer, Leo. Qual é a principal necessidade da escola com IA hoje?" },
+      { role: "user", text: "Quero ensinar IA para meus alunos." },
+      { role: "assistant", text: "O L.E.I.A. pode ajudar nessa frente. Se quiser, eu posso explicar como ele funciona." },
+      { role: "user", text: "Legal, quero sim" },
+      { role: "assistant", text: "O L.E.I.A. é um programa anual para estudantes. Se quiser, eu posso explicar como a escola começa." },
+      { role: "user", text: "Além do L.E.I.A., o que mais vcs poderiam oferecer pra mim?" },
+      { role: "assistant", text: "Também podemos apoiar a gestão da escola com consultoria e capacitação. Alguma dessas áreas parece ser o que você busca?" },
+      { role: "user", text: "Legal! Gostei viu" },
+      { role: "assistant", text: "Que bom, Leo. Fico feliz." },
+      { role: "user", text: "Qual seria o próximo passo?" },
+    ]);
+
+    const state = analyzeAnaConversation(conversation);
+    expect(state.qualification.advancementIntent).toBe(true);
+    expect(state.qualification.multiOfferInterest).toBe(true);
+    expect(state.stage).toBe("qualification");
+    expect(state.leadStage).toBe("qualifying");
+    expect(state.nextQuestion).toEqual({
+      key: "priority",
+      text: "Como você está olhando tanto para os alunos quanto para a gestão da escola, qual dessas duas frentes é mais urgente agora: implementar o L.E.I.A. ou aplicar IA na operação da escola?",
+    });
+    expect(state.nextQuestion?.key).not.toBe("contactConsent");
+  });
+
+  it("continues the selected consulting qualification before requesting contact", () => {
+    const conversation = messages([
+      { role: "user", text: "Sou o Leo, dono de uma escola. Quero ensinar IA aos alunos e melhorar a operação." },
+      { role: "assistant", text: "Qual dessas duas frentes é mais urgente agora: implementar o L.E.I.A. ou aplicar IA na operação da escola?" },
+      { role: "user", text: "A operação da escola." },
+    ]);
+
+    const state = analyzeAnaConversation(conversation, "/lab/ana", {
+      advancementIntent: true,
+      commercialIntent: true,
+    });
+    expect(state.qualification.qualificationFocus).toBe("consulting");
+    expect(state.nextQuestion).toEqual({
+      key: "businessChallenge",
+      text: "Na gestão da escola, qual problema ou processo você mais gostaria de melhorar com IA?",
+    });
+  });
+
+  it("only requests contact consent after consulting qualification is complete", () => {
+    const conversation = messages([
+      { role: "user", text: "Sou a Marina, diretora de uma escola. Quero avançar com uma consultoria para melhorar a operação." },
+      { role: "assistant", text: "Na gestão da escola, qual problema ou processo você mais gostaria de melhorar com IA?" },
+      { role: "user", text: "Quero reduzir o retrabalho da equipe administrativa." },
+      { role: "assistant", text: "Quando vocês gostariam de começar?" },
+      { role: "user", text: "No próximo semestre." },
+    ]);
+
+    const state = analyzeAnaConversation(conversation, "/lab/ana", {
+      qualificationFocus: "consulting",
+      advancementIntent: true,
+      commercialIntent: true,
+    });
+    expect(state.qualification.businessChallenge).toBe("Quero reduzir o retrabalho da equipe administrativa.");
+    expect(state.leadStage).toBe("qualified");
+    expect(state.nextQuestion?.key).toBe("contactConsent");
+  });
+
+  it("does not hand off a lead who supplied contact before qualification", () => {
+    const conversation = messages([
+      { role: "user", text: "Quero marcar uma reunião. Podem me chamar no WhatsApp 11 99999-0000." },
+    ]);
+
+    const state = analyzeAnaConversation(conversation);
+    expect(state.qualification.contactConsent).toBe(true);
+    expect(state.qualification.phone).toBeDefined();
+    expect(state.leadStage).toBe("qualifying");
+    expect(state.stage).toBe("qualification");
+    expect(state.nextQuestion?.key).toBe("name");
+  });
+
+  it("does not qualify a L.E.I.A. lead without stable internet", () => {
+    const state = analyzeAnaConversation(messages([
+      { role: "user", text: "Sou diretor de uma escola de Ensino Médio com 120 alunos. Quero contratar o L.E.I.A. este ano, mas ainda estamos sem internet estável." },
+    ]));
+
+    expect(state.qualification.internetReady).toBe(false);
+    expect(state.leadStage).toBe("qualifying");
+    expect(state.nextQuestion?.key).not.toBe("contactConsent");
   });
 });

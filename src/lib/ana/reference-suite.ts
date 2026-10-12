@@ -327,10 +327,10 @@ export const ANA_REFERENCE_SUITE: AnaReferenceScenario[] = [
     response: { containsAny: ["L.E.I.A.", "proposta"], maxQuestions: 1 },
   },
   {
-    name: "pedido de reunião inicia consentimento",
+    name: "pedido de reunião inicia qualificação",
     category: "commercial",
     turns: [{ role: "user", text: "Quero marcar uma reunião com o time de vendas." }],
-    expected: { leadStage: "meeting_requested", nextQuestionKey: "name" },
+    expected: { leadStage: "qualifying", nextQuestionKey: "name" },
     response: { maxQuestions: 1 },
   },
   {
@@ -345,7 +345,7 @@ export const ANA_REFERENCE_SUITE: AnaReferenceScenario[] = [
     response: { excludes: ["e-mail ou WhatsApp"], maxQuestions: 1 },
   },
   {
-    name: "nome vem antes do canal após consentimento",
+    name: "qualificação continua antes do canal mesmo após consentimento precoce",
     category: "commercial",
     turns: [
       { role: "user", text: "Quero contratar o L.E.I.A. para o Ensino Médio, com 100 alunos e internet estável." },
@@ -354,11 +354,11 @@ export const ANA_REFERENCE_SUITE: AnaReferenceScenario[] = [
       { role: "assistant", text: "Qual é o seu nome?" },
       { role: "user", text: "Mariana" },
     ],
-    expected: { nextQuestionKey: "contact", shouldAskQuestion: true },
-    response: { containsAny: ["e-mail", "WhatsApp"], maxQuestions: 1 },
+    expected: { nextQuestionKey: "timeline", shouldAskQuestion: true },
+    response: { containsAny: ["quando", "começar"], maxQuestions: 1 },
   },
   {
-    name: "contato fornecido com consentimento conclui handoff",
+    name: "contato fornecido cedo não pula a qualificação",
     category: "commercial",
     turns: [
       { role: "user", text: "Quero falar com vendas sobre o L.E.I.A." },
@@ -367,8 +367,8 @@ export const ANA_REFERENCE_SUITE: AnaReferenceScenario[] = [
       { role: "assistant", text: "Qual é o melhor e-mail ou WhatsApp para falar com você?" },
       { role: "user", text: "meu e-mail é contato@escola.com.br" },
     ],
-    expected: { leadStage: "handoff", shouldAskQuestion: false },
-    response: { maxQuestions: 0 },
+    expected: { leadStage: "qualifying", nextQuestionKey: "need", shouldAskQuestion: true },
+    response: { maxQuestions: 1 },
   },
   {
     name: "contato espontâneo não equivale a consentimento",

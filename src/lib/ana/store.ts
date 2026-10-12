@@ -204,9 +204,11 @@ function leadSummary(state: AnaConversationState) {
     qualification.role && `Papel: ${qualification.role}`,
     qualification.schoolSector && `Rede: ${qualification.schoolSector === "private" ? "particular" : "pública"}`,
     qualification.need && `Necessidade: ${qualification.need}`,
+    qualification.qualificationFocus && `Frente prioritária: ${qualification.qualificationFocus}`,
     qualification.gradeFit !== undefined && `Faixa escolar aderente: ${qualification.gradeFit ? "sim" : "não"}`,
     qualification.studentCount !== undefined && `Estudantes: ${qualification.studentCount}`,
     qualification.internetReady !== undefined && `Internet adequada: ${qualification.internetReady ? "sim" : "não"}`,
+    qualification.businessChallenge && `Desafio operacional: ${qualification.businessChallenge}`,
     qualification.timeline && `Prazo: ${qualification.timeline}`,
   ].filter(Boolean);
   return details.join("\n").slice(0, 5000) || undefined;

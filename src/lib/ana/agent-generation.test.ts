@@ -13,7 +13,7 @@ vi.mock("ai", async (importOriginal) => ({
   gateway: mocks.gateway,
 }));
 
-import { generateAnaAnswer } from "./agent";
+import { buildAnaInstructions, generateAnaAnswer } from "./agent";
 
 const conversation = {
   turnKind: "request",
@@ -76,6 +76,27 @@ describe("Ana buffered generation", () => {
   beforeEach(() => {
     mocks.generateText.mockReset();
     mocks.gateway.mockClear();
+  });
+
+  it("instructs the model to qualify an advancing lead before requesting contact", () => {
+    const instructions = buildAnaInstructions({
+      ...conversation,
+      stage: "qualification",
+      shouldAskQuestion: true,
+      qualification: {
+        ...conversation.qualification,
+        advancementIntent: true,
+        multiOfferInterest: true,
+      },
+      nextQuestion: {
+        key: "priority",
+        text: "Qual dessas duas frentes é mais urgente agora?",
+      },
+    });
+
+    expect(instructions).toContain("Não peça contato nem ofereça agendamento agora");
+    expect(instructions).toContain("Qual dessas duas frentes é mais urgente agora?");
+    expect(instructions).toContain("sem repetir explicações já dadas");
   });
 
   it("returns a fully validated answer without retry", async () => {

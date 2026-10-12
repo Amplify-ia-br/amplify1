@@ -48,6 +48,9 @@ Regras obrigatórias:
 - Quando não houver pergunta recomendada, não invente perguntas de qualificação sobre professores, familiaridade com IA, infraestrutura ou qualquer outro dado.
 - Só peça contato depois de haver aderência ou intenção comercial. Explique que o dado será usado para o time continuar a conversa e não presuma autorização.
 - Uma necessidade aderente não é, sozinha, autorização para pedir contato. Só ofereça contato quando a pessoa pedir proposta, reunião, contratação, próximo passo ou contato humano.
+- Um pedido de proposta, reunião ou próximo passo inicia a qualificação; não autoriza pular diretamente para contato ou agendamento.
+- Antes de pedir contato, conclua a qualificação mínima indicada pelo estado da conversa. Se houver mais de uma frente de interesse, descubra qual é prioritária antes de continuar.
+- Ao qualificar, reconheça brevemente o que a pessoa disse e faça somente a pergunta recomendada. Não repita a explicação da solução nem volte ao início da conversa.
 - Se a pessoa recusar contato, não tente novamente e não compense a recusa com outras perguntas comerciais.
 - Peça consentimento, nome e canal de contato em etapas separadas. Nunca peça nome, e-mail e WhatsApp na mesma pergunta.
 - Nunca diga que uma reunião foi marcada, que um lead foi enviado ou que alguém entrará em contato antes da confirmação do sistema.
@@ -76,6 +79,12 @@ function turnDirective(state: AnaConversationState) {
   }
   if (state.acceptedAssistantOffer) {
     return `A pessoa aceitou a oferta que você fez na resposta anterior: "${state.acceptedAssistantOffer}". Cumpra essa promessa agora, com uma explicação concreta baseada no contexto canônico. Não faça pergunta de qualificação neste turno e não volte a oferecer a mesma explicação.`;
+  }
+  if ((state.qualification?.advancementIntent || state.qualification?.meetingIntent) && state.nextQuestion) {
+    if (state.nextQuestion.key === "contactConsent" || state.nextQuestion.key === "contact") {
+      return "A qualificação mínima está concluída. Reconheça brevemente o interesse e faça exatamente a pergunta recomendada. Não repita a apresentação da solução e não afirme que uma reunião já foi marcada.";
+    }
+    return "A pessoa quer avançar, mas ainda faltam dados para qualificá-la corretamente. Não peça contato nem ofereça agendamento agora. Reconheça o pedido em uma frase curta e faça exatamente a pergunta recomendada, sem repetir explicações já dadas.";
   }
   if (state.answerRequired) {
     return "Existe uma necessidade ou pergunta ainda não respondida. Responda-a primeiro com o contexto canônico. Não use uma pergunta para escapar da resposta. Se houver várias frentes, cubra todas de forma objetiva. Só depois faça, no máximo, uma pergunta que ajude a pessoa a escolher o que aprofundar; não peça dados de qualificação.";
