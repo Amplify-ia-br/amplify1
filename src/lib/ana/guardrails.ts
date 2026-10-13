@@ -2,6 +2,7 @@ import type { AnaConversationState } from "./conversation.js";
 import type { AnaRetrievalTrace } from "./retrieval.js";
 import { formatAnaAssistantText } from "./text.js";
 import { normalizeKnowledgeText } from "../okf/core.js";
+import { realizesQuestion, qualificationQuestion } from "./qualification.js";
 
 export type AnaAnswerIssue =
   | "empty"
@@ -16,6 +17,13 @@ export type AnaAnswerIssue =
   | "ungrounded_price"
   | "contact_after_refusal"
   | "premature_contact_request"
+  | "qualification_instead_of_explanation"
+  | "unnecessary_priority"
+  | "unexpected_qualification_question"
+  | "missing_requested_front"
+  | "inappropriate_offer"
+  | "missing_recommended_question"
+  | "policy_language"
   | "missing_leia_expansion";
 
 export type AnaAnswerValidation = {
@@ -110,6 +118,36 @@ export function validateAnaAnswer(
   if ((text.match(/\?/g) ?? []).length > 1) issues.push("multiple_questions");
   if (MARKDOWN.test(text)) issues.push("markdown");
   if (VISIBLE_SOURCE.test(text)) issues.push("visible_source");
+  if (/escolher um vencedor|sem desempate/i.test(text)) issues.push("policy_language");
+  if (conversation.nextQuestion && !realizesQuestion(conversation.nextQuestion.key, text)) issues.push("missing_recommended_question");
+  if (conversation.leiaRecommendationAllowed === false) {
+    const sentences = text.replace(/L\.E\.I\.A\./gi, "LEIA").split(/[.!?\n]/).map(normalizeKnowledgeText);
+    const invalid = sentences.some(sentence => /\bleia\b/.test(sentence)
+      && /\b(?:recomendo|sugiro|indico)\b|\b(?:preparar|treinar|capacitar|formar)\b.{0,65}\b(?:equipe|funcionarios|escritorio)\b|\b(?:ideal|adequado|pode ajudar)\b.{0,45}\b(?:voce|sua empresa|seu escritorio)\b/.test(sentence)
+      && !/\bnao\b.{0,65}\b(?:recomendo|sugiro|indico|adequado|serve|destina|para|e)\b|\bnao\b.{0,35}\b(?:equipe|escritorio|funcionarios)\b/.test(sentence));
+    if (invalid) issues.push("inappropriate_offer");
+  }
+  const questionText = normalizeKnowledgeText(text.replace(/L\.E\.I\.A\./g, "LEIA").match(/[^.!?\n]+\?/g)?.join(" ") ?? "");
+  if (!conversation.nextQuestion && conversation.turnKind !== "greeting" && qualificationQuestion(text)) {
+    issues.push("unexpected_qualification_question");
+  }
+  // Name remains optional. If the model asks instead, it cannot replace the
+  // controller's recommendation with a new commercial requirement.
+  if (conversation.nextQuestion?.key === "name" && questionText && !/\b(?:nome|chama|chamar|tratar)\b/.test(questionText)) {
+    issues.push("unexpected_qualification_question");
+  }
+  if (conversation.answerNeedsTogether && ["leia", "portfolio"].every(id => retrieval.documents.some(document => document.id === id))) {
+    const normalized = normalizeKnowledgeText(text);
+    const studentsCovered = /\b(?:alunos|estudantes)\b|l\.e\.i\.a\./.test(normalized);
+    const processesCovered = /\b(?:consultoria|diagnostico)\b|\b(?:melhorar|automatizar|otimizar|redesenhar)\b.{0,60}\b(?:operacao|processos|gestao)\b|\b(?:operacao|processos|gestao)\b.{0,60}\b(?:ia|automacao|otimizacao)\b/.test(normalized);
+    if (!studentsCovered || !processesCovered) issues.push("missing_requested_front");
+  }
+  if (conversation.acceptedAssistantOffer && (questionText || /\b(?:informe|diga|conte|escolha|defina)\b.{0,45}\b(?:prioridade|prazo|quantos|nome|email|whatsapp)\b/.test(normalizeKnowledgeText(text)))) {
+    issues.push("qualification_instead_of_explanation");
+  }
+  if (conversation.qualification.priorityStatus && /\b(?:prioridade|priorizar|primeiro|pesa mais|mais urgente|focar)\b/.test(questionText)) {
+    issues.push("unnecessary_priority");
+  }
 
   const hasMoney = normalizedMoneyValues(text).length > 0;
   if (hasMoney && !conversation.qualification.pricingIntent) issues.push("unexpected_price");
@@ -140,14 +178,19 @@ export function createAnaDocumentationFallback(
     return "Não encontrei informação suficiente na documentação para responder com segurança agora.";
   }
 
-  const descriptions = retrieval.documents.slice(0, 3).map((document) => {
+  const descriptions = retrieval.documents.filter(document => document.id !== "leia"
+    || conversation.leiaRecommendationAllowed !== false || conversation.leiaExplanationRequested).slice(0, 3).map((document) => {
     const title = document.id === "leia" && conversation.shouldExpandLeia
       ? "L.E.I.A. — Laboratório Escolar de Inteligência Artificial"
       : document.title;
     return `${title}: ${document.description}`;
   });
 
-  return descriptions.length === 1
+  // Describe sources; do not convert catalogue membership into a recommendation.
+  const content = !descriptions.length ? "Não encontrei informação suficiente para orientar essa necessidade com segurança."
+    : descriptions.length === 1
     ? descriptions[0]
-    : `A Amplify pode ajudar nestas frentes:\n\n${descriptions.map((description) => `• ${description}`).join("\n")}`;
+    : `Na documentação da Amplify:\n\n${descriptions.map((description) => `• ${description}`).join("\n")}`;
+  return conversation.nextQuestion && !conversation.acceptedAssistantOffer
+    ? `${content}\n\n${conversation.nextQuestion.text}` : content;
 }

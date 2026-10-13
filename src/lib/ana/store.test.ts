@@ -43,6 +43,11 @@ describe("Ana lead persistence", () => {
         meetingIntent: false,
         contactConsent: false,
         contactRevoked: false,
+        answers: {
+          organization: { status: "provided", answer: "Escola Sintética" },
+          timeline: { status: "unknown", answer: "Não sei" },
+          mainConstraint: { status: "declined", answer: "Prefiro não informar" },
+        },
       },
     } as AnaConversationState;
 
@@ -56,8 +61,13 @@ describe("Ana lead persistence", () => {
       offer_interest: "leia",
       stage: "qualified",
       contact_consent: false,
+      qualification: expect.objectContaining({ answers: state.qualification.answers }),
+      summary: expect.stringContaining("Pendente: timeline: não sabe — Não sei"),
     }), { onConflict: "conversation_id", defaultToNull: false });
     expect(conversationUpdate).toHaveBeenCalledWith({ status: "qualified" });
+    expect(leadUpsert).toHaveBeenCalledWith(expect.objectContaining({
+      summary: expect.stringContaining("Pendente: mainConstraint: preferiu não informar"),
+    }), expect.anything());
   });
 
   it("does not create a lead for a social conversation", async () => {

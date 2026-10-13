@@ -2,6 +2,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { AnaKnowledgeMode, AnaModelId } from "./config.js";
 import type { AnaConversationState, AnaLeadQualification } from "./conversation.js";
 import type { AnaMessage } from "./types.js";
+import { commercialFacts } from "./qualification.js";
 
 type AnaMessageRole = "user" | "assistant" | "system" | "tool";
 
@@ -210,6 +211,9 @@ function leadSummary(state: AnaConversationState) {
     qualification.internetReady !== undefined && `Internet adequada: ${qualification.internetReady ? "sim" : "não"}`,
     qualification.businessChallenge && `Desafio operacional: ${qualification.businessChallenge}`,
     qualification.timeline && `Prazo: ${qualification.timeline}`,
+    ...commercialFacts(qualification),
+    ...commercialFacts(qualification, true).map(value => `Pendente: ${value}`),
+    qualification.nextStep && `Próximo passo: ${qualification.nextStep}`,
   ].filter(Boolean);
   return details.join("\n").slice(0, 5000) || undefined;
 }
