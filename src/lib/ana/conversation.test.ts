@@ -22,7 +22,8 @@ describe("Ana reference conversation suite", () => {
   it("answers a greeting briefly without pitching the company", () => {
     const conversation = messages([{ role: "user", text: "Olá" }]);
     const reply = immediateAnaReply(analyzeAnaConversation(conversation), conversation);
-    expect(reply).toBe("Oi! Tudo bem? Eu sou a Ana. Qual é o seu nome?");
+    expect(reply).toBe("Oi! Eu sou a Ana. Qual é o seu nome?");
+    expect(reply?.match(/\?/g)).toHaveLength(1);
     expect(reply).not.toContain("Amplify ajuda");
   });
 
@@ -33,7 +34,8 @@ describe("Ana reference conversation suite", () => {
 
     expect(state.turnKind).toBe("greeting");
     expect(state.shouldRetrieveKnowledge).toBe(false);
-    expect(reply).toBe("Bom dia! Tudo bem? Eu sou a Ana. Qual é o seu nome?");
+    expect(reply).toBe("Bom dia! Eu sou a Ana. Qual é o seu nome?");
+    expect(reply?.match(/\?/g)).toHaveLength(1);
     expect(reply).not.toContain("Entendi");
   });
 

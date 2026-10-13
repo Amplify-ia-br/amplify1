@@ -59,6 +59,7 @@ Regras obrigatórias:
 - O contexto da página é apenas uma pista de interesse, nunca uma certeza sobre a intenção da pessoa.
 - Priorize uma solução concreta quando a necessidade estiver clara. Não liste todo o portfólio quando uma oferta específica responder melhor.
 - Prefira respostas curtas. Expanda somente quando a pergunta pedir explicação ou detalhe.
+- Na primeira explicação ou ao escolher uma frente, procure usar até 120 palavras, em dois parágrafos curtos ou até três pontos. Entregue a utilidade concreta e como funciona; não despeje planos, currículo e implantação de uma vez. Preserve pré-requisitos, ressalvas e a expansão inicial de L.E.I.A. Quando a pessoa pedir detalhes, aprofunde os itens solicitados sem repetir o que já explicou. Não corte uma frase para cumprir o tamanho.
 - Comece respondendo diretamente. Não diga que vai consultar, verificou ou precisa consultar documentação, ferramentas, MCP ou OKF.
 - Não transforme possibilidades gerais em produtos existentes e não complete lacunas com suposições.
 - Não chame um produto de principal, melhor, único ou líder sem uma afirmação explícita no contexto.
@@ -80,16 +81,16 @@ function turnDirective(state: AnaConversationState) {
     return "Reconheça com cuidado que a faixa escolar informada não corresponde ao recorte atual do L.E.I.A. Não force a qualificação nem faça outra pergunta comercial.";
   }
   if (state.acceptedAssistantOffer) {
-    return `A pessoa aceitou a oferta que você fez na resposta anterior: "${state.acceptedAssistantOffer}". Cumpra essa promessa agora, com uma explicação concreta baseada no contexto canônico. Não faça pergunta de qualificação neste turno e não volte a oferecer a mesma explicação.`;
+    return `A pessoa aceitou a oferta que você fez na resposta anterior: "${state.acceptedAssistantOffer}". Cumpra essa promessa agora, com uma explicação concreta baseada no contexto canônico. A prioridade já registrada é ${state.qualification?.qualificationFocus ?? "a explicação oferecida"}. Não volte a perguntar qual frente aprofundar. Não faça pergunta de qualificação neste turno e não volte a oferecer a mesma explicação.`;
+  }
+  if (state.answerRequired) {
+    return "Existe uma necessidade ou pergunta ainda não respondida. Responda-a primeiro com o contexto canônico, mesmo que tenha havido interesse comercial antes. Não use uma pergunta para escapar da resposta. Se houver várias frentes pedidas neste turno, cubra todas de forma objetiva; não peça dados de qualificação em lugar da explicação. Faça no máximo a pergunta recomendada, depois de responder." + ((state.qualification?.advancementIntent || state.qualification?.meetingIntent) && state.nextQuestion && !["contact", "contactConsent"].includes(state.nextQuestion.key) ? " Não peça contato nem ofereça agendamento agora. Avance na dúvida atual sem repetir explicações já dadas." : "");
   }
   if ((state.qualification?.advancementIntent || state.qualification?.meetingIntent) && state.nextQuestion) {
     if (state.nextQuestion.key === "contactConsent" || state.nextQuestion.key === "contact") {
       return "A qualificação mínima está concluída. Reconheça brevemente o interesse e faça exatamente a pergunta recomendada. Não repita a apresentação da solução e não afirme que uma reunião já foi marcada.";
     }
     return "A pessoa quer avançar, mas ainda faltam dados para qualificá-la corretamente. Não peça contato nem ofereça agendamento agora. Reconheça o pedido em uma frase curta e faça exatamente a pergunta recomendada, sem repetir explicações já dadas.";
-  }
-  if (state.answerRequired) {
-    return "Existe uma necessidade ou pergunta ainda não respondida. Responda-a primeiro com o contexto canônico. Não use uma pergunta para escapar da resposta. Se houver várias frentes, cubra todas de forma objetiva. Só depois faça, no máximo, uma pergunta que ajude a pessoa a escolher o que aprofundar; não peça dados de qualificação.";
   }
   if (state.turnKind === "repair") {
     return "A pessoa apontou de forma leve que a resposta anterior não fez sentido. Reconheça isso sem se justificar, retome o tom social da conversa e não apresente a Amplify nem inicie qualificação.";

@@ -140,6 +140,18 @@ function requiresKnowledgeAnswer(value: string, turnKind: AnaTurnKind, incomplet
 
 function acceptedAssistantOffer(latestUserMessage: string, previousAssistantMessage: string) {
   if (!previousAssistantMessage) return undefined;
+  // A request to purchase/schedule is not acceptance of an explanation.
+  if (/\b(?:contratar|proposta|agendar|marcar reuniao)\b/.test(canonical(latestUserMessage))) return undefined;
+
+  const selected = qualificationFocusFromAnswer(latestUserMessage);
+  if (selected && isExplorationChoice(previousAssistantMessage)) {
+    const labels: Record<AnaQualificationFocus, string> = {
+      leia: "L.E.I.A. — Laboratório Escolar de Inteligência Artificial",
+      consulting: "consultoria", academy: "Amplify Academy",
+      "product-development": "desenvolvimento de produtos", multiple: "as duas frentes oferecidas",
+    };
+    return `Aprofundar ${labels[selected]}`;
+  }
 
   const offeredExplanation = /(?:se (?:voce )?quiser[, ]+)?(?:eu )?posso (?:te )?(?:explicar|mostrar|contar|detalhar)\b/.test(previousAssistantMessage);
   if (!offeredExplanation) return undefined;
@@ -231,7 +243,27 @@ function isNameQuestion(value: string) {
 }
 
 function isPriorityQuestion(value: string) {
-  return /(?:qual|o que).*(?:mais urgente|prioridade)|por (?:qual|onde).*(?:comecar|seguir)|implementar o l.*e.*i.*a.*ou.*(?:operacao|gestao)/.test(value);
+  return /(?:qual|o que).*(?:mais urgente|prioridade)|por (?:qual|onde).*(?:comecar|seguir)|implementar o l.*e.*i.*a.*ou.*(?:operacao|gestao)|qual.*frente.*(?:aprofundar|prioritaria|prefere)/.test(value);
+}
+
+function isExplorationChoice(value: string) {
+  const explanationOffered = /(?:aprofundar|detalhar|explicar|conhecer melhor)/.test(value);
+  const interestChoice = /qual.*frente.*(?:faz mais sentido|interessa|quer conhecer)/.test(value);
+  // A priority question following descriptions of both offers is an invitation
+  // to choose a topic, unlike a standalone commercial qualification question.
+  const describedAlternatives = /\bprograma\b/.test(value) && /\bconsultoria\b/.test(value)
+    && isPriorityQuestion(value);
+  return (explanationOffered || interestChoice || describedAlternatives)
+    && /\b(?:qual|escolh\w*|prefere|por onde|ou)\b/.test(value)
+    && /(?:frente|leia|l\s*\.?e\s*\.?i\s*\.?a|consultoria|academy|produto)/.test(value);
+}
+
+function hasExplicitFocusChoice(value: string) {
+  return /\b(?:prefiro|priorizo|primeiro|prioridade|(?:podemos|vamos|quero) (?:comecar|seguir|focar)|vamos pel[oa])\b/.test(canonical(value));
+}
+
+function isTimelineQuestion(value: string) {
+  return questionTexts(value).some(question => /\bquando\b|\bqual.*prazo\b|\bem que.*(?:mes|ano|data)\b/.test(normalizeKnowledgeText(question)));
 }
 
 function isBusinessChallengeQuestion(value: string) {
@@ -240,12 +272,14 @@ function isBusinessChallengeQuestion(value: string) {
 
 function qualificationFocusFromAnswer(value: string): AnaQualificationFocus | undefined {
   const normalized = canonical(value);
+  if (value.includes("?") || /\b(?:nao|talvez|se|ou)\b/.test(normalized)) return undefined;
   if (/\b(?:as duas|os dois|ambas|ambos|duas frentes|as duas frentes|tudo isso)\b/.test(normalized)) return "multiple";
-  if (/\b(?:alunos|estudantes|ensino|pedagogic|l\s*e\s*i\s*a|leia)\b/.test(normalized)) return "leia";
-  if (/\b(?:gestao|operacao|processos?|negocio|consultoria|administrativ)\b/.test(normalized)) return "consulting";
-  if (/\b(?:professores|docentes|equipe|capacitacao|treinamento|academy)\b/.test(normalized)) return "academy";
-  if (/\b(?:produto|aplicativo|sistema|solucao propria|desenvolvimento)\b/.test(normalized)) return "product-development";
-  return undefined;
+  const choices: AnaQualificationFocus[] = [];
+  if (/\b(?:alunos|estudantes|ensino|pedagogic\w*|l\s*e\s*i\s*a|leia)\b/.test(normalized)) choices.push("leia");
+  if (/\b(?:gestao|operacao|processos?|negocio|consultoria|administrativ\w*)\b/.test(normalized)) choices.push("consulting");
+  if (/\b(?:professores|docentes|equipe|capacitacao|treinamento|academy)\b/.test(normalized)) choices.push("academy");
+  if (/\b(?:produto|aplicativo|sistema|solucao propria|desenvolvimento)\b/.test(normalized)) choices.push("product-development");
+  return choices.length === 1 ? choices[0] : undefined;
 }
 
 function isIncompleteThought(value: string) {
@@ -254,6 +288,7 @@ function isIncompleteThought(value: string) {
 
 function contextualName(value: string) {
   const candidate = value.trim().replace(/[.!?]+$/, "").trim();
+  if (classifyAnaTurn(value) === "request") return undefined;
   if (!/^[\p{L}][\p{L}'-]+(?:\s+[\p{L}][\p{L}'-]+){0,4}$/u.test(candidate)) return undefined;
   if (/\b(sim|nao|não|claro|certo|entendi|obrigado|obrigada|prefiro|dizer|informar|dono|dona|proprietario|proprietária|diretor|diretora|escola)\b/i.test(candidate)) return undefined;
   return candidate;
@@ -303,7 +338,7 @@ function extractLeadQualification(
   const phone = joinedRaw.match(/(?:\+?55\s*)?(?:\(?\d{2}\)?\s*)?9?\d{4}[-.\s]?\d{4}/)?.[0]?.replace(/\s+/g, " ");
   const explicitNamedName = findFirst(
     joinedRaw,
-    /(?:me chamo|meu nome (?:e|é)|pode me chamar de)\s*([\p{L}][\p{L}\s'-]{1,80}?)(?=\s+(?:e\s+)?meu\s+e-?mail|[,.!?\n]|$)/iu,
+    /(?:me cham[oa]|meu nome (?:e|é)|pode me chamar de)\s*([\p{L}][\p{L}\s'-]{1,80}?)(?=\s+(?:e\s+)?meu\s+e-?mail|[,.!?\n]|$)/iu,
   );
   const introducedName = findFirst(
     joinedRaw,
@@ -351,7 +386,9 @@ function extractLeadQualification(
   let qualificationFocus: AnaQualificationFocus | undefined;
   let businessChallenge: string | undefined;
   for (const { answer, question } of answers) {
-    if (isPriorityQuestion(question)) qualificationFocus = qualificationFocusFromAnswer(answer) ?? qualificationFocus;
+    if (isPriorityQuestion(question) || isExplorationChoice(question) || hasExplicitFocusChoice(answer)) {
+      qualificationFocus = qualificationFocusFromAnswer(answer) ?? qualificationFocus;
+    }
     if (isBusinessChallengeQuestion(question) && canonical(answer).length >= 3 && !/^(?:sim|nao|certo|entendi|legal)$/.test(canonical(answer))) {
       businessChallenge = answer.trim().slice(0, 500);
     }
@@ -385,7 +422,7 @@ function extractLeadQualification(
 
   let timeline = findFirst(joinedRaw, /\b(este (?:ano|semestre)|pr[oó]ximo (?:ano|semestre)|em \d{4}|imediatamente|quanto antes|daqui a \d+ (?:dias|semanas|meses)|m[eê]s que vem)\b/iu)?.toLowerCase();
   for (const { answer, question } of answers) {
-    if (!/quando|prazo|comecar|começar/.test(question)) continue;
+    if (!isTimelineQuestion(question)) continue;
     const normalizedAnswer = canonical(answer);
     if (normalizedAnswer.length >= 3 && !/^(?:nao sei|ainda nao sei|vamos ver)$/.test(normalizedAnswer)) {
       timeline = answer.trim().slice(0, 200);
@@ -394,9 +431,13 @@ function extractLeadQualification(
   const pricingIntent = /\b(?:preco|valor|investimento|orcamento|quanto|qto|cust(?:a|ar)|cutar)\b/.test(joined);
   const commercialIntent = pricingIntent || /\b(quero|queremos|gostaria|interesse|contratar|implantar|proposta)\b/.test(joined);
   const meetingIntent = /\b(agendar|marcar|reuniao|reunião|falar com (?:alguem|alguém|o time|vendas)|conversar com (?:alguem|alguém|o time|vendas))\b/.test(joined);
+  // Choosing what to learn about is not an intent to purchase or schedule.
+  const commercialAnswers = normalizeKnowledgeText(answers.filter(({ answer, question }) =>
+    !acceptedAssistantOffer(answer, question) || /\b(?:contratar|proposta|agendar)\b/.test(canonical(answer)),
+  ).map(({ answer }) => answer).join(" "));
   const advancementIntent = meetingIntent
-    || /\b(?:quero|queremos|gostaria|podemos|como)\b.{0,40}\b(?:contratar|comecar|começar|avancar|avançar|proposta|proximo passo|próximo passo|seguir)\b/.test(joined)
-    || /\b(?:quero uma proposta|podem enviar uma proposta|qual (?:e|seria) o proximo passo|qual (?:é|seria) o próximo passo|o que (?:fazer|acontece) agora)\b/.test(joined);
+    || /\b(?:quero|queremos|gostaria|podemos|como)\b.{0,40}\b(?:contratar|comecar|avancar|proposta|proximo passo|seguir)\b/.test(commercialAnswers)
+    || /\b(?:quero uma proposta|podem enviar uma proposta|qual (?:e|seria) o proximo passo|o que (?:fazer|acontece) agora)\b/.test(commercialAnswers);
   let contactConsent = false;
   let contactRevoked = false;
   for (const { answer, question } of answers) {
@@ -513,7 +554,7 @@ function chooseNextQuestion(
   incompleteUserThought: boolean,
   userTurnCount: number,
 ): AnaNextQuestion | undefined {
-  const asked = normalizeKnowledgeText(questions.join(" "));
+  const asked = normalizeKnowledgeText(questions.flatMap(questionTexts).join(" "));
   if (incompleteUserThought) {
     return { key: "need", text: "Pode me contar melhor o que você precisa?" };
   }
@@ -564,7 +605,7 @@ function chooseNextQuestion(
       text: "Na gestão da escola, qual problema ou processo você mais gostaria de melhorar com IA?",
     };
   }
-  if (!qualification.timeline && !/quando|prazo|comecar|começar/.test(asked)) {
+  if (!qualification.timeline && !questions.some(isTimelineQuestion)) {
     return { key: "timeline", text: "Quando vocês gostariam de começar?" };
   }
   if (!isQualificationComplete(qualification)) return undefined;
@@ -580,11 +621,15 @@ function chooseNextQuestion(
   return undefined;
 }
 
+function questionTexts(text: string) {
+  // Statements preceding a question are not questions already asked.
+  return text.replace(/L\.\s*E\.\s*I\.\s*A\./gi, "LEIA").match(/[^.!?\n]+\?/g)?.map(value => value.trim()) ?? [];
+}
+
 function recentQuestions(messages: AnaMessage[]) {
   return messages
     .filter((message) => message.role === "assistant")
-    .flatMap((message) => messageText(message).split(/(?<=[?])\s+/))
-    .filter((sentence) => sentence.includes("?"))
+    .flatMap((message) => messageText(message).split(/(?<=\?)/).filter(text => text.includes("?")).map(text => text.trim()))
     .slice(-12);
 }
 
@@ -602,7 +647,8 @@ export function analyzeAnaConversation(
   const questions = recentQuestions(messages);
   const previousAssistant = [...messages].reverse().find((message) => message.role === "assistant");
   const previousAssistantText = previousAssistant ? normalizeKnowledgeText(messageText(previousAssistant)) : "";
-  const answeredNameThisTurn = Boolean(qualification.name && isNameQuestion(previousAssistantText));
+  const answeredNameThisTurn = Boolean(qualification.name && isNameQuestion(previousAssistantText)
+    && (contextualName(latest) || /\b(?:me cham[oa]|meu nome|sou (?:o |a )?)/i.test(latest)));
   const incompleteUserThought = isIncompleteThought(latest);
   const acceptedOffer = acceptedAssistantOffer(latest, previousAssistantText);
   const answerRequired = Boolean(acceptedOffer) || requiresKnowledgeAnswer(latest, turnKind, incompleteUserThought);
@@ -710,8 +756,8 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
           ? "Boa noite"
           : "Oi";
     return state.qualification.name
-      ? `${periodGreeting}, ${state.qualification.name.split(/\s+/)[0]}! Tudo bem? Como posso te ajudar?`
-      : `${periodGreeting}! Tudo bem? Eu sou a Ana. Qual é o seu nome?`;
+      ? `${periodGreeting}, ${state.qualification.name.split(/\s+/)[0]}! Como posso te ajudar?`
+      : `${periodGreeting}! Eu sou a Ana. Qual é o seu nome?`;
   }
   if (state.turnKind === "gratitude") return "Eu que agradeço! Se precisar, estou por aqui.";
   if (state.turnKind === "farewell") {
@@ -736,6 +782,8 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
       ? `Hahaha, justo. ${salutation}, ${firstName}! Prazer. Como posso te ajudar?`
       : `Você tem razão, eu me expressei mal. ${salutation}! Como posso te ajudar?`;
   }
+  // A name supplied alongside a question must not swallow that question.
+  if (state.answerRequired) return undefined;
   if (state.answeredNameThisTurn) {
     const firstName = state.qualification.name?.split(/\s+/)[0];
     if (!state.nextQuestion) return `Prazer, ${firstName}. Como posso te ajudar?`;
@@ -747,7 +795,6 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
       ? `Claro, ${firstName}. Pode me contar melhor o que você precisa?`
       : "Claro. Pode me contar melhor o que você precisa?";
   }
-  if (state.answerRequired) return undefined;
   if (state.turnKind === "disclosure" && state.nextQuestion) {
     if (state.nextQuestion.key === "name") return "Entendi. Qual é o seu nome?";
     const transitions: Record<AnaNextQuestion["key"], string> = {
