@@ -16,6 +16,8 @@ export type AnaAnswerIssue =
   | "ungrounded_price"
   | "contact_after_refusal"
   | "premature_contact_request"
+  | "qualification_instead_of_explanation"
+  | "unnecessary_priority"
   | "missing_leia_expansion";
 
 export type AnaAnswerValidation = {
@@ -110,6 +112,13 @@ export function validateAnaAnswer(
   if ((text.match(/\?/g) ?? []).length > 1) issues.push("multiple_questions");
   if (MARKDOWN.test(text)) issues.push("markdown");
   if (VISIBLE_SOURCE.test(text)) issues.push("visible_source");
+  const questionText = normalizeKnowledgeText(text.replace(/L\.E\.I\.A\./g, "LEIA").match(/[^.!?\n]+\?/g)?.join(" ") ?? "");
+  if (conversation.acceptedAssistantOffer && (questionText || /\b(?:informe|diga|conte|escolha|defina)\b.{0,45}\b(?:prioridade|prazo|quantos|nome|email|whatsapp)\b/.test(normalizeKnowledgeText(text)))) {
+    issues.push("qualification_instead_of_explanation");
+  }
+  if (conversation.qualification.priorityStatus && /\b(?:prioridade|priorizar|primeiro|pesa mais|mais urgente|focar)\b/.test(questionText)) {
+    issues.push("unnecessary_priority");
+  }
 
   const hasMoney = normalizedMoneyValues(text).length > 0;
   if (hasMoney && !conversation.qualification.pricingIntent) issues.push("unexpected_price");

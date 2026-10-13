@@ -8,6 +8,7 @@ export type AnaReferenceScenario = {
   category: "social" | "leia" | "portfolio" | "commercial" | "safety";
   turns: Array<{ role: "user" | "assistant"; text: string }>;
   pagePath?: string;
+  expectedQualification?: Partial<import("./conversation.js").AnaLeadQualification>;
   expected: Partial<Pick<
     AnaConversationState,
     "turnKind" | "stage" | "shouldRetrieveKnowledge" | "shouldAskQuestion" | "pageHint" | "answerRequired" | "incompleteUserThought" | "shouldExpandLeia"

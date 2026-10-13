@@ -24,6 +24,11 @@ export type AnaLeadQualification = {
   studentCount?: number;
   internetReady?: boolean;
   businessChallenge?: string;
+  // Optional conversational facts, never additional commercial requirements.
+  businessAreas?: string[];
+  objectives?: string[];
+  priorityStatus?: "combined" | "undecided";
+  deferredQuestions?: AnaNextQuestion["key"][];
   timeline?: string;
   commercialIntent: boolean;
   pricingIntent: boolean;
@@ -57,6 +62,7 @@ export type AnaConversationState = {
   answerRequired: boolean;
   acceptedAssistantOffer?: string;
   nextQuestion?: AnaNextQuestion;
+  deferredQuestion?: AnaNextQuestion["key"];
 };
 
 function messageText(message: AnaMessage) {
@@ -141,7 +147,7 @@ function requiresKnowledgeAnswer(value: string, turnKind: AnaTurnKind, incomplet
 function acceptedAssistantOffer(latestUserMessage: string, previousAssistantMessage: string) {
   if (!previousAssistantMessage) return undefined;
   // A request to purchase/schedule is not acceptance of an explanation.
-  if (/\b(?:contratar|proposta|agendar|marcar reuniao)\b/.test(canonical(latestUserMessage))) return undefined;
+  if (/\b(?:contratar|proposta|agendar|marcar reuniao|nao|antes|mas|quanto|preco|custa)\b/.test(canonical(latestUserMessage))) return undefined;
 
   const selected = qualificationFocusFromAnswer(latestUserMessage);
   if (selected && isExplorationChoice(previousAssistantMessage)) {
@@ -153,14 +159,14 @@ function acceptedAssistantOffer(latestUserMessage: string, previousAssistantMess
     return `Aprofundar ${labels[selected]}`;
   }
 
-  const offeredExplanation = /(?:se (?:voce )?quiser[, ]+)?(?:eu )?posso (?:te )?(?:explicar|mostrar|contar|detalhar)\b/.test(previousAssistantMessage);
+  const offeredExplanation = /\bposso\b[^.!?\n]{0,90}\b(?:explicar|mostrar|contar|detalhar)\b/.test(previousAssistantMessage);
   if (!offeredExplanation) return undefined;
 
-  const acceptance = canonical(latestUserMessage);
+  const acceptance = canonical(latestUserMessage).replace(/^(?:(?:ok|okay|legal|otimo|perfeito|beleza)\s+)+/, "");
   const accepted = /^(?:(?:legal|otimo|perfeito|claro|sim|beleza)[, ]+)*(?:quero sim|quero|pode sim|pode|por favor|me explica|explique|manda ver|vamos la)(?:\b|$)/.test(acceptance)
     || /^(?:sim|claro|com certeza)(?:\b|$)/.test(acceptance);
-
-  return accepted ? previousAssistantMessage : undefined;
+  const explicitExplanation = /^(?:(?:pode|quero|gostaria de)\s+)?(?:me |que voce me )?(?:explique|explica|explicar|mostre|mostrar|conte|contar|detalhe|detalhar)\b/.test(acceptance);
+  return accepted || explicitExplanation ? previousAssistantMessage : undefined;
 }
 
 function inferKnownFacts(userMessages: string[]) {
@@ -243,7 +249,7 @@ function isNameQuestion(value: string) {
 }
 
 function isPriorityQuestion(value: string) {
-  return /(?:qual|o que).*(?:mais urgente|prioridade)|por (?:qual|onde).*(?:comecar|seguir)|implementar o l.*e.*i.*a.*ou.*(?:operacao|gestao)|qual.*frente.*(?:aprofundar|prioritaria|prefere)/.test(value);
+  return /(?:qual|o que).*(?:mais urgente|prioridade|priorizar|pesa mais|primeiro|trava resultado)|por (?:qual|onde).*(?:comecar|seguir)|focar primeiro|implementar o l.*e.*i.*a.*ou.*(?:operacao|gestao)|qual.*frente.*(?:aprofundar|prioritaria|prefere)/.test(value);
 }
 
 function isExplorationChoice(value: string) {
@@ -266,20 +272,57 @@ function isTimelineQuestion(value: string) {
   return questionTexts(value).some(question => /\bquando\b|\bqual.*prazo\b|\bem que.*(?:mes|ano|data)\b/.test(normalizeKnowledgeText(question)));
 }
 
+function isTimelineAnswer(value: string) {
+  return /\b(?:hoje|amanha|agora|imediatamente|quanto antes|dia|dias|semana|semanas|mes|meses|ano|anos|semestre|trimestre|janeiro|fevereiro|marco|abril|maio|junho|julho|agosto|setembro|outubro|novembro|dezembro|segunda|terca|quarta|quinta|sexta|sabado|domingo|\d{1,2}\/\d{1,2}|20\d{2})\b/.test(canonical(value));
+}
+
 function isBusinessChallengeQuestion(value: string) {
-  return /qual.*(?:problema|processo|desafio).*(?:melhorar|resolver|ia)|o que.*(?:gestao|operacao|negocio).*(?:melhorar|resolver)/.test(value);
+  return questionTexts(value).some(question => /\bqual\b.*(?:problema|processo|desafio).*(?:melhorar|resolver|ia)|o que.*(?:gestao|operacao|negocio).*(?:melhorar|resolver)/.test(normalizeKnowledgeText(question)));
 }
 
 function qualificationFocusFromAnswer(value: string): AnaQualificationFocus | undefined {
   const normalized = canonical(value);
   if (value.includes("?") || /\b(?:nao|talvez|se|ou)\b/.test(normalized)) return undefined;
-  if (/\b(?:as duas|os dois|ambas|ambos|duas frentes|as duas frentes|tudo isso)\b/.test(normalized)) return "multiple";
+  if (isCombinedAnswer(normalized)) return "multiple";
   const choices: AnaQualificationFocus[] = [];
   if (/\b(?:alunos|estudantes|ensino|pedagogic\w*|l\s*e\s*i\s*a|leia)\b/.test(normalized)) choices.push("leia");
   if (/\b(?:gestao|operacao|processos?|negocio|consultoria|administrativ\w*)\b/.test(normalized)) choices.push("consulting");
   if (/\b(?:professores|docentes|equipe|capacitacao|treinamento|academy)\b/.test(normalized)) choices.push("academy");
   if (/\b(?:produto|aplicativo|sistema|solucao propria|desenvolvimento)\b/.test(normalized)) choices.push("product-development");
   return choices.length === 1 ? choices[0] : undefined;
+}
+
+function isCombinedAnswer(value: string) {
+  const text = canonical(value);
+  if (/\b(?:nao|apenas|somente)\b/.test(text)) return false;
+  return /\b(?:as duas|os dois|ambas|ambos|as tres|os tres|as 3|os 3|duas frentes|tudo isso|todas juntas|todos juntos|igualmente prioritari[oa]s)\b/.test(text) || /^(?:todas|todos)(?: mesmo)?$/.test(text);
+}
+
+function isUnknownOrDeclined(value: string) {
+  return /\b(?:nao (?:sei|sabemos)|nao tenho (?:essa )?(?:visao|visoa|clareza)|ainda nao defini|ainda nao decid|prefiro nao|nao (?:quero|posso|vou) (?:informar|responder|dizer))\b/.test(canonical(value));
+}
+
+function businessFacts(value: string) {
+  const text = canonical(value);
+  // Restrict evidence to what the user actually names. Assistant options never
+  // populate these facts, and an explicit rejection is not an affirmative fact.
+  if (/\bnao (?:quero|preciso|busco)\b/.test(text)) return { areas: [], objectives: [] };
+  const areas = [
+    ["atendimento", /\batendimento\b/], ["chamados", /\bchamados?\b/],
+    ["cobrança", /\bcobranca\b/],
+  ] as const;
+  const objectives = [
+    ["reduzir custos", /\b(?:reduzir|diminuir|baixar) (?:os )?custos\b/],
+    ["melhorar a qualidade do atendimento", /\b(?:melhorar|aumentar|amentar|elevar) (?:a )?qualidade\b/],
+  ] as const;
+  return { areas: areas.filter(([, pattern]) => pattern.test(text)).map(([label]) => label), objectives: objectives.filter(([, pattern]) => pattern.test(text)).map(([label]) => label) };
+}
+
+function explicitBusinessProblem(value: string) {
+  if (isUnknownOrDeclined(value) || /\bnao (?:temos|tenho)\b/.test(canonical(value))) return false;
+  // A free-form problem statement can satisfy the existing field even when
+  // its vocabulary is outside the recognized area labels.
+  return /\b(?:nosso|nossa|meu|minha|o principal|a principal) (?:problema|gargalo|dificuldade|desafio|processo) (?:e|esta|envolve|consiste em)\s+\S.{5,}/.test(canonical(value));
 }
 
 function isIncompleteThought(value: string) {
@@ -312,6 +355,8 @@ export function mergeAnaLeadQualification(
     ...Object.fromEntries(Object.entries(current).filter(([, value]) => value !== undefined)),
     offerInterests: unique([...(previous.offerInterests ?? []), ...(current.offerInterests ?? [])]),
     needs: unique([...(previous.needs ?? []), ...(current.needs ?? [])]),
+    businessAreas: unique([...(previous.businessAreas ?? []), ...(current.businessAreas ?? [])]),
+    objectives: unique([...(previous.objectives ?? []), ...(current.objectives ?? [])]),
     multiOfferInterest: Boolean(previous.multiOfferInterest || current.multiOfferInterest),
     commercialIntent: Boolean(previous.commercialIntent || current.commercialIntent),
     pricingIntent: Boolean(previous.pricingIntent || current.pricingIntent),
@@ -338,7 +383,7 @@ function extractLeadQualification(
   const phone = joinedRaw.match(/(?:\+?55\s*)?(?:\(?\d{2}\)?\s*)?9?\d{4}[-.\s]?\d{4}/)?.[0]?.replace(/\s+/g, " ");
   const explicitNamedName = findFirst(
     joinedRaw,
-    /(?:me cham[oa]|meu nome (?:e|é)|pode me chamar de)\s*([\p{L}][\p{L}\s'-]{1,80}?)(?=\s+(?:e\s+)?meu\s+e-?mail|[,.!?\n]|$)/iu,
+    /(?:me cham[oa]|meu nome (?:e|é)|pode me chamar de)\s*([\p{L}][\p{L}\s'-]{1,80}?)(?=\s+e\s+(?:eu\s+)?(?:sou|tenho|quero|preciso|trabalho)\b|\s+(?:e\s+)?meu\s+e-?mail|[,.!?\n]|$)/iu,
   );
   const introducedName = findFirst(
     joinedRaw,
@@ -346,6 +391,7 @@ function extractLeadQualification(
   );
   const name = (explicitNamedName ? contextualName(explicitNamedName) : undefined)
     ?? (introducedName ? contextualName(introducedName) : undefined)
+    ?? answers.map(({ answer, question }) => isNameQuestion(question) ? contextualName(answer) : undefined).find(Boolean)
     ?? (isNameQuestion(previousQuestion) ? contextualName(latestRaw) : undefined);
   const organization = findFirst(joinedRaw, /(?:minha escola (?:se chama|e|é)|escola chamada)\s+([^,.!?\n]{2,120})/iu);
 
@@ -365,10 +411,13 @@ function extractLeadQualification(
       : undefined;
 
   const schoolContext = /\b(escola|colegio|ensino|aluno|estudante)\b/.test(joined);
+  const business = businessFacts(joinedRaw);
+  const describedBusinessProblem = answers.some(({ answer }) => explicitBusinessProblem(answer));
+  const diagnosticRequest = answers.find(({ answer }) => /\b(?:quero|queria|gostaria|preciso|busco)\b.{0,45}\bdiagnostico\b/.test(canonical(answer)));
   const offerInterests = unique([
     ...(/\bl\s*\.?\s*e\s*\.?\s*i\s*\.?\s*a\b|\bleia\b/.test(joined) || schoolContext ? ["leia" as const] : []),
     ...(/\b(curso|formacao|capacitacao|academy)\b/.test(joined) ? ["academy" as const] : []),
-    ...(/\b(consultoria|diagnostico|processo|otimizar|negocio)\b/.test(joined) ? ["consulting" as const] : []),
+    ...(/\b(consultoria|diagnostico|processo|otimizar|negocio)\b/.test(joined) || business.areas.length || describedBusinessProblem ? ["consulting" as const] : []),
     ...(/\b(desenvolvimento|produto de ia|solucao de ia|implantar solucoes)\b/.test(joined) ? ["product-development" as const] : []),
   ]);
   const offerInterest = offerInterests[0];
@@ -376,7 +425,7 @@ function extractLeadQualification(
     ...(/\b(aluno|alunos|estudante|estudantes|ensinar)\b/.test(joined) ? ["students" as const] : []),
     ...(/\b(professor|professores|docente|docentes)\b/.test(joined) ? ["teachers" as const] : []),
     ...(/\b(gestao|gestor|gestores|direcao|diretores)\b/.test(joined) ? ["management" as const] : []),
-    ...(/\b(processo|processos|operacao|operacoes|negocio|negocios|melhorar (?:meu |o )?negocio|otimizar|otimizacao|otimizado|otimizada)\b/.test(joined) ? ["processes" as const] : []),
+    ...(/\b(processo|processos|operacao|operacoes|negocio|negocios|melhorar (?:meu |o )?negocio|otimizar|otimizacao|otimizado|otimizada)\b/.test(joined) || business.areas.length || describedBusinessProblem || diagnosticRequest ? ["processes" as const] : []),
     ...(/\b(produto|aplicativo|sistema|solucao|solucoes)\b/.test(joined) ? ["product" as const] : []),
   ]);
   const need = needs[0];
@@ -385,20 +434,34 @@ function extractLeadQualification(
 
   let qualificationFocus: AnaQualificationFocus | undefined;
   let businessChallenge: string | undefined;
+  let priorityStatus: AnaLeadQualification["priorityStatus"];
   for (const { answer, question } of answers) {
+    if (/\bprioridades?\b/.test(canonical(answer)) && isUnknownOrDeclined(answer)) priorityStatus = "undecided";
+    if (isCombinedAnswer(answer) && (business.areas.length > 1 || business.objectives.length > 1)) priorityStatus = "combined";
     if (isPriorityQuestion(question) || isExplorationChoice(question) || hasExplicitFocusChoice(answer)) {
-      qualificationFocus = qualificationFocusFromAnswer(answer) ?? qualificationFocus;
+      const focus = qualificationFocusFromAnswer(answer);
+      // "Both" can mean two goals in ONE consulting engagement. Only actual
+      // multi-offer interest uses the existing combined commercial track.
+      qualificationFocus = focus === "multiple" && offerInterests.length === 1 && !multiOfferInterest
+        ? offerInterests[0] : focus ?? qualificationFocus;
+      if (isCombinedAnswer(answer)) priorityStatus = "combined";
+      else if (isUnknownOrDeclined(answer)) priorityStatus = "undecided";
     }
-    if (isBusinessChallengeQuestion(question) && canonical(answer).length >= 3 && !/^(?:sim|nao|certo|entendi|legal)$/.test(canonical(answer))) {
+    if (isBusinessChallengeQuestion(question) && canonical(answer).length >= 3 && !isUnknownOrDeclined(answer) && !isCombinedAnswer(answer) && !/^(?:sim|nao|certo|entendi|legal)$/.test(canonical(answer))) {
       businessChallenge = answer.trim().slice(0, 500);
     }
+    if (businessFacts(answer).areas.length || explicitBusinessProblem(answer)) businessChallenge = answer.trim().slice(0, 500);
   }
+  // Discovering opportunities is a legitimate diagnostic problem statement.
+  // Store the user's words, not an invented operational priority.
+  businessChallenge ??= diagnosticRequest?.answer.trim().slice(0, 500);
+  if (offerInterests.length === 1 && offerInterests[0] === "consulting" && businessChallenge) qualificationFocus ??= "consulting";
 
   let gradeFit: boolean | undefined;
   if (/(?:\b9\s*(?:º|o|ano)|\bnono ano|\bensino medio|\b1\s*(?:ª|a)\s*serie|\b2\s*(?:ª|a)\s*serie|\b3\s*(?:ª|a)\s*serie)(?=\s|[.,!?]|$)/.test(joined)) gradeFit = true;
   if (/(?:\beducacao infantil|\bfundamental i|\bate o 8\s*(?:º|o)|\bsomente.*8\s*(?:º|o))(?=\s|[.,!?]|$)/.test(joined)) gradeFit = false;
   for (const { answer, question } of answers) {
-    if (!/9.*ano|ensino medio|series|serie/.test(question)) continue;
+    if (!/9.*ano|ensino medio|series|serie/.test(questionTexts(question).join(" "))) continue;
     if (isAffirmative(answer)) gradeFit = true;
     else if (isNegative(answer)) gradeFit = false;
   }
@@ -406,7 +469,7 @@ function extractLeadQualification(
   const studentCountMatch = joined.match(/\b(\d{1,5})\s*(?:alunos|estudantes)\b/);
   let studentCount = studentCountMatch ? Number(studentCountMatch[1]) : undefined;
   for (const { answer, question } of answers) {
-    if (!/quantos.*(?:alunos|estudantes)|numero.*(?:alunos|estudantes)/.test(question)) continue;
+    if (!/quantos.*(?:alunos|estudantes)|numero.*(?:alunos|estudantes)/.test(questionTexts(question).join(" "))) continue;
     const contextualCount = canonical(answer).match(/\b(\d{1,5})\b/)?.[1];
     if (contextualCount) studentCount = Number(contextualCount);
   }
@@ -415,7 +478,7 @@ function extractLeadQualification(
   if (/\b(nao temos|nao possui|sem|falta)\b.{0,24}\binternet\b|\binternet\b.{0,24}\b(instavel|ruim|fraca)\b/.test(joined)) internetReady = false;
   else if (/\b(temos|possui|com)\b.{0,24}\binternet\b|\binternet\b.{0,24}\b(estavel|boa|rapida|adequada)\b/.test(joined)) internetReady = true;
   for (const { answer, question } of answers) {
-    if (!/internet|conexao/.test(question)) continue;
+    if (!/internet|conexao/.test(questionTexts(question).join(" "))) continue;
     if (isAffirmative(answer)) internetReady = true;
     else if (isNegative(answer)) internetReady = false;
   }
@@ -424,7 +487,7 @@ function extractLeadQualification(
   for (const { answer, question } of answers) {
     if (!isTimelineQuestion(question)) continue;
     const normalizedAnswer = canonical(answer);
-    if (normalizedAnswer.length >= 3 && !/^(?:nao sei|ainda nao sei|vamos ver)$/.test(normalizedAnswer)) {
+    if (normalizedAnswer.length >= 3 && isTimelineAnswer(answer) && !isUnknownOrDeclined(answer)) {
       timeline = answer.trim().slice(0, 200);
     }
   }
@@ -436,8 +499,21 @@ function extractLeadQualification(
     !acceptedAssistantOffer(answer, question) || /\b(?:contratar|proposta|agendar)\b/.test(canonical(answer)),
   ).map(({ answer }) => answer).join(" "));
   const advancementIntent = meetingIntent
+    || Boolean(diagnosticRequest)
+    || /\b(?:quero|queria|gostaria|preciso)\b.{0,50}\borcamento\b/.test(commercialAnswers)
     || /\b(?:quero|queremos|gostaria|podemos|como)\b.{0,40}\b(?:contratar|comecar|avancar|proposta|proximo passo|seguir)\b/.test(commercialAnswers)
     || /\b(?:quero uma proposta|podem enviar uma proposta|qual (?:e|seria) o proximo passo|o que (?:fazer|acontece) agora)\b/.test(commercialAnswers);
+  // Reuse the candidate's distinction between missing facts and unavailable
+  // answers, scoped to this flow. An unavailable required fact stays pending.
+  const deferredQuestions = new Set(previous?.deferredQuestions ?? []);
+  for (const { answer, question } of answers) {
+    if (isUnknownOrDeclined(answer)) {
+      if (isTimelineQuestion(question)) deferredQuestions.add("timeline");
+      else if (isBusinessChallengeQuestion(question)) deferredQuestions.add("businessChallenge");
+    }
+  }
+  if (timeline || previous?.timeline) deferredQuestions.delete("timeline");
+  if (businessChallenge || previous?.businessChallenge) deferredQuestions.delete("businessChallenge");
   let contactConsent = false;
   let contactRevoked = false;
   for (const { answer, question } of answers) {
@@ -483,6 +559,10 @@ function extractLeadQualification(
     studentCount,
     internetReady,
     businessChallenge,
+    businessAreas: business.areas,
+    objectives: business.objectives,
+    priorityStatus,
+    deferredQuestions: [...deferredQuestions],
     timeline,
     commercialIntent,
     pricingIntent,
@@ -555,6 +635,8 @@ function chooseNextQuestion(
   userTurnCount: number,
 ): AnaNextQuestion | undefined {
   const asked = normalizeKnowledgeText(questions.flatMap(questionTexts).join(" "));
+  if (qualification.contactRevoked) return undefined;
+  if (qualification.deferredQuestions?.length) return undefined;
   if (incompleteUserThought) {
     return { key: "need", text: "Pode me contar melhor o que você precisa?" };
   }
@@ -602,10 +684,12 @@ function chooseNextQuestion(
   if ((track === "consulting" || track === "product-development" || track === "multiple") && !qualification.businessChallenge && !/qual.*(?:problema|processo|desafio)|o que.*(?:gestao|operacao|negocio).*(?:melhorar|resolver)/.test(asked)) {
     return {
       key: "businessChallenge",
-      text: "Na gestão da escola, qual problema ou processo você mais gostaria de melhorar com IA?",
+      text: qualification.offerInterests?.includes("leia")
+        ? "Na gestão da escola, qual problema ou processo você mais gostaria de melhorar com IA?"
+        : "Qual problema ou processo do negócio você gostaria de melhorar com IA?",
     };
   }
-  if (!qualification.timeline && !questions.some(isTimelineQuestion)) {
+  if (!qualification.timeline) {
     return { key: "timeline", text: "Quando vocês gostariam de começar?" };
   }
   if (!isQualificationComplete(qualification)) return undefined;
@@ -647,6 +731,10 @@ export function analyzeAnaConversation(
   const questions = recentQuestions(messages);
   const previousAssistant = [...messages].reverse().find((message) => message.role === "assistant");
   const previousAssistantText = previousAssistant ? normalizeKnowledgeText(messageText(previousAssistant)) : "";
+  const deferredQuestion: AnaNextQuestion["key"] | undefined = isUnknownOrDeclined(latest)
+    ? !qualification.timeline && isTimelineQuestion(previousAssistantText) ? "timeline"
+      : !qualification.businessChallenge && isBusinessChallengeQuestion(previousAssistantText) ? "businessChallenge" : undefined
+    : undefined;
   const answeredNameThisTurn = Boolean(qualification.name && isNameQuestion(previousAssistantText)
     && (contextualName(latest) || /\b(?:me cham[oa]|meu nome|sou (?:o |a )?)/i.test(latest)));
   const incompleteUserThought = isIncompleteThought(latest);
@@ -679,7 +767,7 @@ export function analyzeAnaConversation(
     : turnKind === "greeting" || turnKind === "repair" || turnKind === "acknowledgement" || turnKind === "gratitude" || turnKind === "farewell"
     ? undefined
     : chooseNextQuestion(qualification, questions, incompleteUserThought, userTurnCount);
-  const nextQuestion = acceptedOffer
+  const nextQuestion = acceptedOffer || deferredQuestion
     ? undefined
     : answerRequired
     && suggestedQuestion?.key !== "name"
@@ -723,6 +811,11 @@ export function analyzeAnaConversation(
         : []),
       ...(qualification.qualificationFocus ? [`A frente prioritária informada é ${qualification.qualificationFocus}.`] : []),
       ...(qualification.businessChallenge ? [`Desafio operacional informado: ${qualification.businessChallenge}`] : []),
+      ...(qualification.name ? [`Nome informado: ${qualification.name}.`] : []),
+      ...(qualification.businessAreas?.length ? [`Áreas informadas: ${qualification.businessAreas.join(", ")}.`] : []),
+      ...(qualification.objectives?.length ? [`Objetivos informados: ${qualification.objectives.join("; ")}.`] : []),
+      ...(qualification.priorityStatus === "combined" ? ["A pessoa quer tratar os objetivos juntos, sem desempate."] : []),
+      ...(qualification.priorityStatus === "undecided" ? ["A pessoa ainda não sabe priorizar. No diagnóstico, essa descoberta faz parte do objetivo."] : []),
     ]),
     recentAssistantQuestions: questions,
     userTurnCount,
@@ -736,6 +829,7 @@ export function analyzeAnaConversation(
     answerRequired,
     acceptedAssistantOffer: acceptedOffer,
     nextQuestion,
+    deferredQuestion,
   };
 }
 
@@ -784,6 +878,7 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
   }
   // A name supplied alongside a question must not swallow that question.
   if (state.answerRequired) return undefined;
+  if (state.deferredQuestion) return "Tudo bem. Podemos retomar essa informação quando você souber. O que você já contou fica como contexto para continuarmos.";
   if (state.answeredNameThisTurn) {
     const firstName = state.qualification.name?.split(/\s+/)[0];
     if (!state.nextQuestion) return `Prazer, ${firstName}. Como posso te ajudar?`;
@@ -811,7 +906,12 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
       contactConsent: "Pelo que você contou, vale a pena continuar essa conversa.",
       contact: "Ótimo.",
     };
-    return `${transitions[state.nextQuestion.key]} ${state.nextQuestion.text}`;
+    const progress = state.qualification.priorityStatus === "combined"
+      ? "Entendi. Vamos considerar os objetivos juntos."
+      : state.qualification.priorityStatus === "undecided"
+        ? "Tudo bem. Vou manter a definição de prioridades como parte do diagnóstico."
+        : transitions[state.nextQuestion.key];
+    return `${progress} ${state.nextQuestion.text}`;
   }
   if (state.turnKind !== "acknowledgement") return undefined;
 
