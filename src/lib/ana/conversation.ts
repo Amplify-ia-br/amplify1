@@ -60,6 +60,8 @@ export type AnaConversationState = {
   answeredNameThisTurn: boolean;
   incompleteUserThought: boolean;
   answerRequired: boolean;
+  // Derived scope of this answer, not a persisted qualification requirement.
+  answerNeedsTogether?: boolean;
   acceptedAssistantOffer?: string;
   nextQuestion?: AnaNextQuestion;
   deferredQuestion?: AnaNextQuestion["key"];
@@ -740,6 +742,11 @@ export function analyzeAnaConversation(
   const incompleteUserThought = isIncompleteThought(latest);
   const acceptedOffer = acceptedAssistantOffer(latest, previousAssistantText);
   const answerRequired = Boolean(acceptedOffer) || requiresKnowledgeAnswer(latest, turnKind, incompleteUserThought);
+  const overviewRequested = /\bcomo\b.{0,60}\b(?:ajuda|ajudar)\b/.test(canonical(latest))
+    && !/\b(?:leia|consultoria|academy|alunos|estudantes|operacao|processos|apenas|somente|so)\b/.test(canonical(latest));
+  const answerNeedsTogether = answerRequired && overviewRequested
+    && (!qualification.qualificationFocus || qualification.qualificationFocus === "multiple")
+    && Boolean(qualification.needs?.includes("students") && qualification.needs?.includes("processes"));
   const shouldExpandLeia = !messages.some((message) => (
     message.role === "assistant"
     && /laboratorio escolar de inteligencia artificial/.test(normalizeKnowledgeText(messageText(message)))
@@ -827,6 +834,7 @@ export function analyzeAnaConversation(
     answeredNameThisTurn,
     incompleteUserThought,
     answerRequired,
+    answerNeedsTogether,
     acceptedAssistantOffer: acceptedOffer,
     nextQuestion,
     deferredQuestion,

@@ -18,6 +18,8 @@ export type AnaAnswerIssue =
   | "premature_contact_request"
   | "qualification_instead_of_explanation"
   | "unnecessary_priority"
+  | "unexpected_qualification_question"
+  | "missing_requested_front"
   | "missing_leia_expansion";
 
 export type AnaAnswerValidation = {
@@ -113,6 +115,17 @@ export function validateAnaAnswer(
   if (MARKDOWN.test(text)) issues.push("markdown");
   if (VISIBLE_SOURCE.test(text)) issues.push("visible_source");
   const questionText = normalizeKnowledgeText(text.replace(/L\.E\.I\.A\./g, "LEIA").match(/[^.!?\n]+\?/g)?.join(" ") ?? "");
+  // Name remains optional. If the model asks instead, it cannot replace the
+  // controller's recommendation with a new commercial requirement.
+  if (conversation.nextQuestion?.key === "name" && questionText && !/\b(?:nome|chama|chamar|tratar)\b/.test(questionText)) {
+    issues.push("unexpected_qualification_question");
+  }
+  if (conversation.answerNeedsTogether && ["leia", "portfolio"].every(id => retrieval.documents.some(document => document.id === id))) {
+    const normalized = normalizeKnowledgeText(text);
+    const studentsCovered = /\b(?:alunos|estudantes)\b|l\.e\.i\.a\./.test(normalized);
+    const processesCovered = /\b(?:consultoria|diagnostico)\b|\b(?:melhorar|automatizar|otimizar|redesenhar)\b.{0,60}\b(?:operacao|processos|gestao)\b|\b(?:operacao|processos|gestao)\b.{0,60}\b(?:ia|automacao|otimizacao)\b/.test(normalized);
+    if (!studentsCovered || !processesCovered) issues.push("missing_requested_front");
+  }
   if (conversation.acceptedAssistantOffer && (questionText || /\b(?:informe|diga|conte|escolha|defina)\b.{0,45}\b(?:prioridade|prazo|quantos|nome|email|whatsapp)\b/.test(normalizeKnowledgeText(text)))) {
     issues.push("qualification_instead_of_explanation");
   }

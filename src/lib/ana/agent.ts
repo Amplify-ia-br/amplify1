@@ -132,6 +132,7 @@ ESTADO DESTA CONVERSA:
 - Estágio do lead: ${state.leadStage}
 - Progresso de qualificação: ${state.qualificationScore}%
 - Oferta anterior aceita: ${state.acceptedAssistantOffer ?? "Nenhuma."}
+${state.answerNeedsTogether ? "- Escopo desta resposta: explique tanto educação para estudantes quanto consultoria para a operação, com base nos documentos recuperados. Implantar o programa escolar não responde à necessidade operacional. Não peça contato após recusa." : ""}
 
 FATOS JÁ INFORMADOS PELA PESSOA:
 ${facts}
