@@ -1,5 +1,6 @@
 import { normalizeKnowledgeText } from "../okf/core.js";
 import type { AnaMessage } from "./types.js";
+import { collectQualificationAnswers, commercialFields, commercialQuestions, commercialInterviewComplete, isOrganizationalOpportunity, commercialFacts, unavailableAnswer, type CommercialField, type QualificationAnswers } from "./qualification.js";
 
 export type AnaTurnKind = "greeting" | "repair" | "acknowledgement" | "gratitude" | "farewell" | "disclosure" | "request";
 export type AnaConversationStage = "opening" | "discovery" | "solution" | "qualification" | "contact" | "handoff" | "closing";
@@ -8,6 +9,9 @@ export type AnaOfferInterest = "leia" | "academy" | "consulting" | "product-deve
 export type AnaQualificationFocus = AnaOfferInterest | "multiple";
 
 export type AnaLeadQualification = {
+  answers?: QualificationAnswers;
+  organizationalOpportunity?: boolean;
+  nextStep?: string;
   name?: string;
   email?: string;
   phone?: string;
@@ -39,7 +43,7 @@ export type AnaLeadQualification = {
 };
 
 export type AnaNextQuestion = {
-  key: "name" | "need" | "priority" | "grades" | "students" | "internet" | "businessChallenge" | "timeline" | "contactConsent" | "contact";
+  key: "name" | "need" | "priority" | "grades" | "students" | "internet" | "businessChallenge" | "timeline" | "contactConsent" | "contact" | CommercialField;
   text: string;
 };
 
@@ -65,6 +69,9 @@ export type AnaConversationState = {
   acceptedAssistantOffer?: string;
   nextQuestion?: AnaNextQuestion;
   deferredQuestion?: AnaNextQuestion["key"];
+  leiaRecommendationAllowed?: boolean;
+  leiaExplanationRequested?: boolean;
+  pendingQualification?: string[];
 };
 
 function messageText(message: AnaMessage) {
@@ -232,7 +239,7 @@ function hasExplicitContactRevocation(value: string) {
     || /\bnao me (?:ligue|liguem|chame|chamem|contate|contatem|contacte|contactem)\b/.test(normalized)
     || /\bnao me (?:mande|mandem|envie|enviem) (?:e-?mail|mensagem|whatsapp)\b/.test(normalized)
     || /\bparem? de me (?:ligar|chamar|contatar|contactar|mandar (?:e-?mail|mensagem))\b/.test(normalized)
-    || /\bprefiro nao (?:informar|receber contato|ser contatad[oa])\b/.test(normalized);
+    || /\bprefiro nao (?:receber contato|ser contatad[oa])\b/.test(normalized);
 }
 
 function contextualAnswers(messages: AnaMessage[]) {
@@ -355,6 +362,7 @@ export function mergeAnaLeadQualification(
   return {
     ...previous,
     ...Object.fromEntries(Object.entries(current).filter(([, value]) => value !== undefined)),
+    answers: { ...previous.answers, ...current.answers },
     offerInterests: unique([...(previous.offerInterests ?? []), ...(current.offerInterests ?? [])]),
     needs: unique([...(previous.needs ?? []), ...(current.needs ?? [])]),
     businessAreas: unique([...(previous.businessAreas ?? []), ...(current.businessAreas ?? [])]),
@@ -364,6 +372,7 @@ export function mergeAnaLeadQualification(
     pricingIntent: Boolean(previous.pricingIntent || current.pricingIntent),
     meetingIntent: Boolean(previous.meetingIntent || current.meetingIntent),
     advancementIntent: Boolean(previous.advancementIntent || current.advancementIntent),
+    organizationalOpportunity: Boolean(previous.organizationalOpportunity || current.organizationalOpportunity),
     contactConsent,
     contactRevoked,
   };
@@ -376,6 +385,7 @@ function extractLeadQualification(
   const userMessages = messages.filter((message) => message.role === "user").map(messageText).filter(Boolean);
   const joinedRaw = userMessages.join(" \n");
   const joined = normalizeKnowledgeText(joinedRaw);
+  const eligibilityEvidence = normalizeKnowledgeText(userMessages.flatMap(value => value.split(/[.!?\n]/)).filter(value => !unavailableAnswer(value)).join(" "));
   const latestRaw = userMessages.at(-1) ?? "";
   const previousAssistant = [...messages].reverse().find((message) => message.role === "assistant");
   const previousQuestion = normalizeKnowledgeText(previousAssistant ? messageText(previousAssistant) : "");
@@ -395,7 +405,6 @@ function extractLeadQualification(
     ?? (introducedName ? contextualName(introducedName) : undefined)
     ?? answers.map(({ answer, question }) => isNameQuestion(question) ? contextualName(answer) : undefined).find(Boolean)
     ?? (isNameQuestion(previousQuestion) ? contextualName(latestRaw) : undefined);
-  const organization = findFirst(joinedRaw, /(?:minha escola (?:se chama|e|é)|escola chamada)\s+([^,.!?\n]{2,120})/iu);
 
   const role = /\b(dono|dona|proprietario|proprietaria)\b.*\bescola\b/.test(joined)
     ? "proprietário(a)"
@@ -460,26 +469,29 @@ function extractLeadQualification(
   if (offerInterests.length === 1 && offerInterests[0] === "consulting" && businessChallenge) qualificationFocus ??= "consulting";
 
   let gradeFit: boolean | undefined;
-  if (/(?:\b9\s*(?:º|o|ano)|\bnono ano|\bensino medio|\b1\s*(?:ª|a)\s*serie|\b2\s*(?:ª|a)\s*serie|\b3\s*(?:ª|a)\s*serie)(?=\s|[.,!?]|$)/.test(joined)) gradeFit = true;
-  if (/(?:\beducacao infantil|\bfundamental i|\bate o 8\s*(?:º|o)|\bsomente.*8\s*(?:º|o))(?=\s|[.,!?]|$)/.test(joined)) gradeFit = false;
+  if (/(?:\b9\s*(?:º|o|ano)|\bnono ano|\bensino medio|\b1\s*(?:ª|a)\s*serie|\b2\s*(?:ª|a)\s*serie|\b3\s*(?:ª|a)\s*serie)(?=\s|[.,!?]|$)/.test(eligibilityEvidence)) gradeFit = true;
+  if (/(?:\beducacao infantil|\bfundamental i|\bate o 8\s*(?:º|o)|\bsomente.*8\s*(?:º|o))(?=\s|[.,!?]|$)/.test(eligibilityEvidence)) gradeFit = false;
   for (const { answer, question } of answers) {
+    if (unavailableAnswer(answer)) continue;
     if (!/9.*ano|ensino medio|series|serie/.test(questionTexts(question).join(" "))) continue;
     if (isAffirmative(answer)) gradeFit = true;
     else if (isNegative(answer)) gradeFit = false;
   }
 
-  const studentCountMatch = joined.match(/\b(\d{1,5})\s*(?:alunos|estudantes)\b/);
+  const studentCountMatch = eligibilityEvidence.match(/\b(\d{1,5})\s*(?:alunos|estudantes)\b/);
   let studentCount = studentCountMatch ? Number(studentCountMatch[1]) : undefined;
   for (const { answer, question } of answers) {
+    if (unavailableAnswer(answer)) continue;
     if (!/quantos.*(?:alunos|estudantes)|numero.*(?:alunos|estudantes)/.test(questionTexts(question).join(" "))) continue;
     const contextualCount = canonical(answer).match(/\b(\d{1,5})\b/)?.[1];
     if (contextualCount) studentCount = Number(contextualCount);
   }
 
   let internetReady: boolean | undefined;
-  if (/\b(nao temos|nao possui|sem|falta)\b.{0,24}\binternet\b|\binternet\b.{0,24}\b(instavel|ruim|fraca)\b/.test(joined)) internetReady = false;
-  else if (/\b(temos|possui|com)\b.{0,24}\binternet\b|\binternet\b.{0,24}\b(estavel|boa|rapida|adequada)\b/.test(joined)) internetReady = true;
+  if (/\b(nao temos|nao possui|sem|falta)\b.{0,24}\binternet\b|\binternet\b.{0,24}\b(instavel|ruim|fraca)\b/.test(eligibilityEvidence)) internetReady = false;
+  else if (/\b(temos|possui|com)\b.{0,24}\binternet\b|\binternet\b.{0,24}\b(estavel|boa|rapida|adequada)\b/.test(eligibilityEvidence)) internetReady = true;
   for (const { answer, question } of answers) {
+    if (unavailableAnswer(answer)) continue;
     if (!/internet|conexao/.test(questionTexts(question).join(" "))) continue;
     if (isAffirmative(answer)) internetReady = true;
     else if (isNegative(answer)) internetReady = false;
@@ -505,17 +517,6 @@ function extractLeadQualification(
     || /\b(?:quero|queria|gostaria|preciso)\b.{0,50}\borcamento\b/.test(commercialAnswers)
     || /\b(?:quero|queremos|gostaria|podemos|como)\b.{0,40}\b(?:contratar|comecar|avancar|proposta|proximo passo|seguir)\b/.test(commercialAnswers)
     || /\b(?:quero uma proposta|podem enviar uma proposta|qual (?:e|seria) o proximo passo|o que (?:fazer|acontece) agora)\b/.test(commercialAnswers);
-  // Reuse the candidate's distinction between missing facts and unavailable
-  // answers, scoped to this flow. An unavailable required fact stays pending.
-  const deferredQuestions = new Set(previous?.deferredQuestions ?? []);
-  for (const { answer, question } of answers) {
-    if (isUnknownOrDeclined(answer)) {
-      if (isTimelineQuestion(question)) deferredQuestions.add("timeline");
-      else if (isBusinessChallengeQuestion(question)) deferredQuestions.add("businessChallenge");
-    }
-  }
-  if (timeline || previous?.timeline) deferredQuestions.delete("timeline");
-  if (businessChallenge || previous?.businessChallenge) deferredQuestions.delete("businessChallenge");
   let contactConsent = false;
   let contactRevoked = false;
   for (const { answer, question } of answers) {
@@ -529,7 +530,7 @@ function extractLeadQualification(
       contactRevoked = false;
     }
     if (isContactConsentQuestion(question)) {
-      if (isNegative(answer)) {
+      if (isNegative(answer) || unavailableAnswer(answer) === "declined") {
         contactConsent = false;
         contactRevoked = true;
       } else if (isAffirmative(answer)) {
@@ -537,18 +538,13 @@ function extractLeadQualification(
         contactRevoked = false;
       }
     }
-    const hasContactDetail = answer.includes("@") || answer.replace(/\D/g, "").length >= 8;
-    if (isContactDetailQuestion(question) && hasContactDetail) {
-      contactConsent = true;
-      contactRevoked = false;
-    }
   }
 
-  return mergeAnaLeadQualification(previous, {
+  const merged = mergeAnaLeadQualification(previous, {
     name,
     email,
     phone,
-    organization,
+    organizationalOpportunity: /\b(?:empresa|escritorio|organizacao|escola|colegio|minha equipe|nossa equipe|nosso time|in company)\b/.test(joined),
     role,
     schoolSector,
     offerInterest,
@@ -564,7 +560,7 @@ function extractLeadQualification(
     businessAreas: business.areas,
     objectives: business.objectives,
     priorityStatus,
-    deferredQuestions: [...deferredQuestions],
+    deferredQuestions: [],
     timeline,
     commercialIntent,
     pricingIntent,
@@ -573,6 +569,10 @@ function extractLeadQualification(
     contactConsent,
     contactRevoked,
   });
+  const result = collectQualificationAnswers(answers, merged, previous?.answers ? undefined : previous?.deferredQuestions);
+  if (result.contactConsent && !result.contactRevoked) result.nextStep = "Contato autorizado para continuar a conversa com o time.";
+  else if (result.contactRevoked) result.nextStep = undefined;
+  return result;
 }
 
 function qualificationTrack(qualification: AnaLeadQualification): AnaQualificationFocus | undefined {
@@ -600,32 +600,33 @@ function qualificationFields(qualification: AnaLeadQualification) {
 }
 
 function isQualificationComplete(qualification: AnaLeadQualification) {
+  if (!commercialInterviewComplete(qualification)) return false;
   const track = qualificationTrack(qualification);
+  const addressed = (key: "need" | "businessChallenge" | "timeline" | "grades" | "students" | "internet") => Boolean(qualification.answers?.[key]);
   if (track === "leia") {
-    return Boolean(qualification.need)
-      && qualification.gradeFit === true
-      && qualification.studentCount !== undefined
-      && qualification.internetReady === true
-      && Boolean(qualification.timeline);
+    return addressed("need") && addressed("grades") && addressed("students") && addressed("internet") && addressed("timeline")
+      && qualification.gradeFit !== false && qualification.internetReady !== false;
   }
   if (track === "consulting" || track === "product-development") {
-    return Boolean(qualification.need && qualification.businessChallenge && qualification.timeline);
+    return addressed("need") && addressed("businessChallenge") && addressed("timeline");
   }
-  if (track === "academy") return Boolean(qualification.need && qualification.timeline);
+  if (track === "academy") return addressed("need") && addressed("timeline");
   if (track === "multiple" && qualification.qualificationFocus === "multiple") {
     return Boolean(
-      qualification.need
-      && qualification.gradeFit === true
-      && qualification.studentCount !== undefined
-      && qualification.internetReady === true
-      && qualification.businessChallenge
-      && qualification.timeline,
+      addressed("need") && addressed("grades") && addressed("students") && addressed("internet")
+      && addressed("businessChallenge") && addressed("timeline")
+      && qualification.gradeFit !== false && qualification.internetReady !== false,
     );
   }
   return false;
 }
 
 function qualificationScore(qualification: AnaLeadQualification) {
+  if (isOrganizationalOpportunity(qualification)) {
+    // Factual coverage, not permission or the count of questions completed.
+    const fields = [...commercialFields, "need" as const, ...(qualification.offerInterests?.includes("leia") ? ["grades", "students", "internet"] as const : [])];
+    return Math.round(fields.filter(key => qualification.answers?.[key]?.status === "provided").length / fields.length * 100);
+  }
   const relevant = qualificationFields(qualification);
   return Math.round(relevant.filter((value) => value !== undefined).length / relevant.length * 100);
 }
@@ -638,20 +639,20 @@ function chooseNextQuestion(
 ): AnaNextQuestion | undefined {
   const asked = normalizeKnowledgeText(questions.flatMap(questionTexts).join(" "));
   if (qualification.contactRevoked) return undefined;
-  if (qualification.deferredQuestions?.length) return undefined;
   if (incompleteUserThought) {
     return { key: "need", text: "Pode me contar melhor o que você precisa?" };
   }
   if (
     userTurnCount <= 2
     && !qualification.name
+    && !qualification.answers?.name
     && qualification.gradeFit !== false
     && !qualification.contactRevoked
     && !/qual (?:e )?(?:o )?seu nome|como voce se chama|como posso te chamar/.test(asked)
   ) {
     return { key: "name", text: "Qual é o seu nome?" };
   }
-  if (!qualification.need && !/necessidade|objetivo|desafio|melhorar|resolver|busca/.test(asked)) {
+  if (!qualification.need && !qualification.answers?.need && !/necessidade|objetivo|desafio|melhorar|resolver|busca/.test(asked)) {
     return qualification.offerInterest === "leia"
       ? { key: "need", text: "Qual é a principal necessidade da escola com IA hoje?" }
       : { key: "need", text: "O que você gostaria de melhorar ou resolver hoje?" };
@@ -672,18 +673,22 @@ function chooseNextQuestion(
   const track = qualificationTrack(qualification);
   if (track === "leia" && qualification.gradeFit === false) return undefined;
   if (track === "leia" || track === "multiple") {
-    if (qualification.gradeFit === undefined && !/9.*ano|ensino medio|series/.test(asked)) {
+    if (qualification.gradeFit === undefined && !qualification.answers?.grades && !/9.*ano|ensino medio|series/.test(asked)) {
       return { key: "grades", text: "Sua escola atende turmas do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio?" };
     }
     if (qualification.gradeFit === false && track === "leia") return undefined;
-    if (qualification.studentCount === undefined && !/quantos.*(?:alunos|estudantes)|numero.*(?:alunos|estudantes)/.test(asked)) {
+    if (qualification.studentCount === undefined && !qualification.answers?.students && !/quantos.*(?:alunos|estudantes)|numero.*(?:alunos|estudantes)/.test(asked)) {
       return { key: "students", text: "Quantos estudantes vocês imaginam atender?" };
     }
-    if (qualification.internetReady === undefined && !/internet/.test(asked)) {
+    if (qualification.internetReady === undefined && !qualification.answers?.internet && !/internet/.test(asked)) {
       return { key: "internet", text: "A escola tem conexão estável à internet para as turmas?" };
     }
   }
-  if ((track === "consulting" || track === "product-development" || track === "multiple") && !qualification.businessChallenge && !/qual.*(?:problema|processo|desafio)|o que.*(?:gestao|operacao|negocio).*(?:melhorar|resolver)/.test(asked)) {
+  if (isOrganizationalOpportunity(qualification)) {
+    const missing = commercialFields.find(key => !qualification.answers?.[key]);
+    if (missing) return { key: missing, text: commercialQuestions[missing] };
+  }
+  if ((track === "consulting" || track === "product-development" || track === "multiple") && !qualification.businessChallenge && !qualification.answers?.businessChallenge && !/qual.*(?:problema|processo|desafio)|o que.*(?:gestao|operacao|negocio).*(?:melhorar|resolver)/.test(asked)) {
     return {
       key: "businessChallenge",
       text: qualification.offerInterests?.includes("leia")
@@ -691,11 +696,11 @@ function chooseNextQuestion(
         : "Qual problema ou processo do negócio você gostaria de melhorar com IA?",
     };
   }
-  if (!qualification.timeline) {
+  if (!qualification.timeline && !qualification.answers?.timeline) {
     return { key: "timeline", text: "Quando vocês gostariam de começar?" };
   }
   if (!isQualificationComplete(qualification)) return undefined;
-  if (qualification.contactConsent && !qualification.name) {
+  if (qualification.contactConsent && !qualification.name && !qualification.answers?.name) {
     return { key: "name", text: "Qual é o seu nome?" };
   }
   if (qualification.contactConsent && !qualification.email && !qualification.phone && !/qual.*(?:email|e-mail|whatsapp|telefone)|melhor.*(?:email|e-mail|whatsapp|telefone)/.test(asked)) {
@@ -733,10 +738,7 @@ export function analyzeAnaConversation(
   const questions = recentQuestions(messages);
   const previousAssistant = [...messages].reverse().find((message) => message.role === "assistant");
   const previousAssistantText = previousAssistant ? normalizeKnowledgeText(messageText(previousAssistant)) : "";
-  const deferredQuestion: AnaNextQuestion["key"] | undefined = isUnknownOrDeclined(latest)
-    ? !qualification.timeline && isTimelineQuestion(previousAssistantText) ? "timeline"
-      : !qualification.businessChallenge && isBusinessChallengeQuestion(previousAssistantText) ? "businessChallenge" : undefined
-    : undefined;
+  const deferredQuestion = undefined;
   const answeredNameThisTurn = Boolean(qualification.name && isNameQuestion(previousAssistantText)
     && (contextualName(latest) || /\b(?:me cham[oa]|meu nome|sou (?:o |a )?)/i.test(latest)));
   const incompleteUserThought = isIncompleteThought(latest);
@@ -814,14 +816,15 @@ export function analyzeAnaConversation(
       ...(qualification.internetReady === false ? ["A escola não possui conexão adequada à internet."] : []),
       ...(qualification.needs?.includes("students") ? ["A necessidade inclui ensinar IA aos estudantes."] : []),
       ...(qualification.needs?.includes("processes") || qualification.needs?.includes("product")
-        ? ["A necessidade também inclui aplicar IA na operação da escola."]
+        ? ["A necessidade inclui aplicar IA nos processos da organização."]
         : []),
       ...(qualification.qualificationFocus ? [`A frente prioritária informada é ${qualification.qualificationFocus}.`] : []),
       ...(qualification.businessChallenge ? [`Desafio operacional informado: ${qualification.businessChallenge}`] : []),
       ...(qualification.name ? [`Nome informado: ${qualification.name}.`] : []),
       ...(qualification.businessAreas?.length ? [`Áreas informadas: ${qualification.businessAreas.join(", ")}.`] : []),
       ...(qualification.objectives?.length ? [`Objetivos informados: ${qualification.objectives.join("; ")}.`] : []),
-      ...(qualification.priorityStatus === "combined" ? ["A pessoa quer tratar os objetivos juntos, sem desempate."] : []),
+      ...commercialFacts(qualification),
+      ...(qualification.priorityStatus === "combined" ? ["A pessoa quer tratar os objetivos juntos."] : []),
       ...(qualification.priorityStatus === "undecided" ? ["A pessoa ainda não sabe priorizar. No diagnóstico, essa descoberta faz parte do objetivo."] : []),
     ]),
     recentAssistantQuestions: questions,
@@ -838,6 +841,9 @@ export function analyzeAnaConversation(
     acceptedAssistantOffer: acceptedOffer,
     nextQuestion,
     deferredQuestion,
+    pendingQualification: commercialFacts(qualification, true),
+    leiaRecommendationAllowed: Boolean(qualification.needs?.includes("students") && qualification.gradeFit !== false && qualification.internetReady !== false && qualification.schoolSector !== "public"),
+    leiaExplanationRequested: /\bl\s*\.?\s*e\s*\.?\s*i\s*\.?\s*a\b|\bleia\b/.test(canonical(`${latest} ${acceptedOffer ?? ""}`)),
   };
 }
 
@@ -886,10 +892,11 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
   }
   // A name supplied alongside a question must not swallow that question.
   if (state.answerRequired) return undefined;
-  if (state.deferredQuestion) return "Tudo bem. Podemos retomar essa informação quando você souber. O que você já contou fica como contexto para continuarmos.";
   if (state.answeredNameThisTurn) {
     const firstName = state.qualification.name?.split(/\s+/)[0];
-    if (!state.nextQuestion) return `Prazer, ${firstName}. Como posso te ajudar?`;
+    if (!state.nextQuestion) return state.qualification.need
+      ? `Prazer, ${firstName}. Vamos continuar com ${state.qualification.businessAreas?.join(", ") || state.qualification.businessChallenge || "a necessidade que você trouxe"}.`
+      : `Prazer, ${firstName}. Como posso te ajudar?`;
     return `Prazer, ${firstName}. ${state.nextQuestion.text}`;
   }
   if (state.incompleteUserThought) {
@@ -913,12 +920,15 @@ export function immediateAnaReply(state: AnaConversationState, messages: AnaMess
       timeline: "Entendi.",
       contactConsent: "Pelo que você contou, vale a pena continuar essa conversa.",
       contact: "Ótimo.",
+      organization: "Entendi.",
+      organizationContext: "Certo.",
+      audience: "Entendi.",
+      currentAiUse: "Certo.",
+      desiredOutcome: "Entendi.",
+      mainConstraint: "Certo.",
+      decisionProcess: "Entendi.",
     };
-    const progress = state.qualification.priorityStatus === "combined"
-      ? "Entendi. Vamos considerar os objetivos juntos."
-      : state.qualification.priorityStatus === "undecided"
-        ? "Tudo bem. Vou manter a definição de prioridades como parte do diagnóstico."
-        : transitions[state.nextQuestion.key];
+    const progress = unavailableAnswer(latestUserText) ? "Sem problema." : transitions[state.nextQuestion.key];
     return `${progress} ${state.nextQuestion.text}`;
   }
   if (state.turnKind !== "acknowledgement") return undefined;

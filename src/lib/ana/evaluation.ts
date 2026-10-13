@@ -1,6 +1,7 @@
 import { normalizeKnowledgeText } from "../okf/core.js";
 import type { AnaConversationState } from "./conversation.js";
 import type { AnaReferenceScenario } from "./reference-suite.js";
+import { realizesQuestion } from "./qualification.js";
 
 export type EvaluationFailure = { layer: "controller" | "retrieval" | "generation" | "guardrail" | "persistence"; rule: string };
 export function evaluateState(state: AnaConversationState, expected: AnaReferenceScenario["expected"]): EvaluationFailure[] {
@@ -30,21 +31,7 @@ export function evaluateQuestion(state: AnaConversationState, text: string): Eva
   // Asking for a name is optional by product policy. If asked, it must still
   // match the controller; mandatory response terms remain checked separately.
   if (state.nextQuestion.key === "name" && !text.includes("?")) return [];
-  const questions = text.split(/[.!\n]/).filter(x => x.includes("?")).join(" ");
-  const normalized = normalizeKnowledgeText(questions);
-  const patterns: Record<NonNullable<AnaConversationState["nextQuestion"]>["key"], RegExp> = {
-    name: /nome|chama/,
-    need: /precisa|necessidade|ajudar|busca|resolver|melhorar/,
-    grades: /serie|9.*ano|ensino medio|faixa/,
-    students: /quantos|quantidade|numero.*(?:alunos|estudantes)/,
-    internet: /internet|conexao/,
-    businessChallenge: /desafio|processo|gestao|negocio|operacao|melhorar|resolver/,
-    timeline: /quando|prazo|comecar|iniciar/,
-    priority: /prioridade|prioritaria|primeiro|duas frentes|ambas|foco/,
-    contactConsent: /(?:quer|posso|autoriza|podemos|gostaria).*(?:contato|time|equipe)/,
-    contact: /e-?mail|whatsapp|telefone|celular|canal/,
-  };
-  return patterns[state.nextQuestion.key].test(normalized) ? [] : [{ layer: "generation", rule: `recommended_question_not_realized:${state.nextQuestion.key}` }];
+  return realizesQuestion(state.nextQuestion.key, text) ? [] : [{ layer: "generation", rule: `recommended_question_not_realized:${state.nextQuestion.key}` }];
 }
 
 // In-process evaluation never dispatches or persists a commercial handoff.

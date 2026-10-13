@@ -3,6 +3,9 @@ import type { AnaMessage } from "./types";
 import { analyzeAnaConversation, immediateAnaReply } from "./conversation";
 import { ANA_REFERENCE_SUITE } from "./reference-suite";
 
+// Synthetic context needed by the commercial policy approved after d765e5b.
+const schoolCommercialContext = " Minha escola se chama Horizonte. Somos uma escola particular. Atualmente não usamos IA. Nossa principal restrição é tempo. Eu decido a contratação.";
+
 function messages(turns: Array<{ role: "user" | "assistant"; text: string }>) {
   return turns.map((turn, index) => ({
     id: `message-${index}`,
@@ -141,9 +144,9 @@ describe("Ana reference conversation suite", () => {
 
   it("moves a qualified lead to consented handoff when contact is supplied", () => {
     const conversation = messages([
-      { role: "user", text: "Sou diretor de uma escola. Quero ensinar IA aos estudantes este ano. Atendemos do 9º ano ao Ensino Médio, com 200 alunos e internet estável." },
+      { role: "user", text: "Sou diretor de uma escola. Quero ensinar IA aos estudantes este ano. Atendemos do 9º ano ao Ensino Médio, com 200 alunos e internet estável." + schoolCommercialContext },
       { role: "assistant", text: "Posso registrar seu nome e seu melhor e-mail ou WhatsApp para o time continuar essa conversa?" },
-      { role: "user", text: "Sim, meu nome é Rafael e meu e-mail é rafael@colegio.com.br." },
+      { role: "user", text: "Autorizo o contato. Meu nome é Rafael e meu e-mail é rafael@colegio.com.br." },
     ]);
     const state = analyzeAnaConversation(conversation);
     expect(state.stage).toBe("handoff");
@@ -176,9 +179,9 @@ describe("Ana reference conversation suite", () => {
 
   it("confirms handoff only after persistence succeeds", () => {
     const conversation = messages([
-      { role: "user", text: "Sou diretor e quero falar com vendas sobre o L.E.I.A. para ensinar IA a 90 alunos do Ensino Médio, com internet estável, ainda este ano." },
+      { role: "user", text: "Sou diretor e quero falar com vendas sobre o L.E.I.A. para ensinar IA a 90 alunos do Ensino Médio, com internet estável, ainda este ano." + schoolCommercialContext },
       { role: "assistant", text: "Posso registrar seu nome e seu melhor e-mail ou WhatsApp para o time continuar essa conversa?" },
-      { role: "user", text: "Pode sim, meu nome é Rafael e meu e-mail é contato@escola.com.br." },
+      { role: "user", text: "Autorizo o contato. Meu nome é Rafael e meu e-mail é contato@escola.com.br." },
     ]);
     const state = analyzeAnaConversation(conversation);
     expect(immediateAnaReply(state, conversation)).toBeUndefined();
@@ -367,7 +370,7 @@ describe("Ana reference conversation suite", () => {
 
   it("separates contact consent from the contact channel", () => {
     const beforeConsent = messages([
-      { role: "user", text: "Meu nome é Leonardo. Sou dono de uma escola do 9º ano, com 90 alunos e internet estável. Quero contratar o programa para ensinar IA aos estudantes este ano." },
+      { role: "user", text: "Meu nome é Leonardo. Sou dono de uma escola do 9º ano, com 90 alunos e internet estável. Quero contratar o programa para ensinar IA aos estudantes este ano." + schoolCommercialContext },
     ]);
     const qualified = analyzeAnaConversation(beforeConsent);
     expect(qualified.nextQuestion?.key).toBe("contactConsent");
@@ -477,12 +480,12 @@ describe("Ana reference conversation suite", () => {
     });
     expect(state.qualification.qualificationFocus).toBe("consulting");
     expect(state.nextQuestion).toEqual({
-      key: "businessChallenge",
-      text: "Na gestão da escola, qual problema ou processo você mais gostaria de melhorar com IA?",
+      key: "organization",
+      text: "Qual é a sua empresa ou organização?",
     });
   });
 
-  it("only requests contact consent after consulting qualification is complete", () => {
+  it("does not request contact with only need and timeline after the approved policy change", () => {
     const conversation = messages([
       { role: "user", text: "Sou a Marina, diretora de uma escola. Quero avançar com uma consultoria para melhorar a operação." },
       { role: "assistant", text: "Na gestão da escola, qual problema ou processo você mais gostaria de melhorar com IA?" },
@@ -497,8 +500,8 @@ describe("Ana reference conversation suite", () => {
       commercialIntent: true,
     });
     expect(state.qualification.businessChallenge).toBe("Quero reduzir o retrabalho da equipe administrativa.");
-    expect(state.leadStage).toBe("qualified");
-    expect(state.nextQuestion?.key).toBe("contactConsent");
+    expect(state.leadStage).toBe("qualifying");
+    expect(state.nextQuestion?.key).toBe("organization");
   });
 
   it("does not hand off a lead who supplied contact before qualification", () => {

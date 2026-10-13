@@ -355,8 +355,8 @@ export const ANA_REFERENCE_SUITE: AnaReferenceScenario[] = [
       { role: "assistant", text: "Qual é o seu nome?" },
       { role: "user", text: "Mariana" },
     ],
-    expected: { nextQuestionKey: "timeline", shouldAskQuestion: true },
-    response: { containsAny: ["quando", "começar"], maxQuestions: 1 },
+    expected: { nextQuestionKey: "organization", shouldAskQuestion: true },
+    response: { containsAny: ["empresa", "organização"], maxQuestions: 1 },
   },
   {
     name: "contato fornecido cedo não pula a qualificação",

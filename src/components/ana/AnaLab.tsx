@@ -170,7 +170,7 @@ export default function AnaLab() {
   const leadStageLabel = metadata?.leadStage ? {
     engaged: "engajado",
     qualifying: "em qualificação",
-    qualified: "qualificado",
+    qualified: "qualificação percorrida",
     meeting_requested: "reunião solicitada",
     handoff: "encaminhamento pronto",
     nurture: "nutrição",
@@ -384,7 +384,7 @@ export default function AnaLab() {
                 {qualityFallback && <small>Qualidade: resposta segura gerada diretamente da documentação</small>}
                 {metadata?.validationIssues?.length ? <small>Validações acionadas: {metadata.validationIssues.join(", ")}</small> : null}
                 {conversationStageLabel && <small>Estado: {conversationStageLabel} · {turnKindLabel}</small>}
-                {leadStageLabel && <small>Lead: {leadStageLabel} · qualificação {metadata?.qualificationScore ?? 0}%</small>}
+                {leadStageLabel && <small>Lead: {leadStageLabel} · informações conhecidas {metadata?.qualificationScore ?? 0}%</small>}
                 {nextQuestionLabel && <small>Próximo dado: {nextQuestionLabel}</small>}
               </div>
             </div>
