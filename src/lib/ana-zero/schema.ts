@@ -68,6 +68,7 @@ export type AnaZeroMetadata = {
   sources?: Array<{ id: string; title: string }>;
   regenerated?: boolean;
   issues?: string[];
+  errors?: string[];
   inputTokens?: number;
   outputTokens?: number;
   totalTokens?: number;

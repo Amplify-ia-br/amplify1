@@ -1,7 +1,7 @@
 import { gateway, generateText, stepCountIs, type LanguageModel, type ModelMessage } from "ai";
 import { estimateAnaCost, getAnaFallbackModels, getAnaQualityRetryModel, type AnaModelId } from "../ana/config.js";
 import type { KnowledgeReader } from "../okf/http.js";
-import { ANA_ZERO_SAFE_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer, type AnaZeroIssue } from "./guardrails.js";
+import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer, type AnaZeroIssue } from "./guardrails.js";
 import { buildAnaZeroSystem } from "./prompt.js";
 import type { AnaZeroHandoff, AnaZeroMemoryEntry } from "./schema.js";
 import { createAnaZeroToolState, createAnaZeroTools, sanitizeMemory } from "./tools.js";
@@ -23,6 +23,7 @@ export type AnaZeroTurnResult = {
   sources: Array<{ id: string; title: string }>;
   regenerated: boolean;
   issues: AnaZeroIssue[];
+  errors: string[];
   resolvedModel: string;
   usage: { inputTokens: number; outputTokens: number; totalTokens: number };
   estimatedCostUsd?: number;
@@ -64,31 +65,43 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   let issues: AnaZeroIssue[] = [];
   let regenerated = false;
   let text = "";
+  const errors: string[] = [];
+  const recordError = (model: string, error: unknown) => {
+    const message = (error instanceof Error ? error.message : String(error)).slice(0, 240);
+    errors.push(`${model}: ${message}`);
+    console.error("[Ana Zero] Falha na chamada ao modelo", model, message);
+  };
 
   try {
     const first = validateAnaZeroAnswer(await attempt(input.model), state.evidenceText);
     if (first.valid) text = first.text;
     else issues = first.issues;
-  } catch {
+  } catch (error) {
+    recordError(input.model, error);
     issues = ["empty"];
   }
 
   if (!text) {
     regenerated = true;
+    const retryModel = getAnaQualityRetryModel(input.model);
     try {
-      const second = validateAnaZeroAnswer(await attempt(getAnaQualityRetryModel(input.model), issues), state.evidenceText);
+      const second = validateAnaZeroAnswer(await attempt(retryModel, issues), state.evidenceText);
       if (second.valid) text = second.text;
       else {
         issues = [...new Set([...issues, ...second.issues])];
         text = redactAnaZeroAnswer(second.text, state.evidenceText);
       }
-    } catch {
+    } catch (error) {
+      recordError(retryModel, error);
       issues = [...new Set([...issues, "empty" as const])];
     }
   }
 
+  const technicalFailure = !text && errors.length > 0;
+
   return {
-    text: text || ANA_ZERO_SAFE_REPLY,
+    text: text || (technicalFailure ? ANA_ZERO_TECHNICAL_REPLY : ANA_ZERO_SAFE_REPLY),
+    errors,
     memory: state.memory,
     handoff: state.handoff,
     toolCalls: state.toolCalls,

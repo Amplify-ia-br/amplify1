@@ -10,7 +10,7 @@ vi.mock("ai", async (importOriginal) => ({
 
 import { runAnaZeroTurn } from "./agent";
 import { analyzeTranscript } from "./compare";
-import { ANA_ZERO_SAFE_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer } from "./guardrails";
+import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer } from "./guardrails";
 import { buildAnaZeroSystem } from "./prompt";
 import { COMPARE_SCENARIOS } from "./scenarios";
 import { anaZeroRequestSchema } from "./schema";
@@ -103,10 +103,19 @@ describe("turno do agente", () => {
     expect(turn.text).toBe("Posso explicar o programa.");
   });
 
-  it("usa resposta segura mínima quando o modelo falha duas vezes", async () => {
+  it("assume falha técnica e expõe o erro quando o modelo lança erro duas vezes", async () => {
     mocks.generateText.mockRejectedValue(new Error("indisponível"));
     const turn = await runAnaZeroTurn({ model: "openai/gpt-5.4-mini-fast", reader, memory: [], history });
+    expect(turn.text).toBe(ANA_ZERO_TECHNICAL_REPLY);
+    expect(turn.errors).toHaveLength(2);
+    expect(turn.errors[0]).toContain("indisponível");
+  });
+
+  it("usa resposta segura mínima quando o modelo responde vazio, sem erro técnico", async () => {
+    mocks.generateText.mockResolvedValue(result(""));
+    const turn = await runAnaZeroTurn({ model: "openai/gpt-5.4-mini-fast", reader, memory: [], history });
     expect(turn.text).toBe(ANA_ZERO_SAFE_REPLY);
+    expect(turn.errors).toEqual([]);
   });
 });
 

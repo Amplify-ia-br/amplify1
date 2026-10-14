@@ -132,6 +132,7 @@ export default function AnaZeroLab() {
               {metadata.handoff ? " · pedido de contato registrado" : ""}
               {metadata.regenerated ? " · regenerada" : ""}
               {metadata.issues?.length ? ` · validações: ${metadata.issues.join(", ")}` : ""}
+  {metadata.errors?.length ? ` · erro técnico: ${metadata.errors.join(" | ")}` : ""}
               {metadata.estimatedCostUsd != null ? ` · US$ ${metadata.estimatedCostUsd.toFixed(5)}` : ""}
             </p>
           )}

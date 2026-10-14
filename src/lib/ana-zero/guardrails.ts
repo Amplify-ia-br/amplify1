@@ -53,5 +53,8 @@ export function redactAnaZeroAnswer(text: string, evidenceText: string[]) {
   return kept.join(" ").replace(/\*\*(.*?)\*\*/g, "$1").trim();
 }
 
+export const ANA_ZERO_TECHNICAL_REPLY =
+  "Tive um problema técnico para responder agora. Pode tentar de novo em instantes?";
+
 export const ANA_ZERO_SAFE_REPLY =
   "Prefiro não afirmar isso sem ter certeza. Pode me contar um pouco mais sobre o que você precisa?";

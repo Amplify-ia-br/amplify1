@@ -86,6 +86,7 @@ export async function handleAnaZeroChat(
           sources: turn.sources,
           regenerated: turn.regenerated,
           issues: turn.issues,
+          errors: turn.errors,
           inputTokens: turn.usage.inputTokens,
           outputTokens: turn.usage.outputTokens,
           totalTokens: turn.usage.totalTokens,
