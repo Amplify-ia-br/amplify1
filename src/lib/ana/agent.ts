@@ -152,7 +152,7 @@ DIRETRIZ DESTE TURNO:
 ${turnDirective(state)}`;
 }
 
-function knowledgeContext(retrieval: AnaRetrievalTrace) {
+export function knowledgeContext(retrieval: AnaRetrievalTrace) {
   if (!retrieval.documents.length) return "Nenhum documento relevante foi encontrado.";
   return retrieval.documents.map((document) => [
     `DOCUMENTO: ${document.title}`,
@@ -175,7 +175,7 @@ function addUsage(
   };
 }
 
-function languageModel(model: AnaModelId, apiKey?: string) {
+export function languageModel(model: AnaModelId, apiKey?: string) {
   return ANA_MODELS[model].provider === "anthropic"
     ? createAnthropic({ apiKey })(model.replace("byok/anthropic/", ""))
     : gateway(model);

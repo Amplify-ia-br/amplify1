@@ -32,21 +32,21 @@ export type AnaAnswerValidation = {
   issues: AnaAnswerIssue[];
 };
 
-const HIDDEN_UNICODE = /[\u061C\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/u;
-const INTERNAL_TERMS = /\b(?:MCP|OKF)\b/iu;
-const MARKDOWN = /(?:^|\n)\s{0,3}(?:#{1,6}\s|```|>\s)|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\)/u;
-const VISIBLE_SOURCE = /(?:^|\n)\s*fontes?\s*:/iu;
-const CONTACT_REQUEST = /(?:(?:qual|informe|envie|mande|compartilhe|passe|forne[cç]a|digite|deixe|me passe|pode me passar|preciso(?: do)?|necessito(?: do)?).{0,50}(?:e-?mail|whatsapp|telefone|celular|contato)|(?:qual|diga|me diga|informe).{0,50}(?:forma|jeito|canal).{0,30}(?:falar|contato)|(?:como posso|como podemos).{0,40}(?:falar|contatar|contactar).{0,20}(?:com )?voc[eê]|(?:seu|o seu)\s+(?:e-?mail|whatsapp|telefone|celular)(?:\s*,?\s*(?:por favor|para|pra))?|(?:e-?mail|whatsapp|telefone|celular).{0,24}(?:por favor|para continuarmos|pra continuar)|(?:quer|gostaria).{0,60}(?:entr(?:ar|e) em contato|falar com voc[eê]))/iu;
+export const HIDDEN_UNICODE = /[\u061C\u200B-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/u;
+export const INTERNAL_TERMS = /\b(?:MCP|OKF)\b/iu;
+export const MARKDOWN = /(?:^|\n)\s{0,3}(?:#{1,6}\s|```|>\s)|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\)/u;
+export const VISIBLE_SOURCE = /(?:^|\n)\s*fontes?\s*:/iu;
+export const CONTACT_REQUEST = /(?:(?:qual|informe|envie|mande|compartilhe|passe|forne[cç]a|digite|deixe|me passe|pode me passar|preciso(?: do)?|necessito(?: do)?).{0,50}(?:e-?mail|whatsapp|telefone|celular|contato)|(?:qual|diga|me diga|informe).{0,50}(?:forma|jeito|canal).{0,30}(?:falar|contato)|(?:como posso|como podemos).{0,40}(?:falar|contatar|contactar).{0,20}(?:com )?voc[eê]|(?:seu|o seu)\s+(?:e-?mail|whatsapp|telefone|celular)(?:\s*,?\s*(?:por favor|para|pra))?|(?:e-?mail|whatsapp|telefone|celular).{0,24}(?:por favor|para continuarmos|pra continuar)|(?:quer|gostaria).{0,60}(?:entr(?:ar|e) em contato|falar com voc[eê]))/iu;
 const MONEY = /(?:(?:R\$|BRL|US\$|USD|EUR|€|\$)\s*\d[\d.,]*|\b\d[\d.,]*\s*(?:mil\s+)?(?:reais|d[oó]lares|euros)\b)/giu;
 
-function containsNonLatinLetter(value: string) {
+export function containsNonLatinLetter(value: string) {
   for (const character of value.match(/\p{Letter}/gu) ?? []) {
     if (!/\p{Script=Latin}/u.test(character)) return true;
   }
   return false;
 }
 
-function normalizedMoneyValues(value: string) {
+export function normalizedMoneyValues(value: string) {
   return (value.match(MONEY) ?? []).map((match) => {
     const normalized = match.toLocaleLowerCase("pt-BR");
     const currency = /(?:us\$|usd|dolar|dólar|\$)/u.test(normalized) && !/r\$/u.test(normalized)
@@ -82,7 +82,7 @@ function commercialQualifiers(value: string) {
   return qualifiers.flatMap(([name, pattern]) => pattern.test(normalized) ? [name] : []);
 }
 
-function pricesAreGrounded(text: string, retrieval: AnaRetrievalTrace) {
+export function pricesAreGrounded(text: string, retrieval: AnaRetrievalTrace) {
   const evidence = retrieval.documents.flatMap((document) => document.content.split(/\n{2,}|(?<=[.!?])\s+/u));
   const claims = text.split(/\n+|(?<=[.!?])\s+/u).filter((claim) => normalizedMoneyValues(claim).length > 0);
 

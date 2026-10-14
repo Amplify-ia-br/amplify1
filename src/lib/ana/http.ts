@@ -6,6 +6,7 @@ import {
 import { generateAnaAnswer } from "./agent.js";
 import { anaChatRequestSchema, estimateAnaCost } from "./config.js";
 import { analyzeAnaConversation, immediateAnaReply, type AnaConversationState } from "./conversation.js";
+import { handleExperimentalTurn, isExperimentalEngineEnabled } from "./experimental/http.js";
 import { emptyAnaRetrieval, retrieveAnaKnowledge } from "./retrieval.js";
 import type { AnaMessage, AnaMessageMetadata } from "./types.js";
 import { resolveAnaSession } from "./session.js";
@@ -188,6 +189,24 @@ export async function handleAnaChat(request: Request, reader: KnowledgeReader) {
   const uiMessages = storedMessages.some((message) => message.id === serverUserMessage.id)
     ? storedMessages
     : [...storedMessages, serverUserMessage];
+  if (isExperimentalEngineEnabled()) {
+    return handleExperimentalTurn({
+      reader,
+      mode,
+      model,
+      apiKey,
+      pagePath,
+      conversationKey: conversationId,
+      sessionHash: session.sessionHash,
+      persistedConversationId: persistedUserMessage.persisted ? persistedUserMessage.conversationId : undefined,
+      incomingMessages,
+      uiMessages,
+      previousQualification,
+      headers: withRateHeaders(responseHeaders, rateLimit),
+      startedAt: Date.now(),
+    });
+  }
+
   const conversation = analyzeAnaConversation(uiMessages, pagePath, previousQualification);
   const retrievalQuery = buildAnaRetrievalQuery(latestQuestion, conversation);
   const startedAt = Date.now();
