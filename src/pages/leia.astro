@@ -30,7 +30,7 @@ const canonical = new URL("/leia", Astro.site ?? Astro.url).toString();
 @font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-800-normal.woff2') format('woff2'); font-weight: 800; font-display: swap; }
 /* Layout: L.E.I.A Design System. Seções chapadas alternando roxo e creme (data-theme na seção),
    hero com personagem em arco e onda pintada, programa em números, jornada em escada,
-   conversão em dois caminhos (masterclass e orçamento) para um único formulário. Tema único e deliberado. */
+   conversão em dois caminhos (demonstração e orçamento) para um único formulário. Tema único e deliberado. */
 :root {
   /* marca */
   --roxo-leia: #42128A; --roxo: #482080; --roxo-profundo: #301654; --roxo-noite: #200B52;
@@ -276,12 +276,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 
 /* rodapé */
 .rodape { background: var(--roxo-noite); color: var(--branco); padding: var(--esp-8) var(--margem-pagina) var(--esp-6); --texto: var(--branco); --acao: var(--ciano); --acao-hover: #8FE2E9; --sobre-acao: var(--roxo-profundo); --foco: var(--ciano); }
-.rodape__topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--esp-6); }
-.assinatura { display: flex; align-items: center; gap: var(--esp-6); flex-wrap: wrap; }
-.assinatura__leia { height: 56px; width: auto; }
-.assinatura__divisor { width: 1px; align-self: stretch; background: #3A2270; }
-.assinatura__endosso span { display: block; margin-bottom: 8px; font: 700 11px/14px var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: #D9CCEF; }
-.assinatura__endosso img { height: 44px; width: auto; }
+.rodape__topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--esp-6); }
 .rodape__base { margin-top: 40px; padding-top: 22px; border-top: 1px solid #3A2270; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; font: 500 13px/18px var(--font-sans); color: #CFC2EA; }
 .rodape__base a { color: inherit; }
 
@@ -348,7 +343,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
       <li><a href="#contratacao">Contratação</a></li>
       <li><a href="#perguntas">Perguntas</a></li>
     </ul>
-    <a class="botao" href="#contato" data-intencao="masterclass">Solicitar masterclass</a>
+    <a class="botao" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita</a>
   </div>
 </nav>
 
@@ -361,10 +356,9 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
       <h1 class="titulo-xl">Seus alunos JÁ usam IA. <span class="destaque-2">Ensine a usar com critério.</span></h1>
       <p class="texto">O L.E.I.A. é um programa anual de fluência em inteligência artificial para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio.</p>
       <div class="botoes">
-        <a class="botao botao--grande" href="#contato" data-intencao="masterclass">Solicitar uma masterclass <span class="seta" aria-hidden="true">&rarr;</span></a>
+        <a class="botao botao--grande" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita <span class="seta" aria-hidden="true">&rarr;</span></a>
         <a class="botao botao--contorno botao--grande" href="#formato">Ver como funciona</a>
       </div>
-      <span class="selo">Masterclass gratuita para escolas</span>
     </div>
     <div class="arco">
       <div class="arco__foto"><img src="/leia/assets/personagem-04.jpg" alt="Estudante com o boné do L.E.I.A." width="600" height="750"></div>
@@ -480,7 +474,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
     </div>
     <div class="numeros">
       <div class="numero"><p class="numero__valor">1h40</p><p class="numero__legenda">Dois encontros por semana<span>Com mediação pedagógica em todos</span></p></div>
-      <div class="numero"><p class="numero__valor">48</p><p class="numero__legenda">Horas de mão na massa<span>Dividos em dois módulos semestrais</span></p></div>
+      <div class="numero"><p class="numero__valor">40</p><p class="numero__legenda">Horas de mão na massa<span>Dividos em dois módulos semestrais</span></p></div>
       <div class="numero"><p class="numero__valor">10 a 25</p><p class="numero__legenda">Estudantes por turma<span>A escola pode abrir mais de uma turma</span></p></div>
     </div>
   </div>
@@ -515,7 +509,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
       <img class="jornada-mapa__imagem jornada-mapa__imagem--animada" src="/leia/assets/leia-jornada-animada-v2.gif" alt="Jornada LEIA: chegada ao Início, Alquimistas, Transmutação e Festival dos Inventores. Os alunos visitam Artes, Tecnologia e Empreendedorismo, retornam à Transmutação e seguem para o Festival." width="1280" height="907" loading="lazy" decoding="async">
       <img class="jornada-mapa__imagem jornada-mapa__imagem--reduzida" src="/leia/assets/leia-jornada-base-v2.png" alt="Versão sem movimento da jornada LEIA." width="1536" height="1024" loading="lazy" decoding="async">
     </figure>
-    <p class="jornada-mapa__nota">A lista completa de atividades é apresentada na masterclass.</p>
+    <p class="jornada-mapa__nota">A lista completa de atividades é apresentada na demonstração.</p>
   </div>
 </section>
 
@@ -544,29 +538,29 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
       <ul class="marcadores">
         <li>Mediação em todos os encontros.</li>
         <li>Uso de IA com objetivo declarado.</li>
-        <li>Plataforma e proteção de dados apresentadas na masterclass.</li>
+        <li>Plataforma e proteção de dados apresentadas na demonstração.</li>
       </ul>
     </aside>
   </div>
 </section>
 
-<!-- 9. DA MASTERCLASS À IMPLANTAÇÃO -->
+<!-- 9. DA DEMONSTRAÇÃO À IMPLANTAÇÃO -->
 <section class="secao" data-theme="roxo" id="caminho">
   <div class="container">
     <div class="cabeca">
-      <p class="rotulo">Da masterclass à implantação</p>
+      <p class="rotulo">Da demonstração à implantação</p>
       <h2 class="titulo">Como uma escola <span class="destaque-2">chega ao L.E.I.A.</span></h2>
     </div>
     <div class="grade g-7-5 topo-alinhado">
       <ol class="etapas">
-        <li><div><h3>Masterclass exclusiva para escola - presencial ou online</h3><p class="corpo">Gratuita, com 1 hora de conteúdo e 30 minutos para dúvidas. A equipe vive a experiência do método na prática.</p></div></li>
+        <li><div><h3>Demonstração exclusiva para a escola — presencial ou online</h3><p class="corpo">Gratuita, com 1 hora de conteúdo e 30 minutos para dúvidas. A equipe vive a experiência do método na prática.</p></div></li>
         <li><div><h3>Diagnóstico gratuito</h3><p class="corpo">Conversa com a direção sobre perfil, estrutura e metas da escola.</p></div></li>
         <li><div><h3>Proposta</h3><p class="corpo">Desenhada para a realidade de cada escola.</p></div></li>
         <li><div><h3>Implantação e turmas em 2027</h3><p class="corpo">Formação docente, organização das turmas e início no 1º semestre.</p></div></li>
       </ol>
       <aside class="cartao-creme">
         <span class="selo">Gratuita · 1h + 30 min de dúvidas</span>
-        <h3 class="titulo-2">O que a masterclass apresenta</h3>
+        <h3 class="titulo-2">O que a demonstração apresenta</h3>
         <ul class="marcadores">
           <li>A experiência do método na prática.</li>
           <li>A lista completa de atividades dos estudantes.</li>
@@ -574,7 +568,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
           <li>O mapeamento com a BNCC e a política de privacidade e proteção de dados.</li>
           <li>Como funcionam a condução e a organização das turmas em 2027.</li>
         </ul>
-        <a class="botao botao--bloco" href="#contato" data-intencao="masterclass">Solicitar uma masterclass <span class="seta" aria-hidden="true">&rarr;</span></a>
+        <a class="botao botao--bloco" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita <span class="seta" aria-hidden="true">&rarr;</span></a>
       </aside>
     </div>
   </div>
@@ -616,10 +610,10 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
       <details><summary>A escola precisa ter um laboratório específico?</summary><p class="corpo">Precisa de um laboratório de informática com acesso à internet. O programa usa a infraestrutura que a escola já tem e não depende do celular do estudante.</p></details>
       <details><summary>Precisamos criar uma nova disciplina?</summary><p class="corpo">Não. O programa entra no contraturno, como eletiva ou como itinerário formativo.</p></details>
       <details><summary>Como professores e coordenação participam?</summary><p class="corpo">A formação docente faz parte da implantação, conduzida por especialistas da Amplify. Na condução padrão, um educador do programa dá os encontros, sem trabalho extra para o corpo docente. A escola também pode formar e certificar professores próprios para conduzir.</p></details>
-      <details><summary>Como o programa aborda segurança e uso responsável?</summary><p class="corpo">Todo uso de IA acontece com objetivo declarado e com mediação em todos os encontros. Segurança, verificação e responsabilidade fazem parte do método. Os detalhes da plataforma de IA e da proteção de dados são apresentados na masterclass.</p></details>
+      <details><summary>Como o programa aborda segurança e uso responsável?</summary><p class="corpo">Todo uso de IA acontece com objetivo declarado e com mediação em todos os encontros. Segurança, verificação e responsabilidade fazem parte do método. Os detalhes da plataforma de IA e da proteção de dados são apresentados na demonstração.</p></details>
       <details><summary>Como a escola e as famílias enxergam o resultado?</summary><p class="corpo">Pelos projetos dos estudantes e pelo Festival dos Inventores, no fim do ano, com apresentação pública e avaliação por banca em cinco critérios: criatividade, estética, técnica, impacto e execução.</p></details>
       <details><summary>Quando o programa começa?</summary><p class="corpo">As turmas começam a partir do 1º semestre de 2027.</p></details>
-      <details><summary>A masterclass é gratuita?</summary><p class="corpo">Sim. São 1 hora de conteúdo e 30 minutos para dúvidas, para sua escola, presencial ou online.</p></details>
+      <details><summary>A demonstração é gratuita?</summary><p class="corpo">Sim. São 1 hora de conteúdo e 30 minutos para dúvidas, para sua escola, presencial ou online.</p></details>
       <details><summary>Quanto custa?</summary><p class="corpo">Os valores são apresentados em uma reunião com um especialista, depois de entendermos a realidade da escola. Use o botão "Solicitar orçamento".</p></details>
       <details><summary>A solicitação já confirma uma data?</summary><p class="corpo">Não. O envio do formulário registra o interesse. Nossa equipe entra em contato para entender o contexto e combinar os próximos passos.</p></details>
     </div>
@@ -634,9 +628,9 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
     <div class="contato-dir">
       <p class="rotulo">O primeiro passo</p>
       <h2 class="titulo">Leve essa conversa <span class="eletrico">para a sua escola.</span></h2>
-      <p class="texto">Conte um pouco sobre o seu contexto. Nossa equipe entra em contato para organizar uma masterclass ou conversar sobre implantação e orçamento.</p>
+      <p class="texto">Conte um pouco sobre o seu contexto. Nossa equipe entra em contato para agendar uma demonstração ou conversar sobre implantação e orçamento.</p>
       <ul class="marcadores">
-        <li>Masterclass gratuita para sua escola - presencial ou online.</li>
+        <li>Demonstração gratuita para sua escola — presencial ou online.</li>
         <li>1 hora de conteúdo e 30 minutos para dúvidas.</li>
         <li>Conversa com especialista para montar o orçamento.</li>
       </ul>
@@ -653,7 +647,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
         <fieldset>
           <legend class="legend">Como você quer começar?</legend>
           <div class="opcoes">
-            <label class="opcao"><input type="radio" name="intencao" id="intencao-masterclass" value="masterclass" checked><span>Quero solicitar uma masterclass</span></label>
+            <label class="opcao"><input type="radio" name="intencao" id="intencao-masterclass" value="masterclass" checked><span>Quero agendar uma demonstração gratuita</span></label>
             <label class="opcao"><input type="radio" name="intencao" id="intencao-orcamento" value="orcamento"><span>Quero conversar com um especialista sobre implantação e orçamento</span></label>
           </div>
         </fieldset>
@@ -708,12 +702,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 <footer class="rodape">
   <div class="container">
     <div class="rodape__topo">
-      <div class="assinatura">
-        <img class="assinatura__leia" src="/leia/assets/leia-logo-assinatura-branco.png" alt="L.E.I.A. Laboratório Escolar de Inteligência Artificial">
-        <span class="assinatura__divisor" aria-hidden="true"></span>
-        <div class="assinatura__endosso"><span>Um programa</span><img src="/leia/assets/amplify-assinatura-referencia.png" alt="Amplify, Escola de Inteligência Artificial"></div>
-      </div>
-      <a class="botao" href="#contato" data-intencao="masterclass">Solicitar masterclass</a>
+      <a class="botao" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita</a>
     </div>
     <div class="rodape__base">
       <span>L.E.I.A. · Laboratório Escolar de Inteligência Artificial</span>
@@ -724,7 +713,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   </div>
 </footer>
 
-<div class="cta-fixo" id="cta-fixo"><a class="botao" href="#contato" data-intencao="masterclass">Solicitar masterclass <span class="seta" aria-hidden="true">&rarr;</span></a></div>
+<div class="cta-fixo" id="cta-fixo"><a class="botao" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita <span class="seta" aria-hidden="true">&rarr;</span></a></div>
 
 <script>
 /* ====== CONFIGURAÇÃO ======
@@ -836,7 +825,7 @@ const CONFIG = {
     if (!validar()) return;
     const f = new FormData(form);
     const solicitouMasterclass = f.get("intencao") !== "orcamento";
-    const intencao = solicitouMasterclass ? "Solicitar masterclass" : "Conversar com especialista sobre implantação e orçamento";
+    const intencao = solicitouMasterclass ? "Agendar demonstração gratuita" : "Conversar com especialista sobre implantação e orçamento";
     const formatoMasterclass = solicitouMasterclass ? String(f.get("formatoMasterclass") || "") : "";
     lead = {
       intencao, nome: f.get("nome").trim(), email: f.get("email").trim(), escola: f.get("escola").trim(), papel: f.get("papel"),
@@ -844,7 +833,7 @@ const CONFIG = {
       origem: "Site L.E.I.A.", criadoEm: new Date().toISOString(), ...utm()
     };
     const linhas = [["Como quer começar", lead.intencao], ["Nome", lead.nome], ["E-mail", lead.email], ["Escola ou rede", lead.escola], ["Papel", lead.papel]];
-    if (lead.formatoMasterclass) linhas.splice(1, 0, ["Formato da masterclass", lead.formatoMasterclass === "presencial" ? "Presencial" : "Online"]);
+    if (lead.formatoMasterclass) linhas.splice(1, 0, ["Formato da demonstração", lead.formatoMasterclass === "presencial" ? "Presencial" : "Online"]);
     if (lead.estudantes) linhas.push(["Estudantes (9º ao 3º EM)", lead.estudantes]);
     if (lead.cidade) linhas.push(["Cidade", lead.cidade]);
     if (lead.telefone) linhas.push(["Telefone", lead.telefone]);

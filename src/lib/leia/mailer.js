@@ -27,7 +27,7 @@ function escapeHtml(value) {
 }
 
 function interestLabel(value) {
-  return value === "implantacao" ? "Implantação e orçamento" : "Masterclass";
+  return value === "implantacao" ? "Implantação e orçamento" : "Demonstração gratuita";
 }
 
 function formatLabel(value) {
@@ -51,7 +51,7 @@ export function renderLeiaLeadNotification(lead) {
     ["Escola ou rede", lead.school],
     ["Papel", lead.role],
     ["Interesse", interest],
-    ["Formato da masterclass", format],
+    ["Formato da demonstração", format],
     ["Número de estudantes", lead.students],
     ["Cidade/UF", lead.cityState],
     ["Telefone", lead.phone],

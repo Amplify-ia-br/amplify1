@@ -31,7 +31,7 @@ export function validateLeiaLead(lead) {
     return "Selecione como você quer começar.";
   }
   if (lead.masterclassFormat && !MASTERCLASS_FORMATS.has(lead.masterclassFormat)) {
-    return "Selecione um formato de masterclass válido.";
+    return "Selecione um formato de demonstração válido.";
   }
   return "";
 }

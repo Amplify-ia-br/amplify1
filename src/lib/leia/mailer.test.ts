@@ -26,7 +26,7 @@ describe("LEIA lead notification", () => {
   it("renders every submitted field and escapes user content", () => {
     const message = renderLeiaLeadNotification(lead);
     expect(message.subject).toContain("Escola Horizonte");
-    expect(message.text).toContain("Formato da masterclass: Online");
+    expect(message.text).toContain("Formato da demonstração: Online");
     expect(message.html).toContain("Ana &lt;Souza&gt;");
     expect(message.html).not.toContain("Ana <Souza>");
   });
