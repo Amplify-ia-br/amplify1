@@ -276,12 +276,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 
 /* rodapé */
 .rodape { background: var(--roxo-noite); color: var(--branco); padding: var(--esp-8) var(--margem-pagina) var(--esp-6); --texto: var(--branco); --acao: var(--ciano); --acao-hover: #8FE2E9; --sobre-acao: var(--roxo-profundo); --foco: var(--ciano); }
-.rodape__topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--esp-6); }
-.assinatura { display: flex; align-items: center; gap: var(--esp-6); flex-wrap: wrap; }
-.assinatura__leia { height: 56px; width: auto; }
-.assinatura__divisor { width: 1px; align-self: stretch; background: #3A2270; }
-.assinatura__endosso span { display: block; margin-bottom: 8px; font: 700 11px/14px var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: #D9CCEF; }
-.assinatura__endosso img { height: 44px; width: auto; }
+.rodape__topo { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--esp-6); }
 .rodape__base { margin-top: 40px; padding-top: 22px; border-top: 1px solid #3A2270; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; font: 500 13px/18px var(--font-sans); color: #CFC2EA; }
 .rodape__base a { color: inherit; }
 
@@ -348,7 +343,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
       <li><a href="#contratacao">Contratação</a></li>
       <li><a href="#perguntas">Perguntas</a></li>
     </ul>
-    <a class="botao" href="#contato" data-intencao="masterclass">Solicitar masterclass</a>
+    <a class="botao" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita</a>
   </div>
 </nav>
 
@@ -361,7 +356,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
       <h1 class="titulo-xl">Seus alunos JÁ usam IA. <span class="destaque-2">Ensine a usar com critério.</span></h1>
       <p class="texto">O L.E.I.A. é um programa anual de fluência em inteligência artificial para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio.</p>
       <div class="botoes">
-        <a class="botao botao--grande" href="#contato" data-intencao="masterclass">Solicitar uma masterclass <span class="seta" aria-hidden="true">&rarr;</span></a>
+        <a class="botao botao--grande" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita <span class="seta" aria-hidden="true">&rarr;</span></a>
         <a class="botao botao--contorno botao--grande" href="#formato">Ver como funciona</a>
       </div>
       <span class="selo">Masterclass gratuita para escolas</span>
@@ -480,7 +475,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
     </div>
     <div class="numeros">
       <div class="numero"><p class="numero__valor">1h40</p><p class="numero__legenda">Dois encontros por semana<span>Com mediação pedagógica em todos</span></p></div>
-      <div class="numero"><p class="numero__valor">48</p><p class="numero__legenda">Horas de mão na massa<span>Dividos em dois módulos semestrais</span></p></div>
+      <div class="numero"><p class="numero__valor">40</p><p class="numero__legenda">Horas de mão na massa<span>Dividos em dois módulos semestrais</span></p></div>
       <div class="numero"><p class="numero__valor">10 a 25</p><p class="numero__legenda">Estudantes por turma<span>A escola pode abrir mais de uma turma</span></p></div>
     </div>
   </div>
@@ -574,7 +569,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
           <li>O mapeamento com a BNCC e a política de privacidade e proteção de dados.</li>
           <li>Como funcionam a condução e a organização das turmas em 2027.</li>
         </ul>
-        <a class="botao botao--bloco" href="#contato" data-intencao="masterclass">Solicitar uma masterclass <span class="seta" aria-hidden="true">&rarr;</span></a>
+        <a class="botao botao--bloco" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita <span class="seta" aria-hidden="true">&rarr;</span></a>
       </aside>
     </div>
   </div>
@@ -708,12 +703,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 <footer class="rodape">
   <div class="container">
     <div class="rodape__topo">
-      <div class="assinatura">
-        <img class="assinatura__leia" src="/leia/assets/leia-logo-assinatura-branco.png" alt="L.E.I.A. Laboratório Escolar de Inteligência Artificial">
-        <span class="assinatura__divisor" aria-hidden="true"></span>
-        <div class="assinatura__endosso"><span>Um programa</span><img src="/leia/assets/amplify-assinatura-referencia.png" alt="Amplify, Escola de Inteligência Artificial"></div>
-      </div>
-      <a class="botao" href="#contato" data-intencao="masterclass">Solicitar masterclass</a>
+      <a class="botao" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita</a>
     </div>
     <div class="rodape__base">
       <span>L.E.I.A. · Laboratório Escolar de Inteligência Artificial</span>
@@ -724,7 +714,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   </div>
 </footer>
 
-<div class="cta-fixo" id="cta-fixo"><a class="botao" href="#contato" data-intencao="masterclass">Solicitar masterclass <span class="seta" aria-hidden="true">&rarr;</span></a></div>
+<div class="cta-fixo" id="cta-fixo"><a class="botao" href="#contato" data-intencao="masterclass">Agendar demonstração gratuita <span class="seta" aria-hidden="true">&rarr;</span></a></div>
 
 <script>
 /* ====== CONFIGURAÇÃO ======
