@@ -1,5 +1,6 @@
+import { createAnthropic } from "@ai-sdk/anthropic";
 import { gateway, generateText, stepCountIs, type LanguageModel, type ModelMessage } from "ai";
-import { estimateAnaCost, getAnaFallbackModels, getAnaQualityRetryModel, type AnaModelId } from "../ana/config.js";
+import { ANA_MODELS, estimateAnaCost, getAnaFallbackModels, getAnaQualityRetryModel, type AnaModelId } from "../ana/config.js";
 import type { KnowledgeReader } from "../okf/http.js";
 import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer, type AnaZeroIssue } from "./guardrails.js";
 import { buildAnaZeroSystem } from "./prompt.js";
@@ -36,7 +37,10 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   const state = createAnaZeroToolState(sanitizeMemory(input.memory, userTexts));
   const tools = createAnaZeroTools(input.reader, state, userTexts);
   const messages: ModelMessage[] = input.history.map((turn) => ({ role: turn.role, content: turn.text }));
-  const resolve = input.languageModel ?? ((id: AnaModelId) => gateway(id));
+  const resolve = input.languageModel ?? ((id: AnaModelId) =>
+    ANA_MODELS[id].provider === "anthropic"
+      ? createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })(id.replace("byok/anthropic/", ""))
+      : gateway(id));
   const usage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
   let resolvedModel: string = input.model;
 
@@ -53,7 +57,9 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
       stopWhen: stepCountIs(MAX_STEPS),
       maxOutputTokens: 700,
       maxRetries: 1,
-      providerOptions: { gateway: { tags: ["ana-zero"], models: getAnaFallbackModels(model) } },
+      providerOptions: ANA_MODELS[model].provider === "anthropic"
+        ? { anthropic: { thinking: { type: "disabled" } } }
+        : { gateway: { tags: ["ana-zero"], models: getAnaFallbackModels(model) } },
     });
     usage.inputTokens += result.usage?.inputTokens ?? 0;
     usage.outputTokens += result.usage?.outputTokens ?? 0;
@@ -67,7 +73,10 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   let text = "";
   const errors: string[] = [];
   const recordError = (model: string, error: unknown) => {
-    const message = (error instanceof Error ? error.message : String(error)).slice(0, 240);
+    const message = (error instanceof Error ? error.message : String(error))
+      .replace(/\u001b\[[0-9;]*m/g, "")
+      .replace(/\s+/g, " ")
+      .slice(0, 240);
     errors.push(`${model}: ${message}`);
     console.error("[Ana Zero] Falha na chamada ao modelo", model, message);
   };

@@ -7,7 +7,7 @@ import { formatAnaAssistantText } from "@/lib/ana/text";
 import { ANA_ZERO_DEFAULT_MODEL, type AnaZeroMemoryEntry, type AnaZeroMessage } from "@/lib/ana-zero/schema";
 import "../ana/AnaLab.css";
 
-const gatewayModels = (Object.keys(ANA_MODELS) as AnaModelId[]).filter((id) => ANA_MODELS[id].provider === "gateway");
+const gatewayModels = Object.keys(ANA_MODELS) as AnaModelId[];
 
 const textOf = (message: AnaZeroMessage) =>
   message.parts.filter((part) => part.type === "text").map((part) => part.text).join("");

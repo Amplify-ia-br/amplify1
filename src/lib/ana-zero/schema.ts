@@ -2,9 +2,7 @@ import type { UIMessage } from "ai";
 import { z } from "zod-v4";
 import { ANA_MODELS, type AnaModelId } from "../ana/config.js";
 
-const gatewayModels = (Object.keys(ANA_MODELS) as AnaModelId[]).filter(
-  (id) => ANA_MODELS[id].provider === "gateway",
-) as [AnaModelId, ...AnaModelId[]];
+const selectableModels = Object.keys(ANA_MODELS) as [AnaModelId, ...AnaModelId[]];
 
 export const ANA_ZERO_DEFAULT_MODEL: AnaModelId = "openai/gpt-5.4-mini-fast";
 export const ANA_ZERO_MAX_MESSAGES = 40;
@@ -50,7 +48,7 @@ export const anaZeroRequestSchema = z.strictObject({
     .min(1)
     .max(ANA_ZERO_MAX_MESSAGES),
   memory: z.array(memoryEntrySchema).max(20).default([]),
-  model: z.enum(gatewayModels).default(ANA_ZERO_DEFAULT_MODEL),
+  model: z.enum(selectableModels).default(ANA_ZERO_DEFAULT_MODEL),
 }).refine((value) => value.messages[value.messages.length - 1].role === "user", {
   path: ["messages"],
   message: "A última mensagem precisa ser do usuário.",
