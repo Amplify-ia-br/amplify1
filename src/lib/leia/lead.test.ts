@@ -25,7 +25,7 @@ describe("LEIA lead contract", () => {
 
   it("rejects an unsupported masterclass format", () => {
     const lead = normalizeLeiaLead({ ...validLead, masterclassFormat: "híbrida" }, "/leia");
-    expect(validateLeiaLead(lead)).toBe("Selecione um formato de masterclass válido.");
+    expect(validateLeiaLead(lead)).toBe("Selecione um formato de demonstração válido.");
   });
 
   it("ignores a stale format for an implementation lead", () => {
