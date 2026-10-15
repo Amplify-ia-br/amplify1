@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod-v4";
-import { normalizeKnowledgeText } from "../okf/core.js";
+import { normalizeKnowledgeText, type KnowledgeSearchOptions, type KnowledgeSummary } from "../okf/core.js";
 import type { KnowledgeReader } from "../okf/http.js";
 import { createDirectKnowledgeTools } from "../ana/tools.js";
 import { memoryEntrySchema, type AnaZeroHandoff, type AnaZeroMemoryEntry } from "./schema.js";
@@ -27,6 +27,41 @@ export function sanitizeMemory(memory: AnaZeroMemoryEntry[], userTexts: string[]
   return memory.filter((entry) => quoteIsFromUser(entry.evidence, userTexts));
 }
 
+const SEARCH_STOPWORDS = new Set([
+  "ana", "ajudar", "ajuda", "como", "com", "dos", "das", "para", "por", "que", "uma", "uns", "umas", "num", "numa",
+  "nos", "nas", "sobre", "minha", "meu", "sou", "ser", "ter", "mais", "muito", "uso", "queria", "quero", "saber",
+]);
+
+// O leitor exige que todos os termos estejam no mesmo documento; uma consulta em
+// frase longa volta vazia mesmo quando a base tem a resposta.
+export async function forgivingSearch(
+  reader: KnowledgeReader,
+  query: string,
+  options: KnowledgeSearchOptions = {},
+): Promise<KnowledgeSummary[]> {
+  const exact = await reader.searchKnowledge(query, options);
+  if (exact.length) return exact;
+
+  const { type, tag } = options;
+  const terms = [
+    ...new Set(
+      normalizeKnowledgeText(query)
+        .split(/[^\p{L}\p{N}]+/u)
+        .filter((term) => term.length >= 3 && !SEARCH_STOPWORDS.has(term)),
+    ),
+  ];
+  const hits = new Map<string, { summary: KnowledgeSummary; count: number }>();
+  for (const term of terms) {
+    for (const summary of await reader.searchKnowledge(term, { type, tag })) {
+      const current = hits.get(summary.id);
+      hits.set(summary.id, { summary, count: (current?.count ?? 0) + 1 });
+    }
+  }
+  const ranked = [...hits.values()].sort((left, right) => right.count - left.count).map(({ summary }) => summary);
+  if (ranked.length) return ranked.slice(0, options.limit ?? 10);
+  return reader.listKnowledge({ type, tag });
+}
+
 function recordKnowledgeOutput(state: AnaZeroToolState, name: string, output: unknown) {
   state.toolCalls.push(name);
   state.evidenceText.push(JSON.stringify(output));
@@ -43,7 +78,11 @@ function recordKnowledgeOutput(state: AnaZeroToolState, name: string, output: un
 }
 
 export function createAnaZeroTools(reader: KnowledgeReader, state: AnaZeroToolState, userTexts: string[]) {
-  const knowledge = createDirectKnowledgeTools(reader);
+  const knowledge = createDirectKnowledgeTools({
+    listKnowledge: (filters) => reader.listKnowledge(filters),
+    getKnowledgeById: (id) => reader.getKnowledgeById(id),
+    searchKnowledge: (query, options) => forgivingSearch(reader, query, options),
+  });
   const wrapped = Object.fromEntries(
     Object.entries(knowledge).map(([name, base]) => [
       name,

@@ -14,7 +14,8 @@ import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, val
 import { buildAnaZeroSystem } from "./prompt";
 import { COMPARE_SCENARIOS } from "./scenarios";
 import { anaZeroRequestSchema } from "./schema";
-import { createAnaZeroToolState, createAnaZeroTools, quoteIsFromUser, sanitizeMemory } from "./tools";
+import { createTestKnowledgeService } from "@/lib/okf/test-fixtures";
+import { createAnaZeroToolState, createAnaZeroTools, forgivingSearch, quoteIsFromUser, sanitizeMemory } from "./tools";
 
 const reader = {
   listDocuments: vi.fn(async () => []),
@@ -63,6 +64,26 @@ describe("ferramentas e memória com evidência", () => {
     expect(await run(tools.request_handoff, { summary: "s", consentQuote: "pode me chamar", contact: "outro@x.com" })).toMatchObject({ ok: false });
     expect(await run(tools.request_handoff, { summary: "s", consentQuote: "pode me chamar", contact: "leo@exemplo.com" })).toMatchObject({ ok: true });
     expect(state.handoff?.contact).toBe("leo@exemplo.com");
+  });
+});
+
+describe("busca tolerante", () => {
+  const service = createTestKnowledgeService();
+  const longQuery = "Amplify escola alunos inteligência artificial formação";
+
+  it("a busca literal volta vazia para uma consulta em frase longa", async () => {
+    expect(await service.searchKnowledge(longQuery)).toEqual([]);
+  });
+  it("recupera documentos relevantes termo a termo, do mais ao menos aderente", async () => {
+    const results = await forgivingSearch(service, longQuery);
+    expect(results.map((item) => item.id)).toEqual(["amplify-academy", "company"]);
+  });
+  it("mantém o resultado exato quando a consulta simples já casa", async () => {
+    expect((await forgivingSearch(service, "academy")).map((item) => item.id)).toEqual(["amplify-academy"]);
+  });
+  it("lista os documentos publicados quando nenhum termo casa, sem expor conteúdo não público", async () => {
+    const ids = (await forgivingSearch(service, "xyzzy plugh")).map((item) => item.id);
+    expect([...ids].sort()).toEqual(["amplify-academy", "company"]);
   });
 });
 
@@ -129,6 +150,12 @@ describe("contrato HTTP e prompt", () => {
   });
   it("o prompt não deixa regra de nome obrigatório", () => {
     expect(buildAnaZeroSystem([])).toContain("O nome é opcional");
+  });
+  it("o prompt orienta a reformular buscas vazias e a não abrir com recusa", () => {
+    const system = buildAnaZeroSystem([]);
+    expect(system).toContain("Uma busca vazia nunca prova");
+    expect(system).toContain("nunca \"não encontrei uma descrição pública\"");
+    expect(system).toContain("devolver a pergunta");
   });
 });
 
