@@ -37,7 +37,7 @@ function describePersistenceError(error: unknown) {
 function cleanSecret(value?: string) {
   return value?.trim().replace(/^['"]|['"]$/g, "");
 }
-function getServerClient() {
+export function getServerClient() {
   if (serverClient) return serverClient;
 
   const url = cleanSecret(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL);

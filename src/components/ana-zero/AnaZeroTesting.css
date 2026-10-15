@@ -1,0 +1,57 @@
+.ana-lab .ana-workspace{grid-template-columns:minmax(0,1fr)}
+.ana-lab .ana-welcome{padding-top:6vh;padding-bottom:32px}
+.az-setup,.az-session{width:min(720px,100%);margin:28px auto 0;padding:20px;border:1px solid #22282b;border-radius:12px;background:#0b0f10;text-align:left}
+.az-setup h2,.az-session h2{margin:0 0 14px;font:600 15px/1.3 Inter,sans-serif;color:#e7eced}
+.az-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.az-field span,.az-missions legend{color:#8b9698;font:600 11px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase}
+.az-field input,.az-feedback textarea,.az-session textarea{width:100%;padding:10px 12px;border:1px solid #283033;border-radius:8px;background:#0e1214;color:#e7eced;font:14px/1.45 Inter,sans-serif;outline:0}
+.az-field input:focus-visible,.az-feedback textarea:focus-visible,.az-session textarea:focus-visible{border-color:#32c9c2;box-shadow:0 0 0 2px rgba(50,201,194,.2)}
+.az-missions{margin:0;padding:0;border:0}
+.az-missions legend{padding:0;margin-bottom:8px}
+.az-missions>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.az-missions label{position:relative;display:flex;flex-direction:column;gap:4px;padding:12px;border:1px solid #22282b;border-radius:8px;background:#0e1214;cursor:pointer}
+.az-missions label:hover{border-color:#33403f}
+.az-missions label.is-selected{border-color:#32c9c2;background:#10201f}
+.az-missions label:has(input:focus-visible){box-shadow:0 0 0 2px rgba(50,201,194,.3)}
+.az-missions input{position:absolute;opacity:0;pointer-events:none}
+.az-missions strong{color:#e7eced;font:600 13px Inter,sans-serif}
+.az-missions span{color:#8b9698;font:12px/1.45 Inter,sans-serif}
+.az-mission-banner{display:flex;gap:8px;align-items:baseline;margin:0 auto 14px;padding:8px 12px;max-width:760px;border:1px solid #22282b;border-radius:8px;background:#0b0f10;color:#8b9698;font:12px/1.45 Inter,sans-serif}
+.az-mission-banner strong{color:#32c9c2;white-space:nowrap}
+.ana-message .az-details,.ana-message .az-unsaved,.ana-message .az-feedback{grid-column:2}
+.az-details{margin-top:8px;color:#6f7a7c;font:11px/1.5 Inter,sans-serif}
+.az-details summary{cursor:pointer;width:max-content}
+.az-details p{margin:6px 0 0;padding:8px 10px;border-radius:6px;background:#0b0f10;word-break:break-word}
+.az-unsaved{margin:8px 0 0;color:#8a7a52;font:11px/1.4 Inter,sans-serif}
+.az-feedback{margin-top:8px}
+.az-feedback-row{display:flex;align-items:center;gap:6px;color:#8b9698;font:12px Inter,sans-serif}
+.az-feedback-row button{display:grid;place-items:center;width:30px;height:30px;border:1px solid #283033;border-radius:6px;background:transparent;color:#8b9698;cursor:pointer}
+.az-feedback-row button svg{width:14px;height:14px}
+.az-feedback-row button:hover{color:#e7eced;border-color:#3a4548}
+.az-feedback-row button[aria-pressed="true"]{border-color:#32c9c2;color:#32c9c2;background:#10201f}
+.az-feedback-row button:focus-visible,.az-chips button:focus-visible,.az-stars button:focus-visible,.az-yesno button:focus-visible,.az-submit:focus-visible,.az-link:focus-visible{outline:2px solid #32c9c2;outline-offset:2px}
+.az-ok{display:inline-flex;align-items:center;gap:4px;color:#32c9c2}
+.az-ok svg{width:13px;height:13px}
+.az-bad{color:#e08a8a}
+.az-feedback-detail{display:flex;flex-direction:column;gap:8px;margin-top:8px;max-width:520px}
+.az-chips{display:flex;flex-wrap:wrap;gap:6px}
+.az-chips button,.az-yesno button{padding:6px 10px;border:1px solid #283033;border-radius:999px;background:transparent;color:#aab3b4;font:12px Inter,sans-serif;cursor:pointer}
+.az-chips button[aria-pressed="true"],.az-yesno button[aria-checked="true"]{border-color:#32c9c2;background:#10201f;color:#32c9c2}
+.az-submit{align-self:flex-start;padding:8px 14px;border:1px solid #32c9c2;border-radius:8px;background:#10201f;color:#32c9c2;font:600 12px Inter,sans-serif;cursor:pointer}
+.az-submit:disabled{opacity:.45;cursor:not-allowed}
+.az-link{padding:8px 4px;border:0;background:transparent;color:#8b9698;font:12px Inter,sans-serif;cursor:pointer;text-decoration:underline}
+.az-session{display:flex;flex-direction:column;gap:12px;margin:18px 0 0}
+.az-session p{margin:0;color:#8b9698;font:13px/1.5 Inter,sans-serif}
+.az-session strong{color:#e7eced;font:600 14px Inter,sans-serif}
+.az-stars{display:flex;gap:4px}
+.az-stars button{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:8px;background:transparent;color:#4a5557;cursor:pointer}
+.az-stars button svg{width:22px;height:22px}
+.az-stars button.is-on{color:#32c9c2}
+.az-stars button.is-on svg{fill:currentColor}
+.az-yesno{display:flex;align-items:center;gap:8px;color:#aab3b4;font:13px Inter,sans-serif}
+.az-session-actions{display:flex;align-items:center;gap:10px}
+.az-memory{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:0 1.5rem 8px;color:#6f7a7c;font:11px Inter,sans-serif}
+.az-memory span{padding:3px 8px;border:1px solid #22282b;border-radius:999px;color:#9aa5a7}
+.az-memory b{color:#32c9c2;font-weight:600}
+.az-consent{max-width:720px;margin:14px auto 0;color:#6f7a7c;font:12px/1.5 Inter,sans-serif;text-align:left}
+@media(max-width:640px){.az-missions>div{grid-template-columns:1fr}}

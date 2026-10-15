@@ -1,6 +1,6 @@
 import { normalizeKnowledgeText } from "../okf/core.js";
 import { validateAnaZeroAnswer } from "./guardrails.js";
-import type { CompareScenario } from "./scenarios.js";
+import { OPTIONAL_OFFER, type CompareScenario } from "./scenarios.js";
 
 export type CompareFlag = { reply: number; kind: string; detail: string };
 
@@ -38,6 +38,11 @@ export function analyzeTranscript(scenario: CompareScenario, replies: string[]):
       flags.push({ reply: index, kind: "unrequested_price", detail: reply });
     }
   });
+
+  const withOptionalOffer = replies.map((reply, index) => (OPTIONAL_OFFER.test(reply) ? index : -1)).filter((index) => index >= 0);
+  if (withOptionalOffer.length >= 2) {
+    flags.push({ reply: withOptionalOffer[1], kind: "repeated_optional_offer", detail: `respostas ${withOptionalOffer.map((i) => i + 1).join(", ")}` });
+  }
 
   for (const rule of scenario.forbidAfter ?? []) {
     replies.forEach((reply, index) => {

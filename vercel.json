@@ -49,6 +49,10 @@
     {
       "source": "/api/ana-zero-chat",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/ana-zero-feedback",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
     }
   ],
   "rewrites": [
