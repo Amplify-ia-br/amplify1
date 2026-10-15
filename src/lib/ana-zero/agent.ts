@@ -1,7 +1,8 @@
 import { createAnthropic } from "@ai-sdk/anthropic";
-import { gateway, generateText, stepCountIs, type LanguageModel, type ModelMessage } from "ai";
+import { createGateway, generateText, stepCountIs, type LanguageModel, type ModelMessage } from "ai";
 import { ANA_MODELS, estimateAnaCost, getAnaFallbackModels, getAnaQualityRetryModel, type AnaModelId } from "../ana/config.js";
 import type { KnowledgeReader } from "../okf/http.js";
+import { readServerEnv } from "./env.js";
 import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer, type AnaZeroIssue } from "./guardrails.js";
 import { buildAnaZeroSystem } from "./prompt.js";
 import type { AnaZeroHandoff, AnaZeroMemoryEntry } from "./schema.js";
@@ -39,8 +40,8 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   const messages: ModelMessage[] = input.history.map((turn) => ({ role: turn.role, content: turn.text }));
   const resolve = input.languageModel ?? ((id: AnaModelId) =>
     ANA_MODELS[id].provider === "anthropic"
-      ? createAnthropic({ apiKey: process.env.ANTHROPIC_API_KEY })(id.replace("byok/anthropic/", ""))
-      : gateway(id));
+      ? createAnthropic({ apiKey: readServerEnv("ANTHROPIC_API_KEY") })(id.replace("byok/anthropic/", ""))
+      : createGateway({ apiKey: readServerEnv("AI_GATEWAY_API_KEY") })(id));
   const usage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
   let resolvedModel: string = input.model;
 
