@@ -375,7 +375,10 @@ const KnowledgeAdmin = () => {
         headers: { "content-type": "application/json", Authorization: `Bearer ${session.access_token}` },
         body: JSON.stringify({ documentId: document.id, revisionId: revision.id }),
       });
-      const result = await response.json();
+      const rawResult = await response.text();
+      let result: { message?: string; error?: string } = {};
+      try { result = rawResult ? JSON.parse(rawResult) : {}; }
+      catch { result = { message: `O publicador respondeu com erro HTTP ${response.status}.` }; }
       if (!response.ok) {
         toast.warning(`Conteúdo aprovado; publicação pendente: ${result.message ?? result.error}`);
       } else {
