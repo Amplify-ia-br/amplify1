@@ -25,8 +25,8 @@ relationships:
     target: amplify-academy
   - type: related_to
     target: method
-last_reviewed: 2026-10-08
-updated_at: 2026-10-08
+last_reviewed: 2026-10-15
+updated_at: 2026-10-15
 ---
 
 # Desenho pedagógico do L.E.I.A.
@@ -121,7 +121,7 @@ Uma evidência insuficiente deve gerar nova oportunidade de demonstração. Em t
 
 ## Formação de professores
 
-A proposta atual prevê formação inicial online de seis horas, em um ou mais encontros, seguida de certificação. A renovação inclui recapacitação anual.
+A proposta atual prevê formação inicial online de seis horas, em um ou mais encontros, com certificado de conclusão quando previsto na contratação. A renovação inclui recapacitação anual.
 
 O Guia do Professor deve trazer objetivos, tempos, perguntas de mediação, exemplos, atividades e critérios de evidência. O detalhamento aula a aula ainda está em construção.
 
@@ -155,7 +155,7 @@ O apêndice amarelo das páginas finais da Ficha do Produto contém uma versão 
 - **Faixa etária:** ficha e proposta usam 14 a 17 anos. A brochura usa 13 a 17. O texto público deve priorizar as séries escolares até a decisão final.
 - **Segundo módulo:** ficha, proposta e parte do pitch usam Metamorfose. A brochura e uma imagem do pitch usam Transmutação. Metamorfose é o nome provisório adotado no OKF.
 - **Distribuição das semanas:** a ficha informa 14 semanas de atividades por semestre. A proposta pedagógica informa 12. O OKF publica a carga total e deixa o calendário para a implantação.
-- **Método:** os materiais ainda citam Shockwave Academy. A arquitetura de marca vigente exige apresentação sob Amplify. O conteúdo pode preservar a origem metodológica em registros internos, mas a comunicação não deve reativar a antiga marca.
+- **Método:** os materiais ainda citam Shockwave Academy. A arquitetura de marca vigente exige apresentação sob Amplify Educação. O conteúdo pode preservar a origem metodológica em registros internos, mas a comunicação não deve reativar a antiga marca.
 - **Alinhamento curricular:** o mapeamento detalhado por habilidade ainda precisa de validação pedagógica e jurídica.
 - **Referências:** algumas fontes de 2026 aparecem com pedido explícito de confirmação bibliográfica.
 - **Plataforma e dados:** armazenamento, acessos, retomada e exclusão de registros ainda não estão definidos.

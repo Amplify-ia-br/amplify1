@@ -4,7 +4,7 @@ title: Catálogo de ofertas
 description: Formatos, públicos e resultados esperados das ofertas de Educação e Consultoria da Amplify.
 type: offering
 visibility: public
-status: review
+status: approved
 owner: leadership
 source_of_truth: true
 tags:
@@ -13,6 +13,7 @@ tags:
   - capacitação
   - consultoria
 sources:
+  - "Shock Wave — https://shockwave.academy/"
   - L.E.I.A. Ficha do Produto v2.6, setembro de 2026
   - L.E.I.A. Brochura comercial v5 premium
 relationships:
@@ -24,29 +25,25 @@ relationships:
     target: method
   - type: includes
     target: leia
-last_reviewed: 2026-10-08
-updated_at: 2026-10-08
+last_reviewed: 2026-10-15
+updated_at: 2026-10-15
 ---
 
 # Catálogo de ofertas
 
-Este documento organiza o que a Amplify vende hoje e o que ainda precisa ser fechado antes de entrar em uma proposta.
+Este documento organiza o que a Amplify vende hoje. Carga horária, modalidade, investimento e condições são informados na página ou na proposta de cada oferta.
 
 ## Educação B2C
 
-A educação para pessoas físicas fica sob a Amplify Academy. Atende profissionais, gestores, empreendedores e especialistas que querem usar Inteligência Artificial com mais autonomia no trabalho.
+A educação para pessoas físicas fica sob a Amplify Educação. Atende profissionais, gestores, empreendedores e especialistas que querem usar Inteligência Artificial com mais autonomia no trabalho.
 
 ### Formatos
 
-- cursos;
-- programas de formação;
-- trilhas por profissão, atividade ou nível de conhecimento;
-- mentorias;
-- certificações;
-- comunidade e encontros de atualização;
-- materiais, modelos e agentes de apoio.
+- cursos e formações oriundos da Shockwave;
+- turmas presenciais, online ao vivo, gravadas ou híbridas, conforme a oferta;
+- materiais de apoio previstos em cada programa.
 
-Cada produto define sua própria carga horária e modalidade. As turmas podem ser presenciais, online ao vivo, gravadas ou híbridas. Essas condições precisam constar na página e no checkout do produto.
+Cada produto define sua própria carga horária e modalidade. Quando previsto, o participante recebe certificado de participação ou de conclusão. O certificado não equivale a uma certificação profissional.
 
 ### Resultado esperado
 
@@ -54,21 +51,19 @@ O participante deve sair capaz de escolher ferramentas, reconhecer limites e ris
 
 ## Educação B2G
 
-A Amplify Academy atende órgãos públicos, escolas de governo e instituições que formam servidores. O programa é adaptado às responsabilidades dos participantes e às regras da Administração Pública.
+A Amplify Educação atende órgãos públicos, escolas de governo e instituições que formam servidores. A oferta pode combinar cursos oriundos da Shockwave, capacitação in-company e consultoria. O trabalho é adaptado às responsabilidades dos participantes e às regras da Administração Pública.
 
-### Catálogo de referência
+### Formatos
 
-Os nomes e cargas horárias abaixo vieram do catálogo educacional anterior à unificação da marca. Podem orientar novas propostas, mas precisam ser confirmados antes de divulgação ou contratação.
+- cursos e formações para servidores e lideranças;
+- palestras, workshops e treinamentos in-company;
+- programas por função, área ou problema;
+- formação de multiplicadores;
+- consultoria para diagnóstico, governança, processos e implantação.
 
-| Programa | Público principal | Carga horária de referência | Modalidade de referência | Resultado esperado |
-|---|---|---:|---|---|
-| IA e Governança para Lideranças Públicas | dirigentes e gestores públicos | 20 horas | presencial | criar critérios para priorizar, governar e acompanhar o uso de IA |
-| Engenharia de IA para TI do Setor Público | equipes de tecnologia, dados e arquitetura | 35 horas | presencial, com prática | preparar a equipe para avaliar, desenvolver e operar soluções de IA |
-| Fluência e Produtividade para Servidores | servidores de áreas administrativas e finalísticas | 12 horas | presencial ou online ao vivo | aplicar IA com segurança em tarefas do cotidiano |
-| IA para Compras e Contratações | equipes de compras, licitações e contratos | 16 horas | presencial | usar IA como apoio sem perder controle, rastreabilidade e responsabilidade |
-| IA para Jurídico, Controle e Auditoria | jurídico, controle interno, corregedoria e auditoria | 16 horas | presencial | analisar documentos e rotinas com critérios de segurança e supervisão humana |
-| IA para Comunicação Pública | equipes de comunicação e atendimento | 12 horas | workshop | melhorar produção, revisão e adaptação de conteúdo público |
-| IA para Dados, Indicadores e Decisão | planejamento, inteligência e análise de dados | 20 horas | presencial, com prática | apoiar análises e decisões com dados, mantendo revisão humana |
+### Resultado esperado
+
+O participante ou a organização deve sair com mais capacidade para aplicar IA com segurança em uma função ou problema real. O resultado específico, a carga horária e os critérios de conclusão são definidos em cada contratação.
 
 ## Educação para escolas
 
@@ -121,6 +116,8 @@ A Consultoria atende organizações que precisam decidir onde usar IA, reduzir r
 ### Liderança fracionada
 
 O Fractional CAIO oferece liderança de IA em regime parcial e recorrente. O trabalho pode incluir agenda executiva, priorização, governança, avaliação de fornecedores, coordenação entre áreas e acompanhamento do portfólio.
+
+Escopo, duração e preço são definidos em proposta conforme o contexto e as responsabilidades assumidas.
 
 ### Projetos e implantação
 

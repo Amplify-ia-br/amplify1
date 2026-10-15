@@ -13,6 +13,7 @@ tags:
   - consultoria
   - produtos
 sources:
+  - "Shock Wave — https://shockwave.academy/"
   - L.E.I.A. Ficha do Produto v2.6, setembro de 2026
 relationships:
   - type: related_to
@@ -21,8 +22,8 @@ relationships:
     target: offers
   - type: includes
     target: leia
-last_reviewed: 2026-10-08
-updated_at: 2026-10-08
+last_reviewed: 2026-10-15
+updated_at: 2026-10-15
 ---
 
 # Portfólio da Amplify
@@ -31,25 +32,17 @@ A Amplify trabalha em três frentes: Educação, Consultoria e Desenvolvimento d
 
 ## Educação
 
-A frente de Educação é apresentada como Amplify Academy. Ela atende pessoas e organizações públicas.
+A frente de Educação é apresentada como Amplify Educação. Ela atende pessoas, escolas, empresas e governos.
 
 ### Educação B2C
 
-As ofertas para profissionais, empreendedores, gestores e especialistas podem incluir:
+As ofertas para profissionais, empreendedores, gestores e especialistas incluem cursos e formações oriundos da Shockwave. Cada oferta informa sua modalidade, carga horária e condições.
 
-- cursos e turmas abertas;
-- trilhas por profissão ou nível de conhecimento;
-- mentorias;
-- comunidade;
-- certificações;
-- formação de instrutores e multiplicadores;
-- programas de atualização;
-- acesso a agentes, modelos e materiais de apoio;
-- experiências presenciais e online.
+Quando previsto, o participante recebe certificado de participação ou de conclusão. O certificado não equivale a uma certificação profissional.
 
 ### Educação B2G
 
-A Amplify Academy desenvolve programas para órgãos públicos e escolas de governo. O conteúdo é adaptado à função dos participantes e às rotinas da instituição.
+A Amplify Educação oferece a governos cursos oriundos da Shockwave, capacitação in-company e programas adaptados à função dos participantes e às rotinas da instituição. Projetos de consultoria são apresentados na frente de Consultoria.
 
 Os programas podem atender:
 
@@ -83,7 +76,7 @@ A Consultoria atende empresas, governos e outras organizações que precisam def
 - capacitação de lideranças;
 - programas de adoção.
 
-A capacitação B2B é vendida dentro de Consultoria e pode usar métodos e conteúdos da Amplify Academy.
+A capacitação B2B é vendida dentro de Consultoria e pode usar métodos e conteúdos da Amplify Educação.
 
 ### Fractional CAIO
 
@@ -100,6 +93,8 @@ O Fractional CAIO oferece liderança de IA em regime parcial e recorrente. O ser
 - criação de políticas e critérios de decisão.
 
 Fractional CAIO não é uma mentoria eventual. Existe participação nas decisões e acompanhamento da execução.
+
+Escopo, duração e preço são definidos em proposta conforme o contexto e as responsabilidades assumidas.
 
 ### Diagnóstico e transformação
 

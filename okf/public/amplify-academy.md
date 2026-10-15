@@ -1,6 +1,6 @@
 ---
 id: amplify-academy
-title: Amplify Academy
+title: Amplify Educação
 description: Papel, formatos e princípios de aprendizagem da frente educacional da Amplify.
 type: education
 visibility: public
@@ -12,6 +12,7 @@ tags:
   - formação
   - setor público
 sources:
+  - "Shock Wave — https://shockwave.academy/"
   - L.E.I.A. Ficha do Produto v2.6, setembro de 2026
   - L.E.I.A. Proposta Pedagógica v2.1, outubro de 2026
 relationships:
@@ -21,28 +22,27 @@ relationships:
     target: offers
   - type: offers
     target: leia
-last_reviewed: 2026-10-08
-updated_at: 2026-10-08
+last_reviewed: 2026-10-15
+updated_at: 2026-10-15
 ---
 
-# Amplify Academy
+# Amplify Educação
 
-Amplify Academy é o nome provisório da frente de educação da Amplify.
+Amplify Educação é a frente educacional da Amplify.
 
 Seu papel é desenvolver fluência em Inteligência Artificial. Uma pessoa fluente sabe usar a tecnologia, avaliar seus limites, escolher ferramentas e aplicar o conhecimento em uma situação concreta.
 
-## O que a Academy pode oferecer
+## O que a Amplify Educação oferece
 
-- cursos e trilhas;
-- programas para profissionais;
-- formações para órgãos públicos;
-- certificações;
-- mentorias;
-- comunidade;
+- cursos e formações para pessoas, oriundos da Shockwave;
+- capacitação in-company para empresas e governos;
+- formações para órgãos públicos e escolas de governo;
+- o programa L.E.I.A. para escolas;
 - formação de multiplicadores;
-- biblioteca de agentes e modelos;
 - materiais de apoio;
 - experiências presenciais, online ou híbridas.
+
+Cada curso ou programa informa sua modalidade, carga horária e condições. Quando previsto, o participante recebe certificado de participação ou de conclusão.
 
 ## Como acontece a aprendizagem
 
@@ -60,7 +60,7 @@ O participante testa o que aprendeu, recebe orientação e registra o que funcio
 
 ### Evolução
 
-Novas trilhas, mentorias e certificações ajudam a aprofundar o domínio e a compartilhar o método com outras pessoas.
+Novos cursos e formações ajudam a aprofundar o domínio e a compartilhar o método com outras pessoas.
 
 ## Educação para o setor público
 
@@ -70,12 +70,10 @@ O conteúdo precisa respeitar a função do participante. Uma formação executi
 
 ## Educação para escolas
 
-O [L.E.I.A.](/knowledge/leia) é o programa anual da Amplify Academy para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio. Ele trabalha fluência em Inteligência Artificial por meio de experiências, registros individuais e projetos acompanhados por professores.
+O [L.E.I.A.](/knowledge/leia) é o programa anual da Amplify Educação para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio. Ele trabalha fluência em Inteligência Artificial por meio de experiências, registros individuais e projetos acompanhados por professores.
 
-A Academy responde pelo currículo, pelos materiais e pela formação dos professores que conduzem o programa.
+A Amplify Educação responde pelo currículo, pelos materiais e pela formação dos professores que conduzem o programa.
 
-## Certificações
+## Certificados
 
-Uma certificação deve demonstrar capacidade, não apenas presença em aula. Sempre que possível, a avaliação combina conhecimento, aplicação prática e revisão de uma entrega real.
-
-Nomes, níveis, validade e direitos associados às certificações ainda dependem de aprovação específica antes da divulgação.
+Os cursos e programas podem emitir certificados de participação ou de conclusão. Cada oferta informa os requisitos aplicáveis. A Amplify não apresenta esses certificados como certificação profissional, título ou licença para exercer uma atividade.

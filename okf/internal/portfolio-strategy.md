@@ -1,7 +1,7 @@
 ---
 id: portfolio-strategy
 title: Estratégia interna do portfólio
-description: Tese, prioridades e decisões pendentes das frentes de Educação, Consultoria e Produtos.
+description: Tese, prioridades, decisões vigentes e backlog das frentes de Educação, Consultoria e Produtos.
 type: strategy
 visibility: internal
 status: active
@@ -13,8 +13,9 @@ tags:
   - product-market fit
 sources: []
 relationships: []
-last_reviewed: 2026-10-07
-updated_at: 2026-10-07
+last_reviewed: 2026-10-15
+review_due: 2027-01-15
+updated_at: 2026-10-15
 ---
 
 # Estratégia interna do portfólio
@@ -33,9 +34,9 @@ O valor da Educação depende de conteúdo atualizado, boa experiência de apren
 
 Prioridades:
 
-- estruturar a Amplify Academy;
-- definir a arquitetura das certificações;
-- separar ofertas B2C e B2G;
+- consolidar a Amplify Educação;
+- manter separados os canais B2C, B2B e B2G;
+- emitir apenas certificados de participação ou conclusão enquanto não houver uma arquitetura formal de certificação profissional;
 - manter um processo editorial de atualização;
 - conectar programas a problemas observáveis;
 - medir aprendizagem, aplicação e continuidade.
@@ -48,35 +49,37 @@ Ela também ajuda a Amplify a aprender sobre os problemas do mercado. Esse apren
 
 Prioridades:
 
-- definir ofertas de entrada;
 - criar escopos e critérios de sucesso;
 - separar aconselhamento, diagnóstico e implantação;
 - formar capacidade de gestão da mudança;
 - documentar entregas reutilizáveis;
-- medir margem, duração, adoção e resultado.
+- medir duração, adoção, capacidade de entrega e resultado.
 
 ## Desenvolvimento de Produtos
 
-A Amplify ainda procura product-market fit. Não existe, por enquanto, um critério fixo de quantidade de clientes ou ocorrências para promover uma ideia a produto.
+A Amplify ainda procura product-market fit. Não existe um número universal de clientes ou ocorrências para promover uma ideia a produto.
 
-O portfólio deve permitir experimentos pequenos e decisões rápidas. Hipóteses sem uso, comprador ou disposição para pagar precisam ser revistas ou encerradas.
+Cada experimento deve nascer com uma data de revisão. Nessa revisão, a equipe observa uso, existência de comprador, disposição para pagar e capacidade de entrega. Hipóteses sem evidência suficiente devem ser ajustadas ou encerradas, sem depender de uma meta numérica universal.
 
 ## Marca
 
-Tudo é apresentado sob a bandeira Amplify. Amplify Academy é o nome provisório da frente educacional.
+Tudo é apresentado sob a bandeira Amplify. Amplify Educação é o nome da frente educacional.
 
 Novas unidades, produtos ou certificações não devem criar marcas independentes sem uma decisão explícita de arquitetura.
 
-## Decisões pendentes
+## Decisões vigentes
 
-- nome definitivo da frente educacional;
-- desenho e titularidade das certificações;
-- catálogo inicial B2C;
-- catálogo inicial B2G;
-- escopo e modelo comercial do Fractional CAIO;
-- ofertas de entrada da Consultoria;
+- a frente educacional usa o nome Amplify Educação;
+- o B2C oferece cursos e formações oriundos da Shockwave;
+- empresas recebem capacitação in-company e consultoria;
+- governos podem contratar cursos oriundos da Shockwave, capacitação in-company e consultoria;
+- todos os serviços de Consultoria listados no catálogo podem ser ofertados, com escopo e condições definidos em proposta;
+- certificados são de participação ou conclusão e não devem ser apresentados como certificação profissional.
+
+## Backlog não bloqueante
+
+Estas decisões não impedem a publicação nem a venda das ofertas vigentes. O responsável é `leadership`, com revisão prevista para 15 de janeiro de 2027:
+
 - responsável e orçamento para Desenvolvimento de Produtos;
-- mix de receita desejado;
-- métricas de margem e recorrência;
 - política de nomes para produtos;
-- critérios de encerramento de experimentos.
+- modelo comercial detalhado do Fractional CAIO.

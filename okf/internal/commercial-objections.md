@@ -1,25 +1,25 @@
 ---
 id: commercial-objections
 title: Objeções comerciais
-description: Hipóteses de respostas para objeções recorrentes que ainda precisam ser validadas pelo comercial.
+description: Respostas vigentes para objeções recorrentes, mantidas e refinadas a partir de evidências comerciais.
 type: playbook
 visibility: internal
-status: review
+status: active
 owner: commercial
-source_of_truth: false
+source_of_truth: true
 tags:
   - comercial
   - objeções
   - vendas
 sources: []
 relationships: []
-last_reviewed: 2026-10-07
-updated_at: 2026-10-07
+last_reviewed: 2026-10-15
+updated_at: 2026-10-15
 ---
 
 # Objeções comerciais
 
-As respostas abaixo são uma primeira versão. Elas foram inferidas a partir das ofertas e ainda precisam ser confrontadas com conversas reais do comercial. A equipe deve registrar a linguagem usada pelos clientes, a resposta dada e o que aconteceu depois.
+Este é o playbook interno vigente para responder a objeções comerciais recorrentes. Ele deve ser refinado com conversas reais: a equipe registra a linguagem usada pelos clientes, a resposta dada e o que aconteceu depois.
 
 ## “A equipe já usa ChatGPT”
 
@@ -77,4 +77,4 @@ Para cada objeção real, registrar:
 - avanço, perda ou ausência de decisão;
 - ajuste recomendado.
 
-Depois de haver evidência suficiente, as respostas recorrentes podem passar para `active` e alimentar treinamento comercial, propostas e páginas de perguntas frequentes.
+As evidências registradas alimentam revisões deste playbook, treinamento comercial, propostas e, quando apropriado, páginas de perguntas frequentes.

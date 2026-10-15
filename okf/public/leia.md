@@ -22,8 +22,8 @@ relationships:
     target: portfolio
   - type: offered_by
     target: amplify-academy
-last_reviewed: 2026-10-08
-updated_at: 2026-10-08
+last_reviewed: 2026-10-15
+updated_at: 2026-10-15
 ---
 
 # L.E.I.A.
@@ -91,7 +91,7 @@ Os projetos podem ser coletivos, mas cada estudante mantém seus próprios regis
 
 ## Quem conduz
 
-A modalidade padrão usa professores da escola formados e certificados pela Amplify. A formação inicial faz parte da implantação. A escola também pode contratar um educador da Amplify para conduzir as aulas, conforme disponibilidade e proposta específica.
+A modalidade padrão usa professores da escola que concluíram a formação da Amplify. A formação inicial faz parte da implantação e pode emitir certificado de conclusão. A escola também pode contratar um educador da Amplify para conduzir as aulas, conforme disponibilidade e proposta específica.
 
 As turmas têm de 10 a 25 estudantes. Para grupos com mais de 20, o plano de implantação precisa mostrar como a escola garantirá mediação e acompanhamento individual.
 
