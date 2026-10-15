@@ -1,0 +1,12 @@
+---
+import AnaLabSignup from "@/components/ana-lab/AnaLabSignup";
+import AnaLabLayout from "@/layouts/AnaLabLayout.astro";
+
+export const prerender = false;
+
+const { code } = Astro.params;
+---
+
+<AnaLabLayout>
+  <AnaLabSignup code={code ?? ""} client:load />
+</AnaLabLayout>

@@ -15,11 +15,11 @@ import { buildTranscript, copyText, describeMetadata, memoryLabel, testHeaders, 
 
 const gatewayModels = Object.keys(ANA_MODELS) as AnaModelId[];
 
-export default function AnaZeroLab() {
+export default function AnaZeroLab({ account }: { account?: { name: string } }) {
   const [input, setInput] = useState("");
   const [copied, setCopied] = useState(false);
   const [model, setModel] = useState<AnaModelId>(ANA_ZERO_DEFAULT_MODEL);
-  const [tester, setTester] = useState("");
+  const [tester, setTester] = useState(account?.name ?? "");
   const [missionId, setMissionId] = useState("livre");
   const [sessionId, setSessionId] = useState(() => crypto.randomUUID());
   const [reviewing, setReviewing] = useState(false);
@@ -163,6 +163,7 @@ export default function AnaZeroLab() {
                 <p>Converse como uma pessoa real faria no site. Depois de cada resposta, diga se foi boa ou ruim: é isso que torna a Ana melhor.</p>
                 <TesterSetup
                   tester={tester}
+                  showName={!account}
                   missionId={missionId}
                   onTesterChange={setTester}
                   onMissionChange={setMissionId}

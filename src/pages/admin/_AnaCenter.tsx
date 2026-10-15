@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { ContentTab } from "@/components/admin/ana/ContentTab";
 import { EvolutionTab } from "@/components/admin/ana/EvolutionTab";
+import { InvitesTab } from "@/components/admin/ana/InvitesTab";
 import { OverviewTab } from "@/components/admin/ana/OverviewTab";
 import { RecommendationsTab } from "@/components/admin/ana/RecommendationsTab";
 import { SessionsTab } from "@/components/admin/ana/SessionsTab";
@@ -96,6 +97,7 @@ const AnaCenter = () => {
           <TabsTrigger value="content">Conteúdo</TabsTrigger>
           <TabsTrigger value="recommendations">Recomendações</TabsTrigger>
           <TabsTrigger value="evolution">Evolução</TabsTrigger>
+          <TabsTrigger value="invites">Convites</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="mt-4">
           {overview.data ? <OverviewTab data={overview.data} /> : null}
@@ -111,6 +113,9 @@ const AnaCenter = () => {
         </TabsContent>
         <TabsContent value="evolution" className="mt-4">
           <EvolutionTab filters={filters} />
+        </TabsContent>
+        <TabsContent value="invites" className="mt-4">
+          <InvitesTab />
         </TabsContent>
       </Tabs>
     </div>

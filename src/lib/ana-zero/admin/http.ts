@@ -8,6 +8,13 @@ import {
   pendingSessionIds,
   type Analyst,
 } from "./analyzer.js";
+import {
+  createInvite,
+  LAB_NOT_MIGRATED,
+  loadInvites,
+  revokeInvite,
+  revokeTester,
+} from "../lab/admin.js";
 import { getAdminClient, requireAdmin, type AdminIdentity } from "./auth.js";
 import { loadDataset, loadRecommendations } from "./data.js";
 import {
@@ -39,6 +46,16 @@ const postSchema = z.discriminatedUnion("action", [
     note: z.string().trim().max(1_000).optional(),
     implementedCommit: z.string().trim().max(80).optional(),
   }),
+  z.strictObject({
+    action: z.literal("create-invite"),
+    label: z.string().trim().min(1).max(80),
+    email: z.string().trim().toLowerCase().max(160).optional(),
+    cohort: z.string().trim().max(40).optional(),
+    maxUses: z.number().int().min(1).max(500).default(1),
+    expiresInDays: z.number().int().min(1).max(90).default(14),
+  }),
+  z.strictObject({ action: z.literal("revoke-invite"), id: z.uuid() }),
+  z.strictObject({ action: z.literal("revoke-tester"), id: z.uuid() }),
 ]);
 
 export type AdminDeps = {
@@ -63,6 +80,7 @@ async function handleGet(client: SupabaseClient, url: URL) {
   const filters = parseFilters(url.searchParams);
 
   if (view === "recommendations") return json(await loadRecommendations(client));
+  if (view === "invites") return json(await loadInvites(client));
 
   const all = await loadDataset(client);
   const data = applyFilters(all, filters);
@@ -129,6 +147,17 @@ async function handlePost(client: SupabaseClient, request: Request, identity: Ad
     return update.data ? json({ ok: true }) : json({ error: "not_found" }, 404);
   }
 
+  if (input.action === "create-invite") {
+    const invite = await createInvite(client, input, identity.userId);
+    return invite ? json({ invite }) : json({ error: "not_saved" }, 503);
+  }
+  if (input.action === "revoke-invite") {
+    return (await revokeInvite(client, input.id)) ? json({ ok: true }) : json({ error: "not_saved" }, 503);
+  }
+  if (input.action === "revoke-tester") {
+    return (await revokeTester(client, input.id)) ? json({ ok: true }) : json({ error: "not_saved" }, 503);
+  }
+
   const analyst = (deps.analyst ?? createAnalyst)();
   const data = await loadDataset(client);
 
@@ -165,6 +194,7 @@ export async function handleAnaZeroAdmin(request: Request, deps: AdminDeps = {})
       ? await handleGet(client, new URL(request.url))
       : await handlePost(client, request, identity, deps);
   } catch (error) {
+    if (error instanceof Error && error.message === LAB_NOT_MIGRATED) return json({ error: LAB_NOT_MIGRATED }, 503);
     console.error("[ana-zero-admin] request failed", error instanceof Error ? error.message : error);
     return json({ error: "internal_error" }, 500);
   }

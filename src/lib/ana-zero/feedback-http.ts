@@ -1,15 +1,20 @@
 import { checkAnaRateLimit } from "../ana/store.js";
-import { hasValidTestToken, PRIVATE_HEADERS, sha256 } from "./access.js";
+import { PRIVATE_HEADERS, sha256 } from "./access.js";
+import { authorizeLab, type Authorize } from "./lab/access.js";
 import { anaZeroFeedbackSchema } from "./schema.js";
 import { anaTestStore, type AnaTestStore } from "./testing-store.js";
 
 const MAX_REQUEST_BYTES = 8_192;
 
-export async function handleAnaZeroFeedback(request: Request, store: AnaTestStore = anaTestStore) {
+export async function handleAnaZeroFeedback(
+  request: Request,
+  store: AnaTestStore = anaTestStore,
+  authorize: Authorize = authorizeLab,
+) {
   if (request.method !== "POST") {
     return Response.json({ error: "method_not_allowed" }, { status: 405, headers: PRIVATE_HEADERS });
   }
-  if (!(await hasValidTestToken(request))) {
+  if (!(await authorize(request))) {
     return Response.json({ error: "invalid_token" }, { status: 401, headers: PRIVATE_HEADERS });
   }
 

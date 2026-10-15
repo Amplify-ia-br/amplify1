@@ -1,0 +1,22 @@
+.alx-page{height:100dvh;overflow-y:auto;display:flex;justify-content:center;align-items:flex-start;padding:48px 20px;background:radial-gradient(circle at 45% -15%,rgba(38,185,178,.09),transparent 35rem),#080a0b;color:#f4f7f7;font-family:Inter,sans-serif}
+.alx-card{width:min(520px,100%);display:flex;flex-direction:column;gap:18px}
+.alx-brand{display:flex;align-items:center;gap:11px}
+.alx-brand i{width:17px;height:17px;background:#32c9c2;box-shadow:0 0 22px rgba(50,201,194,.3)}
+.alx-brand strong{font:700 24px/1 "Bricolage Grotesque",sans-serif;letter-spacing:-.05em}
+.alx-card h1{margin:0;font:700 28px/1.15 "Bricolage Grotesque",sans-serif;letter-spacing:-.03em}
+.alx-card h1 span{color:#32c9c2}
+.alx-lead{margin:0;color:#8b9698;font:14px/1.6 Inter,sans-serif}
+.alx-form{display:flex;flex-direction:column;padding:20px;border:1px solid #22282b;border-radius:12px;background:#0b0f10}
+.alx-form .az-field select{width:100%;padding:10px 12px;border:1px solid #283033;border-radius:8px;background:#0e1214;color:#e7eced;font:14px/1.45 Inter,sans-serif;outline:0}
+.alx-form .az-field select:focus-visible{border-color:#32c9c2;box-shadow:0 0 0 2px rgba(50,201,194,.2)}
+.alx-consent{display:flex;gap:10px;align-items:flex-start;margin:4px 0 18px;color:#aab3b4;font:12px/1.55 Inter,sans-serif;cursor:pointer}
+.alx-consent input{margin-top:2px;width:16px;height:16px;accent-color:#32c9c2;flex:none}
+.alx-submit{padding:12px 16px;border:1px solid #32c9c2;border-radius:8px;background:#10201f;color:#32c9c2;font:600 14px Inter,sans-serif;cursor:pointer}
+.alx-submit:disabled{opacity:.45;cursor:not-allowed}
+.alx-submit:focus-visible{outline:2px solid #32c9c2;outline-offset:2px}
+.alx-notice{margin:0;padding:12px 14px;border:1px solid #2c3436;border-radius:8px;background:#0e1214;color:#aab3b4;font:13px/1.55 Inter,sans-serif}
+.alx-error{margin:0 0 14px;padding:10px 12px;border:1px solid #4a2a2a;border-radius:8px;background:#1a0f0f;color:#e08a8a;font:13px/1.5 Inter,sans-serif}
+.alx-center{display:grid;place-items:center;height:100dvh;background:#080a0b;color:#7f8a8c;font:14px Inter,sans-serif}
+.az-greeting{max-width:720px;margin:28px auto 0;color:#aab3b4;font:14px/1.6 Inter,sans-serif;text-align:left}
+.az-greeting strong{color:#e7eced}
+.az-setup .az-greeting{margin:0 0 16px}

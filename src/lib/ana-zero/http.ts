@@ -2,7 +2,8 @@ import { createUIMessageStream, createUIMessageStreamResponse } from "ai";
 import { resolveAnaSession } from "../ana/session.js";
 import { checkAnaRateLimit } from "../ana/store.js";
 import type { KnowledgeReader } from "../okf/http.js";
-import { hasValidTestToken, PRIVATE_HEADERS, sha256 } from "./access.js";
+import { PRIVATE_HEADERS, sha256 } from "./access.js";
+import { authorizeLab, type Authorize } from "./lab/access.js";
 import { runAnaZeroTurn } from "./agent.js";
 import { readServerEnv } from "./env.js";
 import { PROMPT_VERSION } from "./prompt.js";
@@ -20,13 +21,16 @@ export async function handleAnaZeroChat(
   reader: KnowledgeReader,
   run: typeof runAnaZeroTurn = runAnaZeroTurn,
   store: AnaTestStore = anaTestStore,
+  authorize: Authorize = authorizeLab,
 ) {
   if (request.method !== "POST") {
     return Response.json({ error: "method_not_allowed" }, { status: 405, headers: PRIVATE_HEADERS });
   }
-  if (!(await hasValidTestToken(request))) {
+  const access = await authorize(request);
+  if (!access) {
     return Response.json({ error: "invalid_token" }, { status: 401, headers: PRIVATE_HEADERS });
   }
+  const labTester = access.kind === "tester" ? access.tester : undefined;
 
   const raw = await request.text();
   if (new TextEncoder().encode(raw).byteLength > MAX_REQUEST_BYTES) {
@@ -51,7 +55,9 @@ export async function handleAnaZeroChat(
     ? { ...PRIVATE_HEADERS, "set-cookie": session.setCookie }
     : PRIVATE_HEADERS;
   const forwarded = request.headers.get("x-vercel-forwarded-for")?.split(",")[0]?.trim();
-  const identity = forwarded || (session ? `session:${session.sessionHash}` : "anonymous");
+  const identity = labTester
+    ? `tester:${labTester.id}`
+    : forwarded || (session ? `session:${session.sessionHash}` : "anonymous");
   for (const { scope, requests, windowSeconds } of RATE_LIMITS) {
     const limit = await checkAnaRateLimit(await sha256(`${scope}:${identity}`), requests, windowSeconds);
     if (limit.allowed) continue;
@@ -74,7 +80,9 @@ export async function handleAnaZeroChat(
       const saved = sessionId
         ? await store.saveTurn({
             sessionId,
-            testerName: tester,
+            testerName: labTester?.name ?? tester,
+            testerId: labTester?.id,
+            cohort: labTester?.cohort ?? undefined,
             mission,
             model,
             turnIndex,

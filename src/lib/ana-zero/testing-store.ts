@@ -14,6 +14,8 @@ export type SaveTestTurnInput = {
   appCommit?: string;
   sessionId: string;
   testerName: string;
+  testerId?: string;
+  cohort?: string;
   mission: string;
   model: string;
   turnIndex: number;
@@ -71,6 +73,7 @@ export const anaTestStore: AnaTestStore = {
           model: input.model,
           turn_count: input.turnIndex,
           updated_at: now,
+          ...(input.testerId ? { tester_id: input.testerId, cohort: input.cohort ?? null } : {}),
         },
         { onConflict: "id" },
       );

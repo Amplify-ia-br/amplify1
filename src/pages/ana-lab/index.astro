@@ -1,0 +1,10 @@
+---
+import AnaLabGate from "@/components/ana-lab/AnaLabGate";
+import AnaLabLayout from "@/layouts/AnaLabLayout.astro";
+
+export const prerender = false;
+---
+
+<AnaLabLayout>
+  <AnaLabGate client:load />
+</AnaLabLayout>
