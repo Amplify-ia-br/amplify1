@@ -157,6 +157,14 @@ describe("contrato HTTP e prompt", () => {
     expect(system).toContain("nunca \"não encontrei uma descrição pública\"");
     expect(system).toContain("devolver a pergunta");
   });
+  it("o prompt proíbe fecho repetitivo, frases de esquiva e pedido de contato formal", () => {
+    const system = buildAnaZeroSystem([]);
+    expect(system).toContain('Nunca use a fórmula "Se quiser, eu posso..."');
+    expect(system).toContain('Nunca escreva "não tenho isso confirmado"');
+    expect(system).toContain("Escola também é uma organização");
+    expect(system).toContain("Prefere WhatsApp ou e-mail?");
+    expect(system).toContain('Nunca use "consentiria"');
+  });
 });
 
 describe("análise de transcrições", () => {
