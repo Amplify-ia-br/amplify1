@@ -33,7 +33,7 @@ const levels = [
 
 const benefits = [
   "Acesso à metodologia exclusiva Amplify",
-  "Certificação reconhecida pelo mercado",
+  "Certificado de conclusão da formação",
   "Rede de contatos com líderes em IA",
   "Oportunidades de atuação em projetos reais",
   "Material didático e ferramentas de suporte",
