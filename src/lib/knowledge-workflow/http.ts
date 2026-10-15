@@ -15,8 +15,10 @@ export async function handleKnowledgePublish(request: Request) {
   const accessToken = authorization.startsWith("Bearer ") ? authorization.slice(7) : "";
   if (!accessToken) return json({ error: "unauthorized", message: "Faça login novamente." }, 401);
 
-  const supabaseUrl = env("SUPABASE_URL") || env("VITE_SUPABASE_URL");
-  const supabaseKey = env("SUPABASE_PUBLISHABLE_KEY") || env("VITE_SUPABASE_PUBLISHABLE_KEY");
+  // The token comes from the browser client, so validate it against the exact
+  // same Supabase project before falling back to the server aliases.
+  const supabaseUrl = env("VITE_SUPABASE_URL") || env("SUPABASE_URL");
+  const supabaseKey = env("VITE_SUPABASE_PUBLISHABLE_KEY") || env("SUPABASE_PUBLISHABLE_KEY");
   if (!supabaseUrl || !supabaseKey) return json({ error: "server_not_configured", message: "Supabase não configurado no servidor." }, 503);
 
   const client = createClient(supabaseUrl, supabaseKey, {
