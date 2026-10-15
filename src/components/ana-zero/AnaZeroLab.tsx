@@ -1,6 +1,6 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { Bot, ChevronDown, Plus, Send, Sparkles, Square } from "lucide-react";
+import { Bot, Check, ChevronDown, Copy, Plus, Send, Sparkles, Square } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ANA_MODELS, type AnaModelId } from "@/lib/ana/config";
 import { formatAnaAssistantText } from "@/lib/ana/text";
@@ -12,8 +12,54 @@ const gatewayModels = Object.keys(ANA_MODELS) as AnaModelId[];
 const textOf = (message: AnaZeroMessage) =>
   message.parts.filter((part) => part.type === "text").map((part) => part.text).join("");
 
+const describeMetadata = (metadata: AnaZeroMessage["metadata"]) => {
+  if (!metadata) return "";
+  const parts = [
+    metadata.resolvedModel,
+    `ferramentas: ${metadata.toolCalls?.length ? metadata.toolCalls.join(", ") : "nenhuma"}`,
+    metadata.memory?.length ? `memória: ${metadata.memory.map((entry) => `${entry.key}=${entry.value}`).join("; ")}` : "",
+    metadata.handoff ? "pedido de contato registrado" : "",
+    metadata.regenerated ? "regenerada" : "",
+    metadata.issues?.length ? `validações: ${metadata.issues.join(", ")}` : "",
+    metadata.errors?.length ? `erro técnico: ${metadata.errors.join(" | ")}` : "",
+    metadata.estimatedCostUsd != null ? `US$ ${metadata.estimatedCostUsd.toFixed(5)}` : "",
+  ].filter(Boolean);
+  return `[${parts.join(" · ")}]`;
+};
+
+const buildTranscript = (messages: AnaZeroMessage[]) =>
+  messages
+    .map((message) => {
+      const text = textOf(message).trim();
+      if (!text) return "";
+      if (message.role === "user") return `VOCÊ: ${text}`;
+      const diagnostics = describeMetadata(message.metadata);
+      return `ANA: ${text}${diagnostics ? `\n${diagnostics}` : ""}`;
+    })
+    .filter(Boolean)
+    .join("\n\n");
+
+const copyText = async (text: string) => {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.select();
+    const copied = document.execCommand("copy");
+    area.remove();
+    return copied;
+  }
+};
+
 export default function AnaZeroLab() {
   const [input, setInput] = useState("");
+  const [copied, setCopied] = useState(false);
   const [model, setModel] = useState<AnaModelId>(ANA_ZERO_DEFAULT_MODEL);
   const modelRef = useRef(model);
   const memoryRef = useRef<AnaZeroMemoryEntry[]>([]);
@@ -63,6 +109,12 @@ export default function AnaZeroLab() {
     submit(input);
   };
 
+  const copyConversation = async () => {
+    if (!(await copyText(buildTranscript(messages)))) return;
+    setCopied(true);
+    window.setTimeout(() => setCopied(false), 2000);
+  };
+
   const reset = () => {
     if (busy) stop();
     clearError();
@@ -92,6 +144,16 @@ export default function AnaZeroLab() {
             </select>
             <ChevronDown aria-hidden="true" />
           </label>
+          <button
+            className="ana-new"
+            onClick={copyConversation}
+            type="button"
+            disabled={messages.length === 0}
+            aria-label="Copiar conversa com diagnósticos"
+          >
+            {copied ? <Check aria-hidden="true" /> : <Copy aria-hidden="true" />}
+            <span>{copied ? "Copiado" : "Copiar conversa"}</span>
+          </button>
           <button className="ana-new" onClick={reset} type="button"><Plus aria-hidden="true" /> <span>Nova conversa</span></button>
         </div>
       </header>
