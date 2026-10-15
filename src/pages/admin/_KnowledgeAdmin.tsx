@@ -374,9 +374,17 @@ const KnowledgeAdmin = () => {
       } else if (revision.status !== "approved") {
         throw new Error("Esta revisão não está pronta para publicação.");
       }
+      const sessionResult = await supabase.auth.getSession();
+      let currentSession = sessionResult.data.session;
+      if (sessionResult.error || !currentSession) throw new Error("Sua sessão expirou. Entre novamente para publicar.");
+      if (currentSession.expires_at && currentSession.expires_at <= Math.floor(Date.now() / 1000) + 60) {
+        const refreshed = await supabase.auth.refreshSession();
+        currentSession = refreshed.data.session;
+        if (refreshed.error || !currentSession) throw new Error("Sua sessão expirou. Entre novamente para publicar.");
+      }
       const response = await fetch("/api/knowledge-workflow/publish", {
         method: "POST",
-        headers: { "content-type": "application/json", Authorization: `Bearer ${session.access_token}` },
+        headers: { "content-type": "application/json", Authorization: `Bearer ${currentSession.access_token}` },
         body: JSON.stringify({ documentId: document.id, revisionId: revision.id }),
       });
       const rawResult = await response.text();
