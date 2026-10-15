@@ -363,13 +363,17 @@ const KnowledgeAdmin = () => {
     if (!document || !revision || !session) return;
     setBusy(true);
     try {
-      const reviewedAt = new Date().toISOString();
-      const { error } = await db.from("knowledge_revisions").update({
-        status: "approved", reviewed_by: user?.id, reviewed_at: reviewedAt, review_note: reviewNote.trim() || null,
-      }).eq("id", revision.id);
-      if (error) throw error;
-      await db.from("knowledge_documents").update({ status: "approved" }).eq("id", document.id);
-      await appendAudit("revision.approved", document.id, revision.id, document.area_id);
+      if (revision.status === "review") {
+        const reviewedAt = new Date().toISOString();
+        const { error } = await db.from("knowledge_revisions").update({
+          status: "approved", reviewed_by: user?.id, reviewed_at: reviewedAt, review_note: reviewNote.trim() || null,
+        }).eq("id", revision.id);
+        if (error) throw error;
+        await db.from("knowledge_documents").update({ status: "approved" }).eq("id", document.id);
+        await appendAudit("revision.approved", document.id, revision.id, document.area_id);
+      } else if (revision.status !== "approved") {
+        throw new Error("Esta revisão não está pronta para publicação.");
+      }
       const response = await fetch("/api/knowledge-workflow/publish", {
         method: "POST",
         headers: { "content-type": "application/json", Authorization: `Bearer ${session.access_token}` },
@@ -559,7 +563,7 @@ const KnowledgeAdmin = () => {
                   <div className="grid gap-2"><Label htmlFor="change-summary">Resumo da alteração</Label><Input id="change-summary" value={changeSummary} onChange={(event) => setChangeSummary(event.target.value)} placeholder="O que mudou nesta revisão?" /></div>
                   <div className="grid gap-2"><Label htmlFor="knowledge-editor">Conteúdo em Markdown</Label><textarea id="knowledge-editor" value={editorContent} onChange={(event) => setEditorContent(event.target.value)} className="min-h-[420px] w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" /></div>
                   {sources.some((source) => source.document_id === selectedDocument.id && source.sync_status === "changed") && <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-sm text-amber-200"><p>A fonte Google foi alterada depois da última importação.</p><Button className="mt-2" size="sm" variant="outline" onClick={reimportSelectedSource} disabled={busy}>Criar revisão com a mudança</Button></div>}
-                  <div className="flex flex-wrap gap-2"><Button onClick={saveRevision} disabled={busy}>Salvar rascunho</Button><Button variant="outline" onClick={submitForReview} disabled={busy || !selectedRevision || selectedRevision.status === "review"}>Enviar para aprovação</Button>{selectedDocument.status === "active" && <Button variant="ghost" asChild><a href={`/knowledge/${selectedDocument.okf_id}`} target="_blank" rel="noreferrer">Ver publicado</a></Button>}</div>
+                  <div className="flex flex-wrap gap-2"><Button onClick={saveRevision} disabled={busy}>Salvar rascunho</Button><Button variant="outline" onClick={submitForReview} disabled={busy || !selectedRevision || selectedRevision.status === "review"}>Enviar para aprovação</Button>{selectedRevision?.status === "approved" && canReviewSelected && <Button onClick={() => approveAndPublish(selectedDocument, selectedRevision)} disabled={busy}><ShieldCheck className="mr-2 h-4 w-4" />Publicar aprovado</Button>}{selectedDocument.status === "active" && <Button variant="ghost" asChild><a href={`/knowledge/${selectedDocument.okf_id}`} target="_blank" rel="noreferrer">Ver publicado</a></Button>}</div>
                 </CardContent>}
               </Card>
             </div>
