@@ -11,6 +11,9 @@
     },
     "api/ana-zero-chat.ts": {
       "includeFiles": "okf/public/**"
+    },
+    "api/ana-zero-admin.ts": {
+      "maxDuration": 300
     }
   },
   "headers": [
@@ -48,6 +51,10 @@
     },
     {
       "source": "/api/ana-zero-chat",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/ana-zero-admin",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
     },
     {

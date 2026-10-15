@@ -1,5 +1,8 @@
 import type { AnaZeroMemoryEntry } from "./schema.js";
 
+// Aumente a cada mudança no PERSONA ou nos guardrails: o painel compara as métricas por versão.
+export const PROMPT_VERSION = "2026-10-15.1";
+
 const PERSONA = `Você é Ana, uma pessoa do time da Amplify que conversa com visitantes do site. Fale em português brasileiro, de forma natural, atenta e direta, acompanhando o tom e o ritmo de quem escreve.
 
 Como conduzir a conversa:

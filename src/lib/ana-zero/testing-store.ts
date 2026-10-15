@@ -1,7 +1,17 @@
 import { getServerClient } from "../ana/store.js";
-import type { AnaZeroMemoryEntry } from "./schema.js";
+import type { AnaZeroHandoff, AnaZeroMemoryEntry } from "./schema.js";
+
+const NEW_TURN_COLUMNS = /sources|handoff|prompt_version|app_commit/;
+
+function isMissingColumn(error: { code?: string; message?: string }) {
+  return (error.code === "PGRST204" || error.code === "42703") && NEW_TURN_COLUMNS.test(error.message ?? "");
+}
 
 export type SaveTestTurnInput = {
+  sources?: Array<{ id: string; title: string }>;
+  handoff?: AnaZeroHandoff;
+  promptVersion?: string;
+  appCommit?: string;
   sessionId: string;
   testerName: string;
   mission: string;
@@ -66,25 +76,37 @@ export const anaTestStore: AnaTestStore = {
       );
       if (session.error) throw session.error;
 
+      const base = {
+        session_id: input.sessionId,
+        turn_index: input.turnIndex,
+        user_text: input.userText,
+        assistant_text: input.assistantText,
+        resolved_model: input.resolvedModel ?? null,
+        tool_calls: input.toolCalls,
+        memory: input.memory,
+        issues: input.issues,
+        regenerated: input.regenerated,
+        errors: input.errors,
+        total_tokens: input.totalTokens ?? null,
+        estimated_cost_usd: input.estimatedCostUsd ?? null,
+        latency_ms: input.latencyMs,
+      };
       const turn = await supabase.from("ana_test_turns").upsert(
         {
-          session_id: input.sessionId,
-          turn_index: input.turnIndex,
-          user_text: input.userText,
-          assistant_text: input.assistantText,
-          resolved_model: input.resolvedModel ?? null,
-          tool_calls: input.toolCalls,
-          memory: input.memory,
-          issues: input.issues,
-          regenerated: input.regenerated,
-          errors: input.errors,
-          total_tokens: input.totalTokens ?? null,
-          estimated_cost_usd: input.estimatedCostUsd ?? null,
-          latency_ms: input.latencyMs,
+          ...base,
+          sources: input.sources ?? [],
+          handoff: input.handoff ?? null,
+          prompt_version: input.promptVersion ?? null,
+          app_commit: input.appCommit ?? null,
         },
         { onConflict: "session_id,turn_index" },
       );
-      if (turn.error) throw turn.error;
+      if (turn.error) {
+        // Migração de análises ainda não aplicada: grava sem as colunas novas para não perder o turno.
+        if (!isMissingColumn(turn.error)) throw turn.error;
+        const legacy = await supabase.from("ana_test_turns").upsert(base, { onConflict: "session_id,turn_index" });
+        if (legacy.error) throw legacy.error;
+      }
       return true;
     } catch (error) {
       return report("turno", error);

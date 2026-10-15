@@ -4,6 +4,8 @@ import { checkAnaRateLimit } from "../ana/store.js";
 import type { KnowledgeReader } from "../okf/http.js";
 import { hasValidTestToken, PRIVATE_HEADERS, sha256 } from "./access.js";
 import { runAnaZeroTurn } from "./agent.js";
+import { readServerEnv } from "./env.js";
+import { PROMPT_VERSION } from "./prompt.js";
 import { anaZeroRequestSchema, type AnaZeroMessage } from "./schema.js";
 import { anaTestStore, type AnaTestStore } from "./testing-store.js";
 
@@ -87,6 +89,10 @@ export async function handleAnaZeroChat(
             totalTokens: turn.usage.totalTokens,
             estimatedCostUsd: turn.estimatedCostUsd,
             latencyMs: Date.now() - startedAt,
+            sources: turn.sources,
+            handoff: turn.handoff,
+            promptVersion: PROMPT_VERSION,
+            appCommit: readServerEnv("VERCEL_GIT_COMMIT_SHA")?.slice(0, 12),
           })
         : false;
       const textId = `ana-zero-${crypto.randomUUID()}`;

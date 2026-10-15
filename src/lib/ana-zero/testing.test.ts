@@ -11,6 +11,7 @@ import type { KnowledgeReader } from "../okf/http";
 import { hasValidTestToken } from "./access";
 import { handleAnaZeroFeedback } from "./feedback-http";
 import { handleAnaZeroChat } from "./http";
+import { PROMPT_VERSION } from "./prompt";
 import { anaZeroFeedbackSchema } from "./schema";
 import type { AnaTestStore } from "./testing-store";
 
@@ -102,6 +103,8 @@ describe("gravação do turno", () => {
         turnIndex: 1,
         userText: "Oi",
         assistantText: "Oi, eu sou a Ana.",
+        sources: [],
+        promptVersion: PROMPT_VERSION,
       }),
     );
   });
