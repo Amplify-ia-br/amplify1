@@ -40,6 +40,7 @@ export const okfSchema = z
     type: z.string().trim().min(1, "Informe o tipo do documento."),
     visibility: z.enum(["public", "internal", "restricted"]),
     status: z.enum(["draft", "review", "approved", "active", "deprecated"]),
+    area: z.string().regex(OKF_ID, "Use a área em kebab-case.").optional(),
     owner: z.string().trim().min(1, "Informe o responsável."),
     reviewer: z.string().trim().min(1, "O revisor não pode ser vazio.").optional(),
     source_of_truth: z.boolean(),

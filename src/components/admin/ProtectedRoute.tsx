@@ -30,7 +30,9 @@ const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps)
     return <Navigate to="/admin" replace />;
   }
 
-  if (!requireAdmin && !isEditor) {
+  const isKnowledgeRoute = location.pathname.startsWith("/admin/knowledge");
+
+  if (!requireAdmin && !isEditor && !isKnowledgeRoute) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center text-center px-4 space-y-4">
         <h1 className="text-2xl font-heading font-bold">Acesso negado</h1>

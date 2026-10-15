@@ -27,7 +27,9 @@ const AuthContent = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const from = (location.state as any)?.from || "/admin/amplify-day/convites";
+  const queryFrom = new URLSearchParams(location.search).get("from");
+  const safeQueryFrom = queryFrom?.startsWith("/") && !queryFrom.startsWith("//") ? queryFrom : null;
+  const from = (location.state as any)?.from || safeQueryFrom || "/admin/knowledge";
 
   useEffect(() => {
     if (!authLoading && user) {
@@ -90,7 +92,7 @@ const AuthContent = () => {
             </h1>
             <p className="text-sm text-muted-foreground">
               {mode === "login"
-                ? "Acesse a área administrativa do blog"
+                ? "Acesse a administração e a Base de Conhecimento"
                 : "Vamos enviar um link para redefinir sua senha"}
             </p>
           </div>
