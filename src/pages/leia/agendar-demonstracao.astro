@@ -1,0 +1,104 @@
+---
+import Analytics from "@vercel/analytics/astro";
+import LeiaLeadForm from "../../components/leia/LeiaLeadForm.astro";
+
+const intent = Astro.url.searchParams.get("intencao") === "orcamento" ? "orcamento" : "masterclass";
+const isBudget = intent === "orcamento";
+const title = isBudget ? "Implantação do L.E.I.A. para Escolas" : "Agende uma demonstração gratuita do L.E.I.A.";
+const description = isBudget
+  ? "Converse com a equipe da Amplify sobre implantação, turmas e orçamento do programa L.E.I.A."
+  : "Agende uma demonstração gratuita, presencial ou online, do programa L.E.I.A. para sua escola.";
+const canonical = new URL("/leia/agendar-demonstracao", Astro.site ?? Astro.url).toString();
+---
+
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>{title}</title>
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonical}>
+  <meta property="og:type" content="website">
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:url" content={canonical}>
+  <meta property="og:image" content={new URL("/leia/assets/personagem-04.jpg", canonical).toString()}>
+  <link rel="preload" href="/leia/fonts/montserrat-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/leia/fonts/montserrat-latin-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <style>
+    @font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-500-normal.woff2') format('woff2'); font-weight: 500; font-display: swap; }
+    @font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-600-normal.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+    @font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-display: swap; }
+    @font-face { font-family: Montserrat; src: url('/leia/fonts/montserrat-latin-800-normal.woff2') format('woff2'); font-weight: 800; font-display: swap; }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { min-height: 100%; background: #42128a; }
+    body { min-height: 100vh; margin: 0; color: #fff; background: #42128a; font-family: Montserrat, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
+    a { color: inherit; }
+    .pagina { position: relative; isolation: isolate; min-height: 100vh; overflow: hidden; background: linear-gradient(135deg, #42128a 0%, #301654 100%); }
+    .pagina::before { position: absolute; z-index: -2; inset: 0; background: url('/leia/assets/padrao-constelacao.svg') center/cover; content: ""; opacity: .42; }
+    .pagina::after { position: absolute; z-index: -1; right: -90px; bottom: 5%; width: 310px; height: 310px; border-radius: 50%; background: url('/leia/assets/orbe-vibrante.svg') center/contain no-repeat; content: ""; opacity: .72; }
+    .container { width: min(1200px, calc(100% - 48px)); margin-inline: auto; }
+    header { display: flex; min-height: 82px; align-items: center; justify-content: space-between; gap: 24px; border-bottom: 1px solid rgba(255,255,255,.16); }
+    header img { display: block; width: 120px; height: auto; }
+    header a:last-child { color: #d9ccef; font-size: 14px; font-weight: 700; text-decoration: none; }
+    main { display: grid; grid-template-columns: minmax(0, 5fr) minmax(520px, 7fr); align-items: start; gap: clamp(40px, 6vw, 80px); padding-block: clamp(54px, 8vw, 100px); }
+    .intro { position: sticky; top: 48px; display: grid; gap: 24px; padding-top: 14px; }
+    .rotulo { margin: 0; color: #ff94c2; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { max-width: 650px; margin: 0; font-size: clamp(42px, 5vw, 70px); font-weight: 800; letter-spacing: -.045em; line-height: 1.02; text-wrap: balance; }
+    h1 span { color: #67d4de; }
+    .texto { max-width: 570px; margin: 0; color: #d9ccef; font-size: clamp(18px, 1.6vw, 22px); line-height: 1.55; }
+    ul { display: grid; gap: 12px; margin: 4px 0 0; padding: 0; list-style: none; }
+    li { display: flex; align-items: baseline; gap: 10px; color: #fff; font-size: 16px; font-weight: 600; line-height: 1.45; }
+    li::before { flex: none; color: #67d4de; content: "✦"; }
+    .email { margin: 8px 0 0; color: #d9ccef; font-size: 14px; }
+    .email a { color: #fff; font-weight: 700; }
+    footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 24px; padding-block: 22px 28px; border-top: 1px solid rgba(255,255,255,.16); color: #cfc2ea; font-size: 12px; }
+    @media (max-width: 920px) {
+      main { grid-template-columns: minmax(0, 1fr); }
+      .intro { position: static; }
+    }
+    @media (max-width: 640px) {
+      .container { width: min(100% - 32px, 1200px); }
+      header { min-height: 72px; }
+      header img { width: 105px; }
+      h1 { font-size: 38px; }
+      main { padding-block: 42px 64px; }
+      .pagina::after { right: -120px; width: 240px; height: 240px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="pagina">
+    <header class="container">
+      <a href="/leia" aria-label="Voltar para a página do L.E.I.A."><img src="/leia/assets/leia-logo-simbolo-branco.png" alt="L.E.I.A." width="120" height="35"></a>
+      <a href="/leia">← Voltar ao programa</a>
+    </header>
+    <main class="container">
+      <section class="intro">
+        <p class="rotulo">{isBudget ? "Implantação e orçamento" : "Demonstração gratuita"}</p>
+        <h1>{isBudget ? "Vamos desenhar o L.E.I.A. para a sua escola." : <>Veja o L.E.I.A. <span>funcionando na prática.</span></>}</h1>
+        <p class="texto">{isBudget
+          ? "Conte um pouco sobre a sua escola. Um especialista da Amplify entra em contato para entender o contexto, as turmas e o formato de implantação."
+          : "Uma conversa exclusiva para direção e coordenação conhecerem o método, as atividades e a experiência dos estudantes."}</p>
+        <ul>
+          {isBudget ? (
+            <><li>Diagnóstico inicial gratuito.</li><li>Proposta desenhada para a realidade da escola.</li><li>Turmas com início no 1º semestre de 2027.</li></>
+          ) : (
+            <><li>Presencial ou online.</li><li>Sem compromisso e exclusiva para sua escola.</li></>
+          )}
+        </ul>
+        <p class="email">Prefere escrever? <a href="mailto:comercial@amplify.ia.br">comercial@amplify.ia.br</a></p>
+      </section>
+      <LeiaLeadForm intent={intent} />
+    </main>
+    <footer class="container">
+      <span>L.E.I.A. · Laboratório Escolar de Inteligência Artificial</span>
+      <a href="https://amplify.ia.br/privacidade" target="_blank" rel="noopener">Privacidade</a>
+      <span>© 2026 Amplify</span>
+    </footer>
+  </div>
+  <Analytics />
+</body>
+</html>

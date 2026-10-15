@@ -1,0 +1,257 @@
+---
+interface Props {
+  intent?: "masterclass" | "orcamento";
+}
+
+const { intent = "masterclass" } = Astro.props;
+const isBudget = intent === "orcamento";
+---
+
+<div class="form" aria-live="polite">
+  <form id="form-contato" novalidate>
+    <input type="hidden" name="intencao" value={intent}>
+    {!isBudget && (
+      <fieldset>
+        <legend class="legend">Como prefere participar? <span class="opc">(opcional)</span></legend>
+        <div class="opcoes opcoes--inline">
+          <label class="opcao"><input type="radio" name="formatoMasterclass" value="presencial"><span>Presencial</span></label>
+          <label class="opcao"><input type="radio" name="formatoMasterclass" value="online"><span>Online</span></label>
+        </div>
+      </fieldset>
+    )}
+    <div class="linha2">
+      <div class="campo"><label for="nome">Nome</label><input id="nome" name="nome" autocomplete="name" placeholder="Nome e sobrenome" required><span class="erro" id="nome-erro" hidden>Informe seu nome.</span></div>
+      <div class="campo"><label for="email">E-mail profissional</label><input id="email" name="email" type="email" autocomplete="email" placeholder="voce@escola.com.br" required><span class="erro" id="email-erro" hidden>Informe um e-mail válido.</span></div>
+    </div>
+    <div class="linha2">
+      <div class="campo"><label for="escola">Escola ou rede</label><input id="escola" name="escola" autocomplete="organization" placeholder="Nome da escola ou rede" required><span class="erro" id="escola-erro" hidden>Informe a escola ou rede.</span></div>
+      <div class="campo"><label for="papel">Seu papel</label>
+        <select id="papel" name="papel" required><option value="">Selecione</option><option>Direção</option><option>Coordenação pedagógica</option><option>Professor(a)</option><option>Mantenedor(a)</option><option>Outro</option></select>
+        <span class="erro" id="papel-erro" hidden>Selecione seu papel na escola.</span></div>
+    </div>
+    <div class="campo"><label for="estudantes">Quantos estudantes a escola tem do 9º ano à 3ª série? <span class="opc">(opcional)</span></label>
+      <select id="estudantes" name="estudantes"><option value="">Selecione</option><option>Até 100</option><option>101 a 300</option><option>301 a 600</option><option>Mais de 600</option><option>Ainda não sei</option></select></div>
+    <details class="extra">
+      <summary>Adicionar cidade e telefone (opcional)</summary>
+      <div class="linha2">
+        <div class="campo"><label for="cidade">Cidade e estado</label><input id="cidade" name="cidade" autocomplete="address-level2" placeholder="Brasília, DF"></div>
+        <div class="campo"><label for="telefone">Telefone</label><input id="telefone" name="telefone" inputmode="tel" autocomplete="tel" placeholder="(61) 90000-0000"></div>
+      </div>
+    </details>
+    <div class="hp" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+    <p class="form__nota">A solicitação não confirma uma data. Nossa equipe entra em contato para alinhar contexto e formato.</p>
+    <button class="botao" type="submit" id="enviar">Enviar solicitação <span aria-hidden="true">&rarr;</span></button>
+    <p class="form__consent">Ao enviar, você concorda com o uso dos dados para responder a esta solicitação, conforme a nossa <a href="https://amplify.ia.br/privacidade" target="_blank" rel="noopener">política de privacidade</a>.</p>
+  </form>
+
+  <div class="ok" id="ok" hidden tabindex="-1">
+    <div class="ok__selo"><img src="/leia/assets/brilho-4-pontas-coral.svg" alt=""></div>
+    <h2 id="ok-titulo">Solicitação enviada.</h2>
+    <p id="ok-texto">Nossa equipe entra em contato para alinhar contexto e formato.</p>
+    <dl class="resumo" id="resumo"></dl>
+    <div class="botoes">
+      <button class="botao" type="button" id="copiar-resumo">Copiar resumo</button>
+      <button class="botao botao--contorno" type="button" id="editar">Editar dados</button>
+    </div>
+    <p class="status" id="resumo-status" role="status"></p>
+  </div>
+
+  <p class="alternativa">
+    {isBudget ? "Prefere conhecer o programa primeiro?" : "Já quer conversar sobre implantação e orçamento?"}
+    <a href={isBudget ? "/leia/agendar-demonstracao" : "/leia/agendar-demonstracao?intencao=orcamento"}>
+      {isBudget ? "Agendar demonstração gratuita" : "Falar com um especialista"}
+    </a>
+  </p>
+</div>
+
+<style>
+  .form { position: relative; padding: clamp(24px, 4vw, 38px); border-radius: 24px; color: #301654; background: #fff; box-shadow: 0 20px 60px rgba(32, 11, 82, .34); }
+  form { display: grid; gap: 18px; }
+  fieldset { min-width: 0; margin: 0; padding: 0; border: 0; }
+  .linha2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+  .campo { display: grid; min-width: 0; gap: 7px; }
+  .campo label, .legend { color: #301654; font: 700 14px/18px Montserrat, Arial, sans-serif; }
+  .opc { color: #5e4a7e; font-weight: 500; }
+  .campo input, .campo select { width: 100%; min-height: 52px; padding: 12px 16px; border: 2px solid #e6d3bc; border-radius: 8px; appearance: none; color: #301654; background: #fefbf2; font: 400 16px/1.4 Montserrat, Arial, sans-serif; }
+  .campo select { padding-right: 42px; background-image: linear-gradient(45deg, transparent 50%, #301654 50%), linear-gradient(135deg, #301654 50%, transparent 50%); background-position: calc(100% - 22px) 50%, calc(100% - 16px) 50%; background-repeat: no-repeat; background-size: 6px 6px; }
+  .campo input::placeholder { color: #8a7aa3; }
+  .campo input:focus-visible, .campo select:focus-visible { border-color: #482080; outline: 3px solid #482080; outline-offset: 1px; }
+  .campo [aria-invalid="true"] { border-color: #c4432c; }
+  .erro { color: #c4432c; font: 600 13px/18px Montserrat, Arial, sans-serif; }
+  .opcoes { display: grid; gap: 10px; margin-top: 8px; }
+  .opcoes--inline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .opcao { position: relative; display: block; }
+  .opcao input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .opcao span { display: flex; min-height: 52px; align-items: center; gap: 12px; padding: 12px 16px; border: 2px solid #e6d3bc; border-radius: 8px; background: #fefbf2; cursor: pointer; font: 600 15px/21px Montserrat, Arial, sans-serif; }
+  .opcao span::before { width: 18px; height: 18px; flex: none; border: 2px solid #8a7aa3; border-radius: 50%; background: #fff; content: ""; }
+  .opcao input:checked + span { border-color: #482080; background: #f3ecfb; }
+  .opcao input:checked + span::before { border: 6px solid #482080; }
+  .opcao input:focus-visible + span { outline: 3px solid #482080; outline-offset: 2px; }
+  .extra summary { color: #482080; cursor: pointer; list-style: none; font: 700 14px/20px Montserrat, Arial, sans-serif; }
+  .extra summary::-webkit-details-marker { display: none; }
+  .extra summary::before { content: "+ "; }
+  .extra[open] summary::before { content: "− "; }
+  .extra .linha2 { margin-top: 14px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .form__nota, .form__consent { margin: 0; color: #5e4a7e; font: 500 13px/19px Montserrat, Arial, sans-serif; }
+  .form__consent a, .alternativa a { color: #482080; font-weight: 700; }
+  .botao { display: inline-flex; min-height: 56px; align-items: center; justify-content: center; gap: 12px; padding: 14px 22px; border: 0; border-radius: 999px; color: #fff3e4; background: #482080; cursor: pointer; font: 700 16px/1.2 Montserrat, Arial, sans-serif; text-decoration: none; transition: background-color .16s, transform .16s; }
+  .botao:hover { background: #301654; transform: translateY(-1px); }
+  .botao:disabled { cursor: wait; opacity: .65; }
+  .botao--contorno { border: 2px solid #482080; color: #482080; background: transparent; }
+  .ok { display: grid; gap: 14px; }
+  .ok__selo { display: grid; width: 60px; height: 60px; place-items: center; border-radius: 50%; background: #fff3e4; }
+  .ok__selo img { width: 30px; }
+  .ok h2 { margin: 0; font: 700 26px/32px Montserrat, Arial, sans-serif; }
+  .ok p { margin: 0; }
+  .resumo { display: grid; gap: 6px; margin: 0; padding: 18px 20px; border: 1px solid #e6d3bc; border-radius: 8px; background: #fefbf2; font-size: 15px; }
+  .resumo :global(div) { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 10px; }
+  .resumo :global(dt) { font-weight: 700; }
+  .resumo :global(dd) { margin: 0; overflow-wrap: anywhere; color: #5e4a7e; }
+  .botoes { display: flex; flex-wrap: wrap; gap: 12px; }
+  .status { min-height: 20px; color: #482080; font: 600 14px/20px Montserrat, Arial, sans-serif; }
+  .alternativa { margin: 22px 0 0; padding-top: 20px; border-top: 1px solid #e6d3bc; color: #5e4a7e; font: 500 13px/20px Montserrat, Arial, sans-serif; }
+  .alternativa a { margin-left: 4px; }
+  [hidden] { display: none !important; }
+  @media (max-width: 640px) {
+    .linha2, .opcoes--inline { grid-template-columns: minmax(0, 1fr); }
+    .resumo :global(div) { grid-template-columns: minmax(0, 1fr); gap: 0; }
+  }
+</style>
+
+<script>
+  const endpoint = "/api/leia-lead";
+  const $ = (id) => document.getElementById(id);
+  const form = $("form-contato");
+  const ok = $("ok");
+  let lead = null;
+
+  function copiar(texto, noSelecionar, statusEl, okMsg) {
+    const selecionar = () => {
+      const r = document.createRange();
+      r.selectNodeContents(noSelecionar);
+      const s = getSelection();
+      s.removeAllRanges();
+      s.addRange(r);
+      statusEl.textContent = "Texto selecionado. Use Ctrl+C para copiar.";
+    };
+    try { navigator.clipboard.writeText(texto).then(() => { statusEl.textContent = okMsg; }).catch(selecionar); } catch (e) { selecionar(); }
+  }
+
+  $("telefone").addEventListener("input", (ev) => {
+    const d = ev.target.value.replace(/\D/g, "").slice(0, 11);
+    let v = d;
+    if (d.length > 2) v = `(${d.slice(0, 2)}) ${d.slice(2)}`;
+    if (d.length > 7) v = `(${d.slice(0, 2)}) ${d.slice(2, d.length - 4)}-${d.slice(-4)}`;
+    ev.target.value = v;
+  });
+
+  function marcar(id, valido) {
+    $(id).setAttribute("aria-invalid", valido ? "false" : "true");
+    $(id + "-erro").hidden = valido;
+    return valido;
+  }
+
+  function validar() {
+    const campos = ["nome", "email", "escola", "papel"];
+    const resultados = [
+      marcar("nome", $("nome").value.trim().length >= 3),
+      marcar("email", /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test($("email").value.trim())),
+      marcar("escola", $("escola").value.trim().length >= 2),
+      marcar("papel", Boolean($("papel").value))
+    ];
+    const indice = resultados.indexOf(false);
+    if (indice >= 0) $(campos[indice]).focus();
+    return indice < 0;
+  }
+
+  ["nome", "email", "escola", "papel"].forEach((id) => $(id).addEventListener("change", () => {
+    if ($(id).getAttribute("aria-invalid") === "true") validar();
+  }));
+
+  function utm() {
+    const out = {};
+    try { new URLSearchParams(location.search).forEach((v, k) => { if (k.startsWith("utm_")) out[k] = v; }); } catch (e) {}
+    return out;
+  }
+
+  form.addEventListener("submit", async (ev) => {
+    ev.preventDefault();
+    if ($("website").value || !validar()) return;
+    const f = new FormData(form);
+    const orcamento = f.get("intencao") === "orcamento";
+    const intencao = orcamento ? "Conversar com especialista sobre implantação e orçamento" : "Agendar demonstração gratuita";
+    const formatoMasterclass = orcamento ? "" : String(f.get("formatoMasterclass") || "");
+    lead = {
+      intencao,
+      nome: f.get("nome").trim(),
+      email: f.get("email").trim(),
+      escola: f.get("escola").trim(),
+      papel: f.get("papel"),
+      formatoMasterclass,
+      estudantes: f.get("estudantes") || "",
+      cidade: (f.get("cidade") || "").trim(),
+      telefone: f.get("telefone") || "",
+      origem: "Formulário L.E.I.A.",
+      criadoEm: new Date().toISOString(),
+      ...utm()
+    };
+    const linhas = [["Interesse", lead.intencao], ["Nome", lead.nome], ["E-mail", lead.email], ["Escola ou rede", lead.escola], ["Papel", lead.papel]];
+    if (lead.formatoMasterclass) linhas.splice(1, 0, ["Formato da demonstração", lead.formatoMasterclass === "presencial" ? "Presencial" : "Online"]);
+    if (lead.estudantes) linhas.push(["Estudantes (9º ao 3º EM)", lead.estudantes]);
+    if (lead.cidade) linhas.push(["Cidade", lead.cidade]);
+    if (lead.telefone) linhas.push(["Telefone", lead.telefone]);
+    const dl = $("resumo");
+    dl.textContent = "";
+    linhas.forEach(([chave, valor]) => {
+      const div = document.createElement("div");
+      const dt = document.createElement("dt");
+      const dd = document.createElement("dd");
+      dt.textContent = chave;
+      dd.textContent = valor;
+      div.append(dt, dd);
+      dl.append(div);
+    });
+    lead.texto = "Solicitação pelo site do L.E.I.A.\n\n" + linhas.map(([chave, valor]) => `${chave}: ${valor}`).join("\n");
+
+    $("enviar").disabled = true;
+    let enviado = false;
+    try {
+      const payload = {
+        name: lead.nome,
+        email: lead.email,
+        school: lead.escola,
+        role: lead.papel,
+        interest: orcamento ? "implantacao" : "masterclass",
+        masterclassFormat: lead.formatoMasterclass,
+        students: lead.estudantes,
+        cityState: lead.cidade,
+        phone: lead.telefone,
+        path: location.pathname,
+        ...utm()
+      };
+      const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      enviado = response.ok;
+    } catch (e) { enviado = false; }
+    $("enviar").disabled = false;
+
+    if (enviado) {
+      $("ok-titulo").textContent = "Solicitação enviada.";
+      $("ok-texto").textContent = "Nossa equipe entra em contato para alinhar contexto e formato.";
+    } else {
+      $("ok-titulo").textContent = "Não conseguimos enviar agora.";
+      $("ok-texto").textContent = "Copie o resumo abaixo e envie para comercial@amplify.ia.br, ou tente de novo em alguns minutos.";
+    }
+    form.hidden = true;
+    ok.hidden = false;
+    ok.focus();
+  });
+
+  $("copiar-resumo").addEventListener("click", () => copiar(lead ? lead.texto : "", $("resumo"), $("resumo-status"), "Resumo copiado."));
+  $("editar").addEventListener("click", () => {
+    ok.hidden = true;
+    form.hidden = false;
+    $("resumo-status").textContent = "";
+    $("nome").focus();
+  });
+</script>
