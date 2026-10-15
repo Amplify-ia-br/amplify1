@@ -11,7 +11,7 @@ vi.mock("ai", async (importOriginal) => ({
 import { runAnaZeroTurn } from "./agent";
 import { analyzeTranscript } from "./compare";
 import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer } from "./guardrails";
-import { buildAnaZeroSystem } from "./prompt";
+import { buildAnaZeroSystem, hasIntroducedLeia } from "./prompt";
 import { COMPARE_SCENARIOS } from "./scenarios";
 import { anaZeroRequestSchema } from "./schema";
 import { createTestKnowledgeService } from "@/lib/okf/test-fixtures";
@@ -164,6 +164,25 @@ describe("contrato HTTP e prompt", () => {
     expect(system).toContain("Escola também é uma organização");
     expect(system).toContain("Prefere WhatsApp ou e-mail?");
     expect(system).toContain('Nunca use "consentiria"');
+  });
+  it("o prompt mantém a saudação calorosa e sem consulta à base", () => {
+    const system = buildAnaZeroSystem([]);
+    expect(system).toContain("Oi! Eu sou a Ana. Como posso te ajudar?");
+    expect(system).toContain("sem consultar a base e sem apresentar a Amplify");
+    expect(system).toContain("não é afirmação sobre a Amplify e não pede consulta");
+    expect(system).toContain("Isso não vale para saudação");
+  });
+  it("o prompt não deixa a resposta ao nome sem caminho nem presume a frente do dono de escola", () => {
+    const system = buildAnaZeroSystem([]);
+    expect(system).toContain("Responder só \"Oi, Leonardo.\" deixa a pessoa sem caminho");
+    expect(system).toContain("não presuma a frente");
+    expect(system).toContain('Nunca diga que o L.E.I.A. "não é indicado"');
+  });
+  it("o nome por extenso do L.E.I.A. só é pedido na primeira menção", () => {
+    expect(hasIntroducedLeia(["Oi!", "O L.E.I.A. — Laboratório Escolar de Inteligência Artificial é um programa anual."])).toBe(true);
+    expect(hasIntroducedLeia(["Oi! Eu sou a Ana."])).toBe(false);
+    expect(buildAnaZeroSystem([], undefined, true)).toContain('escreva apenas "L.E.I.A."');
+    expect(buildAnaZeroSystem([], undefined, false)).not.toContain("já foi apresentado por extenso");
   });
 });
 

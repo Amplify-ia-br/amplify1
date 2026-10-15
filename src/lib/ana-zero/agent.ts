@@ -4,7 +4,7 @@ import { ANA_MODELS, estimateAnaCost, getAnaFallbackModels, getAnaQualityRetryMo
 import type { KnowledgeReader } from "../okf/http.js";
 import { readServerEnv } from "./env.js";
 import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer, type AnaZeroIssue } from "./guardrails.js";
-import { buildAnaZeroSystem } from "./prompt.js";
+import { buildAnaZeroSystem, hasIntroducedLeia } from "./prompt.js";
 import type { AnaZeroHandoff, AnaZeroMemoryEntry } from "./schema.js";
 import { createAnaZeroToolState, createAnaZeroTools, sanitizeMemory } from "./tools.js";
 
@@ -35,6 +35,7 @@ const MAX_STEPS = 6;
 
 export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTurnResult> {
   const userTexts = input.history.filter((turn) => turn.role === "user").map((turn) => turn.text);
+  const leiaIntroduced = hasIntroducedLeia(input.history.filter((turn) => turn.role === "assistant").map((turn) => turn.text));
   const state = createAnaZeroToolState(sanitizeMemory(input.memory, userTexts));
   const tools = createAnaZeroTools(input.reader, state, userTexts);
   const messages: ModelMessage[] = input.history.map((turn) => ({ role: turn.role, content: turn.text }));
@@ -48,7 +49,7 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   const attempt = async (model: AnaModelId, correction?: AnaZeroIssue[]) => {
     const result = await generateText({
       model: resolve(model),
-      system: `${buildAnaZeroSystem(state.memory, input.pagePath)}${
+      system: `${buildAnaZeroSystem(state.memory, input.pagePath, leiaIntroduced)}${
         correction?.length
           ? `\n\nSua resposta anterior foi rejeitada (${correction.join(", ")}). Reescreva do zero respeitando os limites factuais.`
           : ""
