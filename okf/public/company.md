@@ -17,8 +17,8 @@ relationships:
     target: portfolio
   - type: related_to
     target: method
-last_reviewed: 2026-10-07
-updated_at: 2026-10-07
+last_reviewed: 2026-10-15
+updated_at: 2026-10-15
 ---
 
 # Amplify
@@ -60,4 +60,4 @@ Uma entrega da Amplify precisa deixar algo que continue funcionando depois do pr
 
 ## Marca
 
-Amplify é a marca institucional e comercial. Amplify Academy é o nome provisório da frente de educação.
+Amplify é a marca institucional e comercial. Amplify Educação é o nome da frente educacional.

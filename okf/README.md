@@ -206,7 +206,7 @@ Não existem nesta versão autenticação da KB, embeddings, busca semântica, e
 - [Portfólio](public/portfolio.md)
 - [Catálogo de ofertas](public/offers.md)
 - [Método](public/method.md)
-- [Amplify Academy](public/amplify-academy.md)
+- [Amplify Educação](public/amplify-academy.md)
 - [L.E.I.A.](public/leia.md)
 - [Glossário](public/glossary.md)
 - [Estratégia do portfólio](internal/portfolio-strategy.md)

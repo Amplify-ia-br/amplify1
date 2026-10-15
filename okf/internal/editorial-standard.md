@@ -13,8 +13,8 @@ tags:
   - revisão
 sources: []
 relationships: []
-last_reviewed: 2026-10-07
-updated_at: 2026-10-07
+last_reviewed: 2026-10-15
+updated_at: 2026-10-15
 ---
 
 # Padrão editorial
@@ -88,7 +88,7 @@ Antes de publicar, verifique:
 4. Há palavras abstratas onde caberia um verbo?
 5. A leitura tem ritmo natural?
 6. O nome Amplify está correto?
-7. A frente educacional está identificada como Amplify Academy?
+7. A frente educacional está identificada como Amplify Educação?
 8. Algum número precisa de fonte ou atribuição?
 9. Algum ativo de terceiro está sendo apresentado como próprio?
 10. O conteúdo respeita sua classificação de visibilidade?
