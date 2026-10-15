@@ -1,5 +1,5 @@
 import { stringify } from "yaml";
-import { okfSchema, type OkfDocument } from "@/lib/okf-schema";
+import { okfSchema, type OkfDocument } from "../okf-schema.js";
 
 export function buildPublishedOkfFile(
   metadata: Record<string, unknown>,

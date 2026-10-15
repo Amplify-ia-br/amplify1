@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { buildPublishedOkfFile, publishedOkfPath } from "./publication";
+import { buildPublishedOkfFile, publishedOkfPath } from "./publication.js";
 
 const json = (body: unknown, status = 200) => new Response(JSON.stringify(body), {
   status,
