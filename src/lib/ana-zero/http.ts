@@ -4,6 +4,7 @@ import { checkAnaRateLimit } from "../ana/store.js";
 import type { KnowledgeReader } from "../okf/http.js";
 import { PRIVATE_HEADERS, sha256 } from "./access.js";
 import { authorizeLab, type Authorize } from "./lab/access.js";
+import { labStore } from "./lab/store.js";
 import { runAnaZeroTurn } from "./agent.js";
 import { readServerEnv } from "./env.js";
 import { PROMPT_VERSION } from "./prompt.js";
@@ -31,6 +32,9 @@ export async function handleAnaZeroChat(
     return Response.json({ error: "invalid_token" }, { status: 401, headers: PRIVATE_HEADERS });
   }
   const labTester = access.kind === "tester" ? access.tester : undefined;
+  if (await labStore.isPaused()) {
+    return Response.json({ error: "lab_paused" }, { status: 503, headers: PRIVATE_HEADERS });
+  }
 
   const raw = await request.text();
   if (new TextEncoder().encode(raw).byteLength > MAX_REQUEST_BYTES) {
@@ -59,7 +63,8 @@ export async function handleAnaZeroChat(
     ? `tester:${labTester.id}`
     : forwarded || (session ? `session:${session.sessionHash}` : "anonymous");
   for (const { scope, requests, windowSeconds } of RATE_LIMITS) {
-    const limit = await checkAnaRateLimit(await sha256(`${scope}:${identity}`), requests, windowSeconds);
+    const allowed = scope === "day" && labTester?.dailyLimit ? labTester.dailyLimit : requests;
+    const limit = await checkAnaRateLimit(await sha256(`${scope}:${identity}`), allowed, windowSeconds);
     if (limit.allowed) continue;
     const unavailable = "reason" in limit && (limit.reason === "check_failed" || limit.reason === "not_configured");
     return Response.json(

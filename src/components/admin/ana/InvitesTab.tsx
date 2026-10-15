@@ -26,6 +26,7 @@ export function InvitesTab() {
   const [email, setEmail] = useState("");
   const [cohort, setCohort] = useState("");
   const [maxUses, setMaxUses] = useState(1);
+  const [dailyLimit, setDailyLimit] = useState(60);
   const [expiresInDays, setExpiresInDays] = useState(14);
   const [copied, setCopied] = useState<string | null>(null);
 
@@ -40,6 +41,7 @@ export function InvitesTab() {
         email: email || undefined,
         cohort: cohort || undefined,
         maxUses,
+        dailyLimit,
         expiresInDays,
       }),
     onSuccess: async ({ invite }) => {
@@ -57,6 +59,11 @@ export function InvitesTab() {
     mutationFn: (id: string) => adminPost({ action: "revoke-tester", id }),
     onSuccess: refresh,
   });
+  const setPaused = useMutation({
+    mutationFn: (paused: boolean) => adminPost({ action: "set-lab-paused", paused }),
+    onSuccess: refresh,
+  });
+  const paused = invites.data?.paused ?? false;
 
   async function copy(code: string) {
     try {
@@ -73,10 +80,29 @@ export function InvitesTab() {
     if (label.trim()) create.mutate();
   };
 
-  const error = invites.error ?? create.error ?? revokeInvite.error ?? revokeTester.error;
+  const error = invites.error ?? create.error ?? revokeInvite.error ?? revokeTester.error ?? setPaused.error;
 
   return (
     <div className="space-y-8">
+      <section className="flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
+        <div className="space-y-1">
+          <h2 className="text-lg font-semibold">Lab da Ana</h2>
+          <p className="text-sm text-muted-foreground">
+            {paused
+              ? "O Lab está pausado: ninguém consegue conversar com a Ana até você reativar."
+              : "O Lab está ativo. Pause para interromper todas as conversas e conter custos."}
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant={paused ? "default" : "destructive"}
+          disabled={setPaused.isPending || !invites.data}
+          onClick={() => setPaused.mutate(!paused)}
+        >
+          {paused ? "Reativar o Lab" : "Pausar o Lab"}
+        </Button>
+      </section>
+
       <form onSubmit={onSubmit} className="flex flex-wrap items-end gap-3 rounded-lg border p-4">
         <div className="space-y-1">
           <Label htmlFor="invite-label" className="text-xs text-muted-foreground">Nome do convidado</Label>
@@ -93,6 +119,10 @@ export function InvitesTab() {
         <div className="space-y-1">
           <Label htmlFor="invite-uses" className="text-xs text-muted-foreground">Usos</Label>
           <Input id="invite-uses" type="number" min={1} max={500} className="w-20" value={maxUses} onChange={(e) => setMaxUses(Number(e.target.value) || 1)} />
+        </div>
+        <div className="space-y-1">
+          <Label htmlFor="invite-daily" className="text-xs text-muted-foreground">Mensagens/dia</Label>
+          <Input id="invite-daily" type="number" min={1} max={500} className="w-24" value={dailyLimit} onChange={(e) => setDailyLimit(Number(e.target.value) || 60)} />
         </div>
         <div className="space-y-1">
           <Label htmlFor="invite-days" className="text-xs text-muted-foreground">Validade (dias)</Label>
@@ -129,7 +159,7 @@ export function InvitesTab() {
                   <TableCell>{invite.label}</TableCell>
                   <TableCell>{invite.cohort ?? "—"}</TableCell>
                   <TableCell><Badge variant={status.variant}>{status.label}</Badge></TableCell>
-                  <TableCell>{invite.uses}/{invite.max_uses}</TableCell>
+                  <TableCell>{invite.uses}/{invite.max_uses} · {invite.daily_limit}/dia</TableCell>
                   <TableCell>{dateTime(invite.expires_at)}</TableCell>
                   <TableCell className="space-x-2 text-right">
                     <Button type="button" size="sm" variant="outline" onClick={() => copy(invite.code)}>

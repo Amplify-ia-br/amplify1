@@ -3,9 +3,11 @@ export type LabTester = {
   name: string;
   profile: string;
   cohort: string | null;
+  dailyLimit?: number;
 };
 
 export type InviteRow = {
+  daily_limit: number;
   id: string;
   code: string;
   label: string;

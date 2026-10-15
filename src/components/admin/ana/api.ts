@@ -21,7 +21,7 @@ export type SessionDetailResponse = NonNullable<ReturnType<typeof buildSessionDe
 export type ContentResponse = { content: ReturnType<typeof computeContent> };
 export type EvolutionResponse = { versions: ReturnType<typeof computeByPromptVersion>; currentVersion: string };
 export type RecommendationsResponse = { recommendations: RecommendationRow[]; runs: AnalysisRunRow[] };
-export type InvitesResponse = { invites: InviteRow[]; testers: TesterRow[] };
+export type InvitesResponse = { paused: boolean; invites: InviteRow[]; testers: TesterRow[] };
 
 const ENDPOINT = "/api/ana-zero-admin";
 
@@ -61,7 +61,7 @@ export const errorMessage = (error: unknown) => {
   if (code === "forbidden") return "Seu usuário não tem permissão de admin.";
   if (code === "unauthorized") return "Sessão expirada. Entre novamente.";
   if (code === "storage_unavailable") return "Banco de dados indisponível.";
-  if (code === "lab_not_migrated") return "Aplique a migração 20261015170000_add_ana_lab_invites.sql no Supabase para usar os convites.";
+  if (code === "lab_not_migrated") return "Aplique as migrações 20261015170000_add_ana_lab_invites.sql e 20261015180000_add_ana_lab_controls.sql no Supabase para usar os convites.";
   return "Não foi possível concluir. Tente novamente.";
 };
 

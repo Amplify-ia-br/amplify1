@@ -104,6 +104,7 @@ export default function AnaZeroLab({ account }: { account?: { name: string } }) 
   };
 
   const invalidToken = error?.message?.includes("invalid_token");
+  const labPaused = error?.message?.includes("lab_paused");
 
   return (
     <div className="ana-lab">
@@ -209,7 +210,9 @@ export default function AnaZeroLab({ account }: { account?: { name: string } }) 
                   <div className="ana-error" role="alert">
                     {invalidToken
                       ? "Este link de teste não é válido. Peça um novo link para quem convidou você."
-                      : "Não foi possível responder agora."}
+                      : labPaused
+                        ? "Os testes estão pausados no momento. Tente novamente mais tarde."
+                        : "Não foi possível responder agora."}
                   </div>
                 )}
                 {reviewing && <SessionFeedback sessionId={sessionId} onClose={() => setReviewing(false)} />}

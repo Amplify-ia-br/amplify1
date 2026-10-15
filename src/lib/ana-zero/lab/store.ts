@@ -26,6 +26,7 @@ export type LabStore = {
   checkInvite(code: string): Promise<InviteCheck | undefined>;
   signup(input: SignupInput): Promise<SignupResult | undefined>;
   findTesterByToken(tokenHash: string): Promise<LabTester | null>;
+  isPaused(): Promise<boolean>;
 };
 
 function report(action: string, error: unknown) {
@@ -84,17 +85,47 @@ export const labStore: LabStore = {
     const supabase = getServerClient();
     if (!supabase) return null;
     try {
-      const { data, error } = await supabase
+      let result = await supabase
         .from("ana_lab_testers")
-        .select("id,name,profile,cohort,revoked_at")
+        .select("id,name,profile,cohort,revoked_at,ana_lab_invites(daily_limit)")
         .eq("token_hash", tokenHash)
         .maybeSingle();
-      if (error) throw error;
+      if (result.error) {
+        // Migração de controles ainda não aplicada: mantém o acesso sem o teto individual.
+        result = await supabase
+          .from("ana_lab_testers")
+          .select("id,name,profile,cohort,revoked_at")
+          .eq("token_hash", tokenHash)
+          .maybeSingle() as unknown as typeof result;
+      }
+      if (result.error) throw result.error;
+      const data = result.data as
+        | { id: string; name: string; profile: string; cohort: string | null; revoked_at: string | null; ana_lab_invites?: { daily_limit?: number } | null }
+        | null;
       if (!data || data.revoked_at) return null;
-      return { id: data.id, name: data.name, profile: data.profile, cohort: data.cohort };
+      return {
+        id: data.id,
+        name: data.name,
+        profile: data.profile,
+        cohort: data.cohort,
+        dailyLimit: data.ana_lab_invites?.daily_limit,
+      };
     } catch (error) {
       report("consulta de testador", error);
       return null;
+    }
+  },
+
+  async isPaused() {
+    const supabase = getServerClient();
+    if (!supabase) return false;
+    try {
+      const { data, error } = await supabase.from("ana_lab_settings").select("paused").eq("id", true).maybeSingle();
+      if (error) return false;
+      return Boolean(data?.paused);
+    } catch (error) {
+      report("consulta de pausa", error);
+      return false;
     }
   },
 };

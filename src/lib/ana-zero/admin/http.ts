@@ -13,6 +13,7 @@ import {
   LAB_NOT_MIGRATED,
   loadInvites,
   revokeInvite,
+  setLabPaused,
   revokeTester,
 } from "../lab/admin.js";
 import { getAdminClient, requireAdmin, type AdminIdentity } from "./auth.js";
@@ -52,8 +53,10 @@ const postSchema = z.discriminatedUnion("action", [
     email: z.string().trim().toLowerCase().max(160).optional(),
     cohort: z.string().trim().max(40).optional(),
     maxUses: z.number().int().min(1).max(500).default(1),
+    dailyLimit: z.number().int().min(1).max(500).default(60),
     expiresInDays: z.number().int().min(1).max(90).default(14),
   }),
+  z.strictObject({ action: z.literal("set-lab-paused"), paused: z.boolean() }),
   z.strictObject({ action: z.literal("revoke-invite"), id: z.uuid() }),
   z.strictObject({ action: z.literal("revoke-tester"), id: z.uuid() }),
 ]);
@@ -150,6 +153,11 @@ async function handlePost(client: SupabaseClient, request: Request, identity: Ad
   if (input.action === "create-invite") {
     const invite = await createInvite(client, input, identity.userId);
     return invite ? json({ invite }) : json({ error: "not_saved" }, 503);
+  }
+  if (input.action === "set-lab-paused") {
+    return (await setLabPaused(client, input.paused, identity.userId))
+      ? json({ ok: true, paused: input.paused })
+      : json({ error: "not_saved" }, 503);
   }
   if (input.action === "revoke-invite") {
     return (await revokeInvite(client, input.id)) ? json({ ok: true }) : json({ error: "not_saved" }, 503);
