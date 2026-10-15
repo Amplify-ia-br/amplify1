@@ -2,6 +2,7 @@
 import { render } from "astro:content";
 import { ArrowLeft } from "lucide-react";
 import KnowledgeToc from "@/components/knowledge/KnowledgeToc";
+import KnowledgeAnnotations from "@/components/knowledge/KnowledgeAnnotations";
 import KnowledgeLayout from "@/layouts/KnowledgeLayout.astro";
 import { getPublicKnowledge, markdownToSearchText, type PublicKnowledgeEntry } from "@/lib/knowledge";
 
@@ -60,6 +61,7 @@ const reviewedAt = year && month && day ? `${day}/${month}/${year}` : entry.data
         {entry.data.tags.length > 0 && <ul aria-label="Tags">{entry.data.tags.map((tag) => <li>{tag}</li>)}</ul>}
       </header>
       <div class="knowledge-prose"><Content /></div>
+      <KnowledgeAnnotations client:load okfId={entry.data.id} returnTo={`/knowledge/${entry.data.id}`} />
       {(previous || next) && <nav class="kb-page-navigation" aria-label="Documentos anterior e próximo">
         {previous ? <a href={`/knowledge/${previous.data.id}`}><small>Anterior</small><strong>{previous.data.title}</strong></a> : <span></span>}
         {next && <a href={`/knowledge/${next.data.id}`}><small>Próximo</small><strong>{next.data.title}</strong></a>}

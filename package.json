@@ -13,6 +13,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "okf:validate": "node --experimental-strip-types scripts/validate-okf.ts",
+    "okf:sync-governance": "node scripts/sync-okf-governance.mjs",
     "lighthouse": "lighthouse http://localhost:4173 --output html --output-path ./lighthouse-report.html",
     "lhci:audit": "lhci autorun",
     "lighthouse:prod:mobile:median": "node scripts/lighthouse-prod-mobile-median.mjs https://aplify-site.vercel.app 5",

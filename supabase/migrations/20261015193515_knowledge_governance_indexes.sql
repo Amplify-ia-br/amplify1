@@ -1,0 +1,15 @@
+create index if not exists knowledge_admins_created_by_idx on public.knowledge_admins(created_by);
+create index if not exists knowledge_areas_created_by_idx on public.knowledge_areas(created_by);
+create index if not exists knowledge_area_members_user_idx on public.knowledge_area_members(user_id);
+create index if not exists knowledge_area_members_created_by_idx on public.knowledge_area_members(created_by);
+create index if not exists knowledge_documents_created_by_idx on public.knowledge_documents(created_by);
+create index if not exists knowledge_documents_published_revision_idx on public.knowledge_documents(published_revision_id);
+create index if not exists knowledge_revisions_author_idx on public.knowledge_revisions(author_id);
+create index if not exists knowledge_revisions_reviewer_idx on public.knowledge_revisions(reviewed_by);
+create index if not exists knowledge_sources_connected_by_idx on public.knowledge_sources(connected_by);
+create index if not exists knowledge_annotations_revision_idx on public.knowledge_annotations(revision_id);
+create index if not exists knowledge_annotations_user_idx on public.knowledge_annotations(user_id);
+create index if not exists knowledge_annotations_resolved_by_idx on public.knowledge_annotations(resolved_by);
+create index if not exists knowledge_audit_revision_idx on public.knowledge_audit_events(revision_id);
+create index if not exists knowledge_audit_area_idx on public.knowledge_audit_events(area_id);
+create index if not exists knowledge_audit_actor_idx on public.knowledge_audit_events(actor_id);

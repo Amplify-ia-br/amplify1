@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { FileText, Users, LogOut, ExternalLink, TicketCheck } from "lucide-react";
+import { BookOpenCheck, FileText, Users, LogOut, ExternalLink, TicketCheck } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { assetSrc } from "@/lib/assets";
@@ -9,7 +9,7 @@ import logoAmplify from "@/assets/logo-amplify-branco.png";
 
 const AdminLayout = () => {
   const { user, signOut } = useAuth();
-  const { isAdmin } = useUserRole();
+  const { isAdmin, isEditor } = useUserRole();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -19,8 +19,9 @@ const AdminLayout = () => {
   };
 
   const navItems = [
-    { to: "/admin", label: "Posts", icon: FileText, exact: true },
-    { to: "/admin/amplify-day/convites", label: "Convites", icon: TicketCheck, exact: false },
+    ...(isEditor ? [{ to: "/admin", label: "Posts", icon: FileText, exact: true }] : []),
+    { to: "/admin/knowledge", label: "Knowledge", icon: BookOpenCheck, exact: false },
+    ...(isEditor ? [{ to: "/admin/amplify-day/convites", label: "Convites", icon: TicketCheck, exact: false }] : []),
     ...(isAdmin ? [{ to: "/admin/users", label: "Usuários", icon: Users, exact: false }] : []),
   ];
 
