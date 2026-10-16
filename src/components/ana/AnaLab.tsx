@@ -28,6 +28,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ANA_MODELS, DEFAULT_ANA_MODEL, type AnaKnowledgeMode, type AnaModelId } from "@/lib/ana/config";
 import type { AnaRetrievalTrace } from "@/lib/ana/retrieval";
 import type { AnaMessage } from "@/lib/ana/types";
+import AnaFeedback from "./AnaFeedback";
 import "./AnaLab.css";
 
 const SUGGESTIONS = [
@@ -90,6 +91,7 @@ export default function AnaLab() {
   const activeRequest = useRef(false);
   const assistantCountAtStart = useRef(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [sessionId, setSessionId] = useState(() => crypto.randomUUID());
 
   useEffect(() => { modeRef.current = mode; }, [mode]);
   useEffect(() => { modelRef.current = model; }, [model]);
@@ -175,6 +177,7 @@ export default function AnaLab() {
     if (busy) stop();
     clearError();
     setMessages([]);
+    setSessionId(crypto.randomUUID());
     setInput("");
     setStartedAt(undefined);
     setFirstTokenAt(undefined);
@@ -265,15 +268,37 @@ export default function AnaLab() {
               </section>
             ) : (
               <div className="ana-messages">
-                {messages.map((message) => {
+                {messages.map((message, index) => {
                   const text = message.role === "assistant"
                     ? cleanAssistantText(textFromMessage(message))
                     : textFromMessage(message);
                   if (!text && message.role === "assistant") return null;
+                  const isStreaming = busy && message === lastAssistant;
+                  const messageRetrieval = retrievalFromMessage(message);
+                  const question = message.role === "assistant"
+                    ? messages.slice(0, index).reverse().find((candidate) => candidate.role === "user")
+                    : undefined;
                   return (
                     <article className={`ana-message ana-message-${message.role}`} key={message.id}>
                       <div className="ana-message-label">{message.role === "user" ? "Você" : "Ana"}</div>
-                      <div className="ana-message-text">{text}</div>
+                      <div className="ana-message-body">
+                        <div className="ana-message-text">{text}</div>
+                        {message.role === "assistant" && !isStreaming && (
+                          <AnaFeedback
+                            context={{
+                              sessionId,
+                              messageId: message.id,
+                              question: question ? textFromMessage(question) : undefined,
+                              answer: text,
+                              model: message.metadata?.resolvedModel ?? message.metadata?.model,
+                              mode: message.metadata?.mode,
+                              intent: messageRetrieval?.intent,
+                              sources: messageRetrieval?.documents.map(({ id, title }) => ({ id, title })),
+                              generationId: message.metadata?.generationId,
+                            }}
+                          />
+                        )}
+                      </div>
                     </article>
                   );
                 })}

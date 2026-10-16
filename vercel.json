@@ -38,6 +38,10 @@
     {
       "source": "/api/ana-chat",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/ana-feedback",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
     }
   ],
   "rewrites": [

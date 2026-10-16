@@ -22,6 +22,7 @@ Rota (noindex): `/lab/ana`. API: `POST /api/ana-chat`.
 | Recuperação (intents, termos, ranking, modo `mcp` via `@ai-sdk/mcp` vs `direct`) | `src/lib/ana/retrieval.ts` |
 | Tools diretas (`search_knowledge`, `get_knowledge`, `list_knowledge`) | `src/lib/ana/tools.ts` |
 | Testes | `src/lib/ana/config.test.ts`, `retrieval.test.ts` |
+| Feedback dos testadores (polegar cima/baixo + comentário por resposta da Ana) | UI `src/components/ana/AnaFeedback.tsx` (renderizada em `AnaLab.tsx`, uma `sessionId` por conversa); API `POST /api/ana-feedback` → `api/ana-feedback.ts`, `src/pages/api/ana-feedback.ts`, `src/lib/ana/feedback.ts`; tabela Neon `ana_feedback` (`migrations/003_ana_feedback.sql`, upsert por `session_id + message_id`, guarda pergunta, resposta, modelo, modo, intent, fontes e generationId) |
 
 Regras importantes já implementadas (não regredir):
 - Ana responde só com o contexto OKF fornecido; sem inventar preço, sem chamar produto de "principal/líder"; escreve sempre **L.E.I.A.**; sem Markdown; última linha "Fonte: …".
