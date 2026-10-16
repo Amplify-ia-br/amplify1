@@ -12,6 +12,7 @@ import {
 import logoAmplify from "@/assets/logo-amplify-branco.png";
 import { assetSrc } from "@/lib/assets";
 import type { KnowledgeListItem } from "./KnowledgeDirectory";
+import { parentTarget } from "@/lib/knowledge-hierarchy";
 
 type Props = {
   items: KnowledgeListItem[];
@@ -145,14 +146,34 @@ export default function KnowledgeChrome({ items, activeId, isIndex = false }: Pr
 }
 
 function KnowledgeNavigation({ items, activeId, isIndex }: Props) {
+  const byParent = new Map<string, KnowledgeListItem[]>();
+  const ids = new Set(items.map((item) => item.id));
+  for (const item of items) {
+    const parentId = parentTarget(item.relationships);
+    if (parentId && ids.has(parentId)) byParent.set(parentId, [...(byParent.get(parentId) ?? []), item]);
+  }
+  const ordered: Array<{ item: KnowledgeListItem; depth: number }> = [];
+  const visited = new Set<string>();
+  const visit = (item: KnowledgeListItem, depth: number) => {
+    if (visited.has(item.id)) return;
+    visited.add(item.id);
+    ordered.push({ item, depth });
+    for (const child of byParent.get(item.id) ?? []) visit(child, depth + 1);
+  };
+  for (const item of items) {
+    const parentId = parentTarget(item.relationships);
+    if (!parentId || !ids.has(parentId)) visit(item, 0);
+  }
+  for (const item of items) visit(item, 0);
+
   return (
     <nav>
       <p>DOCUMENTAÇÃO</p>
       <a className={isIndex ? "is-active" : ""} href="/knowledge"><BookOpen aria-hidden="true" /><span>Visão geral</span></a>
       <p>CONTEÚDO</p>
-      {items.map((item) => {
+      {ordered.map(({ item, depth }) => {
         const Icon = iconFor(item.type);
-        return <a key={item.id} className={activeId === item.id ? "is-active" : ""} href={`/knowledge/${item.id}`}><Icon aria-hidden="true" /><span>{item.title}</span></a>;
+        return <a key={item.id} className={`${activeId === item.id ? "is-active" : ""} ${depth > 0 ? "is-child" : ""}`} href={`/knowledge/${item.id}`}><Icon aria-hidden="true" /><span>{item.title}</span></a>;
       })}
     </nav>
   );

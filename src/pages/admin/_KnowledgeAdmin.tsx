@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   AlertTriangle, BookOpenCheck, CheckCircle2, CloudDownload, FileClock, FilePlus2,
-  Loader2, RefreshCw, Settings2, ShieldCheck, Users,
+  CornerDownRight, Link2, Loader2, RefreshCw, Settings2, ShieldCheck, Users,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +16,7 @@ import {
   extractGoogleDocId, googleDocumentToMarkdown, GOOGLE_DOC_MIME_TYPE, sha256, slugifyKnowledgeId,
   type GoogleDocumentPayload,
 } from "@/lib/knowledge-workflow/google-doc";
+import { parentTarget, withParentRelationship, type KnowledgeRelationship } from "@/lib/knowledge-hierarchy";
 
 const db = supabase as any;
 
@@ -42,6 +43,7 @@ type DocumentRow = {
   document_type: string;
   visibility: "public" | "internal" | "restricted";
   status: "draft" | "review" | "approved" | "active" | "deprecated";
+  parent_document_id: string | null;
   published_revision_id: string | null;
   updated_at: string;
 };
@@ -171,6 +173,8 @@ const KnowledgeAdmin = () => {
   const [reviewNote, setReviewNote] = useState("");
   const [googleUrl, setGoogleUrl] = useState("");
   const [importAreaId, setImportAreaId] = useState("");
+  const [importParentId, setImportParentId] = useState("");
+  const [selectedParentId, setSelectedParentId] = useState("");
   const [newArea, setNewArea] = useState({ slug: "", name: "", description: "", owner_key: "", default_visibility: "internal" as Area["default_visibility"] });
   const [assignment, setAssignment] = useState({ area_id: "", user_id: "", role: "owner" as Membership["role"] });
 
@@ -211,11 +215,52 @@ const KnowledgeAdmin = () => {
     isKnowledgeAdmin || memberships.some((member) => member.area_id === selectedDocument.area_id && member.user_id === user.id && member.role === "owner")
   ));
 
+  const orderedDocuments = useMemo(() => {
+    const children = new Map<string | null, DocumentRow[]>();
+    for (const document of documents) {
+      const parentId = document.parent_document_id && documents.some((item) => item.id === document.parent_document_id)
+        ? document.parent_document_id
+        : null;
+      children.set(parentId, [...(children.get(parentId) ?? []), document]);
+    }
+    for (const siblings of children.values()) siblings.sort((left, right) => left.title.localeCompare(right.title, "pt-BR"));
+    const result: Array<{ document: DocumentRow; depth: number }> = [];
+    const visited = new Set<string>();
+    const visit = (parentId: string | null, depth: number) => {
+      for (const document of children.get(parentId) ?? []) {
+        if (visited.has(document.id)) continue;
+        visited.add(document.id);
+        result.push({ document, depth });
+        visit(document.id, depth + 1);
+      }
+    };
+    visit(null, 0);
+    for (const document of documents) if (!visited.has(document.id)) result.push({ document, depth: 0 });
+    return result;
+  }, [documents]);
+
+  const unavailableParentIds = useMemo(() => {
+    if (!selectedDocument) return new Set<string>();
+    const blocked = new Set([selectedDocument.id]);
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (const document of documents) {
+        if (document.parent_document_id && blocked.has(document.parent_document_id) && !blocked.has(document.id)) {
+          blocked.add(document.id);
+          changed = true;
+        }
+      }
+    }
+    return blocked;
+  }, [documents, selectedDocument]);
+
   useEffect(() => {
     setEditorContent(selectedRevision?.content_markdown ?? "");
     setChangeSummary(selectedRevision?.change_summary ?? "");
     setReviewNote(selectedRevision?.review_note ?? "");
-  }, [selectedRevision]);
+    setSelectedParentId(selectedDocument?.parent_document_id ?? "");
+  }, [selectedDocument, selectedRevision]);
 
   const appendAudit = async (eventType: string, documentId?: string, revisionId?: string, areaId?: string, details: Record<string, unknown> = {}) => {
     if (!user) return;
@@ -223,7 +268,8 @@ const KnowledgeAdmin = () => {
   };
 
   const createDocument = async (input: {
-    title: string; content: string; area: Area; source?: { id: string; url: string; revision?: string }; warnings?: string[];
+    title: string; content: string; area: Area; parent?: DocumentRow | null;
+    source?: { id: string; url: string; revision?: string }; warnings?: string[];
   }) => {
     if (!user) throw new Error("Sessão expirada.");
     const baseId = slugifyKnowledgeId(input.title);
@@ -234,14 +280,16 @@ const KnowledgeAdmin = () => {
     const { data: documentRow, error: documentError } = await db.from("knowledge_documents").insert({
       okf_id: okfId, title: input.title, description, area_id: input.area.id,
       owner_key: input.area.owner_key, reviewer_key: `${input.area.slug}-owner`, document_type: "reference",
-      visibility: input.area.default_visibility, status: "draft", source_of_truth: true, tags: [], created_by: user.id,
+      visibility: input.parent?.visibility ?? input.area.default_visibility, status: "draft", source_of_truth: true,
+      tags: [], parent_document_id: input.parent?.id ?? null, created_by: user.id,
     }).select("*").single();
     if (documentError) throw documentError;
     const metadata = {
       id: okfId, title: input.title, description, area: input.area.slug, type: "reference",
-      visibility: input.area.default_visibility, status: "draft", owner: input.area.owner_key,
+      visibility: input.parent?.visibility ?? input.area.default_visibility, status: "draft", owner: input.area.owner_key,
       reviewer: `${input.area.slug}-owner`, source_of_truth: true, tags: [],
-      sources: input.source ? [input.source.url] : [], relationships: [], last_reviewed: today(), updated_at: today(),
+      sources: input.source ? [input.source.url] : [],
+      relationships: withParentRelationship([], input.parent?.okf_id), last_reviewed: today(), updated_at: today(),
     };
     const { data: revision, error: revisionError } = await db.from("knowledge_revisions").insert({
       document_id: documentRow.id, revision_number: 1, content_markdown: input.content,
@@ -258,14 +306,17 @@ const KnowledgeAdmin = () => {
       });
       if (sourceError) throw sourceError;
     }
-    await appendAudit("document.created", documentRow.id, revision.id, input.area.id, { source: input.source ? "google_docs" : "editor", warnings: input.warnings ?? [] });
+    await appendAudit("document.created", documentRow.id, revision.id, input.area.id, {
+      source: input.source ? "google_docs" : "editor", warnings: input.warnings ?? [], parent_okf_id: input.parent?.okf_id ?? null,
+    });
     await load();
     setSelectedDocumentId(documentRow.id);
     return documentRow;
   };
 
   const importGoogleDoc = async () => {
-    const area = areas.find((item) => item.id === importAreaId);
+    const parent = documents.find((item) => item.id === importParentId) ?? null;
+    const area = areas.find((item) => item.id === (parent?.area_id ?? importAreaId));
     if (!area) return toast.error("Escolha a área responsável.");
     const pastedId = googleUrl ? extractGoogleDocId(googleUrl) : null;
     if (googleUrl && !pastedId) return toast.error("O link do Google Docs não é válido.");
@@ -278,7 +329,7 @@ const KnowledgeAdmin = () => {
       if (!response.ok) throw new Error("O Google não liberou a leitura deste documento. Confirme o arquivo e tente novamente.");
       const payload = await response.json() as GoogleDocumentPayload;
       const converted = googleDocumentToMarkdown(payload);
-      await createDocument({ title: converted.title || picked.name, content: converted.markdown, area, source: { id: picked.id, url: picked.url, revision: payload.revisionId }, warnings: converted.warnings });
+      await createDocument({ title: converted.title || picked.name, content: converted.markdown, area, parent, source: { id: picked.id, url: picked.url, revision: payload.revisionId }, warnings: converted.warnings });
       setGoogleUrl("");
       toast.success(converted.warnings.length ? `Importado com ${converted.warnings.length} aviso(s) para revisão.` : "Google Doc importado como rascunho.");
     } catch (error) {
@@ -289,15 +340,77 @@ const KnowledgeAdmin = () => {
   };
 
   const createManualDocument = async () => {
-    const area = areas.find((item) => item.id === importAreaId);
+    const parent = documents.find((item) => item.id === importParentId) ?? null;
+    const area = areas.find((item) => item.id === (parent?.area_id ?? importAreaId));
     if (!area) return toast.error("Escolha a área responsável.");
     setBusy(true);
     try {
-      await createDocument({ title: "Novo documento", content: "# Novo documento\n\nComece a escrever aqui.", area });
+      await createDocument({ title: "Novo documento", content: "# Novo documento\n\nComece a escrever aqui.", area, parent });
       toast.success("Rascunho criado.");
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Falha ao criar documento.");
     } finally { setBusy(false); }
+  };
+
+  const saveDocumentParent = async () => {
+    if (!selectedDocument || !selectedRevision || !user) return;
+    const parent = documents.find((item) => item.id === selectedParentId) ?? null;
+    const area = areas.find((item) => item.id === (parent?.area_id ?? selectedDocument.area_id));
+    if (!area) return toast.error("A área do documento não foi encontrada.");
+    setBusy(true);
+    try {
+      const relationships = withParentRelationship(
+        selectedRevision.metadata.relationships as KnowledgeRelationship[] | undefined,
+        parent?.okf_id,
+      );
+      const revisionStatus = selectedRevision.status === "review" ? "review" : "draft";
+      const metadata = {
+        ...selectedRevision.metadata,
+        area: area.slug,
+        owner: area.owner_key,
+        reviewer: `${area.slug}-owner`,
+        visibility: parent?.visibility ?? selectedDocument.visibility,
+        relationships,
+        status: revisionStatus,
+        updated_at: today(),
+      };
+      let revisionId = selectedRevision.id;
+      if (["draft", "changes_requested", "review"].includes(selectedRevision.status)) {
+        const { error } = await db.from("knowledge_revisions").update({ metadata }).eq("id", selectedRevision.id);
+        if (error) throw error;
+      } else {
+        const revisionNumber = Math.max(0, ...revisions.filter((item) => item.document_id === selectedDocument.id).map((item) => item.revision_number)) + 1;
+        const { data, error } = await db.from("knowledge_revisions").insert({
+          document_id: selectedDocument.id,
+          revision_number: revisionNumber,
+          content_markdown: selectedRevision.content_markdown,
+          metadata,
+          change_summary: "Vínculo editorial atualizado",
+          status: "draft",
+          author_id: user.id,
+        }).select("id").single();
+        if (error) throw error;
+        revisionId = data.id;
+      }
+      const { error: documentError } = await db.from("knowledge_documents").update({
+        parent_document_id: parent?.id ?? null,
+        area_id: area.id,
+        owner_key: area.owner_key,
+        reviewer_key: `${area.slug}-owner`,
+        visibility: parent?.visibility ?? selectedDocument.visibility,
+        status: revisionStatus,
+      }).eq("id", selectedDocument.id);
+      if (documentError) throw documentError;
+      await appendAudit("document.parent_changed", selectedDocument.id, revisionId, area.id, { parent_okf_id: parent?.okf_id ?? null });
+      const suffix = selectedRevision.status === "review"
+        ? " na revisão em andamento."
+        : ["draft", "changes_requested"].includes(selectedRevision.status)
+          ? " no rascunho atual."
+          : " em uma nova revisão.";
+      toast.success(parent ? `Vínculo com ${parent.title} salvo${suffix}` : `Documento transformado em principal${suffix}`);
+      await load();
+    } catch (error) { toast.error(error instanceof Error ? error.message : "Falha ao alterar o vínculo."); }
+    finally { setBusy(false); }
   };
 
   const saveRevision = async () => {
@@ -408,11 +521,13 @@ const KnowledgeAdmin = () => {
       if (!response.ok) throw new Error("Não foi possível ler o OKF publicado.");
       const summaries = await response.json() as Array<{ id: string }>;
       let imported = 0;
+      const publishedDetails: Array<{ id: string; relationships?: KnowledgeRelationship[] }> = [];
       for (const summary of summaries) {
         if (documents.some((document) => document.okf_id === summary.id)) continue;
         const detailResponse = await fetch(`/api/knowledge/${summary.id}`);
         if (!detailResponse.ok) continue;
         const detail = await detailResponse.json();
+        publishedDetails.push(detail);
         const area = areas.find((item) => item.slug === okfAreaFor(detail));
         if (!area || !user) continue;
         const { data: row, error: insertError } = await db.from("knowledge_documents").insert({
@@ -433,6 +548,17 @@ const KnowledgeAdmin = () => {
         await db.from("knowledge_documents").update({ published_revision_id: revision.id }).eq("id", row.id);
         await appendAudit("document.synced_from_okf", row.id, revision.id, area.id);
         imported += 1;
+      }
+      const { data: governedDocuments, error: governedError } = await db.from("knowledge_documents").select("id, okf_id, area_id");
+      if (governedError) throw governedError;
+      for (const detail of publishedDetails) {
+        const child = governedDocuments?.find((item: DocumentRow) => item.okf_id === detail.id);
+        const parentOkfId = parentTarget(detail.relationships);
+        const parent = parentOkfId ? governedDocuments?.find((item: DocumentRow) => item.okf_id === parentOkfId) : null;
+        if (child && parent && child.area_id === parent.area_id) {
+          const { error } = await db.from("knowledge_documents").update({ parent_document_id: parent.id }).eq("id", child.id);
+          if (error) throw error;
+        }
       }
       toast.success(imported ? `${imported} documento(s) publicado(s) sincronizado(s).` : "A governança já está alinhada com o OKF publicado.");
       await load();
@@ -556,11 +682,11 @@ const KnowledgeAdmin = () => {
           ) : (
             <div className="grid gap-4 lg:grid-cols-[360px_minmax(0,1fr)]">
               <Card className="overflow-hidden"><CardHeader><CardTitle className="text-lg">Documentos</CardTitle></CardHeader><CardContent className="space-y-2">
-                {documents.map((document) => {
+                {orderedDocuments.map(({ document, depth }) => {
                   const area = areas.find((item) => item.id === document.area_id);
                   const revision = revisions.find((item) => item.document_id === document.id);
-                  return <button key={document.id} type="button" onClick={() => setSelectedDocumentId(document.id)} className={`w-full rounded-lg border p-3 text-left transition ${selectedDocumentId === document.id ? "border-primary bg-primary/5" : "border-border hover:bg-muted/50"}`}>
-                    <div className="flex items-start justify-between gap-2"><strong className="text-sm">{document.title}</strong><Badge variant="outline">{statusLabel(revision?.status ?? document.status)}</Badge></div>
+                  return <button key={document.id} type="button" onClick={() => setSelectedDocumentId(document.id)} style={{ marginLeft: `${Math.min(depth, 3) * 18}px`, width: `calc(100% - ${Math.min(depth, 3) * 18}px)` }} className={`rounded-lg border p-3 text-left transition ${selectedDocumentId === document.id ? "border-primary bg-primary/5" : "border-border hover:bg-muted/50"}`}>
+                    <div className="flex items-start justify-between gap-2"><strong className="flex min-w-0 items-start gap-2 text-sm">{depth > 0 && <CornerDownRight className="mt-0.5 h-4 w-4 shrink-0 text-primary" />}<span>{document.title}</span></strong><Badge variant="outline">{statusLabel(revision?.status ?? document.status)}</Badge></div>
                     <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground"><span>{area?.name}</span><code>{document.okf_id}</code></div>
                   </button>;
                 })}
@@ -568,6 +694,14 @@ const KnowledgeAdmin = () => {
 
               <Card><CardHeader><CardTitle className="text-lg">{selectedDocument?.title ?? "Selecione um documento"}</CardTitle><CardDescription>{selectedDocument ? `${selectedDocument.okf_id} · ${areas.find((area) => area.id === selectedDocument.area_id)?.name}` : "Edite uma revisão sem interromper a versão publicada."}</CardDescription></CardHeader>
                 {selectedDocument && <CardContent className="space-y-4">
+                  <div className="rounded-lg border bg-muted/20 p-4">
+                    <div className="mb-3 flex items-center gap-2"><Link2 className="h-4 w-4 text-primary" /><div><p className="text-sm font-medium">Organização do documento</p><p className="text-xs text-muted-foreground">Escolha onde este conteúdo aparece na Base de Conhecimento.</p></div></div>
+                    <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                      <div className="grid gap-2"><Label htmlFor="selected-parent">Pertence a</Label><select id="selected-parent" value={selectedParentId} onChange={(event) => setSelectedParentId(event.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm"><option value="">Documento principal</option>{documents.filter((item) => !unavailableParentIds.has(item.id)).map((item) => <option key={item.id} value={item.id}>{item.title} · {areas.find((area) => area.id === item.area_id)?.name}</option>)}</select></div>
+                      <Button variant="outline" onClick={saveDocumentParent} disabled={busy || selectedParentId === (selectedDocument.parent_document_id ?? "")}>Salvar vínculo</Button>
+                    </div>
+                    {selectedParentId && <p className="mt-2 text-xs text-muted-foreground">Área, responsável e visibilidade serão herdados do documento principal. A mudança seguirá para aprovação antes de chegar ao OKF.</p>}
+                  </div>
                   <div className="grid gap-2"><Label htmlFor="change-summary">Resumo da alteração</Label><Input id="change-summary" value={changeSummary} onChange={(event) => setChangeSummary(event.target.value)} placeholder="O que mudou nesta revisão?" /></div>
                   <div className="grid gap-2"><Label htmlFor="knowledge-editor">Conteúdo em Markdown</Label><textarea id="knowledge-editor" value={editorContent} onChange={(event) => setEditorContent(event.target.value)} className="min-h-[420px] w-full rounded-md border border-input bg-background px-3 py-2 font-mono text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring" /></div>
                   {sources.some((source) => source.document_id === selectedDocument.id && source.sync_status === "changed") && <div className="rounded-md border border-amber-500/40 bg-amber-500/5 p-3 text-sm text-amber-200"><p>A fonte Google foi alterada depois da última importação.</p><Button className="mt-2" size="sm" variant="outline" onClick={reimportSelectedSource} disabled={busy}>Criar revisão com a mudança</Button></div>}
@@ -582,10 +716,10 @@ const KnowledgeAdmin = () => {
           <div className="grid gap-4 lg:grid-cols-2">
             <Card><CardHeader><CardTitle className="text-lg">Importar Google Docs</CardTitle><CardDescription>O usuário autoriza o próprio arquivo; nenhuma conta técnica paga é necessária.</CardDescription></CardHeader><CardContent className="space-y-4">
               <div className="grid gap-2"><Label htmlFor="google-url">Link do Google Doc (opcional)</Label><Input id="google-url" value={googleUrl} onChange={(event) => setGoogleUrl(event.target.value)} placeholder="https://docs.google.com/document/d/..." /><p className="text-xs text-muted-foreground">O seletor do Drive confirmará exatamente qual arquivo pode ser lido.</p></div>
-              <div className="grid gap-2"><Label htmlFor="import-area">Área responsável</Label><select id="import-area" value={importAreaId} onChange={(event) => setImportAreaId(event.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm">{areas.map((area) => <option key={area.id} value={area.id}>{area.name}</option>)}</select></div>
+              <DocumentPlacementFields documents={documents} areas={areas} parentId={importParentId} areaId={importAreaId} onParentChange={setImportParentId} onAreaChange={setImportAreaId} prefix="import" />
               <Button onClick={importGoogleDoc} disabled={busy}>{busy ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CloudDownload className="mr-2 h-4 w-4" />}Autorizar e importar</Button>
             </CardContent></Card>
-            <Card><CardHeader><CardTitle className="text-lg">Criar dentro da KB</CardTitle><CardDescription>Comece um rascunho no editor, sem documento externo.</CardDescription></CardHeader><CardContent className="space-y-4"><div className="grid gap-2"><Label htmlFor="manual-area">Área responsável</Label><select id="manual-area" value={importAreaId} onChange={(event) => setImportAreaId(event.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm">{areas.map((area) => <option key={area.id} value={area.id}>{area.name}</option>)}</select></div><Button variant="outline" onClick={createManualDocument} disabled={busy}><FilePlus2 className="mr-2 h-4 w-4" />Criar rascunho</Button></CardContent></Card>
+            <Card><CardHeader><CardTitle className="text-lg">Criar dentro da KB</CardTitle><CardDescription>Comece um rascunho no editor, sem documento externo.</CardDescription></CardHeader><CardContent className="space-y-4"><DocumentPlacementFields documents={documents} areas={areas} parentId={importParentId} areaId={importAreaId} onParentChange={setImportParentId} onAreaChange={setImportAreaId} prefix="manual" /><Button variant="outline" onClick={createManualDocument} disabled={busy}><FilePlus2 className="mr-2 h-4 w-4" />Criar rascunho</Button></CardContent></Card>
           </div>
         </TabsContent>
 
@@ -593,7 +727,8 @@ const KnowledgeAdmin = () => {
           {revisions.filter((revision) => revision.status === "review").length === 0 ? <Card><CardContent className="py-10 text-center text-sm text-muted-foreground"><CheckCircle2 className="mx-auto mb-3 h-8 w-8 text-primary" />Nenhum documento aguardando aprovação.</CardContent></Card> : revisions.filter((revision) => revision.status === "review").map((revision) => {
             const document = documents.find((item) => item.id === revision.document_id);
             const canReview = Boolean(document && user && (isKnowledgeAdmin || memberships.some((member) => member.area_id === document.area_id && member.user_id === user.id && member.role === "owner")));
-              return <Card key={revision.id}><CardHeader><div className="flex flex-wrap items-start justify-between gap-3"><div><CardTitle className="text-lg">{document?.title}</CardTitle><CardDescription>Revisão {revision.revision_number} · {revision.change_summary || "Sem resumo"}</CardDescription></div><Badge>{statusLabel(revision.status)}</Badge></div></CardHeader><CardContent className="space-y-3"><pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-md border bg-muted/30 p-4 text-xs">{revision.content_markdown}</pre>{canReview && document ? <><textarea value={selectedDocumentId === document.id ? reviewNote : ""} onFocus={() => setSelectedDocumentId(document.id)} onChange={(event) => setReviewNote(event.target.value)} placeholder="Comentário da revisão (obrigatório ao pedir ajustes)" className="min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" /><div className="flex gap-2"><Button onClick={() => approveAndPublish(document, revision)} disabled={busy}><ShieldCheck className="mr-2 h-4 w-4" />Aprovar e publicar</Button><Button variant="outline" onClick={() => requestChanges(document, revision)} disabled={busy}>Pedir ajustes</Button></div></> : <p className="flex items-center gap-2 text-sm text-muted-foreground"><AlertTriangle className="h-4 w-4" />Apenas o dono da área ou administrador da KB pode decidir.</p>}</CardContent></Card>;
+              const parent = documents.find((item) => item.id === document?.parent_document_id);
+              return <Card key={revision.id}><CardHeader><div className="flex flex-wrap items-start justify-between gap-3"><div><CardTitle className="text-lg">{document?.title}</CardTitle><CardDescription>Revisão {revision.revision_number} · {revision.change_summary || "Sem resumo"}</CardDescription>{parent && <p className="mt-2 flex items-center gap-1 text-xs text-muted-foreground"><CornerDownRight className="h-3.5 w-3.5 text-primary" />Será publicado em <strong className="text-foreground">{parent.title}</strong> → Documentos relacionados</p>}</div><Badge>{statusLabel(revision.status)}</Badge></div></CardHeader><CardContent className="space-y-3"><pre className="max-h-64 overflow-auto whitespace-pre-wrap rounded-md border bg-muted/30 p-4 text-xs">{revision.content_markdown}</pre>{canReview && document ? <><textarea value={selectedDocumentId === document.id ? reviewNote : ""} onFocus={() => setSelectedDocumentId(document.id)} onChange={(event) => setReviewNote(event.target.value)} placeholder="Comentário da revisão (obrigatório ao pedir ajustes)" className="min-h-20 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" /><div className="flex gap-2"><Button onClick={() => approveAndPublish(document, revision)} disabled={busy}><ShieldCheck className="mr-2 h-4 w-4" />Aprovar e publicar</Button><Button variant="outline" onClick={() => requestChanges(document, revision)} disabled={busy}>Pedir ajustes</Button></div></> : <p className="flex items-center gap-2 text-sm text-muted-foreground"><AlertTriangle className="h-4 w-4" />Apenas o dono da área ou administrador da KB pode decidir.</p>}</CardContent></Card>;
           })}
         </TabsContent>
 
@@ -608,5 +743,37 @@ const KnowledgeAdmin = () => {
     </div>
   );
 };
+
+function DocumentPlacementFields({
+  documents, areas, parentId, areaId, onParentChange, onAreaChange, prefix,
+}: {
+  documents: DocumentRow[];
+  areas: Area[];
+  parentId: string;
+  areaId: string;
+  onParentChange: (value: string) => void;
+  onAreaChange: (value: string) => void;
+  prefix: string;
+}) {
+  const parent = documents.find((item) => item.id === parentId);
+  const inheritedArea = areas.find((item) => item.id === parent?.area_id);
+  return <div className="space-y-4 rounded-lg border bg-muted/20 p-4">
+    <div className="grid gap-2">
+      <Label htmlFor={`${prefix}-parent`}>Organização do documento</Label>
+      <select id={`${prefix}-parent`} value={parentId} onChange={(event) => onParentChange(event.target.value)} className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+        <option value="">Novo documento principal</option>
+        {documents.map((document) => <option key={document.id} value={document.id}>Adicionar a: {document.title}</option>)}
+      </select>
+      <p className="text-xs text-muted-foreground">Um documento complementar aparece dentro do principal, mas mantém URL e histórico próprios.</p>
+    </div>
+    <div className="grid gap-2">
+      <Label htmlFor={`${prefix}-area`}>Área responsável</Label>
+      <select id={`${prefix}-area`} value={parent?.area_id ?? areaId} onChange={(event) => onAreaChange(event.target.value)} disabled={Boolean(parent)} className="h-10 rounded-md border border-input bg-background px-3 text-sm disabled:cursor-not-allowed disabled:opacity-70">
+        {areas.map((area) => <option key={area.id} value={area.id}>{area.name}</option>)}
+      </select>
+      {parent && <p className="text-xs text-primary">Herdado de {parent.title}: {inheritedArea?.name}, responsável e visibilidade.</p>}
+    </div>
+  </div>;
+}
 
 export default KnowledgeAdmin;

@@ -160,6 +160,16 @@ relationships:
     target: company
 ```
 
+Use `document_of` quando um documento complementar deve aparecer dentro de um
+documento principal na Base de Conhecimento. O documento complementar preserva
+seu próprio `id`, histórico, aprovação e URL.
+
+```yaml
+relationships:
+  - type: document_of
+    target: leia
+```
+
 A validação falha quando o destino não existe. Um documento público também não pode apontar para um documento interno ou restrito, evitando a exposição de identificadores e relações não públicas.
 
 ## Validação local
