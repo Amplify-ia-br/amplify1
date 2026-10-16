@@ -12,7 +12,9 @@ source_of_truth: true
 tags: []
 sources:
   - https://docs.google.com/document/d/1y4SpP3fm7d4XI2rxesQx929wKzilGJs0xSPlrkGZzlA/edit?usp=drive_web
-relationships: []
+relationships:
+  - type: document_of
+    target: leia
 last_reviewed: 2026-10-15
 updated_at: 2026-10-15
 ---

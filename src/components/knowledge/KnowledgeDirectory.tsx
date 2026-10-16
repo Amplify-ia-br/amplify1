@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight, BookOpen, FileText, Filter, FolderOpen, GraduationCap, Settings2, X } from "lucide-react";
+import { parentTarget, type KnowledgeRelationship } from "@/lib/knowledge-hierarchy";
 
 export type KnowledgeListItem = {
   id: string;
@@ -10,6 +11,7 @@ export type KnowledgeListItem = {
   tags: string[];
   lastReviewed: string;
   content: string;
+  relationships: KnowledgeRelationship[];
 };
 
 const ALL = "all";
@@ -54,6 +56,13 @@ export default function KnowledgeDirectory({ items }: { items: KnowledgeListItem
       return (!term || haystack.includes(term)) && (type === ALL || item.type === type) && (tag === ALL || item.tags.includes(tag)) && (status === ALL || item.status === status);
     });
   }, [items, query, status, tag, type]);
+  const isDiscovering = Boolean(query.trim() || type !== ALL || tag !== ALL || status !== ALL);
+  const visible = useMemo(() => isDiscovering
+    ? filtered
+    : filtered.filter((item) => {
+      const parentId = parentTarget(item.relationships);
+      return !parentId || !items.some((candidate) => candidate.id === parentId);
+    }), [filtered, isDiscovering, items]);
 
   const activeFilters = [type, tag, status].filter((value) => value !== ALL).length;
   const reset = () => { setType(ALL); setTag(ALL); setStatus(ALL); };
@@ -61,7 +70,7 @@ export default function KnowledgeDirectory({ items }: { items: KnowledgeListItem
   return (
     <section className="kb-directory" aria-label="Documentos da base">
       <div className="kb-directory-toolbar">
-        <p aria-live="polite">{filtered.length} {filtered.length === 1 ? "documento" : "documentos"}</p>
+        <p aria-live="polite">{isDiscovering ? filtered.length : visible.length} {isDiscovering ? "resultado(s)" : "documento(s) principal(is)"}</p>
         <button type="button" onClick={() => setFiltersOpen((open) => !open)} aria-expanded={filtersOpen}>
           <Filter aria-hidden="true" /> Filtros {activeFilters > 0 && <span>{activeFilters}</span>}
         </button>
@@ -76,19 +85,23 @@ export default function KnowledgeDirectory({ items }: { items: KnowledgeListItem
         </div>
       )}
 
-      {filtered.length ? (
+      {visible.length ? (
         <div className="kb-document-list">
-          {filtered.map((item) => {
+          {visible.map((item) => {
             const Icon = iconFor(item.type);
+            const parentId = parentTarget(item.relationships);
+            const parent = parentId ? items.find((candidate) => candidate.id === parentId) : null;
+            const childCount = items.filter((candidate) => parentTarget(candidate.relationships) === item.id).length;
             return (
               <article key={item.id}>
                 <a href={`/knowledge/${item.id}`}>
                   <span className="kb-document-icon"><Icon aria-hidden="true" /></span>
                   <span className="kb-document-copy">
-                    <span className="kb-document-meta"><b>{typeLabel(item.type)}</b><i />{label(item.status)}</span>
+                    <span className="kb-document-meta"><b>{typeLabel(item.type)}</b><i />{label(item.status)}{parent && <><i />Pertence a {parent.title}</>}</span>
                     <strong>{item.title}</strong>
                     <small>{item.description}</small>
                     <span className="kb-document-tags">{item.tags.slice(0, 3).map((itemTag) => <em key={itemTag}>{itemTag}</em>)}</span>
+                    {childCount > 0 && <span className="kb-related-count">{childCount} {childCount === 1 ? "documento relacionado" : "documentos relacionados"}</span>}
                   </span>
                   <ArrowRight className="kb-document-arrow" aria-hidden="true" />
                 </a>

@@ -15,6 +15,7 @@ const items = entries.map((entry) => ({
   tags: entry.data.tags,
   lastReviewed: entry.data.last_reviewed,
   content: markdownToSearchText(entry.body),
+  relationships: entry.data.relationships,
 }));
 ---
 

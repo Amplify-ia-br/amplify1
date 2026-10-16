@@ -1,19 +1,20 @@
 ---
 import { render } from "astro:content";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ArrowRight, Files } from "lucide-react";
 import KnowledgeToc from "@/components/knowledge/KnowledgeToc";
 import KnowledgeAnnotations from "@/components/knowledge/KnowledgeAnnotations";
 import KnowledgeLayout from "@/layouts/KnowledgeLayout.astro";
 import { getPublicKnowledge, markdownToSearchText, type PublicKnowledgeEntry } from "@/lib/knowledge";
+import { parentTarget } from "@/lib/knowledge-hierarchy";
 
 export const prerender = true;
 
 export async function getStaticPaths() {
   const entries = await getPublicKnowledge();
-  return entries.map((entry, index) => ({ params: { id: entry.data.id }, props: { entry, entries, index } }));
+  return entries.map((entry) => ({ params: { id: entry.data.id }, props: { entry, entries } }));
 }
 
-const { entry, entries, index } = Astro.props as { entry: PublicKnowledgeEntry; entries: PublicKnowledgeEntry[]; index: number };
+const { entry, entries } = Astro.props as { entry: PublicKnowledgeEntry; entries: PublicKnowledgeEntry[] };
 const { Content, headings } = await render(entry);
 const items = entries.map((item) => ({
   id: item.data.id,
@@ -24,9 +25,19 @@ const items = entries.map((item) => ({
   tags: item.data.tags,
   lastReviewed: item.data.last_reviewed,
   content: markdownToSearchText(item.body),
+  relationships: item.data.relationships,
 }));
-const previous = entries[index - 1];
-const next = entries[index + 1];
+const parentId = parentTarget(entry.data.relationships);
+const parent = parentId ? entries.find((item) => item.data.id === parentId) : undefined;
+const relatedDocuments = entries.filter((item) => parentTarget(item.data.relationships) === entry.data.id);
+const publicIds = new Set(entries.map((item) => item.data.id));
+const navigationEntries = entries.filter((item) => {
+  const target = parentTarget(item.data.relationships);
+  return !target || !publicIds.has(target);
+});
+const navigationIndex = navigationEntries.findIndex((item) => item.data.id === entry.data.id);
+const previous = navigationIndex > 0 ? navigationEntries[navigationIndex - 1] : undefined;
+const next = navigationIndex >= 0 ? navigationEntries[navigationIndex + 1] : undefined;
 const statusLabels = {
   approved: "Aprovado",
   active: "Ativo",
@@ -49,7 +60,10 @@ const reviewedAt = year && month && day ? `${day}/${month}/${year}` : entry.data
 <KnowledgeLayout title={`${entry.data.title} | Amplify`} description={entry.data.description} items={items} activeId={entry.data.id}>
   <article class="kb-document-page">
     <div>
-      <a href="/knowledge" class="kb-breadcrumb"><ArrowLeft aria-hidden="true" /> Base de conhecimento</a>
+      <nav class="kb-breadcrumb" aria-label="Caminho do documento">
+        <a href="/knowledge"><ArrowLeft aria-hidden="true" /> Base de conhecimento</a>
+        {parent && <><span>/</span><a href={`/knowledge/${parent.data.id}`}>{parent.data.title}</a></>}
+      </nav>
       <header class="kb-document-header">
         <div class="kb-document-kicker">
           <b>{typeLabels[entry.data.type] ?? entry.data.type}</b><i></i>
@@ -61,6 +75,10 @@ const reviewedAt = year && month && day ? `${day}/${month}/${year}` : entry.data
         {entry.data.tags.length > 0 && <ul aria-label="Tags">{entry.data.tags.map((tag) => <li>{tag}</li>)}</ul>}
       </header>
       <div class="knowledge-prose"><Content /></div>
+      {relatedDocuments.length > 0 && <section class="kb-related-documents" aria-labelledby="related-documents-title">
+        <div class="kb-related-heading"><Files aria-hidden="true" /><div><h2 id="related-documents-title">Documentos relacionados</h2><p>Materiais complementares que fazem parte deste conteúdo.</p></div></div>
+        <div>{relatedDocuments.map((document) => <a href={`/knowledge/${document.data.id}`}><span><small>{typeLabels[document.data.type] ?? document.data.type}</small><strong>{document.data.title}</strong><p>{document.data.description}</p></span><ArrowRight aria-hidden="true" /></a>)}</div>
+      </section>}
       <KnowledgeAnnotations client:load okfId={entry.data.id} returnTo={`/knowledge/${entry.data.id}`} />
       {(previous || next) && <nav class="kb-page-navigation" aria-label="Documentos anterior e próximo">
         {previous ? <a href={`/knowledge/${previous.data.id}`}><small>Anterior</small><strong>{previous.data.title}</strong></a> : <span></span>}
