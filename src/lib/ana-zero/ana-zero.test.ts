@@ -11,7 +11,7 @@ vi.mock("ai", async (importOriginal) => ({
 import { runAnaZeroTurn } from "./agent";
 import { analyzeTranscript } from "./compare";
 import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer } from "./guardrails";
-import { buildAnaZeroSystem, hasIntroducedLeia } from "./prompt";
+import { buildAnaZeroSystem, hasIntroducedLeia, PROMPT_VERSION } from "./prompt";
 import { COMPARE_SCENARIOS } from "./scenarios";
 import { anaZeroRequestSchema } from "./schema";
 import { createTestKnowledgeService } from "@/lib/okf/test-fixtures";
@@ -48,6 +48,7 @@ describe("ferramentas e memória com evidência", () => {
   it("aceita citação literal do usuário e rejeita invenção", () => {
     expect(quoteIsFromUser("sou o Leo", ["Oi, sou o Leo"])).toBe(true);
     expect(quoteIsFromUser("sou a Marina", ["Oi, sou o Leo"])).toBe(false);
+    expect(quoteIsFromUser("sim", ["Isso é simples"])).toBe(false);
   });
   it("descarta memória do cliente sem evidência no histórico", () => {
     const kept = sanitizeMemory(
@@ -141,6 +142,9 @@ describe("turno do agente", () => {
 });
 
 describe("contrato HTTP e prompt", () => {
+  it("versiona a política conversacional consolidada", () => {
+    expect(PROMPT_VERSION).toBe("2026-10-19.1");
+  });
   it("exige que a última mensagem seja do usuário e limita o histórico", () => {
     const base = { messages: [{ id: "1", role: "assistant", parts: [{ type: "text", text: "oi" }] }] };
     expect(anaZeroRequestSchema.safeParse(base).success).toBe(false);
@@ -161,8 +165,11 @@ describe("contrato HTTP e prompt", () => {
     const system = buildAnaZeroSystem([]);
     expect(system).toContain('Nunca use a fórmula "Se quiser, eu posso..."');
     expect(system).toContain('Nunca escreva "não tenho isso confirmado"');
-    expect(system).toContain("Escola também é uma organização");
+    expect(system).toContain("Se a pessoa falar da escola como negócio");
     expect(system).toContain("Prefere WhatsApp ou e-mail?");
+    expect(system).toContain("mas não é o contato");
+    expect(system).toContain("número com DDD ou o endereço de e-mail");
+    expect(system).toContain("não pergunte de novo");
     expect(system).toContain('Nunca use "consentiria"');
   });
   it("o prompt mantém a saudação calorosa e sem consulta à base", () => {
@@ -177,6 +184,22 @@ describe("contrato HTTP e prompt", () => {
     expect(system).toContain("Responder só \"Oi, Leonardo.\" deixa a pessoa sem caminho");
     expect(system).toContain("não presuma a frente");
     expect(system).toContain('Nunca diga que o L.E.I.A. "não é indicado"');
+  });
+  it("distingue interesse ativo de encerramento sem violar os limites de perguntas", () => {
+    const system = buildAnaZeroSystem([]);
+    expect(system).toContain("indicam interesse ativo");
+    expect(system).toContain("indicam encerramento");
+    expect(system).toContain("no máximo uma pergunta");
+    expect(system).toContain('Nunca use a fórmula "Se quiser, eu posso..."');
+  });
+  it("prioriza o tema explícito e mantém respostas sobre o L.E.I.A. dentro do L.E.I.A.", () => {
+    const system = buildAnaZeroSystem([]);
+    expect(system).toContain("O assunto escolhido explicitamente pela pessoa tem prioridade");
+    expect(system).toContain("responda primeiro com conteúdo concreto sustentado por ela");
+    expect(system).toContain("nas perguntas seguintes, não repita essa introdução");
+    expect(system).toContain("nunca use essa resposta para voltar a gestão");
+    expect(system).toContain("sem criar um rótulo ou uma frase pronta para essa segunda frente");
+    expect(system).not.toContain("Escola também é uma organização");
   });
   it("o nome por extenso do L.E.I.A. só é pedido na primeira menção", () => {
     expect(hasIntroducedLeia(["Oi!", "O L.E.I.A. — Laboratório Escolar de Inteligência Artificial é um programa anual."])).toBe(true);
@@ -194,5 +217,23 @@ describe("análise de transcrições", () => {
   });
   it("não marca uma conversa que acompanha o nome", () => {
     expect(analyzeTranscript(capture, ["Oi! Eu sou a Ana. Como posso ajudar?", "Prazer, Leo. No que posso ajudar?"])).toEqual([]);
+  });
+  it("marca desvio para gestão numa resposta pedida diretamente sobre o L.E.I.A.", () => {
+    const scenario = COMPARE_SCENARIOS.find((s) => s.name === "pergunta-direta-leia")!;
+    const flags = analyzeTranscript(scenario, ["O L.E.I.A. é para alunos. Também oferecemos consultoria de gestão para a escola."]);
+    expect(flags.map((flag) => flag.kind)).toContain("forbidden");
+  });
+  it("aceita explicação concreta do L.E.I.A. sem desvio de assunto", () => {
+    const scenario = COMPARE_SCENARIOS.find((s) => s.name === "pergunta-direta-leia")!;
+    expect(analyzeTranscript(scenario, ["O L.E.I.A. é um programa para estudantes da Educação Básica aprenderem a usar IA."])).toEqual([]);
+  });
+  it("distingue avanço após interesse de reabertura após encerramento", () => {
+    const active = COMPARE_SCENARIOS.find((s) => s.name === "legal-depois-de-interesse")!;
+    expect(analyzeTranscript(active, ["O L.E.I.A. atende estudantes.", "O próximo passo é definir a turma da escola."])).toEqual([]);
+    expect(analyzeTranscript(active, ["O L.E.I.A. atende estudantes.", "Que bom que você gostou do L.E.I.A."]).map((flag) => flag.kind)).toContain("missing");
+
+    const terminal = COMPARE_SCENARIOS.find((s) => s.name === "ok-seco")!;
+    expect(analyzeTranscript(terminal, ["O L.E.I.A. é um programa para estudantes.", "Tudo certo!"])).toEqual([]);
+    expect(analyzeTranscript(terminal, ["O L.E.I.A. é um programa para estudantes.", "Quer conhecer as opções?"]).map((flag) => flag.kind)).toContain("unneeded_question");
   });
 });

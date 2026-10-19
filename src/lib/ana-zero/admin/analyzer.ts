@@ -201,7 +201,8 @@ function costOf(model: string, inputTokens: number, outputTokens: number) {
   return inputTokens * prices.inputCostPerToken + outputTokens * prices.outputCostPerToken;
 }
 
-const clip = (text: string) => (text.length > TEXT_LIMIT ? `${text.slice(0, TEXT_LIMIT)}…` : text);
+const clipTo = (text: string, limit: number) => (text.length > limit ? `${text.slice(0, limit)}…` : text);
+const clip = (text: string) => clipTo(text, TEXT_LIMIT);
 
 function renderTranscript(session: SessionRow, turns: TurnRow[], feedback: Dataset["feedback"]) {
   const lines = [`Missão do testador: ${session.mission}`];
@@ -394,20 +395,161 @@ export function selectProblemTurns(data: Dataset, limit = 40) {
     });
 }
 
+type RecommendationDedupSource = {
+  title: string;
+  rationale?: string | null;
+  proposedChange?: string | null;
+  proposed_change?: string | null;
+  status?: RecommendationRow["status"];
+};
+
+type RecommendationIntentSignature =
+  | "positive_interest_avoid_closure"
+  | "leia_answer_before_qualification"
+  | "leia_avoid_management_drift"
+  | "leia_stay_on_explicit_topic"
+  | "school_organization_wording"
+  | "contact_value_validation"
+  | "qualification_before_handoff"
+  | "consent_before_handoff"
+  | "generic_interest_not_handoff";
+
+const ACTIVE_RECOMMENDATION_STATUSES = new Set<RecommendationRow["status"]>(["nova", "aceita"]);
+const MAX_EXISTING_RECOMMENDATIONS_IN_PROMPT = 24;
+
+const normalizeRecommendationText = (value: string) =>
+  value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/\bl\s*[.\s]\s*e\s*[.\s]\s*i\s*[.\s]\s*a\b/g, " leia ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+
+function recommendationCorpus(item: RecommendationDedupSource) {
+  return normalizeRecommendationText(
+    [item.title, item.rationale, item.proposedChange ?? item.proposed_change]
+      .filter((part): part is string => typeof part === "string" && part.length > 0)
+      .join(" "),
+  );
+}
+
+function recommendationIntentSignatures(item: RecommendationDedupSource): RecommendationIntentSignature[] {
+  const text = recommendationCorpus(item);
+  const signatures: RecommendationIntentSignature[] = [];
+
+  const positiveInterest =
+    /\b(sinal positivo|interesse (?:ativo|positivo|claro)|demonstr(?:a|ar|ou|acao de) interesse|mostr(?:a|ar|ou) interesse|interessad(?:o|a)|aceit(?:e|ou|acao)|confirmacao positiva|gost(?:ei|ou)|quero saber mais|quero sim)\b/.test(
+      text,
+    );
+  const explicitContinuation =
+    /\b(continu(?:ar|e|acao)|prossegu(?:ir|e)|manter a conversa|nao encerrar|nao finalizar)\b/.test(text);
+  const closureFailure = /\b(encerr(?:ar|a|ou|amento)|finaliz(?:ar|a|ou)|termin(?:ar|a|ou)|interromp(?:er|e|eu)|abandono|conversa morreu)\b/.test(
+    text,
+  );
+  const interestContinuationPhrase =
+    /\b(?:interesse|aceitacao|gostei|quero saber mais)\b.{0,70}\b(?:continuar|prosseguir|manter a conversa)\b/.test(text) ||
+    /\b(?:continuar|prosseguir|manter a conversa)\b.{0,70}\b(?:apos|depois|quando)\b.{0,35}\b(?:interesse|aceite|gostei)\b/.test(
+      text,
+    );
+  if (positiveInterest && explicitContinuation && (closureFailure || interestContinuationPhrase)) {
+    signatures.push("positive_interest_avoid_closure");
+  }
+
+  const concernsLeia = /\bleia\b/.test(text);
+  const answerBeforeQualification =
+    /\b(?:responder|explicar|apresentar|entregar)\b.{0,55}\b(?:antes|primeiro|diretamente)\b.{0,55}\b(?:perguntar|qualificar|qualificacao|gestao|mudar|desviar)\b/.test(
+      text,
+    ) ||
+    /\b(?:antes|primeiro)\b.{0,55}\b(?:perguntar|qualificar|qualificacao)\b/.test(text) &&
+      /\b(?:responder|explicar|conteudo|resposta)\b/.test(text);
+  if (concernsLeia && answerBeforeQualification) signatures.push("leia_answer_before_qualification");
+
+  const managementDrift =
+    /\b(?:nao|sem|evitar)\b.{0,35}\b(?:voltar|reintroduzir|introduzir|desviar|mudar|misturar|puxar|trocar)\b.{0,55}\b(?:gestao|operacao|outra frente)\b/.test(
+      text,
+    ) ||
+    /\b(?:voltar|reintroduzir|desviar|mudar|misturar|puxar)\b.{0,45}\b(?:gestao|operacao|outra frente)\b/.test(text) &&
+      /\b(?:nao|sem|evitar)\b/.test(text);
+  if (concernsLeia && managementDrift) signatures.push("leia_avoid_management_drift");
+
+  const explicitLeiaRequest =
+    /\b(?:pedido explicito|pergunta explicita|pediu|perguntou|solicitou)\b.{0,60}\bleia\b/.test(text) ||
+    /\bleia\b.{0,60}\b(?:pedido explicito|pergunta explicita|pediu|perguntou|solicitou)\b/.test(text);
+  const stayOnTopic = /\b(?:manter|permanecer)\b.{0,25}\b(?:foco|tema|assunto)\b|\bpriorizar\b.{0,35}\bpedido\b/.test(text);
+  if (explicitLeiaRequest && stayOnTopic) signatures.push("leia_stay_on_explicit_topic");
+
+  const concernsSchool = /\b(escola|escolar|instituicao de ensino|organizacao escolar)\b/.test(text);
+  const concernsOrganizationNaming =
+    /\b(organizacao|instituicao|empresa|nome da escola|sua escola|organizacao escolar)\b/.test(text);
+  const concernsWording =
+    /\b(linguagem|redacao|formulacao|vocabulario|natural|artificial|robotic(?:a|o)|soar|terminologia|termo|trocar|substituir)\b/.test(
+      text,
+    );
+  if (concernsSchool && concernsOrganizationNaming && concernsWording) signatures.push("school_organization_wording");
+
+  const contactValue = /\b(whatsapp|telefone|celular|email|numero de contato|dado de contato|contato valido)\b/.test(text);
+  const validatesContactValue =
+    /\b(valid(?:ar|o|a)|numero|dado|inform(?:ar|ado|ada)|colet(?:ar|ado|ada)|preench(?:er|ido|ida)|escolha|preferencia|confundir|falt(?:a|ando))\b/.test(
+      text,
+    );
+  if (contactValue && validatesContactValue) signatures.push("contact_value_validation");
+
+  const handoff = /\b(handoff|encaminh(?:ar|amento)|time comercial|equipe comercial|transferir|repasse comercial)\b/.test(text);
+  const qualification = /\b(qualific(?:ar|acao|ado|ada)|qualificacao minima)\b/.test(text);
+  const orderedGate = /\b(antes|depois|somente|apenas|so|concluir|concluida|sem)\b/.test(text);
+  if (handoff && qualification && orderedGate) signatures.push("qualification_before_handoff");
+
+  const consent = /\b(consentimento|autoriza(?:cao|do|da)|pedido explicito|solicitacao explicita)\b/.test(text);
+  if ((handoff || contactValue) && consent) signatures.push("consent_before_handoff");
+
+  const genericInterest = /\b(interesse generico|sinal generico|apenas interesse|mero interesse)\b/.test(text);
+  const preventsHandoff = /\b(nao|evitar|somente|apenas|so)\b/.test(text);
+  if (handoff && genericInterest && preventsHandoff) signatures.push("generic_interest_not_handoff");
+
+  return signatures;
+}
+
 export function sanitizeRecommendations(
   items: z.infer<typeof recommendationsSchema>["recommendations"],
   data: Dataset,
-  existingTitles: string[],
+  existing: Array<RecommendationDedupSource | string>,
 ) {
   const turnKeys = new Set(data.turns.map((t) => `${t.session_id}:${t.turn_index}`));
-  const seen = new Set(existingTitles.map((t) => t.trim().toLowerCase()));
+  const existingSources = existing.map((item) => (typeof item === "string" ? { title: item } : item));
+  const seenTitles = new Set(existingSources.map((item) => normalizeRecommendationText(item.title)));
+  const seenIntents = new Set(
+    existingSources
+      .filter((item) => item.status === undefined || ACTIVE_RECOMMENDATION_STATUSES.has(item.status))
+      .flatMap(recommendationIntentSignatures),
+  );
   return items.flatMap((item) => {
     const evidence: RecommendationEvidence[] = item.evidence.filter((e) => turnKeys.has(`${e.sessionId}:${e.turnIndex}`));
     const title = item.title.trim();
-    if (!evidence.length || !title || seen.has(title.toLowerCase())) return [];
-    seen.add(title.toLowerCase());
+    const titleFingerprint = normalizeRecommendationText(title);
+    const intents = recommendationIntentSignatures({ ...item, title });
+    if (!evidence.length || !title || seenTitles.has(titleFingerprint) || intents.some((intent) => seenIntents.has(intent))) {
+      return [];
+    }
+    seenTitles.add(titleFingerprint);
+    for (const intent of intents) seenIntents.add(intent);
     return [{ ...item, title, evidence }];
   });
+}
+
+function existingRecommendationsForPrompt(existing: RecommendationRow[]) {
+  return [...existing]
+    .filter((item) => ACTIVE_RECOMMENDATION_STATUSES.has(item.status))
+    .sort((a, b) => b.created_at.localeCompare(a.created_at))
+    .slice(0, MAX_EXISTING_RECOMMENDATIONS_IN_PROMPT)
+    .map((item) => ({
+      titulo: clipTo(item.title, 160),
+      status: item.status,
+      justificativa: clipTo(item.rationale, 500),
+      mudancaProposta: clipTo(item.proposed_change, 800),
+      cenarioDeRegressao: item.regression_scenario ? clipTo(item.regression_scenario, 320) : null,
+    }));
 }
 
 export async function generateRecommendations(
@@ -423,7 +565,7 @@ export async function generateRecommendations(
       versaoDoPrompt: PROMPT_VERSION,
       metricas: computeOverview(data),
       conteudo: computeContent(data),
-      recomendacoesExistentes: options.existing.map((r) => ({ titulo: r.title, status: r.status })),
+      recomendacoesExistentes: existingRecommendationsForPrompt(options.existing),
       turnosProblematicos: problems.map(({ turn, previous, feedback, analysis }) => ({
         sessionId: turn.session_id,
         turnIndex: turn.turn_index,
@@ -447,7 +589,7 @@ export async function generateRecommendations(
     const accepted = sanitizeRecommendations(
       object.recommendations,
       data,
-      options.existing.map((r) => r.title),
+      options.existing,
     );
     if (accepted.length) {
       const insert = await client.from("ana_recommendations").insert(

@@ -20,11 +20,63 @@ export function createAnaZeroToolState(memory: AnaZeroMemoryEntry[]): AnaZeroToo
 export function quoteIsFromUser(quote: string, userTexts: string[]) {
   const needle = normalizeKnowledgeText(quote);
   if (needle.length < 2) return false;
-  return userTexts.some((text) => normalizeKnowledgeText(text).includes(needle));
+  return userTexts.some((text) => {
+    const haystack = normalizeKnowledgeText(text);
+    let offset = haystack.indexOf(needle);
+    while (offset >= 0) {
+      const before = haystack[offset - 1];
+      const after = haystack[offset + needle.length];
+      const startsAtBoundary = before === undefined || !/[\p{L}\p{N}]/u.test(before);
+      const endsAtBoundary = after === undefined || !/[\p{L}\p{N}]/u.test(after);
+      if (startsAtBoundary && endsAtBoundary) return true;
+      offset = haystack.indexOf(needle, offset + 1);
+    }
+    return false;
+  });
 }
 
 export function sanitizeMemory(memory: AnaZeroMemoryEntry[], userTexts: string[]) {
   return memory.filter((entry) => quoteIsFromUser(entry.evidence, userTexts));
+}
+
+const HANDOFF_EMAIL_SCHEMA = z.email();
+const VALID_BRAZILIAN_AREA_CODES = new Set([
+  "11", "12", "13", "14", "15", "16", "17", "18", "19",
+  "21", "22", "24", "27", "28",
+  "31", "32", "33", "34", "35", "37", "38",
+  "41", "42", "43", "44", "45", "46", "47", "48", "49",
+  "51", "53", "54", "55",
+  "61", "62", "63", "64", "65", "66", "67", "68", "69",
+  "71", "73", "74", "75", "77", "79",
+  "81", "82", "83", "84", "85", "86", "87", "88", "89",
+  "91", "92", "93", "94", "95", "96", "97", "98", "99",
+]);
+
+function isPlausibleBrazilianPhone(contact: string) {
+  // Keep the accepted surface deliberately narrow: a contact must be the phone
+  // itself, not prose that happens to contain digits.
+  if (!/^\+?[\d\s().-]+$/.test(contact)) return false;
+
+  let digits = contact.replace(/\D/g, "");
+  if ((digits.length === 12 || digits.length === 13) && digits.startsWith("55")) {
+    digits = digits.slice(2);
+  } else if (contact.startsWith("+")) {
+    return false;
+  }
+
+  if (digits.length !== 10 && digits.length !== 11) return false;
+  const ddd = digits.slice(0, 2);
+  const subscriber = digits.slice(2);
+  if (!VALID_BRAZILIAN_AREA_CODES.has(ddd)) return false;
+
+  // Brazilian mobile numbers have nine digits and start with 9. Landlines
+  // have eight digits and currently start from 2 through 5.
+  return subscriber.length === 9 ? subscriber.startsWith("9") : /^[2-5]/.test(subscriber);
+}
+
+export function isValidHandoffContact(contact: string) {
+  const value = contact.trim();
+  return HANDOFF_EMAIL_SCHEMA.safeParse(value).success || isPlausibleBrazilianPhone(value);
 }
 
 const SEARCH_STOPWORDS = new Set([
@@ -114,7 +166,7 @@ export function createAnaZeroTools(reader: KnowledgeReader, state: AnaZeroToolSt
     }),
     request_handoff: tool({
       description:
-        "Registra o pedido de contato com o time humano. Use somente depois que a pessoa pediu um próximo passo, consentiu em ser contatada e informou o canal. Não envia nada nem agenda nada.",
+        "Registra o pedido de contato com o time humano. Use somente depois que a pessoa pediu um próximo passo, consentiu em ser contatada e informou literalmente um e-mail válido ou telefone com DDD. Dizer apenas 'WhatsApp' ou 'e-mail' informa uma preferência, não um contato. Não envia nada nem agenda nada.",
       inputSchema: z.object({
         summary: z.string().trim().min(1).max(500),
         consentQuote: z.string().trim().min(2).max(400),
@@ -127,6 +179,9 @@ export function createAnaZeroTools(reader: KnowledgeReader, state: AnaZeroToolSt
         }
         if (!quoteIsFromUser(handoff.contact, userTexts)) {
           return { ok: false as const, error: "contact_not_provided_by_user" };
+        }
+        if (!isValidHandoffContact(handoff.contact)) {
+          return { ok: false as const, error: "contact_must_be_valid_email_or_phone" };
         }
         state.handoff = handoff;
         return { ok: true as const, status: "recorded_pending_review" as const };
