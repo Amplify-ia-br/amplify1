@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { createGateway, generateText, Output } from "ai";
+import { createGateway, generateText, NoObjectGeneratedError, Output } from "ai";
 import { z } from "zod-v4";
 import { ANA_MODELS } from "../../ana/config.js";
 import { readServerEnv } from "../env.js";
@@ -32,6 +32,73 @@ const RETRY_DELAYS_MS = [300, 900];
 const TEXT_LIMIT = 1_200;
 
 const score = z.number().int().min(1).max(5);
+
+type UnknownRecord = Record<string, unknown>;
+
+const asRecord = (value: unknown): UnknownRecord =>
+  value !== null && typeof value === "object" && !Array.isArray(value) ? (value as UnknownRecord) : {};
+
+const boundedString = (value: unknown, max: number, fallback = "") =>
+  (typeof value === "string" ? value : fallback).slice(0, max);
+
+const boundedStrings = (value: unknown, maxItems: number, maxLength: number) =>
+  (Array.isArray(value) ? value : [])
+    .filter((item): item is string => typeof item === "string")
+    .slice(0, maxItems)
+    .map((item) => item.slice(0, maxLength));
+
+const boundedScore = (value: unknown) => {
+  const numeric = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(numeric) ? Math.max(1, Math.min(5, Math.round(numeric))) : 3;
+};
+
+function normalizeSessionAnalysis(value: unknown) {
+  const object = asRecord(value);
+  const stageReached = STAGES.includes(object.stageReached as (typeof STAGES)[number]) ? object.stageReached : "abandono";
+  return {
+    goalReached: object.goalReached === true,
+    stageReached,
+    topics: boundedStrings(object.topics, 6, 60),
+    intent: boundedString(object.intent, 160, "Não identificado"),
+    objections: boundedStrings(object.objections, 5, 120),
+    summary: boundedString(object.summary, 400, "Análise sem resumo."),
+    turns: (Array.isArray(object.turns) ? object.turns : []).map((item, index) => {
+      const turn = asRecord(item);
+      const rawIndex = typeof turn.turnIndex === "number" ? turn.turnIndex : Number(turn.turnIndex);
+      const failureCategory = FAILURE_CATEGORIES.includes(turn.failureCategory as (typeof FAILURE_CATEGORIES)[number])
+        ? turn.failureCategory
+        : "nenhuma";
+      return {
+        turnIndex: Number.isInteger(rawIndex) ? rawIndex : index + 1,
+        naturalness: boundedScore(turn.naturalness),
+        relevance: boundedScore(turn.relevance),
+        factuality: boundedScore(turn.factuality),
+        commercialProgress: boundedScore(turn.commercialProgress),
+        conciseness: boundedScore(turn.conciseness),
+        tags: boundedStrings(turn.tags, 4, 40),
+        failureCategory,
+        summary: boundedString(turn.summary, 240, "Sem resumo."),
+      };
+    }),
+  };
+}
+
+function recoverInvalidStructuredOutput<T>(error: unknown, schema: z.ZodType<T>): T | undefined {
+  if (!NoObjectGeneratedError.isInstance(error)) return undefined;
+  const causeValue = asRecord(error.cause).value;
+  let raw = causeValue;
+  if (raw === undefined && error.text) {
+    try {
+      raw = JSON.parse(error.text);
+    } catch {
+      return undefined;
+    }
+  }
+  const record = asRecord(raw);
+  const normalized = "turns" in record ? normalizeSessionAnalysis(record) : raw;
+  const parsed = schema.safeParse(normalized);
+  return parsed.success ? parsed.data : undefined;
+}
 
 export const sessionAnalysisSchema = z.object({
   goalReached: z.boolean(),
@@ -93,6 +160,14 @@ export async function runAnalystWithRetry<T>(
     try {
       return await analyst.run(args);
     } catch (error) {
+      const recovered = recoverInvalidStructuredOutput(error, args.schema);
+      if (recovered !== undefined && NoObjectGeneratedError.isInstance(error)) {
+        return {
+          object: recovered,
+          inputTokens: error.usage?.inputTokens ?? 0,
+          outputTokens: error.usage?.outputTokens ?? 0,
+        };
+      }
       lastError = error;
       if (attempt < ANALYST_ATTEMPTS - 1) await sleep(RETRY_DELAYS_MS[attempt]);
     }
