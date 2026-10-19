@@ -23,7 +23,12 @@ export const FAILURE_CATEGORIES = [
 export const STAGES = ["abertura", "descoberta", "qualificacao", "contato", "encerramento", "abandono"] as const;
 
 const MAX_SESSIONS_PER_RUN = 12;
-const CONCURRENCY = 3;
+// The analyst model is intentionally processed sequentially. In production,
+// concurrent structured-output requests to the gateway caused all but one
+// session in a batch to fail intermittently.
+const CONCURRENCY = 1;
+const ANALYST_ATTEMPTS = 3;
+const RETRY_DELAYS_MS = [300, 900];
 const TEXT_LIMIT = 1_200;
 
 const score = z.number().int().min(1).max(5);
@@ -76,6 +81,25 @@ export type Analyst = {
   }>;
 };
 
+const wait = (milliseconds: number) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
+export async function runAnalystWithRetry<T>(
+  analyst: Analyst,
+  args: { system: string; prompt: string; schema: z.ZodType<T> },
+  sleep: (milliseconds: number) => Promise<unknown> = wait,
+) {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < ANALYST_ATTEMPTS; attempt += 1) {
+    try {
+      return await analyst.run(args);
+    } catch (error) {
+      lastError = error;
+      if (attempt < ANALYST_ATTEMPTS - 1) await sleep(RETRY_DELAYS_MS[attempt]);
+    }
+  }
+  throw lastError;
+}
+
 export function createAnalyst(model = readServerEnv("ANA_ANALYST_MODEL") || DEFAULT_ANALYST_MODEL): Analyst {
   const languageModel = createGateway({ apiKey: readServerEnv("AI_GATEWAY_API_KEY") })(model);
   return {
@@ -86,7 +110,6 @@ export function createAnalyst(model = readServerEnv("ANA_ANALYST_MODEL") || DEFA
         system,
         prompt,
         output: Output.object({ schema }),
-        temperature: 0.2,
       });
       return {
         object: result.output as never,
@@ -190,7 +213,7 @@ export async function analyzeSessions(
     if (!session) return 0;
     const turns = data.turns.filter((t) => t.session_id === sessionId).sort((a, b) => a.turn_index - b.turn_index);
     try {
-      const { object, inputTokens, outputTokens } = await analyst.run({
+      const { object, inputTokens, outputTokens } = await runAnalystWithRetry(analyst, {
         system: SESSION_SYSTEM,
         prompt: renderTranscript(
           session,
@@ -242,6 +265,7 @@ export async function analyzeSessions(
     } catch (error) {
       failures += 1;
       lastError = error instanceof Error ? error.message : String(error);
+      console.error("[Ana Zero] Falha ao analisar conversa", { sessionId, error: lastError });
       return 0;
     }
   });
@@ -255,7 +279,7 @@ export async function analyzeSessions(
     cost_usd: cost,
     error: lastError?.slice(0, 500) ?? null,
   });
-  return { runId, analyzed, failures, remaining: Math.max(0, wanted.length - batch.length), costUsd: cost, error: lastError };
+  return { runId, analyzed, failures, remaining: Math.max(0, wanted.length - analyzed), costUsd: cost, error: lastError };
 }
 
 const RECOMMEND_SYSTEM = `Você é analista de qualidade conversacional da Ana, assistente comercial da Amplify.
@@ -339,7 +363,7 @@ export async function generateRecommendations(
         analiseIA: analysis ? { falha: analysis.failure_category, resumo: analysis.summary } : null,
       })),
     };
-    const { object, inputTokens, outputTokens } = await analyst.run({
+    const { object, inputTokens, outputTokens } = await runAnalystWithRetry(analyst, {
       system: `${RECOMMEND_SYSTEM}\n\nPROMPT ATUAL DA ANA:\n${options.systemPrompt}`,
       prompt: JSON.stringify(payload),
       schema: recommendationsSchema,

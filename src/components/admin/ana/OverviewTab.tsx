@@ -13,10 +13,12 @@ export function OverviewTab({ data }: { data: OverviewResponse }) {
   const analyze = useMutation({
     mutationFn: () => adminPost<{ analyzed: number; failures: number; remaining: number; costUsd: number }>({ action: "analyze" }),
     onSuccess: (result) => {
-      toast.success(
-        `${result.analyzed} conversa(s) analisada(s)${result.failures ? `, ${result.failures} falharam` : ""}` +
-          `${result.remaining ? `. Restam ${result.remaining}: rode de novo.` : "."}`,
-      );
+      const message = `${result.analyzed} conversa(s) analisada(s)` +
+        `${result.failures ? `, ${result.failures} falharam e continuam na fila` : ""}` +
+        `${result.remaining ? `. Restam ${result.remaining}.` : "."}`;
+      if (!result.analyzed && result.failures) toast.error(message);
+      else if (result.failures) toast.warning(message);
+      else toast.success(message);
       queryClient.invalidateQueries({ queryKey: ["ana-admin"] });
     },
     onError: (error) => toast.error(errorMessage(error)),
@@ -31,7 +33,7 @@ export function OverviewTab({ data }: { data: OverviewResponse }) {
           <span>{pendingAnalysis} conversa(s) aguardando análise automática. Use o botão apenas para processar a fila agora.</span>
           <Button size="sm" disabled={analyze.isPending} onClick={() => analyze.mutate()}>
             {analyze.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Processar pendências agora
+            {analyze.isPending ? "Processando fila..." : "Processar pendências agora"}
           </Button>
         </div>
       ) : null}
