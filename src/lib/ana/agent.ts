@@ -1,4 +1,4 @@
-import { gateway, generateText, type ModelMessage } from "ai";
+import { gateway, generateText, type FinishReason, type ModelMessage } from "ai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import {
   ANA_MODELS,
@@ -20,7 +20,7 @@ export type AnaGeneratedAnswer = {
   };
   resolvedModel: string;
   generationId?: string;
-  finishReason: string;
+  finishReason: FinishReason | "fallback";
   qualityRetryCount: number;
   qualityFallback: boolean;
   validationIssues: AnaAnswerIssue[];
