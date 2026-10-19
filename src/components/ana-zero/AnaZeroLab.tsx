@@ -4,7 +4,7 @@ import { Bot, Check, ChevronDown, ClipboardCheck, Copy, Plus, Send, Sparkles, Sq
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { ANA_MODELS, type AnaModelId } from "@/lib/ana/config";
 import { formatAnaAssistantText } from "@/lib/ana/text";
-import { TEST_MISSIONS } from "@/lib/ana-zero/missions";
+import { MISSION_MAPPING_VERSION, recommendedMissionForProfile, TEST_MISSIONS } from "@/lib/ana-zero/missions";
 import { ANA_ZERO_DEFAULT_MODEL, type AnaZeroMemoryEntry, type AnaZeroMessage } from "@/lib/ana-zero/schema";
 import "../ana/AnaLab.css";
 import "./AnaZeroTesting.css";
@@ -15,18 +15,21 @@ import { buildTranscript, copyText, describeMetadata, memoryLabel, testHeaders, 
 
 const gatewayModels = Object.keys(ANA_MODELS) as AnaModelId[];
 
-export default function AnaZeroLab({ account }: { account?: { name: string } }) {
+export default function AnaZeroLab({ account }: { account?: { name: string; profile: string } }) {
   const [input, setInput] = useState("");
   const [copied, setCopied] = useState(false);
   const [model, setModel] = useState<AnaModelId>(ANA_ZERO_DEFAULT_MODEL);
   const [tester, setTester] = useState(account?.name ?? "");
-  const [missionId, setMissionId] = useState("livre");
+  const [missionId, setMissionId] = useState(() => recommendedMissionForProfile(account?.profile));
+  const [missionOrigin, setMissionOrigin] = useState<"recommended" | "manual">(account ? "recommended" : "manual");
+  const [showMissionPicker, setShowMissionPicker] = useState(!account);
   const [sessionId, setSessionId] = useState(() => crypto.randomUUID());
   const [reviewing, setReviewing] = useState(false);
   const [devMode, setDevMode] = useState(false);
   const modelRef = useRef(model);
   const testerRef = useRef(tester);
   const missionRef = useRef(missionId);
+  const missionOriginRef = useRef(missionOrigin);
   const sessionRef = useRef(sessionId);
   const memoryRef = useRef<AnaZeroMemoryEntry[]>([]);
   const endRef = useRef<HTMLDivElement>(null);
@@ -34,6 +37,7 @@ export default function AnaZeroLab({ account }: { account?: { name: string } }) 
   useEffect(() => { modelRef.current = model; }, [model]);
   useEffect(() => { testerRef.current = tester; }, [tester]);
   useEffect(() => { missionRef.current = missionId; }, [missionId]);
+  useEffect(() => { missionOriginRef.current = missionOrigin; }, [missionOrigin]);
   useEffect(() => { sessionRef.current = sessionId; }, [sessionId]);
   useEffect(() => { setDevMode(new URLSearchParams(window.location.search).has("dev")); }, []);
 
@@ -54,6 +58,8 @@ export default function AnaZeroLab({ account }: { account?: { name: string } }) 
         sessionId: sessionRef.current,
         tester: testerRef.current,
         mission: missionRef.current,
+        missionOrigin: missionOriginRef.current,
+        missionMappingVersion: MISSION_MAPPING_VERSION,
       },
     }),
   }), []);
@@ -101,6 +107,12 @@ export default function AnaZeroLab({ account }: { account?: { name: string } }) 
     setInput("");
     setReviewing(false);
     setSessionId(crypto.randomUUID());
+    setShowMissionPicker(true);
+  };
+
+  const chooseMission = (nextMissionId: string) => {
+    setMissionId(nextMissionId);
+    setMissionOrigin("manual");
   };
 
   const invalidToken = error?.message?.includes("invalid_token");
@@ -167,7 +179,9 @@ export default function AnaZeroLab({ account }: { account?: { name: string } }) 
                   showName={!account}
                   missionId={missionId}
                   onTesterChange={setTester}
-                  onMissionChange={setMissionId}
+                  onMissionChange={chooseMission}
+                  recommended={Boolean(account) && !showMissionPicker}
+                  onChooseOther={() => setShowMissionPicker(true)}
                 />
                 <p className="az-consent">
                   As conversas de teste são gravadas, junto com o seu feedback, para melhorar a Ana. Não escreva dados

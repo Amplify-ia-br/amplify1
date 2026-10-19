@@ -1,3 +1,5 @@
+import type { LabProfileId } from "./lab/profiles.js";
+
 export type TestMission = {
   id: string;
   title: string;
@@ -48,3 +50,18 @@ export const TEST_MISSIONS: TestMission[] = [
 ];
 
 export const MISSION_IDS = TEST_MISSIONS.map((mission) => mission.id) as [string, ...string[]];
+
+export const MISSION_MAPPING_VERSION = "2026-10-v1";
+
+export const DEFAULT_MISSION_BY_PROFILE: Record<LabProfileId, string> = {
+  dono_escola: "dono-escola",
+  gestor_educacional: "gestor-escola",
+  professor: "professor",
+  profissional_empresa: "empresa",
+  estudante: "livre",
+  outro: "livre",
+};
+
+export function recommendedMissionForProfile(profile?: string) {
+  return DEFAULT_MISSION_BY_PROFILE[profile as LabProfileId] ?? "livre";
+}

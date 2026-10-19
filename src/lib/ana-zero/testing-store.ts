@@ -2,9 +2,14 @@ import { getServerClient } from "../ana/store.js";
 import type { AnaZeroHandoff, AnaZeroMemoryEntry } from "./schema.js";
 
 const NEW_TURN_COLUMNS = /sources|handoff|prompt_version|app_commit/;
+const NEW_SESSION_COLUMNS = /mission_origin|mission_mapping_version/;
 
 function isMissingColumn(error: { code?: string; message?: string }) {
   return (error.code === "PGRST204" || error.code === "42703") && NEW_TURN_COLUMNS.test(error.message ?? "");
+}
+
+function isMissingSessionColumn(error: { code?: string; message?: string }) {
+  return (error.code === "PGRST204" || error.code === "42703") && NEW_SESSION_COLUMNS.test(error.message ?? "");
 }
 
 export type SaveTestTurnInput = {
@@ -17,6 +22,8 @@ export type SaveTestTurnInput = {
   testerId?: string;
   cohort?: string;
   mission: string;
+  missionOrigin?: "recommended" | "manual";
+  missionMappingVersion?: string;
   model: string;
   turnIndex: number;
   userText: string;
@@ -65,18 +72,26 @@ export const anaTestStore: AnaTestStore = {
     if (!supabase) return false;
     try {
       const now = new Date().toISOString();
-      const session = await supabase.from("ana_test_sessions").upsert(
+      const sessionBase = {
+        id: input.sessionId,
+        tester_name: input.testerName,
+        mission: input.mission,
+        model: input.model,
+        turn_count: input.turnIndex,
+        updated_at: now,
+        ...(input.testerId ? { tester_id: input.testerId, cohort: input.cohort ?? null } : {}),
+      };
+      let session = await supabase.from("ana_test_sessions").upsert(
         {
-          id: input.sessionId,
-          tester_name: input.testerName,
-          mission: input.mission,
-          model: input.model,
-          turn_count: input.turnIndex,
-          updated_at: now,
-          ...(input.testerId ? { tester_id: input.testerId, cohort: input.cohort ?? null } : {}),
+          ...sessionBase,
+          mission_origin: input.missionOrigin ?? "manual",
+          mission_mapping_version: input.missionMappingVersion ?? null,
         },
         { onConflict: "id" },
       );
+      if (session.error && isMissingSessionColumn(session.error)) {
+        session = await supabase.from("ana_test_sessions").upsert(sessionBase, { onConflict: "id" });
+      }
       if (session.error) throw session.error;
 
       const base = {

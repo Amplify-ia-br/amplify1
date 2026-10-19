@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Filters } from "@/lib/ana-zero/admin/types";
+import { profileLabel } from "@/lib/ana-zero/lab/profiles";
 
 const ALL = "all";
 
@@ -20,11 +21,13 @@ function FilterSelect({
   value,
   options,
   onChange,
+  formatOption = (option) => option,
 }: {
   label: string;
   value?: string;
   options: string[];
   onChange: (value?: string) => void;
+  formatOption?: (option: string) => string;
 }) {
   return (
     <div className="space-y-1">
@@ -37,7 +40,7 @@ function FilterSelect({
           <SelectItem value={ALL}>Todos</SelectItem>
           {options.map((option) => (
             <SelectItem key={option} value={option}>
-              {option}
+              {formatOption(option)}
             </SelectItem>
           ))}
         </SelectContent>
@@ -79,6 +82,20 @@ const AnaCenter = () => {
           <Input id="ana-to" type="date" className="w-40" value={filters.to ?? ""} onChange={(e) => patch({ to: e.target.value || undefined })} />
         </div>
         <FilterSelect label="Missão" value={filters.mission} options={overview.data?.options.missions ?? []} onChange={(mission) => patch({ mission })} />
+        <FilterSelect
+          label="Perfil real"
+          value={filters.profile}
+          options={overview.data?.options.profiles ?? []}
+          onChange={(profile) => patch({ profile })}
+          formatOption={profileLabel}
+        />
+        <FilterSelect
+          label="Origem da missão"
+          value={filters.missionOrigin}
+          options={overview.data?.options.missionOrigins ?? []}
+          onChange={(missionOrigin) => patch({ missionOrigin })}
+          formatOption={(origin) => origin === "recommended" ? "Recomendada" : "Escolhida manualmente"}
+        />
         <FilterSelect label="Modelo" value={filters.model} options={overview.data?.options.models ?? []} onChange={(model) => patch({ model })} />
         <FilterSelect
           label="Versão do prompt"

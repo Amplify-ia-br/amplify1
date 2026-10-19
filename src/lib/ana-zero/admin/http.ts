@@ -73,6 +73,8 @@ function parseFilters(params: URLSearchParams): Filters {
     from: pick("from"),
     to: pick("to"),
     mission: pick("mission"),
+    profile: pick("profile"),
+    missionOrigin: pick("missionOrigin"),
     model: pick("model"),
     promptVersion: pick("promptVersion"),
   };

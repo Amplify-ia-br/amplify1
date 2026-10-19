@@ -52,6 +52,8 @@ export const anaZeroRequestSchema = z.strictObject({
   sessionId: z.uuid().optional(),
   tester: z.string().trim().max(80).default(""),
   mission: z.string().trim().max(40).default("livre"),
+  missionOrigin: z.enum(["recommended", "manual"]).default("manual"),
+  missionMappingVersion: z.string().trim().max(40).optional(),
 }).refine((value) => value.messages[value.messages.length - 1].role === "user", {
   path: ["messages"],
   message: "A última mensagem precisa ser do usuário.",

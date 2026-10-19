@@ -89,7 +89,13 @@ describe("gravação do turno", () => {
     const store = makeStore();
     const run = vi.fn(async () => fakeTurn);
     const response = await handleAnaZeroChat(
-      post(chatBody({ sessionId: SESSION_ID, tester: "Maria", mission: "dono-escola" })),
+      post(chatBody({
+        sessionId: SESSION_ID,
+        tester: "Maria",
+        mission: "dono-escola",
+        missionOrigin: "recommended",
+        missionMappingVersion: "2026-10-v1",
+      })),
       {} as KnowledgeReader,
       run as never,
       store,
@@ -100,6 +106,8 @@ describe("gravação do turno", () => {
         sessionId: SESSION_ID,
         testerName: "Maria",
         mission: "dono-escola",
+        missionOrigin: "recommended",
+        missionMappingVersion: "2026-10-v1",
         turnIndex: 1,
         userText: "Oi",
         assistantText: "Oi, eu sou a Ana.",

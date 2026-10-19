@@ -73,7 +73,7 @@ export async function handleAnaZeroChat(
     );
   }
 
-  const { messages, memory, model, sessionId, tester, mission } = parsed.data;
+  const { messages, memory, model, sessionId, tester, mission, missionOrigin, missionMappingVersion } = parsed.data;
   const history = messages.map((message) => ({ role: message.role, text: message.parts[0].text }));
   const turnIndex = history.filter((message) => message.role === "user").length;
   const startedAt = Date.now();
@@ -89,6 +89,8 @@ export async function handleAnaZeroChat(
             testerId: labTester?.id,
             cohort: labTester?.cohort ?? undefined,
             mission,
+            missionOrigin,
+            missionMappingVersion,
             model,
             turnIndex,
             userText: history[history.length - 1].text,

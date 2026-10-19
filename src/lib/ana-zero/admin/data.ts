@@ -50,14 +50,27 @@ async function fetchTurns(client: SupabaseClient): Promise<TurnRow[]> {
   }
 }
 
-export async function loadDataset(client: SupabaseClient): Promise<Dataset> {
-  const [sessions, turns, feedback, turnAnalyses, sessionAnalyses] = await Promise.all([
-    fetchAll<SessionRow>(
+async function fetchSessions(client: SupabaseClient): Promise<SessionRow[]> {
+  const base = "id,created_at,tester_name,mission,model,overall_rating,helped,closing_comment";
+  try {
+    const rows = await fetchAll<SessionRow & { ana_lab_testers?: { profile?: string } | null }>(
       client,
       "ana_test_sessions",
-      "id,created_at,tester_name,mission,model,overall_rating,helped,closing_comment",
+      `${base},tester_id,cohort,mission_origin,mission_mapping_version,ana_lab_testers(profile)`,
       "created_at",
-    ),
+    );
+    return rows.map(({ ana_lab_testers, ...session }) => ({
+      ...session,
+      tester_profile: ana_lab_testers?.profile ?? null,
+    }));
+  } catch {
+    return fetchAll<SessionRow>(client, "ana_test_sessions", base, "created_at");
+  }
+}
+
+export async function loadDataset(client: SupabaseClient): Promise<Dataset> {
+  const [sessions, turns, feedback, turnAnalyses, sessionAnalyses] = await Promise.all([
+    fetchSessions(client),
     fetchTurns(client),
     fetchAll<FeedbackRow>(
       client,

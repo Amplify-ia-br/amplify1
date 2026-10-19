@@ -45,6 +45,8 @@ export function applyFilters(data: Dataset, filters: Filters): Dataset {
     if (from !== undefined && created < from) return false;
     if (to !== undefined && created >= to) return false;
     if (filters.mission && session.mission !== filters.mission) return false;
+    if (filters.profile && session.tester_profile !== filters.profile) return false;
+    if (filters.missionOrigin && session.mission_origin !== filters.missionOrigin) return false;
     if (filters.model && session.model !== filters.model) return false;
     if (sessionsWithVersion && !sessionsWithVersion.has(session.id)) return false;
     return true;
@@ -67,6 +69,8 @@ export function filterOptions(data: Dataset) {
     [...new Set(values.filter((value): value is string => Boolean(value)))].sort();
   return {
     missions: unique(data.sessions.map((s) => s.mission)),
+    profiles: unique(data.sessions.map((s) => s.tester_profile)),
+    missionOrigins: unique(data.sessions.map((s) => s.mission_origin)),
     models: unique(data.sessions.map((s) => s.model)),
     promptVersions: unique(data.turns.map((t) => t.prompt_version)),
   };
@@ -228,6 +232,8 @@ export function summarizeSessions(data: Dataset) {
         createdAt: session.created_at,
         testerName: session.tester_name,
         mission: session.mission,
+        testerProfile: session.tester_profile ?? null,
+        missionOrigin: session.mission_origin ?? null,
         model: session.model,
         turns: turns.length,
         positive: verdicts.filter((v) => v === 1).length,

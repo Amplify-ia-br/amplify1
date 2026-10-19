@@ -4,7 +4,12 @@ export type SessionRow = {
   id: string;
   created_at: string;
   tester_name: string;
+  tester_id?: string | null;
+  tester_profile?: string | null;
+  cohort?: string | null;
   mission: string;
+  mission_origin?: "recommended" | "manual" | null;
+  mission_mapping_version?: string | null;
   model: string;
   overall_rating: number | null;
   helped: boolean | null;
@@ -78,6 +83,8 @@ export type Filters = {
   from?: string;
   to?: string;
   mission?: string;
+  profile?: string;
+  missionOrigin?: string;
   model?: string;
   promptVersion?: string;
 };

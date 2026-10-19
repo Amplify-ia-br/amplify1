@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import type { Filters } from "@/lib/ana-zero/admin/types";
+import { profileLabel } from "@/lib/ana-zero/lab/profiles";
 import { adminGet, dateTime, errorMessage, type SessionsResponse, usd } from "./api";
 import { SessionSheet } from "./SessionSheet";
 import { Empty } from "./shared";
@@ -44,7 +45,9 @@ export function SessionsTab({ filters }: { filters: Filters }) {
               <TableRow>
                 <TableHead>Quando</TableHead>
                 <TableHead>Testador</TableHead>
+                <TableHead>Perfil real</TableHead>
                 <TableHead>Missão</TableHead>
+                <TableHead>Origem</TableHead>
                 <TableHead className="text-right">Turnos</TableHead>
                 <TableHead>Avaliações</TableHead>
                 <TableHead>Nota</TableHead>
@@ -64,7 +67,9 @@ export function SessionsTab({ filters }: { filters: Filters }) {
                 >
                   <TableCell className="whitespace-nowrap">{dateTime(session.createdAt)}</TableCell>
                   <TableCell>{session.testerName}</TableCell>
+                  <TableCell>{session.testerProfile ? profileLabel(session.testerProfile) : "—"}</TableCell>
                   <TableCell>{session.mission}</TableCell>
+                  <TableCell>{session.missionOrigin === "recommended" ? "Recomendada" : session.missionOrigin === "manual" ? "Manual" : "—"}</TableCell>
                   <TableCell className="text-right tabular-nums">{session.turns}</TableCell>
                   <TableCell className="whitespace-nowrap tabular-nums">
                     +{session.positive} / -{session.negative}

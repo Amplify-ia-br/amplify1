@@ -3,7 +3,11 @@ import AnaZeroLab from "@/components/ana-zero/AnaZeroLab";
 import "../ana/AnaLab.css";
 import "./AnaLabAccess.css";
 
-type Gate = { phase: "loading" } | { phase: "denied" } | { phase: "unavailable" } | { phase: "ready"; name: string };
+type Gate =
+  | { phase: "loading" }
+  | { phase: "denied" }
+  | { phase: "unavailable" }
+  | { phase: "ready"; name: string; profile: string };
 
 export default function AnaLabGate() {
   const [gate, setGate] = useState<Gate>({ phase: "loading" });
@@ -14,8 +18,8 @@ export default function AnaLabGate() {
       .then(async (response) => {
         if (response.status === 401) return setGate({ phase: "denied" });
         if (!response.ok) return setGate({ phase: "unavailable" });
-        const data = (await response.json()) as { tester: { name: string } };
-        setGate({ phase: "ready", name: data.tester.name });
+        const data = (await response.json()) as { tester: { name: string; profile: string } };
+        setGate({ phase: "ready", name: data.tester.name, profile: data.tester.profile });
       })
       .catch((cause: unknown) => {
         if ((cause as { name?: string }).name !== "AbortError") setGate({ phase: "unavailable" });
@@ -23,7 +27,7 @@ export default function AnaLabGate() {
     return () => controller.abort();
   }, []);
 
-  if (gate.phase === "ready") return <AnaZeroLab account={{ name: gate.name }} />;
+  if (gate.phase === "ready") return <AnaZeroLab account={{ name: gate.name, profile: gate.profile }} />;
   if (gate.phase === "loading") return <div className="alx-center">Carregando...</div>;
 
   return (

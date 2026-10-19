@@ -16,6 +16,11 @@
 .az-missions input{position:absolute;opacity:0;pointer-events:none}
 .az-missions strong{color:#e7eced;font:600 13px Inter,sans-serif}
 .az-missions span{color:#8b9698;font:12px/1.45 Inter,sans-serif}
+.az-recommended-mission{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid #2a4a48;border-radius:9px;background:#10201f}
+.az-recommended-mission strong{color:#e7eced;font:600 15px Inter,sans-serif}
+.az-recommended-mission span{color:#9ba6a8;font:13px/1.5 Inter,sans-serif}
+.az-recommended-mission button{align-self:flex-start;margin-top:6px;padding:0;border:0;background:transparent;color:#32c9c2;font:600 12px Inter,sans-serif;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.az-recommended-mission button:focus-visible{outline:2px solid rgba(50,201,194,.55);outline-offset:4px;border-radius:2px}
 .az-mission-banner{display:flex;gap:8px;align-items:baseline;margin:0 auto 14px;padding:8px 12px;max-width:760px;border:1px solid #22282b;border-radius:8px;background:#0b0f10;color:#8b9698;font:12px/1.45 Inter,sans-serif}
 .az-mission-banner strong{color:#32c9c2;white-space:nowrap}
 .ana-message .az-details,.ana-message .az-unsaved,.ana-message .az-feedback{grid-column:2}

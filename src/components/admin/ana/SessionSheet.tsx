@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { adminGet, adminPost, dateTime, errorMessage, ms, REASON_LABELS, type SessionDetailResponse } from "./api";
+import { profileLabel } from "@/lib/ana-zero/lab/profiles";
 
 type Props = { sessionId: string | null; highlightTurn?: number; onClose: () => void };
 
@@ -65,6 +66,10 @@ export function SessionSheet({ sessionId, highlightTurn, onClose }: Props) {
         {data ? (
           <div className="mt-4 space-y-4">
             <div className="flex flex-wrap items-center gap-2 text-sm">
+              {data.session.tester_profile ? <Badge variant="outline">Perfil: {profileLabel(data.session.tester_profile)}</Badge> : null}
+              {data.session.mission_origin ? (
+                <Badge variant="outline">Missão {data.session.mission_origin === "recommended" ? "recomendada" : "manual"}</Badge>
+              ) : null}
               {data.session.overall_rating !== null ? <Badge>Nota {data.session.overall_rating}/5</Badge> : null}
               {data.session.helped !== null ? (
                 <Badge variant="secondary">{data.session.helped ? "Ajudou" : "Não ajudou"}</Badge>

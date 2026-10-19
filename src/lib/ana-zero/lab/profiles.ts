@@ -7,6 +7,8 @@ export const LAB_PROFILES = [
   { id: "outro", label: "Outro" },
 ] as const;
 
+export type LabProfileId = (typeof LAB_PROFILES)[number]["id"];
+
 export const LAB_PROFILE_IDS = LAB_PROFILES.map((profile) => profile.id) as [
   (typeof LAB_PROFILES)[number]["id"],
   ...(typeof LAB_PROFILES)[number]["id"][],
