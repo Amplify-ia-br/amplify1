@@ -39,9 +39,52 @@ const trustedCompanies = [
   { name: "Toccato", logo: assetSrc(logoToccato) },
 ];
 
+const LeiaAnnouncement = () => (
+  <aside
+    aria-label="Conheça o L.E.I.A., programa de inteligência artificial para escolas"
+    className="relative isolate overflow-hidden border-b border-[#7b5aa5]/30 bg-[#160d24]"
+  >
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 -z-10 opacity-90"
+      style={{
+        background:
+          "radial-gradient(circle at 12% 50%, rgba(255,126,102,.16), transparent 18%), radial-gradient(circle at 82% 0%, rgba(92,211,222,.15), transparent 24%), linear-gradient(90deg, rgba(79,31,143,.32), transparent 48%)",
+      }}
+    />
+    <div aria-hidden="true" className="absolute left-[8%] top-2 h-1.5 w-1.5 rounded-full bg-[#ff8b72]/70" />
+    <div aria-hidden="true" className="absolute right-[18%] bottom-2 h-1 w-1 rounded-full bg-[#65d3de]/70" />
+
+    <Link
+      to="/leia"
+      className="group container mx-auto flex min-h-14 items-center justify-between gap-4 px-4 py-2.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[#65d3de]"
+    >
+      <div className="flex min-w-0 items-center gap-3 md:gap-4">
+        <span className="shrink-0 rounded-full border border-[#ffb8a8]/25 bg-[#ff8b72]/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.16em] text-[#ffc8bb]">
+          Para escolas
+        </span>
+        <span className="shrink-0 font-heading text-sm font-bold tracking-[0.14em] text-white md:text-base">
+          L.E.I.A.
+        </span>
+        <span className="hidden h-4 w-px bg-white/20 sm:block" aria-hidden="true" />
+        <span className="hidden truncate text-sm text-[#d9ccef] sm:block">
+          Inteligência artificial com critério começa na escola.
+        </span>
+      </div>
+
+      <span className="flex shrink-0 items-center gap-2 text-xs font-semibold text-[#65d3de] transition-colors group-hover:text-white md:text-sm">
+        <span className="hidden sm:inline">Conheça o programa</span>
+        <span className="sm:hidden">Conheça</span>
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" aria-hidden="true" />
+      </span>
+    </Link>
+  </aside>
+);
+
 const Index = ({ images }: IndexProps) => {
   return (
     <Layout>
+      <LeiaAnnouncement />
       <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 gradient-bg" />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
