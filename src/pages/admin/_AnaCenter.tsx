@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 import { ContentTab } from "@/components/admin/ana/ContentTab";
 import { EvolutionTab } from "@/components/admin/ana/EvolutionTab";
 import { InvitesTab } from "@/components/admin/ana/InvitesTab";
@@ -15,6 +16,12 @@ import type { Filters } from "@/lib/ana-zero/admin/types";
 import { profileLabel } from "@/lib/ana-zero/lab/profiles";
 
 const ALL = "all";
+const TAB_VALUES = ["overview", "sessions", "content", "recommendations", "evolution", "invites"] as const;
+type TabValue = (typeof TAB_VALUES)[number];
+
+function isTabValue(value: string | null): value is TabValue {
+  return value !== null && TAB_VALUES.includes(value as TabValue);
+}
 
 function FilterSelect({
   label,
@@ -51,7 +58,16 @@ function FilterSelect({
 
 const AnaCenter = () => {
   const [filters, setFilters] = useState<Filters>({});
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = isTabValue(searchParams.get("tab")) ? searchParams.get("tab") as TabValue : "overview";
   const patch = (next: Partial<Filters>) => setFilters((current) => ({ ...current, ...next }));
+  const selectTab = (tab: string) => {
+    if (!isTabValue(tab)) return;
+    const next = new URLSearchParams(searchParams);
+    if (tab === "overview") next.delete("tab");
+    else next.set("tab", tab);
+    setSearchParams(next, { replace: true });
+  };
 
   const overview = useQuery({
     queryKey: ["ana-admin", "overview", filters],
@@ -107,7 +123,7 @@ const AnaCenter = () => {
 
       {overview.isError ? <p className="text-sm text-destructive">{errorMessage(overview.error)}</p> : null}
 
-      <Tabs defaultValue="overview">
+      <Tabs value={activeTab} onValueChange={selectTab}>
         <TabsList className="flex h-auto flex-wrap justify-start">
           <TabsTrigger value="overview">Visão geral</TabsTrigger>
           <TabsTrigger value="sessions">Conversas</TabsTrigger>
