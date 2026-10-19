@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { BookOpenCheck, FileText, Users, LogOut, ExternalLink, TicketCheck } from "lucide-react";
+import { BookOpenCheck, Bot, FileText, Users, LogOut, ExternalLink, TicketCheck } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useUserRole } from "@/hooks/useUserRole";
 import { assetSrc } from "@/lib/assets";
@@ -22,7 +22,12 @@ const AdminLayout = () => {
     ...(isEditor ? [{ to: "/admin", label: "Posts", icon: FileText, exact: true }] : []),
     { to: "/admin/knowledge", label: "Knowledge", icon: BookOpenCheck, exact: false },
     ...(isEditor ? [{ to: "/admin/amplify-day/convites", label: "Convites", icon: TicketCheck, exact: false }] : []),
-    ...(isAdmin ? [{ to: "/admin/users", label: "Usuários", icon: Users, exact: false }] : []),
+    ...(isAdmin
+      ? [
+          { to: "/admin/ana", label: "Ana", icon: Bot, exact: false },
+          { to: "/admin/users", label: "Usuários", icon: Users, exact: false },
+        ]
+      : []),
   ];
 
   const isActive = (to: string, exact: boolean) =>

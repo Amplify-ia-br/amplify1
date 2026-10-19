@@ -14,6 +14,7 @@ import ResetPassword from "@/pages/_ResetPassword";
 const AdminDashboard = lazy(() => import("@/pages/admin/_AdminDashboard"));
 const PostEditor = lazy(() => import("@/pages/admin/_PostEditor"));
 const UserManagement = lazy(() => import("@/pages/admin/_UserManagement"));
+const AnaCenter = lazy(() => import("@/pages/admin/_AnaCenter"));
 const AmplifyDayInvitations = lazy(() => import("@/pages/admin/_AmplifyDayInvitations"));
 const KnowledgeAdmin = lazy(() => import("@/pages/admin/_KnowledgeAdmin"));
 
@@ -34,6 +35,7 @@ const AdminApp = () => (
               <Route path="posts/:id/edit" element={<Suspense fallback={<AdminRouteFallback />}><PostEditor /></Suspense>} />
               <Route path="amplify-day/convites" element={<Suspense fallback={<AdminRouteFallback />}><AmplifyDayInvitations /></Suspense>} />
               <Route path="knowledge" element={<Suspense fallback={<AdminRouteFallback />}><KnowledgeAdmin /></Suspense>} />
+              <Route path="ana" element={<ProtectedRoute requireAdmin><Suspense fallback={<AdminRouteFallback />}><AnaCenter /></Suspense></ProtectedRoute>} />
               <Route path="users" element={<ProtectedRoute requireAdmin><Suspense fallback={<AdminRouteFallback />}><UserManagement /></Suspense></ProtectedRoute>} />
             </Route>
             <Route path="/auth" element={<Auth />} />

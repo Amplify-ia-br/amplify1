@@ -62,15 +62,25 @@ describe("Ana deterministic retrieval", () => {
     expect(ranked).toEqual([]);
   });
 
-  it("retrieves the canonical L.E.I.A. document for a real school lead", async () => {
+  it("retrieves both the school offer and broader portfolio for a generic school lead", async () => {
     const result = await retrieveAnaKnowledge(
       "direct",
       "Oi, me disseram que vcs tem uma solução para escolas. Como vcs podem me ajudar na minha escola?",
       fileKnowledgeService,
     );
 
-    expect(result.intent).toBe("educacao-escolas");
-    expect(result.documents.map(({ id }) => id)).toEqual(["leia"]);
+    expect(result.intent).toBe("educacao-escolas+portfolio");
+    expect(result.documents.map(({ id }) => id)).toEqual(["leia", "portfolio"]);
     expect(result.fallbackText).toContain("L.E.I.A.");
+  });
+
+  it("retrieves education and consulting material for a school with two needs", async () => {
+    const result = await retrieveAnaKnowledge(
+      "direct",
+      "Quero ensinar IA aos alunos e melhorar a operação da escola com soluções de IA implementadas.",
+      fileKnowledgeService,
+    );
+
+    expect(result.documents.map(({ id }) => id)).toEqual(expect.arrayContaining(["leia", "portfolio"]));
   });
 });

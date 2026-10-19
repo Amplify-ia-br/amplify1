@@ -1,5 +1,6 @@
 import type { UIMessage } from "ai";
 import type { AnaKnowledgeMode, AnaModelId } from "./config.js";
+import type { AnaConversationStage, AnaTurnKind } from "./conversation.js";
 import type { AnaRetrievalTrace } from "./retrieval.js";
 
 export type AnaMessageMetadata = {
@@ -13,6 +14,14 @@ export type AnaMessageMetadata = {
   estimatedCostUsd?: number;
   generationId?: string;
   resolvedModel?: string;
+  qualityRetryCount?: number;
+  qualityFallback?: boolean;
+  validationIssues?: import("./guardrails.js").AnaAnswerIssue[];
+  turnKind?: AnaTurnKind;
+  conversationStage?: AnaConversationStage;
+  leadStage?: import("./conversation.js").AnaLeadStage;
+  qualificationScore?: number;
+  nextQuestionKey?: import("./conversation.js").AnaNextQuestion["key"];
 };
 
 export type AnaDataParts = {

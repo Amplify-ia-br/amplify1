@@ -8,6 +8,12 @@
     },
     "api/ana-chat.ts": {
       "includeFiles": "okf/public/**"
+    },
+    "api/ana-zero-chat.ts": {
+      "includeFiles": "okf/public/**"
+    },
+    "api/ana-zero-admin.ts": {
+      "maxDuration": 300
     }
   },
   "headers": [
@@ -37,6 +43,34 @@
     },
     {
       "source": "/api/ana-chat",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/lab/ana-zero",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/ana-zero-chat",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/ana-lab",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/ana-lab/:path*",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/ana-lab",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/ana-zero-admin",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
+    },
+    {
+      "source": "/api/ana-zero-feedback",
       "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive, nosnippet" }]
     }
   ],
