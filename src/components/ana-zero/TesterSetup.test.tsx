@@ -15,11 +15,12 @@ describe("TesterSetup", () => {
     const onChooseOther = vi.fn();
     render(<TesterSetup {...base} recommended onChooseOther={onChooseOther} />);
 
-    expect(screen.getByRole("heading", { name: "Sua primeira missão" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Cenário desta conversa" })).toBeInTheDocument();
+    expect(screen.getByText(/Seu perfil real já está salvo/)).toBeInTheDocument();
     expect(screen.getByText("Dono de escola")).toBeInTheDocument();
     expect(screen.queryByRole("radio")).not.toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("button", { name: "Escolher outro cenário" }));
+    fireEvent.click(screen.getByRole("button", { name: "Trocar cenário" }));
     expect(onChooseOther).toHaveBeenCalledOnce();
   });
 
@@ -27,7 +28,8 @@ describe("TesterSetup", () => {
     const onMissionChange = vi.fn();
     render(<TesterSetup {...base} recommended={false} onMissionChange={onMissionChange} />);
 
-    expect(screen.getByRole("heading", { name: "Escolha o próximo cenário" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Cenário desta conversa" })).toBeInTheDocument();
+    expect(screen.getByText(/Isso não altera o seu perfil real/)).toBeInTheDocument();
     expect(screen.getAllByRole("radio")).toHaveLength(8);
     fireEvent.click(screen.getByRole("radio", { name: /Cético/ }));
     expect(onMissionChange).toHaveBeenCalledWith("cetico");

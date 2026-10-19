@@ -2,6 +2,10 @@
 .ana-lab .ana-welcome{padding-top:6vh;padding-bottom:32px}
 .az-setup,.az-session{width:min(720px,100%);margin:28px auto 0;padding:20px;border:1px solid #22282b;border-radius:12px;background:#0b0f10;text-align:left}
 .az-setup h2,.az-session h2{margin:0 0 14px;font:600 15px/1.3 Inter,sans-serif;color:#e7eced}
+.az-setup-context{margin:-6px 0 16px;color:#9ba6a8;font:13px/1.5 Inter,sans-serif}
+.az-test-guide{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;width:min(720px,100%);margin:24px auto 0;padding:0;list-style:none;text-align:left}
+.az-test-guide li{display:flex;gap:9px;align-items:flex-start;padding:12px;border:1px solid #22282b;border-radius:9px;background:#0b0f10;color:#9ba6a8;font:12px/1.45 Inter,sans-serif}
+.az-test-guide b{display:grid;flex:0 0 22px;place-items:center;width:22px;height:22px;border-radius:999px;background:#10201f;color:#32c9c2;font:700 11px Inter,sans-serif}
 .az-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
 .az-field span,.az-missions legend{color:#8b9698;font:600 11px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase}
 .az-field input,.az-feedback textarea,.az-session textarea{width:100%;padding:10px 12px;border:1px solid #283033;border-radius:8px;background:#0e1214;color:#e7eced;font:14px/1.45 Inter,sans-serif;outline:0}
@@ -30,6 +34,7 @@
 .az-unsaved{margin:8px 0 0;color:#8a7a52;font:11px/1.4 Inter,sans-serif}
 .az-feedback{margin-top:8px}
 .az-feedback-row{display:flex;align-items:center;gap:6px;color:#8b9698;font:12px Inter,sans-serif}
+.az-feedback-prompt{margin-right:2px;color:#9ba6a8}
 .az-feedback-row button{display:grid;place-items:center;width:30px;height:30px;border:1px solid #283033;border-radius:6px;background:transparent;color:#8b9698;cursor:pointer}
 .az-feedback-row button svg{width:14px;height:14px}
 .az-feedback-row button:hover{color:#e7eced;border-color:#3a4548}
@@ -47,6 +52,7 @@
 .az-link{padding:8px 4px;border:0;background:transparent;color:#8b9698;font:12px Inter,sans-serif;cursor:pointer;text-decoration:underline}
 .az-session{display:flex;flex-direction:column;gap:12px;margin:18px 0 0}
 .az-session p{margin:0;color:#8b9698;font:13px/1.5 Inter,sans-serif}
+.az-question{color:#aab3b4;font:13px Inter,sans-serif}
 .az-session strong{color:#e7eced;font:600 14px Inter,sans-serif}
 .az-stars{display:flex;gap:4px}
 .az-stars button{display:grid;place-items:center;width:36px;height:36px;border:0;border-radius:8px;background:transparent;color:#4a5557;cursor:pointer}
@@ -59,4 +65,4 @@
 .az-memory span{padding:3px 8px;border:1px solid #22282b;border-radius:999px;color:#9aa5a7}
 .az-memory b{color:#32c9c2;font-weight:600}
 .az-consent{max-width:720px;margin:14px auto 0;color:#6f7a7c;font:12px/1.5 Inter,sans-serif;text-align:left}
-@media(max-width:640px){.az-missions>div{grid-template-columns:1fr}}
+@media(max-width:640px){.az-missions>div,.az-test-guide{grid-template-columns:1fr}.az-feedback-row{flex-wrap:wrap}.az-feedback-prompt{flex-basis:100%}}

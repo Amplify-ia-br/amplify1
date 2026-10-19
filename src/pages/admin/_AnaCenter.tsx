@@ -60,6 +60,7 @@ const AnaCenter = () => {
   const [filters, setFilters] = useState<Filters>({});
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = isTabValue(searchParams.get("tab")) ? searchParams.get("tab") as TabValue : "overview";
+  const showsConversationFilters = activeTab !== "recommendations" && activeTab !== "invites";
   const patch = (next: Partial<Filters>) => setFilters((current) => ({ ...current, ...next }));
   const selectTab = (tab: string) => {
     if (!isTabValue(tab)) return;
@@ -84,7 +85,7 @@ const AnaCenter = () => {
         </p>
       </header>
 
-      <div className="flex flex-wrap items-end gap-3">
+      {showsConversationFilters ? <div className="flex flex-wrap items-end gap-3">
         <div className="space-y-1">
           <Label htmlFor="ana-from" className="text-xs text-muted-foreground">
             De
@@ -119,7 +120,7 @@ const AnaCenter = () => {
           options={overview.data?.options.promptVersions ?? []}
           onChange={(promptVersion) => patch({ promptVersion })}
         />
-      </div>
+      </div> : null}
 
       {overview.isError ? <p className="text-sm text-destructive">{errorMessage(overview.error)}</p> : null}
 

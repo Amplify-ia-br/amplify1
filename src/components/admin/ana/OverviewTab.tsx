@@ -28,10 +28,10 @@ export function OverviewTab({ data }: { data: OverviewResponse }) {
     <div className="space-y-6">
       {pendingAnalysis > 0 ? (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border bg-muted/40 p-3 text-sm">
-          <span>{pendingAnalysis} conversa(s) ainda sem análise de IA. Elas alimentam a aba Conteúdo e as recomendações.</span>
+          <span>{pendingAnalysis} conversa(s) aguardando análise automática. Use o botão apenas para processar a fila agora.</span>
           <Button size="sm" disabled={analyze.isPending} onClick={() => analyze.mutate()}>
             {analyze.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Analisar conversas
+            Processar pendências agora
           </Button>
         </div>
       ) : null}
@@ -39,8 +39,12 @@ export function OverviewTab({ data }: { data: OverviewResponse }) {
       <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
         <Kpi label="Conversas" value={overview.sessions} hint={`${overview.testers} testador(es)`} />
         <Kpi label="Turnos" value={overview.turns} hint={`${overview.avgTurnsPerSession} por conversa`} />
-        <Kpi label="Aprovação dos turnos" value={pct(overview.positiveRate)} hint={`${overview.ratedTurns} avaliados (${pct(overview.ratedShare)})`} />
-        <Kpi label="Nota média final" value={overview.avgRating ?? "—"} hint={`Ajudou: ${pct(overview.helpedRate)}`} />
+        <Kpi
+          label="Aprovação dos turnos"
+          value={pct(overview.positiveRate)}
+          hint={`${overview.ratedTurns} avaliados (${pct(overview.ratedShare)})${overview.ratedTurns < 30 ? " · amostra pequena" : ""}`}
+        />
+        <Kpi label="Nota média final" value={overview.avgRating ?? "—"} hint={`Resolveu: ${pct(overview.helpedRate)} · confiança: ${pct(overview.trustedRate)}`} />
         <Kpi label="Turnos com alerta" value={pct(overview.issueRate)} />
         <Kpi label="Regeneração" value={pct(overview.regenerationRate)} hint={`Erros: ${pct(overview.errorRate)}`} />
         <Kpi label="Latência" value={ms(overview.latencyP50)} hint={`p95 ${ms(overview.latencyP95)}`} />

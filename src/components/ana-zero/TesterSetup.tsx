@@ -23,7 +23,12 @@ export default function TesterSetup({
 
   return (
     <section className="az-setup" aria-labelledby="az-setup-title">
-      <h2 id="az-setup-title">{recommended ? "Sua primeira missão" : "Escolha o próximo cenário"}</h2>
+      <h2 id="az-setup-title">Cenário desta conversa</h2>
+      <p className="az-setup-context">
+        {recommended
+          ? "Seu perfil real já está salvo. Agora simule esta situação para testar como a Ana responde."
+          : "Escolha a situação que você vai simular. Isso não altera o seu perfil real."}
+      </p>
       {showName && (
         <label className="az-field">
           <span>Seu nome (opcional)</span>
@@ -41,7 +46,7 @@ export default function TesterSetup({
         <div className="az-recommended-mission">
           <strong>{mission.title}</strong>
           <span>{mission.brief}</span>
-          <button type="button" onClick={onChooseOther}>Escolher outro cenário</button>
+          <button type="button" onClick={onChooseOther}>Trocar cenário</button>
         </div>
       ) : (
         <fieldset className="az-missions">

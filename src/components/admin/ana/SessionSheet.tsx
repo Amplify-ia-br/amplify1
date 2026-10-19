@@ -72,7 +72,10 @@ export function SessionSheet({ sessionId, highlightTurn, onClose }: Props) {
               ) : null}
               {data.session.overall_rating !== null ? <Badge>Nota {data.session.overall_rating}/5</Badge> : null}
               {data.session.helped !== null ? (
-                <Badge variant="secondary">{data.session.helped ? "Ajudou" : "Não ajudou"}</Badge>
+                <Badge variant="secondary">{data.session.helped ? "Resolveu" : "Não resolveu"}</Badge>
+              ) : null}
+              {data.session.trusted !== null ? (
+                <Badge variant="secondary">{data.session.trusted ? "Confiável" : "Não confiável"}</Badge>
               ) : null}
               <Button size="sm" variant="outline" className="ml-auto" disabled={analyze.isPending} onClick={() => analyze.mutate()}>
                 {analyze.isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
