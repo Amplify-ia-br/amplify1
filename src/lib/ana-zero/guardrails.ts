@@ -8,7 +8,9 @@ export type AnaZeroIssue =
   | "ungrounded_price"
   | "promise_of_action"
   | "stalled_active_interest"
-  | "missing_leia_implementation";
+  | "missing_leia_implementation"
+  | "missing_leia_shared_decisions"
+  | "renamed_leia_presentation";
 
 const MONEY = /(?:(?:R\$|BRL|US\$|USD|EUR|€|\$)\s*\d[\d.,]*|\b\d[\d.,]*\s*(?:mil\s+)?(?:reais|d[oó]lares|euros)\b)/giu;
 const MARKDOWN = /(?:^|\n)\s{0,3}(?:#{1,6}\s|```|>\s)|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\)/u;
@@ -23,6 +25,8 @@ const IMPLEMENTATION_STAGES = [
   /planej|diagn[oó]stico/i,
   /prepar|proposta/i,
 ];
+const SHARED_DECISIONS = /em conjunto|decis(?:[aã]o|[oõ]es) conjunta|defini[cç][aã]o conjunta|definid[oa]s? com a escola|combinad[oa]s? com a escola/i;
+const RENAMED_LEIA_PRESENTATION = /masterclass|aula experimental|demonstra[cç][aã]o gratuita/i;
 
 type ConversationTurn = { role: "user" | "assistant"; text: string };
 
@@ -58,7 +62,10 @@ function expectsLeiaImplementation(history: ConversationTurn[]) {
   const latest = history.at(-1);
   if (!latest || latest.role !== "user") return false;
   const previousAssistant = [...history].reverse().find((turn) => turn.role === "assistant")?.text ?? "";
-  return ACTIVE_INTEREST.test(latest.text.trim()) && LEIA_TOPIC.test(previousAssistant) && IMPLEMENTATION_OFFER.test(previousAssistant);
+  const recentContext = history.slice(-6).map((turn) => turn.text).join("\n");
+  return (
+    ACTIVE_INTEREST.test(latest.text.trim()) && LEIA_TOPIC.test(previousAssistant) && IMPLEMENTATION_OFFER.test(previousAssistant)
+  ) || (LEIA_TOPIC.test(recentContext) && IMPLEMENTATION_OFFER.test(latest.text));
 }
 
 export function validateAnaZeroTurnAnswer(value: string, evidenceText: string[], history: ConversationTurn[]) {
@@ -72,6 +79,8 @@ export function validateAnaZeroTurnAnswer(value: string, evidenceText: string[],
   if (expectsLeiaImplementation(history)) {
     const coveredStages = IMPLEMENTATION_STAGES.filter((pattern) => pattern.test(base.text)).length;
     if (coveredStages < 2) issues.push("missing_leia_implementation");
+    if (!SHARED_DECISIONS.test(base.text)) issues.push("missing_leia_shared_decisions");
+    if (RENAMED_LEIA_PRESENTATION.test(base.text)) issues.push("renamed_leia_presentation");
   }
 
   return { valid: issues.length === 0, text: base.text, issues: [...new Set(issues)] };

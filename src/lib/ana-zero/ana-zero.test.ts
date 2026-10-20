@@ -66,7 +66,7 @@ describe("guardrails factuais", () => {
       expect.arrayContaining(["stalled_active_interest", "missing_leia_implementation"]),
     );
     expect(validateAnaZeroTurnAnswer(
-      "Primeiro, a escola experimenta o método em uma apresentação gratuita. Depois vem o diagnóstico para planejar o cenário e, por fim, a proposta prepara calendário e responsabilidades.",
+      "Primeiro, a escola experimenta o método em uma apresentação gratuita. Depois vem o diagnóstico para planejar o cenário e, por fim, a proposta prepara calendário e responsabilidades. Horários e ferramentas são definidos em conjunto.",
       [],
       conversation,
     ).valid).toBe(true);
@@ -77,6 +77,16 @@ describe("guardrails factuais", () => {
     ];
     expect(validateAnaZeroTurnAnswer("Consigo orientar no geral, mas os detalhes dependem do time.", [], acceptedOffer).issues)
       .toContain("missing_leia_implementation");
+
+    const directQuestion = [
+      { role: "assistant" as const, text: "O L.E.I.A. atende estudantes do 9º ano ao Ensino Médio." },
+      { role: "user" as const, text: "Como é a implantação na escola?" },
+    ];
+    expect(validateAnaZeroTurnAnswer(
+      "Começa com uma masterclass gratuita, depois diagnóstico e proposta. A escola e a Amplify definem os detalhes em conjunto.",
+      [],
+      directQuestion,
+    ).issues).toContain("renamed_leia_presentation");
   });
 });
 
@@ -223,7 +233,7 @@ describe("turno do agente", () => {
     mocks.generateText
       .mockResolvedValueOnce(result("Ótimo."))
       .mockResolvedValueOnce(result(
-        "A implantação começa por Experimentar, com uma apresentação gratuita. Depois, Planejar traz o diagnóstico da escola e Preparar organiza a proposta e as responsabilidades.",
+        "A implantação começa por Experimentar, com uma apresentação gratuita. Depois, Planejar traz o diagnóstico da escola e Preparar organiza a proposta e as responsabilidades. Horários e ferramentas são definidos em conjunto.",
       ));
 
     const turn = await runAnaZeroTurn({
@@ -306,6 +316,7 @@ describe("contrato HTTP e prompt", () => {
     expect(system).toContain("sem criar um rótulo ou uma frase pronta para essa segunda frente");
     expect(system).toContain("Experimentar, Planejar e Preparar");
     expect(system).toContain("Não diga apenas que \"depende\"");
+    expect(system).toContain('diga "apresentação gratuita", nunca "masterclass"');
     expect(system).not.toContain("Escola também é uma organização");
   });
   it("o nome por extenso do L.E.I.A. só é pedido na primeira menção", () => {

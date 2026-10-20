@@ -52,6 +52,12 @@ function correctionInstructions(issues: AnaZeroIssue[]) {
   if (issues.includes("missing_leia_implementation")) {
     instructions.push("Explique concretamente a implantação do L.E.I.A. usando a jornada Experimentar, Planejar e Preparar recuperada da ficha do produto, antes de sugerir contato.");
   }
+  if (issues.includes("missing_leia_shared_decisions")) {
+    instructions.push("Inclua que horários, ferramenta de IA, acompanhamento, eventos, acessos e registros são definidos em conjunto pela Amplify e pela escola.");
+  }
+  if (issues.includes("renamed_leia_presentation")) {
+    instructions.push("Use o termo da ficha, apresentação gratuita, sem renomeá-la como masterclass, demonstração ou aula experimental.");
+  }
   return instructions.join(" ");
 }
 
