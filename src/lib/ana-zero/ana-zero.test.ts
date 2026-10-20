@@ -88,6 +88,20 @@ describe("guardrails factuais", () => {
       directQuestion,
     ).issues).toContain("renamed_leia_presentation");
   });
+  it("não trata o nome do canal como autorização para pedir o contato", () => {
+    const conversation = [
+      { role: "user" as const, text: "Quero falar com um especialista" },
+      { role: "assistant" as const, text: "Posso passar seu WhatsApp para um especialista da Amplify continuar essa conversa?" },
+      { role: "user" as const, text: "WhatsApp" },
+    ];
+    expect(validateAnaZeroTurnAnswer("Só me envie seu WhatsApp com DDD, por favor.", [], conversation).issues)
+      .toContain("ambiguous_handoff_consent");
+    expect(validateAnaZeroTurnAnswer(
+      "Só para confirmar: posso passar seu WhatsApp para um especialista da Amplify continuar esta conversa?",
+      [],
+      conversation,
+    ).valid).toBe(true);
+  });
 });
 
 describe("ferramentas e memória com evidência", () => {
@@ -253,11 +267,30 @@ describe("turno do agente", () => {
     expect(mocks.generateText.mock.calls[0][0].system).toContain("CONHECIMENTO CANÔNICO RECUPERADO");
     expect(mocks.generateText.mock.calls[1][0].system).toContain("Não responda com uma confirmação isolada");
   });
+
+  it("mantém a confirmação explícita mesmo se o modelo insistir em pedir o número", async () => {
+    mocks.generateText
+      .mockResolvedValueOnce(result("Só me envie seu WhatsApp com DDD."))
+      .mockResolvedValueOnce(result("Pode mandar o número com DDD."));
+    const turn = await runAnaZeroTurn({
+      model: "openai/gpt-5.4-mini-fast",
+      reader,
+      memory: [],
+      history: [
+        { role: "user", text: "Quero falar com um especialista" },
+        { role: "assistant", text: "Posso passar seu WhatsApp para um especialista da Amplify continuar essa conversa?" },
+        { role: "user", text: "WhatsApp" },
+      ],
+    });
+    expect(turn.regenerated).toBe(true);
+    expect(turn.text).toBe("Só para confirmar: posso passar seu WhatsApp para um especialista da Amplify continuar esta conversa?");
+    expect(mocks.generateText.mock.calls[1][0].system).toContain("Não peça o número ainda");
+  });
 });
 
 describe("contrato HTTP e prompt", () => {
   it("versiona a política conversacional consolidada", () => {
-    expect(PROMPT_VERSION).toBe("2026-10-20.1");
+    expect(PROMPT_VERSION).toBe("2026-10-20.2");
   });
   it("exige que a última mensagem seja do usuário e limita o histórico", () => {
     const base = { messages: [{ id: "1", role: "assistant", parts: [{ type: "text", text: "oi" }] }] };

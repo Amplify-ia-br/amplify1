@@ -58,7 +58,17 @@ function correctionInstructions(issues: AnaZeroIssue[]) {
   if (issues.includes("renamed_leia_presentation")) {
     instructions.push("Use o termo da ficha, apresentação gratuita, sem renomeá-la como masterclass, demonstração ou aula experimental.");
   }
+  if (issues.includes("ambiguous_handoff_consent")) {
+    instructions.push('A pessoa respondeu apenas com o nome do canal, sem autorizar o contato. Pergunte novamente: "Só para confirmar: posso passar seu WhatsApp para um especialista da Amplify continuar esta conversa?". Não peça o número ainda.');
+  }
   return instructions.join(" ");
+}
+
+function behavioralFallback(issues: AnaZeroIssue[]) {
+  if (issues.includes("ambiguous_handoff_consent")) {
+    return "Só para confirmar: posso passar seu WhatsApp para um especialista da Amplify continuar esta conversa?";
+  }
+  return "";
 }
 
 export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTurnResult> {
@@ -137,7 +147,7 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
       if (second.valid) text = second.text;
       else {
         issues = [...new Set([...issues, ...second.issues])];
-        text = redactAnaZeroAnswer(second.text, state.evidenceText);
+        text = behavioralFallback(issues) || redactAnaZeroAnswer(second.text, state.evidenceText);
       }
     } catch (error) {
       recordError(retryModel, error);

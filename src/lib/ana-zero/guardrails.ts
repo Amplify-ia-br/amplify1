@@ -10,7 +10,8 @@ export type AnaZeroIssue =
   | "stalled_active_interest"
   | "missing_leia_implementation"
   | "missing_leia_shared_decisions"
-  | "renamed_leia_presentation";
+  | "renamed_leia_presentation"
+  | "ambiguous_handoff_consent";
 
 const MONEY = /(?:(?:R\$|BRL|US\$|USD|EUR|€|\$)\s*\d[\d.,]*|\b\d[\d.,]*\s*(?:mil\s+)?(?:reais|d[oó]lares|euros)\b)/giu;
 const MARKDOWN = /(?:^|\n)\s{0,3}(?:#{1,6}\s|```|>\s)|\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\)/u;
@@ -27,6 +28,8 @@ const IMPLEMENTATION_STAGES = [
 ];
 const SHARED_DECISIONS = /em conjunto|decis(?:[aã]o|[oõ]es) conjunta|defini[cç][aã]o conjunta|definid[oa]s? com a escola|combinad[oa]s? com a escola/i;
 const RENAMED_LEIA_PRESENTATION = /masterclass|aula experimental|demonstra[cç][aã]o gratuita/i;
+const CHANNEL_ONLY = /^(?:whats\s*app|zap|e-?mail|email)[!.?\s]*$/i;
+const HANDOFF_PERMISSION_QUESTION = /\bposso\b.{0,80}\b(?:passar|compartilhar)\b.{0,80}\b(?:whats\s*app|contato)\b/i;
 
 type ConversationTurn = { role: "user" | "assistant"; text: string };
 
@@ -81,6 +84,14 @@ export function validateAnaZeroTurnAnswer(value: string, evidenceText: string[],
     if (coveredStages < 2) issues.push("missing_leia_implementation");
     if (!SHARED_DECISIONS.test(base.text)) issues.push("missing_leia_shared_decisions");
     if (RENAMED_LEIA_PRESENTATION.test(base.text)) issues.push("renamed_leia_presentation");
+  }
+  if (
+    latest?.role === "user"
+    && CHANNEL_ONLY.test(latest.text.trim())
+    && /\bposso\b.{0,80}\bwhats\s*app\b/i.test(history.at(-2)?.text ?? "")
+    && !HANDOFF_PERMISSION_QUESTION.test(base.text)
+  ) {
+    issues.push("ambiguous_handoff_consent");
   }
 
   return { valid: issues.length === 0, text: base.text, issues: [...new Set(issues)] };
