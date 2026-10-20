@@ -56,6 +56,10 @@ describe("guardrails factuais", () => {
   it("redige apenas frases problemáticas", () => {
     expect(redactAnaZeroAnswer("Posso explicar o programa. Agendei sua reunião.", [])).toBe("Posso explicar o programa.");
   });
+  it("remove uma frase repetida consecutivamente da resposta", () => {
+    const question = "Posso passar seu WhatsApp para um especialista da Amplify continuar esta conversa?";
+    expect(validateAnaZeroAnswer(`${question} ${question}`, []).text).toBe(question);
+  });
   it("rejeita confirmação seca e explicação vazia quando a implantação do L.E.I.A. foi oferecida", () => {
     const conversation = [
       { role: "user" as const, text: "Quero entender o L.E.I.A." },
@@ -290,7 +294,7 @@ describe("turno do agente", () => {
 
 describe("contrato HTTP e prompt", () => {
   it("versiona a política conversacional consolidada", () => {
-    expect(PROMPT_VERSION).toBe("2026-10-20.2");
+    expect(PROMPT_VERSION).toBe("2026-10-20.3");
   });
   it("exige que a última mensagem seja do usuário e limita o histórico", () => {
     const base = { messages: [{ id: "1", role: "assistant", parts: [{ type: "text", text: "oi" }] }] };

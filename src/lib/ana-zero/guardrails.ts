@@ -33,6 +33,16 @@ const HANDOFF_PERMISSION_QUESTION = /\bposso\b.{0,80}\b(?:passar|compartilhar)\b
 
 type ConversationTurn = { role: "user" | "assistant"; text: string };
 
+function removeAdjacentRepeatedSentences(value: string) {
+  return value
+    .split(/(?<=[.!?])\s+/u)
+    .filter((sentence, index, sentences) => {
+      if (!index) return true;
+      return sentence.trim().toLocaleLowerCase("pt-BR") !== sentences[index - 1].trim().toLocaleLowerCase("pt-BR");
+    })
+    .join(" ");
+}
+
 function moneyValues(value: string) {
   return (value.match(MONEY) ?? []).map((match) => {
     const normalized = match.toLocaleLowerCase("pt-BR");
@@ -46,7 +56,7 @@ function containsNonLatinLetter(value: string) {
 }
 
 export function validateAnaZeroAnswer(value: string, evidenceText: string[]) {
-  const text = formatAnaAssistantText(value);
+  const text = removeAdjacentRepeatedSentences(formatAnaAssistantText(value));
   const issues: AnaZeroIssue[] = [];
   if (!text) issues.push("empty");
   if (containsNonLatinLetter(text)) issues.push("non_latin_script");
