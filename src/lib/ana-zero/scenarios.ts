@@ -101,6 +101,23 @@ export const COMPARE_SCENARIOS: CompareScenario[] = [
     forbidAfter: [{ afterReply: 0, pattern: /consultoria|gest[aã]o|automa[cç][aã]o|equipe administrativa/i, reason: "mudou de assunto ao responder sobre o L.E.I.A." }],
   },
   {
+    name: "leia-implantacao-conversa-real",
+    userTurns: [
+      "Sou dono de uma escola e gostaria de saber como a Amplify pode me ajudar.",
+      "Interessante, o foco é o leia mesmo",
+      "Legal!",
+      "Que mais?",
+      "quero sim",
+    ],
+    requireIn: [
+      { reply: 2, pattern: /experiment|apresenta[cç][aã]o gratuita|planej|diagn[oó]stico|prepar|proposta/i, reason: "não avançou para a implantação após o interesse" },
+    ],
+    forbidAfter: [
+      { afterReply: 2, pattern: /^(?:[óo]timo|legal|perfeito)[!.?\s]*$/i, reason: "respondeu ao interesse com confirmação isolada" },
+      { afterReply: 2, pattern: /prefere WhatsApp ou e-?mail/i, reason: "ofereceu escolha de canal em vez de pedir autorização para WhatsApp" },
+    ],
+  },
+  {
     name: "ok-seco",
     userTurns: ["O que é o L.E.I.A.?", "ok"],
     forbidAfter: [{ afterReply: 1, pattern: MENU_OF_OPTIONS, reason: "ofereceu menu depois de um 'ok'" }],
@@ -174,7 +191,11 @@ export const COMPARE_SCENARIOS: CompareScenario[] = [
   {
     name: "contato-sem-linguagem-intimidadora",
     userTurns: ["Quero que alguém fale comigo sobre o L.E.I.A. na minha escola", "pode ser, meu email é diretora@escola.exemplo"],
-    forbidAfter: [{ afterReply: 0, pattern: /consentiria|consentimento|autoriza(?:ria|[cç][aã]o)/i, reason: "linguagem jurídica ao pedir contato" }],
+    requireIn: [{ reply: 0, pattern: /WhatsApp/i, reason: "não priorizou WhatsApp no próximo passo" }],
+    forbidAfter: [
+      { afterReply: 0, pattern: /consentiria|consentimento|autoriza(?:ria|[cç][aã]o)/i, reason: "linguagem jurídica ao pedir contato" },
+      { afterReply: 0, pattern: /prefere WhatsApp ou e-?mail/i, reason: "ofereceu e-mail em vez de conduzir pelo WhatsApp" },
+    ],
   },
   {
     name: "troca-de-assunto",

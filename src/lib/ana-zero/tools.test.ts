@@ -70,6 +70,17 @@ describe("request_handoff", () => {
     })).resolves.toEqual({ ok: false, error: "consent_not_found_in_user_messages" });
     expect(state.handoff).toBeUndefined();
   });
+
+  it("não aceita o nome do canal como autorização explícita", async () => {
+    const { state, tool } = createHandoffTool(["WhatsApp", "(11) 99999-8888"]);
+
+    await expect(run(tool, {
+      summary: "Quer conversar com o time",
+      consentQuote: "WhatsApp",
+      contact: "(11) 99999-8888",
+    })).resolves.toEqual({ ok: false, error: "explicit_consent_required" });
+    expect(state.handoff).toBeUndefined();
+  });
 });
 
 describe("isValidHandoffContact", () => {

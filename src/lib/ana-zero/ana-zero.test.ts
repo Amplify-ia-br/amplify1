@@ -10,12 +10,26 @@ vi.mock("ai", async (importOriginal) => ({
 
 import { runAnaZeroTurn } from "./agent";
 import { analyzeTranscript } from "./compare";
-import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer } from "./guardrails";
+import {
+  ANA_ZERO_SAFE_REPLY,
+  ANA_ZERO_TECHNICAL_REPLY,
+  redactAnaZeroAnswer,
+  validateAnaZeroAnswer,
+  validateAnaZeroTurnAnswer,
+} from "./guardrails";
 import { buildAnaZeroSystem, hasIntroducedLeia, PROMPT_VERSION } from "./prompt";
 import { COMPARE_SCENARIOS } from "./scenarios";
 import { anaZeroRequestSchema } from "./schema";
 import { createTestKnowledgeService } from "@/lib/okf/test-fixtures";
-import { createAnaZeroToolState, createAnaZeroTools, forgivingSearch, quoteIsFromUser, sanitizeMemory } from "./tools";
+import {
+  createAnaZeroToolState,
+  createAnaZeroTools,
+  forgivingSearch,
+  primeLeiaProductKnowledge,
+  quoteIsFromUser,
+  sanitizeMemory,
+  shouldPrimeLeiaProductKnowledge,
+} from "./tools";
 
 const reader = {
   listDocuments: vi.fn(async () => []),
@@ -41,6 +55,28 @@ describe("guardrails factuais", () => {
   });
   it("redige apenas frases problemáticas", () => {
     expect(redactAnaZeroAnswer("Posso explicar o programa. Agendei sua reunião.", [])).toBe("Posso explicar o programa.");
+  });
+  it("rejeita confirmação seca e explicação vazia quando a implantação do L.E.I.A. foi oferecida", () => {
+    const conversation = [
+      { role: "user" as const, text: "Quero entender o L.E.I.A." },
+      { role: "assistant" as const, text: "Posso explicar como funciona a implantação do L.E.I.A. na escola." },
+      { role: "user" as const, text: "Legal!" },
+    ];
+    expect(validateAnaZeroTurnAnswer("Ótimo.", [], conversation).issues).toEqual(
+      expect.arrayContaining(["stalled_active_interest", "missing_leia_implementation"]),
+    );
+    expect(validateAnaZeroTurnAnswer(
+      "Primeiro, a escola experimenta o método em uma apresentação gratuita. Depois vem o diagnóstico para planejar o cenário e, por fim, a proposta prepara calendário e responsabilidades.",
+      [],
+      conversation,
+    ).valid).toBe(true);
+
+    const acceptedOffer = [
+      { role: "assistant" as const, text: "Posso explicar como o L.E.I.A. entra na rotina da escola." },
+      { role: "user" as const, text: "quero sim" },
+    ];
+    expect(validateAnaZeroTurnAnswer("Consigo orientar no geral, mas os detalhes dependem do time.", [], acceptedOffer).issues)
+      .toContain("missing_leia_implementation");
   });
 });
 
@@ -85,6 +121,34 @@ describe("busca tolerante", () => {
   it("lista os documentos publicados quando nenhum termo casa, sem expor conteúdo não público", async () => {
     const ids = (await forgivingSearch(service, "xyzzy plugh")).map((item) => item.id);
     expect([...ids].sort()).toEqual(["amplify-academy", "company"]);
+  });
+
+  it("abre preventivamente a ficha mais recente do L.E.I.A. em uma continuação curta", async () => {
+    const document = {
+      id: "leia-ficha-v3-1",
+      title: "L.E.I.A | Ficha do Produto_v3.1",
+      description: "Ficha",
+      type: "reference",
+      tags: [],
+      status: "active",
+      updated_at: "2026-10-15",
+      content: "Experimentar, Planejar e Preparar.",
+    };
+    const leiaReader = {
+      searchKnowledge: vi.fn(async () => [{ ...document, content: undefined }]),
+      listKnowledge: vi.fn(async () => []),
+      getKnowledgeById: vi.fn(async () => document),
+    } as never;
+    const conversation = [
+      { role: "assistant" as const, text: "Posso explicar a implantação do L.E.I.A. na escola." },
+      { role: "user" as const, text: "Legal!" },
+    ];
+    const state = createAnaZeroToolState([]);
+
+    expect(shouldPrimeLeiaProductKnowledge(conversation)).toBe(true);
+    await expect(primeLeiaProductKnowledge(leiaReader, state, conversation)).resolves.toMatchObject({ id: "leia-ficha-v3-1" });
+    expect(state.toolCalls).toEqual(["search_knowledge", "get_knowledge"]);
+    expect([...state.sources.keys()]).toEqual(["leia-ficha-v3-1"]);
   });
 });
 
@@ -139,11 +203,51 @@ describe("turno do agente", () => {
     expect(turn.text).toBe(ANA_ZERO_SAFE_REPLY);
     expect(turn.errors).toEqual([]);
   });
+
+  it("regenera a confirmação seca e injeta a ficha do produto na conversa real de implantação", async () => {
+    const product = {
+      id: "leia-ficha-v3-1",
+      title: "L.E.I.A | Ficha do Produto_v3.1",
+      description: "Ficha",
+      type: "reference",
+      tags: [],
+      status: "active",
+      updated_at: "2026-10-15",
+      content: "Experimentar: apresentação gratuita. Planejar: diagnóstico. Preparar: proposta e responsabilidades.",
+    };
+    const leiaReader = {
+      searchKnowledge: vi.fn(async () => [{ ...product, content: undefined }]),
+      listKnowledge: vi.fn(async () => []),
+      getKnowledgeById: vi.fn(async () => product),
+    } as never;
+    mocks.generateText
+      .mockResolvedValueOnce(result("Ótimo."))
+      .mockResolvedValueOnce(result(
+        "A implantação começa por Experimentar, com uma apresentação gratuita. Depois, Planejar traz o diagnóstico da escola e Preparar organiza a proposta e as responsabilidades.",
+      ));
+
+    const turn = await runAnaZeroTurn({
+      model: "openai/gpt-5.4-mini-fast",
+      reader: leiaReader,
+      memory: [],
+      history: [
+        { role: "user", text: "Interessante, o foco é o L.E.I.A." },
+        { role: "assistant", text: "Posso explicar como funciona a implantação do L.E.I.A. na escola." },
+        { role: "user", text: "Legal!" },
+      ],
+    });
+
+    expect(turn.regenerated).toBe(true);
+    expect(turn.text).toContain("Experimentar");
+    expect(turn.sources).toEqual([{ id: "leia-ficha-v3-1", title: "L.E.I.A | Ficha do Produto_v3.1" }]);
+    expect(mocks.generateText.mock.calls[0][0].system).toContain("CONHECIMENTO CANÔNICO RECUPERADO");
+    expect(mocks.generateText.mock.calls[1][0].system).toContain("Não responda com uma confirmação isolada");
+  });
 });
 
 describe("contrato HTTP e prompt", () => {
   it("versiona a política conversacional consolidada", () => {
-    expect(PROMPT_VERSION).toBe("2026-10-19.1");
+    expect(PROMPT_VERSION).toBe("2026-10-20.1");
   });
   it("exige que a última mensagem seja do usuário e limita o histórico", () => {
     const base = { messages: [{ id: "1", role: "assistant", parts: [{ type: "text", text: "oi" }] }] };
@@ -166,9 +270,10 @@ describe("contrato HTTP e prompt", () => {
     expect(system).toContain('Nunca use a fórmula "Se quiser, eu posso..."');
     expect(system).toContain('Nunca escreva "não tenho isso confirmado"');
     expect(system).toContain("Se a pessoa falar da escola como negócio");
-    expect(system).toContain("Prefere WhatsApp ou e-mail?");
-    expect(system).toContain("mas não é o contato");
-    expect(system).toContain("número com DDD ou o endereço de e-mail");
+    expect(system).toContain("Posso passar seu WhatsApp para um especialista");
+    expect(system).toContain("não basta como autorização");
+    expect(system).toContain("número com DDD");
+    expect(system).toContain("Não ofereça e-mail como alternativa");
     expect(system).toContain("não pergunte de novo");
     expect(system).toContain('Nunca use "consentiria"');
   });
@@ -199,6 +304,8 @@ describe("contrato HTTP e prompt", () => {
     expect(system).toContain("nas perguntas seguintes, não repita essa introdução");
     expect(system).toContain("nunca use essa resposta para voltar a gestão");
     expect(system).toContain("sem criar um rótulo ou uma frase pronta para essa segunda frente");
+    expect(system).toContain("Experimentar, Planejar e Preparar");
+    expect(system).toContain("Não diga apenas que \"depende\"");
     expect(system).not.toContain("Escola também é uma organização");
   });
   it("o nome por extenso do L.E.I.A. só é pedido na primeira menção", () => {
@@ -235,5 +342,23 @@ describe("análise de transcrições", () => {
     const terminal = COMPARE_SCENARIOS.find((s) => s.name === "ok-seco")!;
     expect(analyzeTranscript(terminal, ["O L.E.I.A. é um programa para estudantes.", "Tudo certo!"])).toEqual([]);
     expect(analyzeTranscript(terminal, ["O L.E.I.A. é um programa para estudantes.", "Quer conhecer as opções?"]).map((flag) => flag.kind)).toContain("unneeded_question");
+  });
+  it("reproduz a conversa real e exige conteúdo concreto antes do handoff", () => {
+    const scenario = COMPARE_SCENARIOS.find((s) => s.name === "leia-implantacao-conversa-real")!;
+    const goodReplies = [
+      "A Amplify atua com o L.E.I.A. para estudantes e com IA na operação da escola.",
+      "O L.E.I.A. desenvolve fluência em IA com mediação pedagógica.",
+      "A implantação começa por Experimentar, com uma apresentação gratuita, e segue para Planejar, com um diagnóstico.",
+      "A Amplify fornece programa, formação e suporte; a escola organiza infraestrutura, matrículas e comunicação.",
+      "Em Preparar, a proposta reúne plano, calendário e responsabilidades. Os detalhes da sua escola ficam para a conversa com o especialista.",
+    ];
+    expect(analyzeTranscript(scenario, goodReplies)).toEqual([]);
+
+    const badReplies = [...goodReplies];
+    badReplies[2] = "Ótimo.";
+    badReplies[4] = "Para o formato exato, prefere WhatsApp ou e-mail?";
+    expect(analyzeTranscript(scenario, badReplies).map((flag) => flag.kind)).toEqual(
+      expect.arrayContaining(["missing", "forbidden"]),
+    );
   });
 });

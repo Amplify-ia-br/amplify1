@@ -6,6 +6,7 @@ import {
   generateRecommendations,
   runAnalystWithRetry,
   sanitizeRecommendations,
+  SESSION_ANALYSIS_SYSTEM,
   sessionAnalysisSchema,
   type Analyst,
 } from "./analyzer";
@@ -37,6 +38,14 @@ const recommendationDataset = {
 } satisfies Dataset;
 
 const evidence = [{ sessionId: "session-1", turnIndex: 1, note: "Falha observada." }];
+
+describe("política do avaliador", () => {
+  it("não confunde captura de contato com uma conversa bem conduzida", () => {
+    expect(SESSION_ANALYSIS_SYSTEM).toContain("Uma captura de contato não compensa uma conversa ruim");
+    expect(SESSION_ANALYSIS_SYSTEM).toContain("promessa de explicação que não foi cumprida");
+    expect(SESSION_ANALYSIS_SYSTEM).toContain("no máximo 350 caracteres");
+  });
+});
 
 function recommendation(
   title: string,

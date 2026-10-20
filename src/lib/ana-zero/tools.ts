@@ -1,6 +1,11 @@
 import { tool } from "ai";
 import { z } from "zod-v4";
-import { normalizeKnowledgeText, type KnowledgeSearchOptions, type KnowledgeSummary } from "../okf/core.js";
+import {
+  normalizeKnowledgeText,
+  type KnowledgeDocument,
+  type KnowledgeSearchOptions,
+  type KnowledgeSummary,
+} from "../okf/core.js";
 import type { KnowledgeReader } from "../okf/http.js";
 import { createDirectKnowledgeTools } from "../ana/tools.js";
 import { memoryEntrySchema, type AnaZeroHandoff, type AnaZeroMemoryEntry } from "./schema.js";
@@ -79,6 +84,12 @@ export function isValidHandoffContact(contact: string) {
   return HANDOFF_EMAIL_SCHEMA.safeParse(value).success || isPlausibleBrazilianPhone(value);
 }
 
+const EXPLICIT_HANDOFF_CONSENT = /\b(?:sim|pode|autorizo|concordo|quero|aceito|me (?:cham(?:a|e)|contat(?:a|e))|podem me (?:chamar|contatar))\b/i;
+
+export function isExplicitHandoffConsent(quote: string) {
+  return EXPLICIT_HANDOFF_CONSENT.test(normalizeKnowledgeText(quote));
+}
+
 const SEARCH_STOPWORDS = new Set([
   "ana", "ajudar", "ajuda", "como", "com", "dos", "das", "para", "por", "que", "uma", "uns", "umas", "num", "numa",
   "nos", "nas", "sobre", "minha", "meu", "sou", "ser", "ter", "mais", "muito", "uso", "queria", "quero", "saber",
@@ -129,6 +140,41 @@ function recordKnowledgeOutput(state: AnaZeroToolState, name: string, output: un
   collect(value.document);
 }
 
+const LEIA_TOPIC = /\bl\s*\.?\s*e\s*\.?\s*i\s*\.?\s*a\s*\.?\b|laborat[oó]rio escolar de intelig[êe]ncia artificial/i;
+const LEIA_CONTINUATION = /^(?:legal|gostei|interessante|bacana|quero sim|pode ser|claro|que mais|sim)[!.?\s]*$/i;
+const LEIA_IMPLEMENTATION = /implanta[cç][aã]o|como funciona|na pr[aá]tica|rotina da escola|etapas?|responsabilidades?|come[cç](?:ar|o)|pr[oó]ximos? passos?/i;
+
+type ConversationTurn = { role: "user" | "assistant"; text: string };
+
+export function shouldPrimeLeiaProductKnowledge(history: ConversationTurn[]) {
+  const latest = history.at(-1);
+  if (!latest || latest.role !== "user") return false;
+  if (LEIA_TOPIC.test(latest.text)) return true;
+
+  const recentContext = history.slice(-6).map((turn) => turn.text).join("\n");
+  return LEIA_TOPIC.test(recentContext) && (LEIA_CONTINUATION.test(latest.text.trim()) || LEIA_IMPLEMENTATION.test(latest.text));
+}
+
+export async function primeLeiaProductKnowledge(
+  reader: KnowledgeReader,
+  state: AnaZeroToolState,
+  history: ConversationTurn[],
+): Promise<KnowledgeDocument | undefined> {
+  if (!shouldPrimeLeiaProductKnowledge(history)) return undefined;
+
+  const results = await forgivingSearch(reader, "L.E.I.A. Ficha do Produto", { limit: 20 });
+  recordKnowledgeOutput(state, "search_knowledge", { results });
+  const product = results
+    .filter((item) => /ficha do produto/i.test(normalizeKnowledgeText(item.title)))
+    .sort((left, right) => right.updated_at.localeCompare(left.updated_at))[0];
+  if (!product) return undefined;
+
+  const document = await reader.getKnowledgeById(product.id);
+  if (!document) return undefined;
+  recordKnowledgeOutput(state, "get_knowledge", { document });
+  return document;
+}
+
 export function createAnaZeroTools(reader: KnowledgeReader, state: AnaZeroToolState, userTexts: string[]) {
   const knowledge = createDirectKnowledgeTools({
     listKnowledge: (filters) => reader.listKnowledge(filters),
@@ -176,6 +222,9 @@ export function createAnaZeroTools(reader: KnowledgeReader, state: AnaZeroToolSt
         state.toolCalls.push("request_handoff");
         if (!quoteIsFromUser(handoff.consentQuote, userTexts)) {
           return { ok: false as const, error: "consent_not_found_in_user_messages" };
+        }
+        if (!isExplicitHandoffConsent(handoff.consentQuote)) {
+          return { ok: false as const, error: "explicit_consent_required" };
         }
         if (!quoteIsFromUser(handoff.contact, userTexts)) {
           return { ok: false as const, error: "contact_not_provided_by_user" };
