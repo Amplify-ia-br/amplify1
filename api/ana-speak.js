@@ -1,21 +1,115 @@
 export const config = { runtime: "edge" };
 
 const SYSTEM_PROMPT =
-  "Você é Ana, estrategista de IA da Amplify. Conduza uma conversa curta de qualificação com um executivo brasileiro. Fale de forma natural, consultiva e humana. Use frases curtas. Reconheça brevemente a resposta anterior antes de avançar. Faça apenas uma pergunta por vez. Não use listas, markdown, jargões nem tom de venda. Evite parecer assistente virtual. Língua: português brasileiro.";
+  "Você é Ana, estrategista de IA da Amplify. Conduza uma conversa curta de qualificação com pessoas e organizações brasileiras. Fale de forma natural, consultiva e humana. Use frases curtas. Reconheça brevemente a resposta anterior antes de avançar. Faça apenas uma pergunta por vez e preserve exatamente a pergunta fornecida pelo sistema. Não use listas, markdown, jargões nem pressão comercial. Não invente preços, condições, produtos ou critérios. Língua: português brasileiro.";
 
 const ANTHROPIC_MODEL = "claude-haiku-4-5-20251001";
+const DEFAULT_RATE_LIMIT_MAX = 20;
+const DEFAULT_RATE_LIMIT_WINDOW_MS = 60_000;
+const MAX_REQUEST_BODY_CHARS = 24_000;
+const SENSITIVE_HISTORY_FIELDS = new Set(["name", "email", "phone"]);
+const speechRateLimit = createFixedWindowRateLimiter();
 // Voz da Ana via ElevenLabs. ELEVENLABS_VOICE_ID deve apontar para a voz
 // escolhida na conta ElevenLabs (feminina, pt-BR, consultiva). O default é a
 // voz premade "Sarah", trocável por env. eleven_multilingual_v2 entrega o
 // melhor pt-BR; eleven_turbo_v2_5 reduz latência se necessário.
-const ELEVENLABS_VOICE_ID = process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL";
-const ELEVENLABS_MODEL_ID = process.env.ELEVENLABS_MODEL_ID || "eleven_multilingual_v2";
+function getElevenLabsVoiceId() {
+  return process.env.ELEVENLABS_VOICE_ID || "EXAVITQu4vr4xnSDxMaL";
+}
 
-function jsonResponse(payload, status = 200) {
+function getElevenLabsModelId() {
+  return process.env.ELEVENLABS_MODEL_ID || "eleven_multilingual_v2";
+}
+
+function jsonResponse(payload, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(payload), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+      "X-Content-Type-Options": "nosniff",
+      ...extraHeaders,
+    },
   });
+}
+
+function positiveInteger(value, fallback, maximum) {
+  const parsed = Number.parseInt(String(value || ""), 10);
+  if (!Number.isFinite(parsed) || parsed <= 0) return fallback;
+  return Math.min(parsed, maximum);
+}
+
+export function redactSpeechText(value) {
+  return String(value || "")
+    .replace(/\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b/gi, "[e-mail omitido]")
+    .replace(/(?<!\d)(?:\+?55[\s.-]?)?(?:\(?\d{2}\)?[\s.-]?)?(?:9[\s.-]?)?\d{4}[\s.-]?\d{4}(?!\d)/g, "[telefone omitido]");
+}
+
+export function sanitizeSpeechMessages(messages) {
+  if (!Array.isArray(messages)) return [];
+  return messages
+    .filter((message) => message && typeof message === "object")
+    .slice(-16)
+    .map((message) => ({
+      role: message.role === "assistant" ? "assistant" : "user",
+      content: SENSITIVE_HISTORY_FIELDS.has(String(message.field || ""))
+        ? "Dado pessoal informado e omitido por privacidade."
+        : redactSpeechText(message.content).slice(0, 1200),
+    }));
+}
+
+export function createFixedWindowRateLimiter({ now = () => Date.now() } = {}) {
+  const buckets = new Map();
+
+  return ({ key, limit, windowMs }) => {
+    const timestamp = now();
+    const existing = buckets.get(key);
+    const bucket = !existing || timestamp >= existing.resetAt
+      ? { count: 0, resetAt: timestamp + windowMs }
+      : existing;
+
+    bucket.count += 1;
+    buckets.set(key, bucket);
+
+    if (buckets.size > 1_000) {
+      for (const [storedKey, storedBucket] of buckets) {
+        if (timestamp >= storedBucket.resetAt) buckets.delete(storedKey);
+      }
+    }
+
+    return {
+      allowed: bucket.count <= limit,
+      remaining: Math.max(0, limit - bucket.count),
+      retryAfterSeconds: Math.max(1, Math.ceil((bucket.resetAt - timestamp) / 1_000)),
+    };
+  };
+}
+
+function requestClientKey(request) {
+  const forwarded =
+    request.headers.get("x-vercel-forwarded-for") ||
+    request.headers.get("x-forwarded-for") ||
+    request.headers.get("x-real-ip") ||
+    "anonymous";
+  return forwarded.split(",")[0].trim().slice(0, 128) || "anonymous";
+}
+
+function originAllowed(request, configuredOrigins = "") {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+
+  let requestOrigin;
+  try {
+    requestOrigin = new URL(request.url).origin;
+  } catch (_error) {
+    return false;
+  }
+
+  const allowedOrigins = String(configuredOrigins)
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  return origin === requestOrigin || allowedOrigins.includes(origin);
 }
 
 function encodeHeaderText(value) {
@@ -58,7 +152,7 @@ async function generateAnaText(messages, currentQuestion) {
         max_tokens: 150,
         system: SYSTEM_PROMPT,
         messages: [
-          ...messages.map((message) => ({
+          ...messages.slice(-16).map((message) => ({
             role: message.role === "assistant" ? "assistant" : "user",
             content: String(message.content || "").slice(0, 1200),
           })),
@@ -102,7 +196,7 @@ async function generateAudio(text) {
 
   try {
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${ELEVENLABS_VOICE_ID}?output_format=mp3_44100_128`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${getElevenLabsVoiceId()}?output_format=mp3_44100_128`,
       {
         method: "POST",
         signal: timeout.signal,
@@ -113,7 +207,7 @@ async function generateAudio(text) {
         },
         body: JSON.stringify({
           text,
-          model_id: ELEVENLABS_MODEL_ID,
+          model_id: getElevenLabsModelId(),
           voice_settings: {
             stability: 0.5,
             similarity_boost: 0.75,
@@ -135,39 +229,106 @@ async function generateAudio(text) {
   }
 }
 
-export default async function handler(request) {
-  if (request.method !== "POST") {
-    return jsonResponse({ error: "Método não permitido." }, 405);
-  }
+export function createAnaSpeakHandler({
+  generateText = generateAnaText,
+  generateSpeech = generateAudio,
+  consumeRateLimit = speechRateLimit,
+  env = process.env,
+} = {}) {
+  return async function handler(request) {
+    if (request.method !== "POST") {
+      return jsonResponse({ error: "Método não permitido." }, 405, { Allow: "POST" });
+    }
 
-  let body;
+    if (!originAllowed(request, env.ANA_SPEECH_ALLOWED_ORIGINS)) {
+      return jsonResponse(
+        { error: "Origem não autorizada.", code: "ana_speech_origin_forbidden" },
+        403,
+      );
+    }
 
-  try {
-    body = await request.json();
-  } catch (_error) {
-    return jsonResponse({ error: "Payload JSON inválido." }, 400);
-  }
+    const contentLength = Number.parseInt(request.headers.get("content-length") || "0", 10);
+    if (Number.isFinite(contentLength) && contentLength > MAX_REQUEST_BODY_CHARS) {
+      return jsonResponse(
+        { error: "Payload muito grande.", code: "ana_speech_payload_too_large" },
+        413,
+      );
+    }
 
-  const messages = Array.isArray(body.messages) ? body.messages : [];
-  const currentQuestion = String(body.currentQuestion || "").trim();
-
-  if (!currentQuestion) {
-    return jsonResponse({ error: "currentQuestion é obrigatório." }, 400);
-  }
-
-  try {
-    const text = await generateAnaText(messages, currentQuestion);
-    const audio = await generateAudio(text);
-
-    return new Response(audio, {
-      status: 200,
-      headers: {
-        "Content-Type": "audio/mpeg",
-        "Cache-Control": "no-store",
-        "x-ana-text": encodeHeaderText(text),
-      },
+    const rateLimitMax = positiveInteger(env.ANA_SPEECH_RATE_LIMIT_MAX, DEFAULT_RATE_LIMIT_MAX, 120);
+    const rateLimitWindowMs = positiveInteger(
+      env.ANA_SPEECH_RATE_LIMIT_WINDOW_MS,
+      DEFAULT_RATE_LIMIT_WINDOW_MS,
+      3_600_000,
+    );
+    const limit = consumeRateLimit({
+      key: requestClientKey(request),
+      limit: rateLimitMax,
+      windowMs: rateLimitWindowMs,
     });
-  } catch (error) {
-    return jsonResponse({ error: error.message || "Erro ao gerar fala da Ana." }, 500);
-  }
+
+    if (!limit.allowed) {
+      return jsonResponse(
+        {
+          error: "Muitas solicitações de voz. Aguarde um instante ou continue por texto.",
+          code: "ana_speech_rate_limited",
+        },
+        429,
+        { "Retry-After": String(limit.retryAfterSeconds) },
+      );
+    }
+
+    let body;
+    try {
+      const rawBody = await request.text();
+      if (rawBody.length > MAX_REQUEST_BODY_CHARS) {
+        return jsonResponse(
+          { error: "Payload muito grande.", code: "ana_speech_payload_too_large" },
+          413,
+        );
+      }
+      body = JSON.parse(rawBody);
+    } catch (_error) {
+      return jsonResponse({ error: "Payload JSON inválido." }, 400);
+    }
+
+    if (!body || typeof body !== "object" || Array.isArray(body)) {
+      return jsonResponse({ error: "Payload JSON inválido." }, 400);
+    }
+
+    const messages = sanitizeSpeechMessages(body.messages);
+    const currentQuestion = redactSpeechText(body.currentQuestion).trim().slice(0, 500);
+
+    if (!currentQuestion) {
+      return jsonResponse({ error: "currentQuestion é obrigatório." }, 400);
+    }
+
+    try {
+      const generatedText = await generateText(messages, currentQuestion);
+      const text = redactSpeechText(generatedText).trim().slice(0, 1_500);
+      if (!text) throw new Error("A geração da fala retornou texto vazio.");
+      const audio = await generateSpeech(text);
+
+      return new Response(audio, {
+        status: 200,
+        headers: {
+          "Content-Type": "audio/mpeg",
+          "Cache-Control": "no-store",
+          "X-Content-Type-Options": "nosniff",
+          "x-ana-text": encodeHeaderText(text),
+        },
+      });
+    } catch (error) {
+      console.error("Erro ao gerar fala da Ana:", error);
+      return jsonResponse(
+        {
+          error: "A voz da Ana não está disponível agora. Você pode continuar por texto.",
+          code: "ana_speech_unavailable",
+        },
+        503,
+      );
+    }
+  };
 }
+
+export default createAnaSpeakHandler();
