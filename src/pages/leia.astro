@@ -1,5 +1,6 @@
 ---
 import Analytics from "@vercel/analytics/astro";
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 
 const title = "L.E.I.A. para Escolas";
 const description = "O L.E.I.A. é um programa anual de fluência em inteligência artificial para estudantes do 9º ano do Ensino Fundamental à 3ª série do Ensino Médio, no laboratório de informática da escola.";
@@ -213,6 +214,43 @@ h1, h2, h3 { color: var(--texto); text-wrap: balance; }
 .cartao-creme { padding: var(--esp-6); border-radius: var(--raio-md); background: var(--creme); display: grid; gap: var(--esp-4); align-content: start;
   --texto: var(--roxo-profundo); --texto-suave: #5E4A7E; --destaque: var(--coral-texto); --destaque-2: var(--roxo); --acao: var(--roxo); --acao-hover: var(--roxo-profundo); --sobre-acao: var(--creme); --foco: var(--roxo); --selo: #F6E3CC; --linha: #E6D3BC; color: var(--texto); }
 
+/* equipe — faixa compacta de credibilidade */
+.equipe { background: var(--roxo-profundo); padding-block: var(--esp-8); }
+.equipe > .deco { opacity: .45; transform: scale(.72); transform-origin: top right; }
+.equipe .container { display: grid; grid-template-columns: minmax(220px, 3fr) minmax(0, 9fr); gap: var(--esp-7); align-items: center; }
+.equipe .cabeca { max-width: 19rem; margin-bottom: 0; gap: var(--esp-3); }
+.equipe .cabeca .titulo { font-size: clamp(30px, 3vw, 38px); line-height: 1.12; }
+.equipe .cabeca .texto { font-size: 16px; line-height: 24px; }
+.equipe-carrossel { min-width: 0; display: grid; gap: var(--esp-3); }
+.equipe-carrossel__viewport { border-radius: var(--raio-md); outline: none; }
+.equipe-carrossel__viewport:focus-visible { outline: 3px solid var(--foco); outline-offset: 5px; }
+.equipe-slide { min-height: 312px; grid-template-columns: 210px minmax(0, 1fr); overflow: hidden; border: 1px solid var(--linha); border-radius: var(--raio-md); background: var(--roxo); }
+.equipe-slide:not([hidden]) { display: grid; }
+.equipe-slide[hidden] { display: none; }
+.equipe-slide__foto { min-height: 312px; background: var(--roxo-noite); overflow: hidden; }
+.equipe-slide__foto img { width: 100%; height: 100%; object-fit: cover; object-position: var(--equipe-pos, 50% 30%); }
+.equipe-slide__conteudo { display: flex; flex-direction: column; justify-content: center; gap: 9px; padding: 26px 30px; }
+.equipe-slide__indice { font: 700 10px/14px var(--font-sans); letter-spacing: .13em; text-transform: uppercase; color: var(--ciano); }
+.equipe-slide__nome { font: 700 clamp(25px, 2.8vw, 34px)/1.08 var(--font-display); letter-spacing: -.02em; }
+.equipe-slide__cargo { max-width: 44rem; font: 700 14px/20px var(--font-sans); color: var(--rosa); }
+.equipe-slide__resumo { max-width: 45rem; font: 400 15px/23px var(--font-sans); color: var(--texto-suave); text-wrap: pretty; }
+.equipe-slide details { max-width: 45rem; padding-top: 8px; border-top: 1px solid var(--linha); }
+.equipe-slide summary { width: fit-content; cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 6px; font: 700 13px/20px var(--font-sans); color: var(--ciano); }
+.equipe-slide summary::-webkit-details-marker { display: none; }
+.equipe-slide summary svg { width: 16px; height: 16px; transition: transform .16s; }
+.equipe-slide details[open] summary svg { transform: rotate(180deg); }
+.equipe-slide__bio { margin-top: var(--esp-3); font: 400 14px/22px var(--font-sans); color: var(--texto-suave); text-wrap: pretty; }
+.equipe-carrossel__rodape { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: var(--esp-5); }
+.equipe-carrossel__setas { display: flex; gap: var(--esp-2); }
+.equipe-carrossel__seta { width: 40px; height: 40px; display: grid; place-items: center; color: var(--roxo-profundo); background: var(--ciano); border: 0; border-radius: 50%; cursor: pointer; transition: transform .16s, background-color .16s; }
+.equipe-carrossel__seta:hover { background: #8FE2E9; transform: translateY(-1px); }
+.equipe-carrossel__seta svg { width: 19px; height: 19px; stroke-width: 2.5; }
+.equipe-carrossel__pontos { display: flex; justify-content: center; gap: 10px; }
+.equipe-carrossel__ponto { width: 28px; height: 28px; padding: 0; display: grid; place-items: center; background: transparent; border: 0; border-radius: 50%; cursor: pointer; }
+.equipe-carrossel__ponto::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--linha); transition: width .16s, background-color .16s; }
+.equipe-carrossel__ponto[aria-current="true"]::before { width: 19px; border-radius: var(--raio-pill); background: var(--rosa); }
+.equipe-carrossel__status { min-width: 48px; text-align: right; font: 700 12px/18px var(--font-sans); color: var(--texto-suave); font-variant-numeric: tabular-nums; }
+
 /* contratação */
 .contrato { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: var(--esp-7); align-items: start; }
 .reuniao { list-style: none; padding: 0; display: grid; gap: var(--esp-3); counter-reset: r; }
@@ -299,6 +337,10 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   .nav .botao { display: none; }
   .cta-fixo { display: block; }
   .rodape { padding-bottom: 110px; }
+  .equipe .container { grid-template-columns: minmax(0, 1fr); gap: var(--esp-6); }
+  .equipe .cabeca { max-width: 34rem; }
+  .equipe-slide { min-height: 300px; grid-template-columns: 190px minmax(0, 1fr); }
+  .equipe-slide__foto { min-height: 300px; }
 }
 @media (max-width: 640px) {
   :root { --margem-pagina: 18px; }
@@ -321,6 +363,24 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   .jornada-mapa__titulo { margin-bottom: 22px; }
   .jornada-mapa__texto { margin-bottom: 28px; }
   .jornada-mapa__imagem { border-radius: 16px; }
+  .equipe { padding-block: 52px; }
+  .equipe .container { gap: var(--esp-5); }
+  .equipe .cabeca { gap: 8px; }
+  .equipe .cabeca .titulo { font-size: 28px; line-height: 34px; }
+  .equipe .cabeca .texto { font-size: 15px; line-height: 22px; }
+  .equipe-slide:not([hidden]) { grid-template-columns: 104px minmax(0, 1fr); align-items: start; }
+  .equipe-slide { min-height: 0; }
+  .equipe-slide__foto { min-height: 0; height: 128px; margin: 18px 0 0 18px; border-radius: var(--raio-sm); }
+  .equipe-slide__conteudo { padding: 18px; gap: 7px; }
+  .equipe-slide__indice { font-size: 9px; line-height: 13px; }
+  .equipe-slide__nome { font-size: 23px; }
+  .equipe-slide__cargo { font-size: 13px; line-height: 18px; }
+  .equipe-slide__resumo { grid-column: 1 / -1; font-size: 14px; line-height: 21px; }
+  .equipe-slide details { grid-column: 1 / -1; }
+  .equipe-carrossel__rodape { grid-template-columns: auto minmax(0, 1fr); gap: var(--esp-3); }
+  .equipe-carrossel__pontos { justify-content: flex-end; }
+  .equipe-carrossel__status { grid-column: 1 / -1; grid-row: 2; min-width: 0; text-align: center; }
+  .equipe-carrossel__seta { width: 40px; height: 40px; }
 }
 @media (max-width: 400px) { :root { --margem-pagina: 16px; } }
 @media (prefers-reduced-motion: reduce) {
@@ -340,6 +400,7 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
       <li><a href="#programa">O programa</a></li>
       <li><a href="#formato">Formato</a></li>
       <li><a href="#jornada">Jornada</a></li>
+      <li><a href="#equipe">Equipe</a></li>
       <li><a href="#contratacao">Contratação</a></li>
       <li><a href="#perguntas">Perguntas</a></li>
     </ul>
@@ -544,7 +605,123 @@ fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
   </div>
 </section>
 
-<!-- 9. DA DEMONSTRAÇÃO À IMPLANTAÇÃO -->
+<!-- 9. EQUIPE -->
+<section class="secao equipe" data-theme="roxo" id="equipe" aria-labelledby="equipe-titulo">
+  <div class="constelacao" aria-hidden="true"></div>
+  <img class="deco" src="/leia/assets/estrela-8-raios-coral.svg" alt="" style="right:5%;top:72px;width:72px">
+  <div class="container">
+    <div class="cabeca">
+      <p class="rotulo">L.E.I.A. / Nossa equipe</p>
+      <h2 class="titulo" id="equipe-titulo">Quem lidera o <span class="destaque-2">LEIA</span></h2>
+      <p class="texto">Experiência em negócios, tecnologia e educação a serviço da aprendizagem.</p>
+    </div>
+
+    <div class="equipe-carrossel" data-equipe-carousel role="region" aria-roledescription="carrossel" aria-label="Time Leia">
+      <div class="equipe-carrossel__viewport" data-equipe-viewport tabindex="0">
+        <article class="equipe-slide" data-equipe-slide role="group" aria-roledescription="slide" aria-label="1 de 5: Michael Haxton">
+          <figure class="equipe-slide__foto">
+            <img src="/leia/team/michael-haxton.webp" alt="Michael Haxton falando ao microfone" width="976" height="762" loading="lazy" decoding="async" style="--equipe-pos:50% 42%">
+          </figure>
+          <div class="equipe-slide__conteudo">
+            <p class="equipe-slide__indice">01 / Experiência educacional</p>
+            <h3 class="equipe-slide__nome">Michael Haxton</h3>
+            <p class="equipe-slide__cargo">Gerente de Experiência Educacional</p>
+            <p class="equipe-slide__resumo">Empreendedor em comunicação e aprendizagem organizacional, conecta educação, cultura, inovação e estratégia. No LEIA, responde pela experiência educacional do programa.</p>
+            <details>
+              <summary>Ler biografia completa <ChevronDown aria-hidden="true" /></summary>
+              <p class="equipe-slide__bio">Empreendedor em comunicação e aprendizagem organizacional, atua conectando educação, cultura, inovação e estratégia. Sócio da Look’n Feel, onde foi Diretor de RH, conduziu uma escola livre durante oito anos. Sua trajetória inclui atuação na área de Gov Intelligence da Oracle, aplicando conhecimentos de comunicação e educação ao desenvolvimento de soluções de aprendizagem para o relacionamento com organizações governamentais no Brasil e na América Latina. Desenvolveu experiências formativas em criatividade, empreendedorismo, branding e apresentações. No LEIA, responde pela experiência educacional do programa.</p>
+            </details>
+          </div>
+        </article>
+
+        <article class="equipe-slide" data-equipe-slide role="group" aria-roledescription="slide" aria-label="2 de 5: Magno Maciel" hidden>
+          <figure class="equipe-slide__foto">
+            <img src="/leia/team/magno-maciel.webp" alt="Retrato de Magno Maciel" width="800" height="1200" loading="lazy" decoding="async" style="--equipe-pos:50% 32%">
+          </figure>
+          <div class="equipe-slide__conteudo">
+            <p class="equipe-slide__indice">02 / Dados e inteligência artificial</p>
+            <h3 class="equipe-slide__nome">Magno Maciel</h3>
+            <p class="equipe-slide__cargo">CEO do Grupo X-Via e Head Global da vertical LIDE Inteligência Artificial</p>
+            <p class="equipe-slide__resumo">Referência em dados e IA para gestão pública, lidera o Grupo X-Via e a vertical LIDE Inteligência Artificial. Desde 2018, já capacitou mais de 100 mil profissionais em algumas das maiores iniciativas de educação em IA da América Latina.</p>
+            <details>
+              <summary>Ler biografia completa <ChevronDown aria-hidden="true" /></summary>
+              <p class="equipe-slide__bio">CEO do Grupo X-Via, referência em dados e IA para gestão pública; Head Global da vertical LIDE Inteligência Artificial no LIDE – Grupo de Líderes Empresariais. Foi cofundador e CTO do Dashplan, fintech líder em planejamento financeiro; sócio da Thermofy, plataforma de IA para termografia clínica presente em 26 países; Diretor do Programa de Mestrado Internacional em IA da Faculdade HUB (Grupo Primo) e Coordenador do MBA em IA da EXAME. Como pesquisador, foi membro do Research Group da OpenAI e fundador do GA.IA (Grupo de Análise de IAs de Fronteira). Desde 2018, professor de destaque em algumas das maiores iniciativas de educação em IA da América Latina: mais de 100 mil profissionais capacitados. Foi Conselheiro em IA no board de empresas no Brasil e no exterior, além de palestrante e consultor. Graduado em Engenharia Elétrica, com especializações em Machine Learning, Cibersegurança, Programação, Finanças, Governança Corporativa, M&amp;A e Privacidade de Dados.</p>
+            </details>
+          </div>
+        </article>
+
+        <article class="equipe-slide" data-equipe-slide role="group" aria-roledescription="slide" aria-label="3 de 5: Fernando Godoy" hidden>
+          <figure class="equipe-slide__foto">
+            <img src="/leia/team/fernando-godoy.webp" alt="Fernando Godoy palestrando" width="400" height="600" loading="lazy" decoding="async" style="--equipe-pos:50% 30%">
+          </figure>
+          <div class="equipe-slide__conteudo">
+            <p class="equipe-slide__indice">03 / Inovação e novos negócios</p>
+            <h3 class="equipe-slide__nome">Fernando Godoy</h3>
+            <p class="equipe-slide__cargo">Diretor de Inovação e Novos Negócios da X-VIA</p>
+            <p class="equipe-slide__resumo">Empreendedor serial há mais de 25 anos em tecnologia e inovação nos EUA e no Brasil. Cofundador e CEO da Amplify, atua na capacitação e implementação de soluções em IA.</p>
+            <details>
+              <summary>Ler biografia completa <ChevronDown aria-hidden="true" /></summary>
+              <p class="equipe-slide__bio">Empreendedor serial há mais de 25 anos em tecnologia e inovação nos EUA e no Brasil; especialista em inteligência artificial e experiências imersivas. Cofundador e CEO da Amplify, pioneira em capacitação e implementação de soluções em IA, e Diretor de Inovação e Novos Negócios da X-VIA. Foi Head de inteligência artificial da dataRain. Fundou a Flex Interativa, pioneira em experiências imersivas no Brasil, a Escola do Metaverso e a Cervejaria Leuven. Palestrante internacional, professor de MBA e autor de “Metaverso: Como gerar oportunidades e fazer negócios na Web3” e “Metodologia Startup Village”. Coordena o curso “IA para Negócios” das faculdades PECEGE USP e Quero Educação. Foi presidente do conselho administrativo da CBCA – Companhia Brasileira de Cerveja Artesanal e Vice-Presidente da VDI – Brasil (Associação de Engenheiros Brasil-Alemanha), na área de inovação. Selecionado pela APEX-BRASIL entre os “top 15 empreendedores” para os programas de internacionalização do Startout em Miami, Nova Iorque e Lisboa. Formado em engenharia pela UNESP, com MBA Executivo pelo Insper.</p>
+            </details>
+          </div>
+        </article>
+
+        <article class="equipe-slide" data-equipe-slide role="group" aria-roledescription="slide" aria-label="4 de 5: Leonardo Camacho" hidden>
+          <figure class="equipe-slide__foto">
+            <img src="/leia/team/leonardo-camacho.webp" alt="Leonardo Camacho palestrando" width="1200" height="675" loading="lazy" decoding="async" style="--equipe-pos:50% 35%">
+          </figure>
+          <div class="equipe-slide__conteudo">
+            <p class="equipe-slide__indice">04 / Aprendizado organizacional</p>
+            <h3 class="equipe-slide__nome">Leonardo Camacho</h3>
+            <p class="equipe-slide__cargo">Educador de IA e Head de Soluções da Amplify</p>
+            <p class="equipe-slide__resumo">Pesquisa inteligência artificial aplicada ao aprendizado organizacional, à estratégia e à performance em empresas de alto crescimento. Traduz sua experiência executiva em métodos para decisão, execução e aprendizagem apoiadas por IA.</p>
+            <details>
+              <summary>Ler biografia completa <ChevronDown aria-hidden="true" /></summary>
+              <p class="equipe-slide__bio">Pesquisa inteligência artificial aplicada ao aprendizado organizacional, à estratégia e à performance em empresas de alto crescimento. Como executivo de receita e produto, implantou projetos de data science e IA em diferentes contextos de negócio, conectados a crescimento de receita, go-to-market, analytics, gestão de produtos e operação comercial. No Bootcamp, traduz essa experiência em método: líderes e equipes deixam o uso improvisado de ferramentas para construir rotinas de decisão, execução e aprendizagem apoiadas por IA. Mestre pela Fundação Dom Cabral e doutorando pela Burgundy School of Business.</p>
+            </details>
+          </div>
+        </article>
+
+        <article class="equipe-slide" data-equipe-slide role="group" aria-roledescription="slide" aria-label="5 de 5: Gilson Leal" hidden>
+          <figure class="equipe-slide__foto">
+            <img src="/leia/team/gilson-leal.webp" alt="Retrato de Gilson Leal" width="800" height="1200" loading="lazy" decoding="async" style="--equipe-pos:50% 28%">
+          </figure>
+          <div class="equipe-slide__conteudo">
+            <p class="equipe-slide__indice">05 / Criatividade e IA</p>
+            <h3 class="equipe-slide__nome">Gilson Leal</h3>
+            <p class="equipe-slide__cargo">Fundador da Shockwave Academy e professor de IA para Negócios no IDP</p>
+            <p class="equipe-slide__resumo">Educador e consultor em inteligência artificial, criatividade, inovação e empreendedorismo. Sua atuação conecta repertório criativo, aprendizagem prática e desenvolvimento de fluência em IA.</p>
+            <details>
+              <summary>Ler biografia completa <ChevronDown aria-hidden="true" /></summary>
+              <p class="equipe-slide__bio">Educador e consultor em inteligência artificial, criatividade, inovação e empreendedorismo. Fundador da Shockwave Academy e da Zona Criativa, reúne experiência em formação profissional e aplicação da IA aos negócios. Cofundador da agência Radiola, construiu sua trajetória na publicidade e na direção de criação. É graduado em Comunicação Social – Publicidade e Propaganda pela UnB, com MBA em Liderança, Inovação e Gestão 4.0 pela PUCRS. No IDP, leciona Criatividade e Inteligência Artificial para Negócios. Sua atuação conecta repertório criativo, aprendizagem prática e desenvolvimento de fluência em IA.</p>
+            </details>
+          </div>
+        </article>
+      </div>
+
+      <div class="equipe-carrossel__rodape">
+        <div class="equipe-carrossel__setas">
+          <button class="equipe-carrossel__seta" type="button" data-equipe-prev aria-label="Ver integrante anterior">
+            <ChevronLeft aria-hidden="true" />
+          </button>
+          <button class="equipe-carrossel__seta" type="button" data-equipe-next aria-label="Ver próximo integrante">
+            <ChevronRight aria-hidden="true" />
+          </button>
+        </div>
+        <div class="equipe-carrossel__pontos" aria-label="Escolher integrante">
+          <button class="equipe-carrossel__ponto" type="button" data-equipe-dot="0" aria-label="Mostrar Michael Haxton" aria-current="true"></button>
+          <button class="equipe-carrossel__ponto" type="button" data-equipe-dot="1" aria-label="Mostrar Magno Maciel" aria-current="false"></button>
+          <button class="equipe-carrossel__ponto" type="button" data-equipe-dot="2" aria-label="Mostrar Fernando Godoy" aria-current="false"></button>
+          <button class="equipe-carrossel__ponto" type="button" data-equipe-dot="3" aria-label="Mostrar Leonardo Camacho" aria-current="false"></button>
+          <button class="equipe-carrossel__ponto" type="button" data-equipe-dot="4" aria-label="Mostrar Gilson Leal" aria-current="false"></button>
+        </div>
+        <p class="equipe-carrossel__status" data-equipe-status aria-live="polite" aria-atomic="true">1 / 5</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10. DA DEMONSTRAÇÃO À IMPLANTAÇÃO -->
 <section class="secao" data-theme="roxo" id="caminho">
   <div class="container">
     <div class="cabeca">
@@ -780,6 +957,44 @@ const CONFIG = {
     try { navigator.clipboard.writeText(texto).then(() => { statusEl.textContent = okMsg; }).catch(selecionar); } catch (e) { selecionar(); }
   }
   $("copiar-email").addEventListener("click", () => copiar($("email-comercial").textContent, $("email-comercial"), $("copiar-email-status"), "E-mail copiado."));
+
+  // Equipe: navegação manual, por teclado e por gesto, sem avanço automático.
+  const equipe = document.querySelector("[data-equipe-carousel]");
+  if (equipe) {
+    const viewport = equipe.querySelector("[data-equipe-viewport]");
+    const slides = Array.from(equipe.querySelectorAll("[data-equipe-slide]"));
+    const pontos = Array.from(equipe.querySelectorAll("[data-equipe-dot]"));
+    const status = equipe.querySelector("[data-equipe-status]");
+    let atual = 0;
+    let inicioToque = null;
+
+    const mostrar = (indice) => {
+      const proximo = (indice + slides.length) % slides.length;
+      slides.forEach((slide, i) => {
+        slide.hidden = i !== proximo;
+        if (i !== proximo) slide.querySelector("details")?.removeAttribute("open");
+      });
+      pontos.forEach((ponto, i) => ponto.setAttribute("aria-current", String(i === proximo)));
+      atual = proximo;
+      status.textContent = `${atual + 1} / ${slides.length}`;
+    };
+
+    equipe.querySelector("[data-equipe-prev]").addEventListener("click", () => mostrar(atual - 1));
+    equipe.querySelector("[data-equipe-next]").addEventListener("click", () => mostrar(atual + 1));
+    pontos.forEach((ponto, i) => ponto.addEventListener("click", () => mostrar(i)));
+    viewport.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") { event.preventDefault(); mostrar(atual - 1); }
+      if (event.key === "ArrowRight") { event.preventDefault(); mostrar(atual + 1); }
+    });
+    viewport.addEventListener("touchstart", (event) => { inicioToque = event.changedTouches[0]?.clientX ?? null; }, { passive: true });
+    viewport.addEventListener("touchend", (event) => {
+      if (inicioToque === null) return;
+      const fimToque = event.changedTouches[0]?.clientX ?? inicioToque;
+      const deslocamento = fimToque - inicioToque;
+      if (Math.abs(deslocamento) >= 50) mostrar(atual + (deslocamento < 0 ? 1 : -1));
+      inicioToque = null;
+    }, { passive: true });
+  }
 
   // Máscara de telefone
   $("telefone").addEventListener("input", (ev) => {
