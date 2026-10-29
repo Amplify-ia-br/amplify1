@@ -3,7 +3,6 @@ import type { AnaZeroHandoff, AnaZeroMemoryEntry } from "./schema.js";
 
 const NEW_TURN_COLUMNS = /sources|handoff|prompt_version|app_commit/;
 const NEW_SESSION_COLUMNS = /mission_origin|mission_mapping_version/;
-const NEW_SESSION_FEEDBACK_COLUMNS = /trusted|completed_at/;
 
 function isMissingColumn(error: { code?: string; message?: string }) {
   return (error.code === "PGRST204" || error.code === "42703") && NEW_TURN_COLUMNS.test(error.message ?? "");
@@ -52,7 +51,6 @@ export type SaveSessionFeedbackInput = {
   sessionId: string;
   rating: number;
   helped?: boolean;
-  trusted?: boolean;
   comment?: string;
 };
 
@@ -159,39 +157,20 @@ export const anaTestStore: AnaTestStore = {
     const supabase = getServerClient();
     if (!supabase) return false;
     try {
-      const completedAt = new Date().toISOString();
-      let result = await supabase
+      const { data, error } = await supabase
         .from("ana_test_sessions")
         .update({
           overall_rating: input.rating,
           helped: input.helped ?? null,
-          trusted: input.trusted ?? null,
           closing_comment: input.comment ?? null,
-          completed_at: completedAt,
-          updated_at: completedAt,
+          updated_at: new Date().toISOString(),
         })
         .eq("id", input.sessionId)
         .select("id");
-      if (result.error && isMissingSessionFeedbackColumn(result.error)) {
-        result = await supabase
-          .from("ana_test_sessions")
-          .update({
-            overall_rating: input.rating,
-            helped: input.helped ?? null,
-            closing_comment: input.comment ?? null,
-            updated_at: completedAt,
-          })
-          .eq("id", input.sessionId)
-          .select("id");
-      }
-      if (result.error) throw result.error;
-      return Array.isArray(result.data) && result.data.length > 0;
+      if (error) throw error;
+      return Array.isArray(data) && data.length > 0;
     } catch (error) {
       return report("feedback da conversa", error);
     }
   },
 };
-
-function isMissingSessionFeedbackColumn(error: { code?: string; message?: string }) {
-  return (error.code === "PGRST204" || error.code === "42703") && NEW_SESSION_FEEDBACK_COLUMNS.test(error.message ?? "");
-}

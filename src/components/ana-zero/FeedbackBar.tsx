@@ -50,7 +50,6 @@ export default function FeedbackBar({ sessionId, turnIndex }: Props) {
   return (
     <div className="az-feedback">
       <div className="az-feedback-row" role="group" aria-label="Avaliar esta resposta">
-        <span className="az-feedback-prompt">Esta resposta foi útil?</span>
         <button type="button" aria-pressed={verdict === 1} aria-label="Resposta boa" onClick={() => choose(1)}>
           <ThumbsUp aria-hidden="true" />
         </button>

@@ -159,16 +159,12 @@ describe("feedback", () => {
     expect(store.saveTurnFeedback).toHaveBeenCalledWith(
       expect.objectContaining({ turnIndex: 2, verdict: -1, reasons: ["repetitiva"], comment: "repetiu" }),
     );
-    const schedule = vi.fn();
     const session = await handleAnaZeroFeedback(
-      post({ kind: "session", sessionId: SESSION_ID, rating: 4, helped: true, trusted: true }),
+      post({ kind: "session", sessionId: SESSION_ID, rating: 4, helped: true }),
       store,
-      undefined,
-      schedule,
     );
     expect(session.status).toBe(200);
-    expect(store.saveSessionFeedback).toHaveBeenCalledWith(expect.objectContaining({ rating: 4, helped: true, trusted: true }));
-    expect(schedule).toHaveBeenCalledWith(SESSION_ID);
+    expect(store.saveSessionFeedback).toHaveBeenCalledWith(expect.objectContaining({ rating: 4, helped: true }));
   });
 
   it("responde 503 quando não consegue gravar", async () => {

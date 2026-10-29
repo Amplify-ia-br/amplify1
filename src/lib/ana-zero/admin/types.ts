@@ -13,8 +13,6 @@ export type SessionRow = {
   model: string;
   overall_rating: number | null;
   helped: boolean | null;
-  trusted: boolean | null;
-  completed_at?: string | null;
   closing_comment: string | null;
 };
 

@@ -82,7 +82,6 @@ export function computeOverview(data: Dataset) {
   const positive = feedback.filter((row) => row.verdict === 1).length;
   const ratings = sessions.map((s) => s.overall_rating).filter((v): v is number => v !== null);
   const helpedAnswered = sessions.filter((s) => s.helped !== null);
-  const trustAnswered = sessions.filter((s) => s.trusted !== null);
   const latencies = turns.map((t) => t.latency_ms).filter((v): v is number => v !== null);
   const costs = turns.map((t) => t.estimated_cost_usd ?? 0);
 
@@ -117,7 +116,6 @@ export function computeOverview(data: Dataset) {
     positiveRate: ratio(positive, rated),
     avgRating: ratings.length ? round(average(ratings) ?? 0, 2) : null,
     helpedRate: ratio(helpedAnswered.filter((s) => s.helped).length, helpedAnswered.length),
-    trustedRate: ratio(trustAnswered.filter((s) => s.trusted).length, trustAnswered.length),
     issueRate: ratio(turns.filter((t) => (t.issues?.length ?? 0) > 0).length, turns.length),
     regenerationRate: ratio(turns.filter((t) => t.regenerated).length, turns.length),
     errorRate: ratio(turns.filter((t) => (t.errors?.length ?? 0) > 0).length, turns.length),
@@ -242,7 +240,6 @@ export function summarizeSessions(data: Dataset) {
         negative: verdicts.filter((v) => v === -1).length,
         overallRating: session.overall_rating,
         helped: session.helped,
-        trusted: session.trusted,
         hasIssues: turns.some((t) => (t.issues?.length ?? 0) > 0),
         hasErrors: turns.some((t) => (t.errors?.length ?? 0) > 0),
         costUsd: round(turns.reduce((a, t) => a + (t.estimated_cost_usd ?? 0), 0), 5),

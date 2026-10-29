@@ -10,7 +10,6 @@ export async function handleAnaZeroFeedback(
   request: Request,
   store: AnaTestStore = anaTestStore,
   authorize: Authorize = authorizeLab,
-  scheduleAnalysis?: (sessionId: string) => void,
 ) {
   if (request.method !== "POST") {
     return Response.json({ error: "method_not_allowed" }, { status: 405, headers: PRIVATE_HEADERS });
@@ -57,17 +56,8 @@ export async function handleAnaZeroFeedback(
           sessionId: feedback.sessionId,
           rating: feedback.rating,
           helped: feedback.helped,
-          trusted: feedback.trusted,
           comment: feedback.comment || undefined,
         });
-
-  if (saved && feedback.kind === "session" && scheduleAnalysis) {
-    try {
-      scheduleAnalysis(feedback.sessionId);
-    } catch (error) {
-      console.error("[Ana Zero] Falha ao agendar análise automática", error instanceof Error ? error.message : error);
-    }
-  }
 
   return saved
     ? Response.json({ ok: true }, { headers: PRIVATE_HEADERS })

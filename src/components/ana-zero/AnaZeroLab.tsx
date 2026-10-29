@@ -149,7 +149,7 @@ export default function AnaZeroLab({ account }: { account?: { name: string; prof
             aria-label="Avaliar a conversa inteira"
           >
             <ClipboardCheck aria-hidden="true" />
-            <span>Finalizar teste</span>
+            <span>Avaliar conversa</span>
           </button>
           <button
             className="ana-new"
@@ -173,12 +173,7 @@ export default function AnaZeroLab({ account }: { account?: { name: string; prof
                 <div className="ana-avatar"><Bot aria-hidden="true" /></div>
                 <p className="ana-eyebrow">Teste com voluntários · Amplify</p>
                 <h1>Converse com a <span>Ana</span></h1>
-                <p>Simule uma necessidade real, faça de 3 a 5 perguntas e avalie as respostas. Leva cerca de 5 minutos.</p>
-                <ol className="az-test-guide" aria-label="Como participar do teste">
-                  <li><b>1</b><span>Use o cenário abaixo como ponto de partida.</span></li>
-                  <li><b>2</b><span>Converse naturalmente e tente atingir o objetivo.</span></li>
-                  <li><b>3</b><span>Avalie cada resposta e finalize o teste no topo.</span></li>
-                </ol>
+                <p>Converse como uma pessoa real faria no site. Depois de cada resposta, diga se foi boa ou ruim: é isso que torna a Ana melhor.</p>
                 <TesterSetup
                   tester={tester}
                   showName={!account}
@@ -196,7 +191,7 @@ export default function AnaZeroLab({ account }: { account?: { name: string; prof
             ) : (
               <div className="ana-messages">
                 <p className="az-mission-banner">
-                  <strong>Cenário em teste: {mission.title}</strong>
+                  <strong>Missão: {mission.title}</strong>
                   <span>{mission.brief}</span>
                 </p>
                 {messages.map((message) => {

@@ -245,7 +245,7 @@ export async function saveAnaLeadSnapshot(conversationId: string, state: AnaConv
 
     const { data, error } = await supabase
       .from("ana_leads")
-      .upsert([lead], { onConflict: "conversation_id", defaultToNull: false })
+      .upsert(lead, { onConflict: "conversation_id", defaultToNull: false })
       .select("id, stage")
       .single();
     if (error || !data?.id) throw error || new Error("lead_not_returned");

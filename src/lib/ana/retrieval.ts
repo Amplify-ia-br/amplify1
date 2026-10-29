@@ -62,7 +62,7 @@ function detectIntents(terms: string[]) {
 
 function priorityDocumentIds(terms: string[]) {
   const intents = detectIntents(terms);
-  const ids: string[] = intents.flatMap((intent) => [...intent.ids]);
+  const ids = intents.flatMap((intent) => [...intent.ids]);
   const termSet = new Set(terms);
   const hasSchoolIntent = intents.some(({ name }) => name === "educacao-escolas");
   const hasExplicitLeia = termSet.has("leia");
