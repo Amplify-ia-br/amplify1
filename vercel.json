@@ -1,5 +1,10 @@
 {
   "functions": {
+    "api/ana-site.ts": {
+      "includeFiles": "okf/public/**",
+      "maxDuration": 120
+    },
+    "api/ana-site-admin.ts": { "maxDuration": 120 },
     "api/knowledge/**/*.ts": {
       "includeFiles": "okf/public/**"
     },

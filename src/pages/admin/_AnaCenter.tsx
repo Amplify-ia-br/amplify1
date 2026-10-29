@@ -1,3 +1,4 @@
+import { SiteDeliveriesTab } from '@/components/admin/ana/SiteDeliveriesTab';
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
@@ -16,7 +17,7 @@ import type { Filters } from "@/lib/ana-zero/admin/types";
 import { profileLabel } from "@/lib/ana-zero/lab/profiles";
 
 const ALL = "all";
-const TAB_VALUES = ["overview", "sessions", "content", "recommendations", "evolution", "invites"] as const;
+const TAB_VALUES = ["overview", "sessions", "content", "recommendations", "evolution", "invites", "site"] as const;
 type TabValue = (typeof TAB_VALUES)[number];
 
 function isTabValue(value: string | null): value is TabValue {
@@ -60,7 +61,7 @@ const AnaCenter = () => {
   const [filters, setFilters] = useState<Filters>({});
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = isTabValue(searchParams.get("tab")) ? searchParams.get("tab") as TabValue : "overview";
-  const showsConversationFilters = activeTab !== "recommendations" && activeTab !== "invites";
+  const showsConversationFilters = activeTab !== "recommendations" && activeTab !== "invites" && activeTab !== "site";
   const patch = (next: Partial<Filters>) => setFilters((current) => ({ ...current, ...next }));
   const selectTab = (tab: string) => {
     if (!isTabValue(tab)) return;
@@ -132,6 +133,7 @@ const AnaCenter = () => {
           <TabsTrigger value="recommendations">Recomendações</TabsTrigger>
           <TabsTrigger value="evolution">Evolução</TabsTrigger>
           <TabsTrigger value="invites">Convites</TabsTrigger>
+          <TabsTrigger value="site">Site CRIATOWN</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="mt-4">
           {overview.data ? <OverviewTab data={overview.data} /> : null}
@@ -151,6 +153,7 @@ const AnaCenter = () => {
         <TabsContent value="invites" className="mt-4">
           <InvitesTab />
         </TabsContent>
+      <TabsContent value="site" className="mt-4"><SiteDeliveriesTab /></TabsContent>
       </Tabs>
     </div>
   );

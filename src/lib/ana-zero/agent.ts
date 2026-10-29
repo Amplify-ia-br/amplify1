@@ -1,3 +1,4 @@
+import { createSiteTools } from '../ana-site/tools.js';
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGateway, generateText, stepCountIs, type LanguageModel, type ModelMessage } from "ai";
 import { ANA_MODELS, estimateAnaCost, getAnaFallbackModels, getAnaQualityRetryModel, type AnaModelId } from "../ana/config.js";
@@ -20,6 +21,8 @@ export type AnaZeroTurnInput = {
   memory: AnaZeroMemoryEntry[];
   reader: KnowledgeReader;
   pagePath?: string;
+  siteContext?: string;
+  signal?: AbortSignal;
   languageModel?: (model: AnaModelId) => LanguageModel;
 };
 
@@ -85,11 +88,11 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   };
   let primedKnowledge = "";
   try {
-    primedKnowledge = (await primeLeiaProductKnowledge(input.reader, state, input.history))?.content ?? "";
+    primedKnowledge = (await primeLeiaProductKnowledge(input.reader, state, input.siteContext && input.pagePath?.startsWith('/leia/') ? [{ role: 'assistant', text: 'Contexto da página: L.E.I.A.' }, ...input.history] : input.history))?.content ?? "";
   } catch (error) {
     recordError("knowledge-prime", error);
   }
-  const tools = createAnaZeroTools(input.reader, state, userTexts);
+  const tools = input.siteContext ? createSiteTools(input.reader, state, userTexts, input.history) : createAnaZeroTools(input.reader, state, userTexts);
   const messages: ModelMessage[] = input.history.map((turn) => ({ role: turn.role, content: turn.text }));
   const resolve = input.languageModel ?? ((id: AnaModelId) =>
     ANA_MODELS[id].provider === "anthropic"
@@ -98,10 +101,19 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   const usage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
   let resolvedModel: string = input.model;
 
+  const baseSystem = buildAnaZeroSystem(state.memory, input.pagePath, leiaIntroduced);
+  const system = input.siteContext
+    ? baseSystem.replaceAll('Amplify', 'CRIATOWN').replace('uma pessoa do time da CRIATOWN', 'a assistente virtual da CRIATOWN') + '\n\n' + input.siteContext
+      + '\nA marca pública do grupo é CRIATOWN. Documentos legados podem usar o nome anterior Amplify; apresente as ofertas usando a marca CRIATOWN.\nAo solicitar contato sobre L.E.I.A., obtenha escola, papel e UF quando ainda não informados. Peça uma informação de cada vez. Outros assuntos vão para Leonardo. Nunca anuncie entrega ou agendamento: a aplicação informa o resultado após confirmação do CRM.'
+    : baseSystem;
+  const siteIntroduction = input.siteContext
+    ? '\nA interface já apresentou você como ANA, assistente virtual da CRIATOWN. Não repita sua apresentação. Para autorização de encaminhamento, pergunte explicitamente se pode compartilhar o contato e o resumo da conversa com o responsável; uma resposta afirmativa curta a essa pergunta vale como autorização.'
+      + (input.pagePath === '/leia/obrigado/' ? '\nNesta página de obrigado, limite a iniciativa à orientação sobre próximos passos, sem nova abordagem comercial. Só inicie qualificação se a pessoa pedir explicitamente atendimento.' : '')
+    : '';
   const attempt = async (model: AnaModelId, correction?: AnaZeroIssue[]) => {
     const result = await generateText({
       model: resolve(model),
-      system: `${buildAnaZeroSystem(state.memory, input.pagePath, leiaIntroduced)}${
+      system: `${system}${siteIntroduction}${
         primedKnowledge
           ? `\n\nCONHECIMENTO CANÔNICO RECUPERADO PARA ESTE TURNO:\n${primedKnowledge}`
           : ""
@@ -115,6 +127,7 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
       stopWhen: stepCountIs(MAX_STEPS),
       maxOutputTokens: 700,
       maxRetries: 1,
+      abortSignal: input.signal,
       providerOptions: ANA_MODELS[model].provider === "anthropic"
         ? { anthropic: { thinking: { type: "disabled" } } }
         : { gateway: { tags: ["ana-zero"], models: getAnaFallbackModels(model) } },
