@@ -61,4 +61,26 @@ describe('fila de entrega CRM',()=>{
   const promise=deliverToCrm(d as any,base.id,f as any);await vi.runAllTimersAsync();
   expect(await promise).toBe('delivered');expect(opportunityOwner).toBe('final-owner');
  });
+ it('DF usa o responsável persistido do rodízio sem disparar a distribuição antiga',async()=>{
+  env();vi.stubEnv('GHL_ANA_DF_OWNER_IDS','samuel,binho,mike');
+  const d=db({...base,contact_id:'contact',opportunity_id:'opportunity',note_id:'note',payload:{...base.payload,route:'leia',uf:'DF'}});
+  d.rpc.mockResolvedValueOnce({data:{...base,contact_id:'contact',opportunity_id:'opportunity',note_id:'note',payload:{...base.payload,route:'leia',uf:'DF'}}}).mockResolvedValueOnce({data:'binho'});
+  const calls:any[]=[];const f=vi.fn(async(url:any,init:any)=>{
+   calls.push({url:String(url),method:init.method,body:init.body?JSON.parse(init.body):null});
+   return Response.json(String(url).includes('/opportunities/')?{opportunity:{assignedTo:'binho'}}:{contact:{assignedTo:'binho'}});
+  });
+  expect(await deliverToCrm(d as any,base.id,f as any)).toBe('delivered');
+  expect(d.rpc).toHaveBeenCalledWith('assign_ana_site_df_owner',expect.objectContaining({p_owners:['samuel','binho','mike']}));
+  expect(calls.filter(c=>c.method==='PUT').every(c=>c.body.assignedTo==='binho')).toBe(true);
+  expect(calls.some(c=>c.method==='POST'&&c.body?.tags?.includes('ana-handoff-ready'))).toBe(false);
+ });
+ it('DF não atribui contato quando a reserva durável falha',async()=>{
+  env();vi.stubEnv('GHL_ANA_DF_OWNER_IDS','samuel,binho,mike');
+  const d=db({...base,contact_id:'contact',opportunity_id:'opportunity',note_id:'note',payload:{...base.payload,route:'leia',uf:'DF'}});
+  d.rpc.mockResolvedValueOnce({data:{...base,contact_id:'contact',opportunity_id:'opportunity',note_id:'note',payload:{...base.payload,route:'leia',uf:'DF'}}}).mockResolvedValueOnce({data:null});
+  const f=vi.fn(async()=>Response.json({contact:{}}));
+  expect(await deliverToCrm(d as any,base.id,f as any)).toBe('pending');
+  expect(d.checkpoints.at(-1).last_error).toBe('df_assignment_not_persisted');
+  expect(f).toHaveBeenCalledTimes(1);
+ });
 });

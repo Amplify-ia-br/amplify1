@@ -67,7 +67,21 @@ export async function deliverToCrm(client: SupabaseClient, deliveryId: string, f
       await checkpoint({ note_id: result.id });
     }
     const current = await ghl(`/contacts/${contactId}`, 'GET');
-    if (h.route === 'leia') {
+    if (h.route === 'leia' && h.uf === 'DF') {
+      const owners=(readServerEnv('GHL_ANA_DF_OWNER_IDS') || '').split(',').map(s=>s.trim()).filter(Boolean);
+      if(owners.length!==3 || new Set(owners).size!==3)throw new Error('df_team_not_configured');
+      const assigned=await client.rpc('assign_ana_site_df_owner',{p_id:delivery.id,p_token:lock,p_owners:owners});
+      if(assigned.error || !assigned.data)throw new Error('df_assignment_not_persisted');
+      const owner=assigned.data as string;
+      // DF is assigned here rather than triggering the unconfigured CRM branch.
+      await ghl(`/contacts/${contactId}/tags`, 'DELETE', {tags:[...REGION_TAGS,'ana-handoff-ready']});
+      await ghl(`/contacts/${contactId}/tags`, 'POST', {tags:['ana-site','ana-leia','ana-region-df']});
+      await ghl(`/contacts/${contactId}`, 'PUT', {assignedTo:owner});
+      await ghl(`/opportunities/${opportunityId}`, 'PUT', {assignedTo:owner});
+      const confirmed=await ghl(`/contacts/${contactId}`, 'GET');
+      const opportunity=await ghl(`/opportunities/${opportunityId}`, 'GET');
+      if(confirmed.contact?.assignedTo!==owner || opportunity.opportunity?.assignedTo!==owner)throw new Error('df_owner_not_confirmed');
+    } else if (h.route === 'leia') {
       if (!delivery.routing_prepared) {
         await ghl(`/contacts/${contactId}/tags`, 'DELETE', { tags: [...REGION_TAGS, 'ana-handoff-ready'] });
         // Existing contacts can have an unrelated owner. A new assignment must
