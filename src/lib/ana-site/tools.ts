@@ -19,7 +19,8 @@ export function stateMatches(uf:string,evidence:string){
 export function validateSiteHandoff(h: SiteHandoff, texts: string[], history?: Array<{role:string;text:string}>) {
   if (/\b(n[aã]o|nunca|jamais|recuso)\b/i.test(h.consentQuote) || !quoteIsFromUser(h.consentQuote, texts) || !isExplicitHandoffConsent(h.consentQuote)) return 'explicit_consent_required';
   if(history){
-    const index=history.findLastIndex(t=>t.role==='user' && quoteIsFromUser(h.consentQuote,[t.text]));
+    let index=-1;
+    for(let i=history.length-1;i>=0;i--){if(history[i].role==='user' && quoteIsFromUser(h.consentQuote,[history[i].text])){index=i;break;}}
     const direct=/\b(?:autorizo|pode(?:m)?|aceito|quero)\b.{0,70}(?:contato|compartilhar|passar|encaminhar|chamar|whats|telefone|especialista)/i.test(h.consentQuote);
     const asked=index>0 && history[index-1].role==='assistant' && /(?:posso|podemos|autoriza).{0,90}(?:passar|compartilhar|encaminhar|enviar).{0,90}(?:contato|whats|telefone)/i.test(history[index-1].text);
     if(!direct&&!asked)return 'explicit_consent_required';

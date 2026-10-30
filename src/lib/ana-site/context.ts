@@ -44,7 +44,7 @@ export function resolveContext(value: unknown): AnaContext | null {
   if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
   const v = value as Record<string, unknown>;
   if (Object.keys(v).some(k => !['pageId', 'sectionId', 'intentId'].includes(k))) return null;
-  if (typeof v.pageId !== 'string' || !Object.hasOwn(ANA_PAGES, v.pageId)) return null;
+  if (typeof v.pageId !== 'string' || !Object.prototype.hasOwnProperty.call(ANA_PAGES, v.pageId)) return null;
   const page = ANA_PAGES[v.pageId as AnaPageId];
   if (typeof v.sectionId !== 'string' || !(page.sections as readonly string[]).includes(v.sectionId)) return null;
   if (v.intentId !== undefined && !page.suggestions.some(s => s.id === v.intentId)) return null;
