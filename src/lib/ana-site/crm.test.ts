@@ -47,4 +47,18 @@ describe('fila de entrega CRM',()=>{
   expect(calls.some(c=>c.url.includes('/opportunities/'))).toBe(false);
   expect(d.checkpoints.at(-1).last_error).toBe('regional_assignment_pending');
  });
+ it('aguarda a atribuição final quando o workflow troca o responsável inicial',async()=>{
+  env();vi.useFakeTimers();let reads=0;let opportunityOwner='';
+  const d=db({...base,routing_prepared:true,contact_id:'contact',opportunity_id:'opportunity',note_id:'note',payload:{...base.payload,route:'leia',uf:'SP',organization:'Escola',role:'Direção'}});
+  const f=vi.fn(async(url:any,init:any)=>{
+   if(String(url).includes('/opportunities/')){
+    if(init.method==='PUT')opportunityOwner=JSON.parse(init.body).assignedTo;
+    return Response.json({opportunity:{assignedTo:opportunityOwner}});
+   }
+   reads++;
+   return Response.json({contact:{assignedTo:reads<5?'temporary-owner':'final-owner',tags:['ana-handoff-ready']}});
+  });
+  const promise=deliverToCrm(d as any,base.id,f as any);await vi.runAllTimersAsync();
+  expect(await promise).toBe('delivered');expect(opportunityOwner).toBe('final-owner');
+ });
 });

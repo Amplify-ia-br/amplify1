@@ -9,7 +9,7 @@ describe('unsafe generated output', () => {
     const eq = vi.fn().mockReturnThis();
     const update = vi.fn(() => ({ eq }));
     const from = vi.fn(() => ({ update }));
-    const rpc = vi.fn(async () => ({ data: { kind: 'ready', id: 'test-conversation', history: [], memory: [] } }));
+    const rpc = vi.fn(async (..._args: unknown[]) => ({ data: { kind: 'ready', id: 'test-conversation', history: [], memory: [] } }));
     const deliver = vi.fn();
     const request = new Request('https://example.test/api/ana-site', { method: 'POST', headers: { authorization: 'Bearer test-secret' }, body: JSON.stringify({ conversationId: crypto.randomUUID(), messageId: crypto.randomUUID(), message: 'oi', context: { pageId: 'home', sectionId: 'inicio' } }) });
     const response = await handleAnaSite(request, {} as never, {

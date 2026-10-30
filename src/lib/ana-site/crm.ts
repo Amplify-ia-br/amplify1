@@ -83,16 +83,23 @@ export async function deliverToCrm(client: SupabaseClient, deliveryId: string, f
       }
       // Do not rerun the distribution workflow on retries. Wait for its confirmed owner.
       let owner: string | undefined;
-      for (let attempt=0; attempt<5; attempt++) {
+      let stableSamples=0;
+      for (let attempt=0; attempt<12; attempt++) {
         await new Promise(resolve=>setTimeout(resolve,1000));
         const routed = await ghl(`/contacts/${contactId}`, 'GET');
-        owner = routed.contact?.assignedTo;
-        if(owner) break;
+        const nextOwner=routed.contact?.assignedTo;
+        stableSamples=nextOwner && nextOwner===owner ? stableSamples+1 : 1;
+        owner=nextOwner;
+        // Regional workflows can assign a temporary owner before their final
+        // branch completes. Require a settling window and repeated observations.
+        if(owner && attempt>=5 && stableSamples>=3) break;
       }
-      if (!owner) throw new Error('regional_assignment_pending');
+      if (!owner || stableSamples<3) throw new Error('regional_assignment_pending');
       await ghl(`/opportunities/${opportunityId}`, 'PUT', { assignedTo: owner });
       const opportunity = await ghl(`/opportunities/${opportunityId}`, 'GET');
       if (opportunity.opportunity?.assignedTo !== owner) throw new Error('opportunity_owner_not_confirmed');
+      const finalContact=await ghl(`/contacts/${contactId}`, 'GET');
+      if(finalContact.contact?.assignedTo!==owner)throw new Error('regional_assignment_pending');
     } else {
       await ghl(`/contacts/${contactId}`, 'PUT', { assignedTo: leonardoId });
       const assigned = await ghl(`/contacts/${contactId}`, 'GET');
