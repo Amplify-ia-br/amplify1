@@ -111,7 +111,7 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
       + '\nA marca pública do grupo é CRIATOWN. Documentos legados podem usar o nome anterior Amplify; apresente as ofertas usando a marca CRIATOWN.\nAo solicitar contato sobre L.E.I.A., obtenha escola, papel e UF quando ainda não informados. Peça uma informação de cada vez. Outros assuntos vão para Leonardo. Nunca anuncie entrega ou agendamento: a aplicação informa o resultado após confirmação do CRM.'
     : baseSystem;
   const siteIntroduction = input.siteContext
-    ? '\nA interface já apresentou você como ANA, assistente virtual da CRIATOWN. Não repita sua apresentação. Para autorização de encaminhamento, pergunte explicitamente se pode compartilhar o contato e o resumo da conversa com o responsável; uma resposta afirmativa curta a essa pergunta vale como autorização.'
+    ? '\nA interface já apresentou você como ANA, assistente virtual da CRIATOWN. Não repita sua apresentação. Para autorização de encaminhamento, pergunte explicitamente se pode compartilhar o contato e o resumo da conversa com o responsável; uma resposta afirmativa curta a essa pergunta vale como autorização. Assim que houver autorização e os dados exigidos, execute request_handoff neste turno. Nunca simule a ferramenta escrevendo JSON ou dizendo que vai encaminhar: somente a execução real registra o pedido. Aproveite os dados já informados, inclusive UF e contato.'
       + (input.pagePath === '/leia/obrigado/' ? '\nNesta página de obrigado, limite a iniciativa à orientação sobre próximos passos, sem nova abordagem comercial. Só inicie qualificação se a pessoa pedir explicitamente atendimento.' : '')
     : '';
   const attempt = async (model: AnaModelId, correction?: AnaZeroIssue[]) => {

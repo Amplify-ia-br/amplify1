@@ -200,7 +200,7 @@ describe("turno do agente", () => {
     expect(turn.text).not.toContain('consentQuote');
   });
 
-  it.each(['{"consentQuote":"Autorizo","contact":"qa@example.invalid"}Perfeito.', 'Já anotei seu pedido para o time dar sequência.'])('falha sem salvar quando a segunda resposta pública permanece insegura: %s', async (answer) => {
+  it.each(['{"consentQuote":"Autorizo","contact":"qa@example.invalid"}Perfeito.', 'Já anotei seu pedido para o time dar sequência.', 'Anotado. Vou encaminhar seu pedido de apresentação gratuita do L.E.I.A. para o time seguir com a conversa.'])('falha sem salvar quando a segunda resposta pública permanece insegura: %s', async (answer) => {
     mocks.generateText.mockResolvedValue(result(answer));
     const turn = await runAnaZeroTurn({ model: 'openai/gpt-5.4-mini-fast', reader, memory: [], history, siteContext: 'Home pública' });
     expect(mocks.generateText).toHaveBeenCalledTimes(2);
