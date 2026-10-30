@@ -8,6 +8,7 @@ import { ANA_ZERO_DEFAULT_MODEL } from '../ana-zero/schema.js';
 import { readServerEnv } from '../ana-zero/env.js';
 import type { KnowledgeReader } from '../okf/http.js';
 import { ANA_PAGES, ANA_UUID, parseAnaRequest, contextInstruction } from './context.js';
+import { publicSiteAnswer } from './presentation.js';
 import { deliverToCrm } from './crm.js';
 import { handoffKey, type SiteHandoff } from './tools.js';
 
@@ -71,7 +72,7 @@ export async function handleAnaSite(request:Request,reader:KnowledgeReader,deps:
   if(turn.text === ANA_ZERO_TECHNICAL_REPLY)throw new Error('generation_failed');
   const handoff=turn.handoff as SiteHandoff|undefined;
   const dedupeKey=handoff ? await handoffKey(handoff) : undefined;
-  let message=handoff ? 'Anotei seu pedido para o time dar sequência. A entrega ao responsável ainda está sendo confirmada.' : turn.text;
+  let message=handoff ? 'Anotei seu pedido para o time dar sequência. A entrega ao responsável ainda está sendo confirmada.' : publicSiteAnswer(turn.text);
   const result={conversationId:body.conversationId,message,...(handoff?{handoff:'pending'}:{})};
   const saved=await client.rpc('finish_ana_site_turn',{p_id:claim.id,p_hash:session.sessionHash,p_request:body.messageId,p_user:body.message,p_assistant:message,p_memory:turn.memory,p_response:result,p_handoff:handoff?{...handoff,origin:page.path,dedupeKey}:null,p_metadata:{engine:'ana-site',promptVersion:'2026-10-29.1',context:body.context,sources:turn.sources,model:turn.resolvedModel,errors:turn.errors.map(()=> 'generation_error')}});
   if(saved.error||!saved.data)throw new Error('save_failed');

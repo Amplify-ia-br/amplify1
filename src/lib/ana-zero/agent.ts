@@ -119,7 +119,7 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
           : ""
       }${
         correction?.length
-          ? `\n\nSua resposta anterior foi rejeitada (${correction.join(", ")}). Reescreva do zero respeitando os limites factuais. ${correctionInstructions(correction)}`
+          ? `\n\nSua resposta anterior foi rejeitada (${correction.join(", ")}). Reescreva do zero respeitando os limites factuais. ${(input.siteContext ? correctionInstructions(correction).replaceAll('Amplify', 'CRIATOWN') : correctionInstructions(correction))}`
           : ""
       }`,
       messages,
