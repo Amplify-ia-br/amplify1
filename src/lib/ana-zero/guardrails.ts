@@ -7,6 +7,7 @@ export type AnaZeroIssue =
   | "non_latin_script"
   | "ungrounded_price"
   | "promise_of_action"
+  | "unsafe_site_handoff"
   | "stalled_active_interest"
   | "missing_leia_implementation"
   | "missing_leia_shared_decisions"

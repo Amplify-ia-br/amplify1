@@ -8,7 +8,7 @@ import { ANA_ZERO_DEFAULT_MODEL } from '../ana-zero/schema.js';
 import { readServerEnv } from '../ana-zero/env.js';
 import type { KnowledgeReader } from '../okf/http.js';
 import { ANA_PAGES, ANA_UUID, parseAnaRequest, contextInstruction } from './context.js';
-import { publicSiteAnswer } from './presentation.js';
+import { publicSiteAnswer, unsafeSiteAnswer } from './presentation.js';
 import { deliverToCrm } from './crm.js';
 import { handoffKey, type SiteHandoff } from './tools.js';
 
@@ -71,6 +71,7 @@ export async function handleAnaSite(request:Request,reader:KnowledgeReader,deps:
   const turn=await (deps.run ?? runAnaZeroTurn)({model:ANA_ZERO_DEFAULT_MODEL,reader,history:[...claim.history,{role:'user',text:body.message}],memory:claim.memory,pagePath:page.path,siteContext:contextInstruction(body.context),signal:AbortSignal.timeout(48000)});
   if(turn.text === ANA_ZERO_TECHNICAL_REPLY)throw new Error('generation_failed');
   const handoff=turn.handoff as SiteHandoff|undefined;
+  if(unsafeSiteAnswer(turn.text,Boolean(handoff)))throw new Error('unsafe_generation');
   const dedupeKey=handoff ? await handoffKey(handoff) : undefined;
   let message=handoff ? 'Anotei seu pedido para o time dar sequência. A entrega ao responsável ainda está sendo confirmada.' : publicSiteAnswer(turn.text);
   const result={conversationId:body.conversationId,message,...(handoff?{handoff:'pending'}:{})};

@@ -185,6 +185,29 @@ describe("turno do agente", () => {
     mocks.generateText.mockReset();
   });
 
+  it('regenera argumentos expostos e exige a execução validada da ferramenta pública', async () => {
+    const handoff = { summary: 'Pedido de parceria', consentQuote: 'Autorizo encaminhar meu contato', contact: 'qa@example.invalid', route: 'other', routeEvidence: 'Quero uma parceria' };
+    mocks.generateText.mockResolvedValueOnce(result(JSON.stringify(handoff) + 'Já anotei seu pedido.'))
+      .mockImplementationOnce(async (args) => {
+        expect(args.system).toContain('execute a ferramenta request_handoff de verdade');
+        expect(await args.tools.request_handoff.execute(handoff)).toEqual({ ok: true, status: 'pending_delivery' });
+        return result('Tudo certo.');
+      });
+    const turn = await runAnaZeroTurn({ model: 'openai/gpt-5.4-mini-fast', reader, memory: [], siteContext: 'Home pública', history: [{ role: 'user', text: 'Quero uma parceria. Meu contato é qa@example.invalid. Autorizo encaminhar meu contato.' }] });
+    expect(turn.regenerated).toBe(true);
+    expect(turn.handoff).toEqual(handoff);
+    expect(turn.toolCalls).toContain('request_handoff');
+    expect(turn.text).not.toContain('consentQuote');
+  });
+
+  it.each(['{"consentQuote":"Autorizo","contact":"qa@example.invalid"}Perfeito.', 'Já anotei seu pedido para o time dar sequência.'])('falha sem salvar quando a segunda resposta pública permanece insegura: %s', async (answer) => {
+    mocks.generateText.mockResolvedValue(result(answer));
+    const turn = await runAnaZeroTurn({ model: 'openai/gpt-5.4-mini-fast', reader, memory: [], history, siteContext: 'Home pública' });
+    expect(mocks.generateText).toHaveBeenCalledTimes(2);
+    expect(turn.text).toBe(ANA_ZERO_TECHNICAL_REPLY);
+    expect(turn.handoff).toBeUndefined();
+  });
+
   it("passa a conversa completa e a memória ao modelo", async () => {
     mocks.generateText.mockResolvedValueOnce(result("Prazer, Leo. Como posso ajudar?"));
     const turn = await runAnaZeroTurn({

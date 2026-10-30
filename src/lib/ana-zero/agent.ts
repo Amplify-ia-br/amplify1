@@ -1,4 +1,5 @@
 import { createSiteTools } from '../ana-site/tools.js';
+import { unsafeSiteAnswer } from '../ana-site/presentation.js';
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGateway, generateText, stepCountIs, type LanguageModel, type ModelMessage } from "ai";
 import { ANA_MODELS, estimateAnaCost, getAnaFallbackModels, getAnaQualityRetryModel, type AnaModelId } from "../ana/config.js";
@@ -49,6 +50,9 @@ function stripAnsiSequences(value: string) {
 
 function correctionInstructions(issues: AnaZeroIssue[]) {
   const instructions: string[] = [];
+  if (issues.includes('unsafe_site_handoff')) {
+    instructions.push('Nunca escreva JSON, argumentos de ferramentas ou confirmações de registro na resposta. Havendo autorização explícita e todos os dados necessários, execute a ferramenta request_handoff de verdade. Se faltarem dados, peça apenas a informação faltante. A aplicação confirma o registro e a entrega; texto sozinho não registra um pedido.');
+  }
   if (issues.includes("stalled_active_interest")) {
     instructions.push("A pessoa demonstrou interesse ativo. Não responda com uma confirmação isolada: entregue o próximo conteúdo útil do assunto.");
   }
@@ -142,9 +146,17 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   let issues: AnaZeroIssue[] = [];
   let regenerated = false;
   let text = "";
+  const validate = (value: string) => {
+    const checked = validateAnaZeroTurnAnswer(value, state.evidenceText, input.history);
+    if (input.siteContext && unsafeSiteAnswer(value, Boolean(state.handoff))) {
+      checked.issues.push('unsafe_site_handoff');
+      checked.valid = false;
+    }
+    return checked;
+  };
 
   try {
-    const first = validateAnaZeroTurnAnswer(await attempt(input.model), state.evidenceText, input.history);
+    const first = validate(await attempt(input.model));
     if (first.valid) text = first.text;
     else issues = first.issues;
   } catch (error) {
@@ -156,11 +168,13 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
     regenerated = true;
     const retryModel = getAnaQualityRetryModel(input.model);
     try {
-      const second = validateAnaZeroTurnAnswer(await attempt(retryModel, issues), state.evidenceText, input.history);
+      const second = validate(await attempt(retryModel, issues));
       if (second.valid) text = second.text;
       else {
         issues = [...new Set([...issues, ...second.issues])];
-        text = behavioralFallback(issues) || redactAnaZeroAnswer(second.text, state.evidenceText);
+        text = second.issues.includes('unsafe_site_handoff')
+          ? ANA_ZERO_TECHNICAL_REPLY
+          : behavioralFallback(issues) || redactAnaZeroAnswer(second.text, state.evidenceText);
       }
     } catch (error) {
       recordError(retryModel, error);
