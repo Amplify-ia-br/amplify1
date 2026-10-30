@@ -14,7 +14,10 @@ const UF_NAMES: Record<string,string> = {AC:'acre',AL:'alagoas',AP:'amapa',AM:'a
 const normalize=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
 export function stateMatches(uf:string,evidence:string){
  const s=normalize(evidence).trim();
- return new RegExp(`(?:^|[\\s,/-])${uf.toLowerCase()}(?:$|[\\s,.!/-])`).test(s) || s===UF_NAMES[uf] || (uf==='DF' && s==='brasilia');
+ const name=UF_NAMES[uf];
+ return new RegExp(`(?:^|[\\s,/-])${uf.toLowerCase()}(?:$|[\\s,.!/-])`).test(s)
+  || Boolean(name && new RegExp(`\\b${name}\\b`).test(s))
+  || (uf==='DF' && /\bbrasilia\b/.test(s));
 }
 export function validateSiteHandoff(h: SiteHandoff, texts: string[], history?: Array<{role:string;text:string}>) {
   if (/\b(n[aã]o|nunca|jamais|recuso)\b/i.test(h.consentQuote) || !quoteIsFromUser(h.consentQuote, texts) || !isExplicitHandoffConsent(h.consentQuote)) return 'explicit_consent_required';
