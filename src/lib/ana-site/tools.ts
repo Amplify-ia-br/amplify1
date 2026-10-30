@@ -15,8 +15,10 @@ const normalize=(s:string)=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').to
 export function stateMatches(uf:string,evidence:string){
  const s=normalize(evidence).trim();
  const name=UF_NAMES[uf];
+ const named=uf==='PA' ? s===name || /(?:^|[\s,/-])pará(?:$|[\s,.!/-])/iu.test(evidence)
+  : Boolean(name && new RegExp(`\\b${name}\\b${uf==='MT'?'(?! do sul)':''}`).test(s));
  return new RegExp(`(?:^|[\\s,/-])${uf.toLowerCase()}(?:$|[\\s,.!/-])`).test(s)
-  || Boolean(name && new RegExp(`\\b${name}\\b`).test(s))
+  || named
   || (uf==='DF' && /\bbrasilia\b/.test(s));
 }
 export function validateSiteHandoff(h: SiteHandoff, texts: string[], history?: Array<{role:string;text:string}>) {
