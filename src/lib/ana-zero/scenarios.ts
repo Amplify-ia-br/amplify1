@@ -34,7 +34,11 @@ export const COMPARE_SCENARIOS: CompareScenario[] = [
   {
     name: "pergunta-direta-leia",
     userTurns: ["O que é o L.E.I.A. e para quem ele foi criado?"],
-    requireIn: [{ reply: 0, pattern: /estudantes|alunos/i, reason: "não explicou o público" }],
+    requireIn: [
+      { reply: 0, pattern: /estudantes|alunos/i, reason: "não explicou o público" },
+      { reply: 0, pattern: /programa|laborat[oó]rio|forma[cç][aã]o|educa[cç][aã]o b[aá]sica/i, reason: "não explicou concretamente o que é o L.E.I.A." },
+    ],
+    forbidAfter: [{ afterReply: 0, pattern: /consultoria|gest[aã]o|opera[cç][aã]o|equipe administrativa/i, reason: "desviou do L.E.I.A. para a frente de gestão" }],
   },
   {
     name: "preco-sem-valor-publico",
@@ -64,17 +68,60 @@ export const COMPARE_SCENARIOS: CompareScenario[] = [
   {
     name: "duas-frentes",
     userTurns: ["Quero IA para meus alunos e também para melhorar a operação da escola"],
+    requireIn: [
+      { reply: 0, pattern: /L\.E\.I\.A|estudantes|alunos/i, reason: "não respondeu à frente para estudantes" },
+      { reply: 0, pattern: /gest[aã]o|opera[cç][aã]o|processos|equipe/i, reason: "não respondeu à frente operacional" },
+    ],
+  },
+  {
+    name: "dono-escola-duas-frentes",
+    userTurns: ["Sou dono de uma escola"],
+    requireIn: [
+      { reply: 0, pattern: /L\.E\.I\.A|estudantes|alunos/i, reason: "não apresentou a frente para estudantes" },
+      { reply: 0, pattern: /gest[aã]o|opera[cç][aã]o|processos|equipe/i, reason: "não apresentou a frente operacional" },
+    ],
+    forbidAfter: [{ afterReply: 0, pattern: /escola como organiza[cç][aã]o/i, reason: "usou o rótulo artificial em vez de linguagem natural" }],
   },
   {
     name: "legal-depois-de-interesse",
     userTurns: ["Sou dono de uma escola e quero levar IA para os alunos", "Legal!"],
     forbidAfter: [{ afterReply: 1, pattern: MENU_OF_OPTIONS, reason: "virou menu de opções em vez de conduzir" }],
-    requireIn: [{ reply: 1, pattern: /\?/, reason: "deixou a conversa morrer sem conduzir" }],
+    requireIn: [{ reply: 1, pattern: /pr[oó]xim[oa]|passo|come[cç]|implanta[cç]|turma|ano|s[eé]rie|p[uú]blico|contexto|\?/i, reason: "deixou a conversa morrer sem avançar no tema" }],
+  },
+  {
+    name: "interesse-ativo-aprofunda-leia",
+    userTurns: ["Quero entender como funciona o L.E.I.A.", "Gostei, interessante"],
+    requireIn: [{ reply: 1, pattern: /pr[oó]xim[oa]|passo|come[cç]|implanta[cç]|turma|ano|s[eé]rie|p[uú]blico|contexto|\?/i, reason: "não avançou dentro do tema de interesse" }],
+    forbidAfter: [{ afterReply: 1, pattern: /consultoria|gest[aã]o|opera[cç][aã]o|equipe administrativa/i, reason: "reintroduziu gestão depois de interesse no L.E.I.A." }],
+  },
+  {
+    name: "leia-pergunta-segue-no-tema",
+    userTurns: ["Como o L.E.I.A. funciona na prática na escola?"],
+    requireIn: [{ reply: 0, pattern: /L\.E\.I\.A|alunos|estudantes|turma|escola/i, reason: "não respondeu concretamente sobre o L.E.I.A." }],
+    forbidAfter: [{ afterReply: 0, pattern: /consultoria|gest[aã]o|automa[cç][aã]o|equipe administrativa/i, reason: "mudou de assunto ao responder sobre o L.E.I.A." }],
+  },
+  {
+    name: "leia-implantacao-conversa-real",
+    userTurns: [
+      "Sou dono de uma escola e gostaria de saber como a Amplify pode me ajudar.",
+      "Interessante, o foco é o leia mesmo",
+      "Legal!",
+      "Que mais?",
+      "quero sim",
+    ],
+    requireIn: [
+      { reply: 2, pattern: /experiment|apresenta[cç][aã]o gratuita|planej|diagn[oó]stico|prepar|proposta/i, reason: "não avançou para a implantação após o interesse" },
+    ],
+    forbidAfter: [
+      { afterReply: 2, pattern: /^(?:[óo]timo|legal|perfeito)[!.?\s]*$/i, reason: "respondeu ao interesse com confirmação isolada" },
+      { afterReply: 2, pattern: /prefere WhatsApp ou e-?mail/i, reason: "ofereceu escolha de canal em vez de pedir autorização para WhatsApp" },
+    ],
   },
   {
     name: "ok-seco",
     userTurns: ["O que é o L.E.I.A.?", "ok"],
     forbidAfter: [{ afterReply: 1, pattern: MENU_OF_OPTIONS, reason: "ofereceu menu depois de um 'ok'" }],
+    noQuestionIn: [1],
   },
   {
     name: "sim-solto",
@@ -144,7 +191,11 @@ export const COMPARE_SCENARIOS: CompareScenario[] = [
   {
     name: "contato-sem-linguagem-intimidadora",
     userTurns: ["Quero que alguém fale comigo sobre o L.E.I.A. na minha escola", "pode ser, meu email é diretora@escola.exemplo"],
-    forbidAfter: [{ afterReply: 0, pattern: /consentiria|consentimento|autoriza(?:ria|[cç][aã]o)/i, reason: "linguagem jurídica ao pedir contato" }],
+    requireIn: [{ reply: 0, pattern: /WhatsApp/i, reason: "não priorizou WhatsApp no próximo passo" }],
+    forbidAfter: [
+      { afterReply: 0, pattern: /consentiria|consentimento|autoriza(?:ria|[cç][aã]o)/i, reason: "linguagem jurídica ao pedir contato" },
+      { afterReply: 0, pattern: /prefere WhatsApp ou e-?mail/i, reason: "ofereceu e-mail em vez de conduzir pelo WhatsApp" },
+    ],
   },
   {
     name: "troca-de-assunto",

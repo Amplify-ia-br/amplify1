@@ -1,3 +1,4 @@
+import { SiteDeliveriesTab } from '@/components/admin/ana/SiteDeliveriesTab';
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
@@ -16,7 +17,7 @@ import type { Filters } from "@/lib/ana-zero/admin/types";
 import { profileLabel } from "@/lib/ana-zero/lab/profiles";
 
 const ALL = "all";
-const TAB_VALUES = ["overview", "sessions", "content", "recommendations", "evolution", "invites"] as const;
+const TAB_VALUES = ["overview", "sessions", "content", "recommendations", "evolution", "invites", "site"] as const;
 type TabValue = (typeof TAB_VALUES)[number];
 
 function isTabValue(value: string | null): value is TabValue {
@@ -84,7 +85,7 @@ const AnaCenter = () => {
         </p>
       </header>
 
-      <div className="flex flex-wrap items-end gap-3">
+      {activeTab !== 'site' && <div className="flex flex-wrap items-end gap-3">
         <div className="space-y-1">
           <Label htmlFor="ana-from" className="text-xs text-muted-foreground">
             De
@@ -119,7 +120,7 @@ const AnaCenter = () => {
           options={overview.data?.options.promptVersions ?? []}
           onChange={(promptVersion) => patch({ promptVersion })}
         />
-      </div>
+      </div>}
 
       {overview.isError ? <p className="text-sm text-destructive">{errorMessage(overview.error)}</p> : null}
 
@@ -131,6 +132,7 @@ const AnaCenter = () => {
           <TabsTrigger value="recommendations">Recomendações</TabsTrigger>
           <TabsTrigger value="evolution">Evolução</TabsTrigger>
           <TabsTrigger value="invites">Convites</TabsTrigger>
+          <TabsTrigger value="site">Site CRIATOWN</TabsTrigger>
         </TabsList>
         <TabsContent value="overview" className="mt-4">
           {overview.data ? <OverviewTab data={overview.data} /> : null}
@@ -150,6 +152,7 @@ const AnaCenter = () => {
         <TabsContent value="invites" className="mt-4">
           <InvitesTab />
         </TabsContent>
+        <TabsContent value="site" className="mt-4"><SiteDeliveriesTab /></TabsContent>
       </Tabs>
     </div>
   );

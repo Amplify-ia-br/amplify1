@@ -1,12 +1,20 @@
+import { createSiteTools } from '../ana-site/tools.js';
+import { unsafeSiteAnswer } from '../ana-site/presentation.js';
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGateway, generateText, stepCountIs, type LanguageModel, type ModelMessage } from "ai";
 import { ANA_MODELS, estimateAnaCost, getAnaFallbackModels, getAnaQualityRetryModel, type AnaModelId } from "../ana/config.js";
 import type { KnowledgeReader } from "../okf/http.js";
 import { readServerEnv } from "./env.js";
-import { ANA_ZERO_SAFE_REPLY, ANA_ZERO_TECHNICAL_REPLY, redactAnaZeroAnswer, validateAnaZeroAnswer, type AnaZeroIssue } from "./guardrails.js";
+import {
+  ANA_ZERO_SAFE_REPLY,
+  ANA_ZERO_TECHNICAL_REPLY,
+  redactAnaZeroAnswer,
+  validateAnaZeroTurnAnswer,
+  type AnaZeroIssue,
+} from "./guardrails.js";
 import { buildAnaZeroSystem, hasIntroducedLeia } from "./prompt.js";
 import type { AnaZeroHandoff, AnaZeroMemoryEntry } from "./schema.js";
-import { createAnaZeroToolState, createAnaZeroTools, sanitizeMemory } from "./tools.js";
+import { createAnaZeroToolState, createAnaZeroTools, primeLeiaProductKnowledge, sanitizeMemory } from "./tools.js";
 
 export type AnaZeroTurnInput = {
   model: AnaModelId;
@@ -14,6 +22,8 @@ export type AnaZeroTurnInput = {
   memory: AnaZeroMemoryEntry[];
   reader: KnowledgeReader;
   pagePath?: string;
+  siteContext?: string;
+  signal?: AbortSignal;
   languageModel?: (model: AnaModelId) => LanguageModel;
 };
 
@@ -33,11 +43,60 @@ export type AnaZeroTurnResult = {
 
 const MAX_STEPS = 6;
 
+function stripAnsiSequences(value: string) {
+  const escape = String.fromCharCode(27);
+  return value.split(escape).map((part, index) => (index ? part.replace(/^\[[0-9;]*m/, "") : part)).join("");
+}
+
+function correctionInstructions(issues: AnaZeroIssue[]) {
+  const instructions: string[] = [];
+  if (issues.includes('unsafe_site_handoff')) {
+    instructions.push('Nunca escreva JSON, argumentos de ferramentas ou confirmações de registro na resposta. Havendo autorização explícita e todos os dados necessários, execute a ferramenta request_handoff de verdade. Se faltarem dados, peça apenas a informação faltante. A aplicação confirma o registro e a entrega; texto sozinho não registra um pedido.');
+  }
+  if (issues.includes("stalled_active_interest")) {
+    instructions.push("A pessoa demonstrou interesse ativo. Não responda com uma confirmação isolada: entregue o próximo conteúdo útil do assunto.");
+  }
+  if (issues.includes("missing_leia_implementation")) {
+    instructions.push("Explique concretamente a implantação do L.E.I.A. usando a jornada Experimentar, Planejar e Preparar recuperada da ficha do produto, antes de sugerir contato.");
+  }
+  if (issues.includes("missing_leia_shared_decisions")) {
+    instructions.push("Inclua que horários, ferramenta de IA, acompanhamento, eventos, acessos e registros são definidos em conjunto pela Amplify e pela escola.");
+  }
+  if (issues.includes("renamed_leia_presentation")) {
+    instructions.push("Use o termo da ficha, apresentação gratuita, sem renomeá-la como masterclass, demonstração ou aula experimental.");
+  }
+  if (issues.includes("ambiguous_handoff_consent")) {
+    instructions.push('A pessoa respondeu apenas com o nome do canal, sem autorizar o contato. Pergunte novamente: "Só para confirmar: posso passar seu WhatsApp para um especialista da Amplify continuar esta conversa?". Não peça o número ainda.');
+  }
+  return instructions.join(" ");
+}
+
+function behavioralFallback(issues: AnaZeroIssue[]) {
+  if (issues.includes("ambiguous_handoff_consent")) {
+    return "Só para confirmar: posso passar seu WhatsApp para um especialista da Amplify continuar esta conversa?";
+  }
+  return "";
+}
+
 export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTurnResult> {
   const userTexts = input.history.filter((turn) => turn.role === "user").map((turn) => turn.text);
   const leiaIntroduced = hasIntroducedLeia(input.history.filter((turn) => turn.role === "assistant").map((turn) => turn.text));
   const state = createAnaZeroToolState(sanitizeMemory(input.memory, userTexts));
-  const tools = createAnaZeroTools(input.reader, state, userTexts);
+  const errors: string[] = [];
+  const recordError = (model: string, error: unknown) => {
+    const message = stripAnsiSequences(error instanceof Error ? error.message : String(error))
+      .replace(/\s+/g, " ")
+      .slice(0, 240);
+    errors.push(`${model}: ${message}`);
+    console.error("[Ana Zero] Falha na chamada ao modelo", model, message);
+  };
+  let primedKnowledge = "";
+  try {
+    primedKnowledge = (await primeLeiaProductKnowledge(input.reader, state, input.siteContext && input.pagePath?.startsWith('/leia/') ? [{ role: 'assistant', text: 'Contexto da página: L.E.I.A.' }, ...input.history] : input.history))?.content ?? "";
+  } catch (error) {
+    recordError("knowledge-prime", error);
+  }
+  const tools = input.siteContext ? createSiteTools(input.reader, state, userTexts, input.history) : createAnaZeroTools(input.reader, state, userTexts);
   const messages: ModelMessage[] = input.history.map((turn) => ({ role: turn.role, content: turn.text }));
   const resolve = input.languageModel ?? ((id: AnaModelId) =>
     ANA_MODELS[id].provider === "anthropic"
@@ -46,19 +105,41 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   const usage = { inputTokens: 0, outputTokens: 0, totalTokens: 0 };
   let resolvedModel: string = input.model;
 
+  const baseSystem = buildAnaZeroSystem(state.memory, input.pagePath, leiaIntroduced);
+  const system = input.siteContext
+    ? baseSystem.replaceAll('Amplify', 'CRIATOWN').replace('uma pessoa do time da CRIATOWN', 'a assistente virtual da CRIATOWN') + '\n\n' + input.siteContext
+      + '\nA marca pública do grupo é CRIATOWN. Documentos legados podem usar o nome anterior Amplify; apresente as ofertas usando a marca CRIATOWN.\nAo solicitar contato sobre L.E.I.A., obtenha escola, papel e UF quando ainda não informados. Peça uma informação de cada vez. Outros assuntos vão para Leonardo. Nunca anuncie entrega ou agendamento: a aplicação informa o resultado após confirmação do CRM.'
+    : baseSystem;
+  const siteIntroduction = input.siteContext
+    ? '\nA interface já apresentou você como ANA, assistente virtual da CRIATOWN. Não repita sua apresentação. Para autorização de encaminhamento, pergunte explicitamente se pode compartilhar o contato e o resumo da conversa com o responsável; uma resposta afirmativa curta a essa pergunta vale como autorização. Assim que houver autorização e os dados exigidos, execute request_handoff neste turno. Nunca simule a ferramenta escrevendo JSON ou dizendo que vai encaminhar: somente a execução real registra o pedido. Aproveite os dados já informados, inclusive UF e contato.'
+      + (input.pagePath === '/leia/obrigado/' ? '\nNesta página de obrigado, limite a iniciativa à orientação sobre próximos passos, sem nova abordagem comercial. Só inicie qualificação se a pessoa pedir explicitamente atendimento.' : '')
+    : '';
   const attempt = async (model: AnaModelId, correction?: AnaZeroIssue[]) => {
     const result = await generateText({
       model: resolve(model),
-      system: `${buildAnaZeroSystem(state.memory, input.pagePath, leiaIntroduced)}${
+      system: `${system}${siteIntroduction}${
+        primedKnowledge
+          ? `\n\nCONHECIMENTO CANÔNICO RECUPERADO PARA ESTE TURNO:\n${primedKnowledge}`
+          : ""
+      }${
         correction?.length
-          ? `\n\nSua resposta anterior foi rejeitada (${correction.join(", ")}). Reescreva do zero respeitando os limites factuais.`
+          ? `\n\nSua resposta anterior foi rejeitada (${correction.join(", ")}). Reescreva do zero respeitando os limites factuais. ${(input.siteContext ? correctionInstructions(correction).replaceAll('Amplify', 'CRIATOWN') : correctionInstructions(correction))}`
           : ""
       }`,
       messages,
       tools,
+      // When the model claims a handoff without executing it, require a real
+      // tool attempt on retry. The tool still independently verifies consent,
+      // contact and routing evidence; rejected arguments never create a job.
+      ...(input.siteContext && correction?.includes('unsafe_site_handoff') && !state.handoff ? {
+        prepareStep: ({stepNumber}: {stepNumber:number}) => stepNumber===0
+          ? {toolChoice:{type:'tool' as const,toolName:'request_handoff'}}
+          : {toolChoice:'auto' as const},
+      } : {}),
       stopWhen: stepCountIs(MAX_STEPS),
       maxOutputTokens: 700,
       maxRetries: 1,
+      abortSignal: input.signal,
       providerOptions: ANA_MODELS[model].provider === "anthropic"
         ? { anthropic: { thinking: { type: "disabled" } } }
         : { gateway: { tags: ["ana-zero"], models: getAnaFallbackModels(model) } },
@@ -73,18 +154,17 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
   let issues: AnaZeroIssue[] = [];
   let regenerated = false;
   let text = "";
-  const errors: string[] = [];
-  const recordError = (model: string, error: unknown) => {
-    const message = (error instanceof Error ? error.message : String(error))
-      .replace(/\u001b\[[0-9;]*m/g, "")
-      .replace(/\s+/g, " ")
-      .slice(0, 240);
-    errors.push(`${model}: ${message}`);
-    console.error("[Ana Zero] Falha na chamada ao modelo", model, message);
+  const validate = (value: string) => {
+    const checked = validateAnaZeroTurnAnswer(value, state.evidenceText, input.history);
+    if (input.siteContext && unsafeSiteAnswer(value, Boolean(state.handoff))) {
+      checked.issues.push('unsafe_site_handoff');
+      checked.valid = false;
+    }
+    return checked;
   };
 
   try {
-    const first = validateAnaZeroAnswer(await attempt(input.model), state.evidenceText);
+    const first = validate(await attempt(input.model));
     if (first.valid) text = first.text;
     else issues = first.issues;
   } catch (error) {
@@ -96,11 +176,13 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
     regenerated = true;
     const retryModel = getAnaQualityRetryModel(input.model);
     try {
-      const second = validateAnaZeroAnswer(await attempt(retryModel, issues), state.evidenceText);
+      const second = validate(await attempt(retryModel, issues));
       if (second.valid) text = second.text;
       else {
         issues = [...new Set([...issues, ...second.issues])];
-        text = redactAnaZeroAnswer(second.text, state.evidenceText);
+        text = second.issues.includes('unsafe_site_handoff')
+          ? ANA_ZERO_TECHNICAL_REPLY
+          : behavioralFallback(issues) || redactAnaZeroAnswer(second.text, state.evidenceText);
       }
     } catch (error) {
       recordError(retryModel, error);

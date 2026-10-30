@@ -86,6 +86,7 @@ export const anaZeroFeedbackSchema = z.discriminatedUnion("kind", [
     sessionId: z.uuid(),
     rating: z.number().int().min(1).max(5),
     helped: z.boolean().optional(),
+    trusted: z.boolean().optional(),
     comment: feedbackComment,
   }),
 ]);
