@@ -190,6 +190,8 @@ describe("turno do agente", () => {
     mocks.generateText.mockResolvedValueOnce(result(JSON.stringify(handoff) + 'Já anotei seu pedido.'))
       .mockImplementationOnce(async (args) => {
         expect(args.system).toContain('execute a ferramenta request_handoff de verdade');
+        expect(args.prepareStep({stepNumber:0})).toEqual({toolChoice:{type:'tool',toolName:'request_handoff'}});
+        expect(args.prepareStep({stepNumber:1})).toEqual({toolChoice:'auto'});
         expect(await args.tools.request_handoff.execute(handoff)).toEqual({ ok: true, status: 'pending_delivery' });
         return result('Tudo certo.');
       });

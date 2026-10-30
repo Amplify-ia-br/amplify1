@@ -10,6 +10,7 @@ describe('public identity', () => {
  it('rejects internal payloads and unrecorded confirmation, while allowing ordinary help', () => {
   expect(unsafeSiteAnswer('{"consentQuote":"Autorizo","contact":"qa@example.invalid"}Perfeito.', false)).toBe(true);
   expect(unsafeSiteAnswer('Já anotei seu pedido para o time dar sequência.', false)).toBe(true);
+  expect(unsafeSiteAnswer('Perfeito — já deixei registrado o pedido para o time dar sequência.', false)).toBe(true);
   expect(unsafeSiteAnswer('Seu pedido foi encaminhado ao time.', false)).toBe(true);
   expect(unsafeSiteAnswer('Posso compartilhar seu contato e o resumo com o time?', false)).toBe(false);
   expect(unsafeSiteAnswer('Anotei seu pedido.', true)).toBe(false);

@@ -128,6 +128,14 @@ export async function runAnaZeroTurn(input: AnaZeroTurnInput): Promise<AnaZeroTu
       }`,
       messages,
       tools,
+      // When the model claims a handoff without executing it, require a real
+      // tool attempt on retry. The tool still independently verifies consent,
+      // contact and routing evidence; rejected arguments never create a job.
+      ...(input.siteContext && correction?.includes('unsafe_site_handoff') && !state.handoff ? {
+        prepareStep: ({stepNumber}: {stepNumber:number}) => stepNumber===0
+          ? {toolChoice:{type:'tool' as const,toolName:'request_handoff'}}
+          : {toolChoice:'auto' as const},
+      } : {}),
       stopWhen: stepCountIs(MAX_STEPS),
       maxOutputTokens: 700,
       maxRetries: 1,
